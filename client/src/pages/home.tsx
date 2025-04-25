@@ -33,7 +33,8 @@ const defaultLoanDetails: LoanDetails = {
   overpaymentMonth: 24,
   reduceTermNotPayment: true,
   name: "Home Purchase - 30 Year",
-  startDate: new Date()
+  startDate: new Date(),
+  currency: "USD"
 };
 
 export default function Home() {

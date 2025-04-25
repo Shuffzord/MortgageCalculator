@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
+import CurrencySelector from "@/components/ui/currency-selector";
 import {
   Popover,
   PopoverContent,
@@ -160,6 +161,23 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                       max={50}
                       placeholder="30"
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {/* Currency Selector */}
+            <FormField
+              control={form.control}
+              name="currency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <CurrencySelector 
+                      value={field.value || "USD"} 
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />

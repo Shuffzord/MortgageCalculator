@@ -13,6 +13,7 @@ export interface LoanDetails {
   reduceTermNotPayment: boolean;
   startDate?: Date;
   dateCreated?: string;
+  currency?: string;
 }
 
 export interface Schedule {
