@@ -6,16 +6,16 @@
   :root {
     /* Main color palette */
     --primary: 26 107 114; /* #1A6B72 - deep blue-green */
-    --primary-foreground: 255 255 255;
+    --primary-foreground: 255 255 255; /* White */
     
     --secondary: 232 168 124; /* #E8A87C - warm accent */
-    --secondary-foreground: 17 17 17;
+    --secondary-foreground: 17 17 17; /* Dark text on secondary */
     
     --background: 248 249 250; /* #F8F9FA - light neutral */
     --foreground: 51 51 51; /* #333333 - regular text */
     
     --card: 255 255 255; /* #FFFFFF */
-    --card-foreground: 51 51 51;
+    --card-foreground: 51 51 51; /* #333333 - text on cards */
     
     --muted: 245 245 245;
     --muted-foreground: 115 115 115;
@@ -29,11 +29,26 @@
     --border: 229 231 235;
     --input: 229 231 235;
     
+    --accent: 52 152 219; /* #3498DB - same as info */
+    --accent-foreground: 255 255 255;
+    
+    --popover: 255 255 255;
+    --popover-foreground: 51 51 51;
+    
+    --ring: 26 107 114; /* Same as primary */
+    
     --radius: 0.5rem;
     
     /* Typography */
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
     --font-serif: 'Merriweather', Georgia, serif;
+    
+    /* Chart colors */
+    --chart-principal: 26 107 114; /* Primary */
+    --chart-interest: 232 168 124; /* Secondary */
+    --chart-balance: 52 152 219; /* Info */
+    --chart-payment: 46 139 87; /* Success */
+    --chart-overpayment: 245 176 65; /* Warning */
   }
 
   /* Typography settings */
@@ -65,8 +80,8 @@
   body {
     font-size: 1rem; /* 16px */
     font-weight: 400;
-    background-color: rgb(var(--background));
-    color: rgb(var(--foreground));
+    background-color: #F8F9FA; /* Background color */
+    color: #333333; /* Text color */
   }
 
   small {
@@ -113,7 +128,7 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased;
   }
 }
 

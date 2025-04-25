@@ -22,57 +22,66 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
-        background: "rgb(var(--background) / <alpha-value>)",
-        foreground: "rgb(var(--foreground) / <alpha-value>)",
-        card: {
-          DEFAULT: "rgb(var(--card) / <alpha-value>)",
-          foreground: "rgb(var(--card-foreground) / <alpha-value>)",
-        },
-        popover: {
-          DEFAULT: "rgb(var(--popover) / <alpha-value>)",
-          foreground: "rgb(var(--popover-foreground) / <alpha-value>)",
-        },
+        // Main colors
         primary: {
-          DEFAULT: "rgb(var(--primary) / <alpha-value>)",
-          foreground: "rgb(var(--primary-foreground) / <alpha-value>)",
+          DEFAULT: "#1A6B72", // Deep blue-green
+          foreground: "#FFFFFF", // White
         },
         secondary: {
-          DEFAULT: "rgb(var(--secondary) / <alpha-value>)",
-          foreground: "rgb(var(--secondary-foreground) / <alpha-value>)",
+          DEFAULT: "#E8A87C", // Warm accent color
+          foreground: "#111111", // Dark text
         },
+        background: "#F8F9FA", // Light neutral background
+        foreground: "#333333", // Dark gray text
+        
+        // Component colors
+        card: {
+          DEFAULT: "#FFFFFF", // White card background
+          foreground: "#333333", // Dark gray text
+        },
+        popover: {
+          DEFAULT: "#FFFFFF", // White popover background
+          foreground: "#333333", // Dark gray text
+        },
+        
+        // Status colors
         success: {
-          DEFAULT: "rgb(var(--success) / <alpha-value>)",
-          foreground: "rgb(255 255 255 / <alpha-value>)",
+          DEFAULT: "#2E8B57", // Muted green
+          foreground: "#FFFFFF", // White text
         },
         warning: {
-          DEFAULT: "rgb(var(--warning) / <alpha-value>)",
-          foreground: "rgb(17 17 17 / <alpha-value>)",
+          DEFAULT: "#F5B041", // Soft amber
+          foreground: "#111111", // Dark text
         },
         info: {
-          DEFAULT: "rgb(var(--info) / <alpha-value>)",
-          foreground: "rgb(255 255 255 / <alpha-value>)",
-        },
-        muted: {
-          DEFAULT: "rgb(var(--muted) / <alpha-value>)",
-          foreground: "rgb(var(--muted-foreground) / <alpha-value>)",
-        },
-        accent: {
-          DEFAULT: "rgb(var(--accent) / <alpha-value>)",
-          foreground: "rgb(var(--accent-foreground) / <alpha-value>)",
+          DEFAULT: "#3498DB", // Calm blue
+          foreground: "#FFFFFF", // White text
         },
         destructive: {
-          DEFAULT: "rgb(var(--destructive) / <alpha-value>)",
-          foreground: "rgb(var(--destructive-foreground) / <alpha-value>)",
+          DEFAULT: "#C0392B", // Subdued red
+          foreground: "#FFFFFF", // White text
         },
-        border: "rgb(var(--border) / <alpha-value>)",
-        input: "rgb(var(--input) / <alpha-value>)",
-        ring: "rgb(var(--ring) / <alpha-value>)",
+        
+        // UI element colors
+        muted: {
+          DEFAULT: "#F5F5F5", 
+          foreground: "#737373",
+        },
+        accent: {
+          DEFAULT: "#3498DB", // Same as info blue
+          foreground: "#FFFFFF", // White text
+        },
+        border: "#E5E7EB",
+        input: "#E5E7EB",
+        ring: "#1A6B72", // Same as primary
+        
+        // Chart colors
         chart: {
-          principal: "rgb(var(--primary) / <alpha-value>)",
-          interest: "rgb(var(--secondary) / <alpha-value>)",
-          balance: "rgb(var(--info) / <alpha-value>)",
-          payment: "rgb(var(--success) / <alpha-value>)",
-          overpayment: "rgb(var(--warning) / <alpha-value>)",
+          principal: "#1A6B72", // Primary - blue-green
+          interest: "#E8A87C", // Secondary - warm accent
+          balance: "#3498DB", // Info - calm blue
+          payment: "#2E8B57", // Success - muted green
+          overpayment: "#F5B041", // Warning - soft amber
         },
       },
       keyframes: {

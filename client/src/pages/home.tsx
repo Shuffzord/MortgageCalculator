@@ -114,27 +114,29 @@ export default function Home() {
   const { t } = useTranslation();
   
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#F8F9FA" }}>
       {/* Header */}
-      <header className="bg-card shadow-sm border-b border-border">
+      <header className="shadow-sm border-b" style={{ backgroundColor: "#FFFFFF", borderColor: "#E5E7EB" }}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold flex items-center">
-              <Calculator className="mr-2 h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-semibold flex items-center" style={{ color: "#111111" }}>
+              <Calculator className="mr-2 h-6 w-6" style={{ color: "#1A6B72" }} />
               {t('app.title')}
             </h1>
             <div className="flex items-center space-x-2">
               <LanguageSwitcher />
               <button 
                 onClick={handleSave}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200"
+                style={{ backgroundColor: "#1A6B72", color: "#FFFFFF", borderColor: "transparent" }}
               >
                 <Save className="mr-1.5 h-4 w-4" />
                 {t('form.saveCalculation')}
               </button>
               <button 
                 onClick={() => setSavedCalculationsOpen(true)}
-                className="inline-flex items-center px-4 py-2 border border-input text-sm font-medium rounded-md text-foreground bg-card hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                className="inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200"
+                style={{ backgroundColor: "#FFFFFF", color: "#333333", borderColor: "#E5E7EB" }}
               >
                 <FolderOpen className="mr-1.5 h-4 w-4" />
                 {t('form.loadCalculation')}
@@ -150,10 +152,12 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Calculator form */}
             <div className="lg:col-span-4">
-              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
-                <div className="bg-primary/5 p-4 border-b border-border">
-                  <h2 className="flex items-center text-xl font-semibold">
-                    <HomeIcon className="mr-2 h-5 w-5 text-primary" />
+              <div className="rounded-lg shadow-md border overflow-hidden animate-fade-in" 
+                style={{ backgroundColor: "#FFFFFF", borderColor: "#E5E7EB" }}>
+                <div className="p-4 border-b" 
+                  style={{ backgroundColor: "rgba(26, 107, 114, 0.05)", borderColor: "#E5E7EB" }}>
+                  <h2 className="flex items-center text-xl font-semibold" style={{ color: "#111111" }}>
+                    <HomeIcon className="mr-2 h-5 w-5" style={{ color: "#1A6B72" }} />
                     {t('form.loanDetails')}
                   </h2>
                 </div>
@@ -169,10 +173,12 @@ export default function Home() {
             {/* Results area */}
             <div className="lg:col-span-8 space-y-8">
               {/* Payment Summary */}
-              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
-                <div className="bg-secondary/10 p-4 border-b border-border">
-                  <h2 className="flex items-center text-xl font-semibold">
-                    <BarChart4 className="mr-2 h-5 w-5 text-secondary" />
+              <div className="rounded-lg shadow-md border overflow-hidden animate-fade-in"
+                style={{ backgroundColor: "#FFFFFF", borderColor: "#E5E7EB" }}>
+                <div className="p-4 border-b" 
+                  style={{ backgroundColor: "rgba(232, 168, 124, 0.1)", borderColor: "#E5E7EB" }}>
+                  <h2 className="flex items-center text-xl font-semibold" style={{ color: "#111111" }}>
+                    <BarChart4 className="mr-2 h-5 w-5" style={{ color: "#E8A87C" }} />
                     {t('summary.title')}
                   </h2>
                 </div>
@@ -191,10 +197,12 @@ export default function Home() {
               </div>
               
               {/* Visualization */}
-              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
-                <div className="bg-info/10 p-4 border-b border-border">
-                  <h2 className="flex items-center text-xl font-semibold">
-                    <BarChart4 className="mr-2 h-5 w-5 text-info" />
+              <div className="rounded-lg shadow-md border overflow-hidden animate-fade-in"
+                style={{ backgroundColor: "#FFFFFF", borderColor: "#E5E7EB" }}>
+                <div className="p-4 border-b" 
+                  style={{ backgroundColor: "rgba(52, 152, 219, 0.1)", borderColor: "#E5E7EB" }}>
+                  <h2 className="flex items-center text-xl font-semibold" style={{ color: "#111111" }}>
+                    <BarChart4 className="mr-2 h-5 w-5" style={{ color: "#3498DB" }} />
                     {t('chart.title')}
                   </h2>
                 </div>
@@ -208,10 +216,12 @@ export default function Home() {
               </div>
               
               {/* Amortization Schedule */}
-              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
-                <div className="bg-success/10 p-4 border-b border-border">
-                  <h2 className="flex items-center text-xl font-semibold">
-                    <Calendar className="mr-2 h-5 w-5 text-success" />
+              <div className="rounded-lg shadow-md border overflow-hidden animate-fade-in"
+                style={{ backgroundColor: "#FFFFFF", borderColor: "#E5E7EB" }}>
+                <div className="p-4 border-b" 
+                  style={{ backgroundColor: "rgba(46, 139, 87, 0.1)", borderColor: "#E5E7EB" }}>
+                  <h2 className="flex items-center text-xl font-semibold" style={{ color: "#111111" }}>
+                    <Calendar className="mr-2 h-5 w-5" style={{ color: "#2E8B57" }} />
                     {t('schedule.title')}
                   </h2>
                 </div>
@@ -225,14 +235,15 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border py-6">
+      <footer className="border-t py-6" 
+        style={{ backgroundColor: "#FFFFFF", borderColor: "#E5E7EB" }}>
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-muted-foreground text-sm mb-2 md:mb-0">
+            <div className="text-sm mb-2 md:mb-0" style={{ color: "#737373" }}>
               <p>{t('app.title')} | &copy; {new Date().getFullYear()}</p>
             </div>
-            <div className="flex items-center text-muted-foreground text-sm">
-              <HelpCircle className="h-4 w-4 mr-1" />
+            <div className="flex items-center text-sm" style={{ color: "#737373" }}>
+              <HelpCircle className="h-4 w-4 mr-1" style={{ color: "#737373" }} />
               <p>{t('app.description')}</p>
             </div>
           </div>
