@@ -10,8 +10,11 @@
   "form": {
     "loanDetails": "Detalles del Préstamo",
     "loanAmount": "Monto del Préstamo",
+    "loanAmountTooltip": "El monto inicial del préstamo antes de los intereses.",
     "interestRate": "Tasa de Interés",
+    "interestRateTooltip": "Tasa de interés anual como porcentaje.",
     "loanTerm": "Plazo del Préstamo",
+    "loanTermTooltip": "La duración del préstamo en años.",
     "years": "años",
     "calculate": "Calcular",
     "saveCalculation": "Guardar Cálculo",

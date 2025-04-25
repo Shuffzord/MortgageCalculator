@@ -65,7 +65,7 @@ export default function OverpaymentSection({
 
   return (
     <div className="border-t border-gray-200 p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Overpayment Scenario</h2>
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('overpayment.title')}</h2>
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -75,7 +75,7 @@ export default function OverpaymentSection({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Overpayment Amount
+                  {t('overpayment.amount')}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
@@ -88,7 +88,7 @@ export default function OverpaymentSection({
                 <FormControl>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">$</span>
+                      <span className="text-gray-500 sm:text-sm">{t('form.currency')}</span>
                     </div>
                     <Input
                       {...field}
@@ -113,7 +113,7 @@ export default function OverpaymentSection({
             name="afterPayment"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Apply After Payment</FormLabel>
+                <FormLabel>{t('overpayment.afterPayment')}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -137,7 +137,7 @@ export default function OverpaymentSection({
             name="effect"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Effect of Overpayment</FormLabel>
+                <FormLabel>{t('overpayment.effect')}</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -146,11 +146,11 @@ export default function OverpaymentSection({
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="reduceTerm" id="reduceTerm" />
-                      <Label htmlFor="reduceTerm">Reduce Term</Label>
+                      <Label htmlFor="reduceTerm">{t('overpayment.reduceTerm')}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="reducePayment" id="reducePayment" />
-                      <Label htmlFor="reducePayment">Reduce Payment</Label>
+                      <Label htmlFor="reducePayment">{t('overpayment.reducePayment')}</Label>
                     </div>
                   </RadioGroup>
                 </FormControl>
