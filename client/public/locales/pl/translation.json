@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "Kalkulator Kredytu Hipotecznego",
+    "description": "Oblicz swoje raty kredytu i zobacz harmonogram amortyzacji"
+  },
+  "language": {
+    "english": "Angielski",
+    "spanish": "Hiszpański",
+    "polish": "Polski"
+  },
+  "form": {
+    "loanDetails": "Szczegóły Kredytu",
+    "loanAmount": "Kwota Kredytu",
+    "loanAmountTooltip": "Początkowa kwota kredytu przed odsetkami.",
+    "interestRate": "Stopa Procentowa",
+    "interestRateTooltip": "Roczna stopa procentowa wyrażona w procentach.",
+    "loanTerm": "Okres Kredytowania",
+    "loanTermTooltip": "Długość kredytu w latach.",
+    "years": "lat",
+    "calculate": "Oblicz",
+    "saveCalculation": "Zapisz Obliczenia",
+    "loadCalculation": "Wczytaj Obliczenia",
+    "calculationName": "Nazwa Obliczeń",
+    "currency": "zł"
+  },
+  "overpayment": {
+    "title": "Nadpłata",
+    "amount": "Kwota Nadpłaty",
+    "amountTooltip": "Dodatkowa jednorazowa płatność na poczet kapitału kredytu.",
+    "afterPayment": "Po Płatności Numer",
+    "effect": "Efekt",
+    "reduceTerm": "Skróć Okres",
+    "reducePayment": "Zmniejsz Ratę",
+    "apply": "Zastosuj Nadpłatę"
+  },
+  "summary": {
+    "title": "Podsumowanie Kredytu",
+    "monthlyPayment": "Miesięczna Rata",
+    "totalInterest": "Całkowite Odsetki",
+    "totalPayment": "Całkowita Płatność",
+    "loanDetails": "Szczegóły Kredytu",
+    "principal": "Kapitał",
+    "interestRate": "Stopa Procentowa",
+    "term": "Okres",
+    "years": "lat",
+    "monthsSaved": "Zaoszczędzone Miesiące",
+    "interestSaved": "Zaoszczędzone Odsetki"
+  },
+  "chart": {
+    "title": "Podział Płatności",
+    "principal": "Kapitał",
+    "interest": "Odsetki",
+    "balance": "Pozostało",
+    "payment": "Płatność"
+  },
+  "schedule": {
+    "title": "Harmonogram Amortyzacji",
+    "payment": "Płatność",
+    "principal": "Kapitał",
+    "interest": "Odsetki",
+    "balance": "Pozostało",
+    "noData": "Oblicz kredyt, aby zobaczyć harmonogram amortyzacji"
+  },
+  "load": {
+    "title": "Zapisane Obliczenia",
+    "noSaved": "Nie znaleziono zapisanych obliczeń",
+    "cancel": "Anuluj"
+  },
+  "errors": {
+    "required": "To pole jest wymagane",
+    "minAmount": "Kwota kredytu musi wynosić co najmniej 1 000",
+    "minRate": "Stopa procentowa musi wynosić co najmniej 0,1%",
+    "maxRate": "Stopa procentowa może wynosić maksymalnie 20%",
+    "minTerm": "Okres kredytowania musi wynosić co najmniej 1 rok",
+    "maxTerm": "Okres kredytowania może wynosić maksymalnie 50 lat",
+    "minOverpayment": "Kwota nadpłaty musi być większa lub równa 0"
+  }
+}

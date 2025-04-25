@@ -28,14 +28,32 @@ export default function LanguageSwitcher() {
         <DropdownMenuItem
           onClick={() => changeLanguage('en')}
           className={currentLanguage.startsWith('en') ? 'bg-muted' : ''}
+          style={{ 
+            color: currentLanguage.startsWith('en') ? '#1A6B72' : '#333333',
+            backgroundColor: currentLanguage.startsWith('en') ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
+          }}
         >
           {t('language.english')}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => changeLanguage('es')}
           className={currentLanguage === 'es' ? 'bg-muted' : ''}
+          style={{ 
+            color: currentLanguage === 'es' ? '#1A6B72' : '#333333',
+            backgroundColor: currentLanguage === 'es' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
+          }}
         >
           {t('language.spanish')}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => changeLanguage('pl')}
+          className={currentLanguage === 'pl' ? 'bg-muted' : ''}
+          style={{ 
+            color: currentLanguage === 'pl' ? '#1A6B72' : '#333333',
+            backgroundColor: currentLanguage === 'pl' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
+          }}
+        >
+          {t('language.polish')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

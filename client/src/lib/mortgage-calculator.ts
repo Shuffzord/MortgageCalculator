@@ -11,6 +11,7 @@ export interface LoanDetails {
   overpaymentAmount: number;
   overpaymentMonth: number;
   reduceTermNotPayment: boolean;
+  startDate?: Date;
   dateCreated?: string;
 }
 
@@ -21,6 +22,7 @@ export interface Schedule {
   interestPayment: number;
   remainingPrincipal: number;
   isOverpayment: boolean;
+  paymentDate?: Date;
 }
 
 /**

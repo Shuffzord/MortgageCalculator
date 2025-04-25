@@ -13,6 +13,7 @@ i18n
   // Initialize i18next
   .init({
     fallbackLng: 'en',
+    supportedLngs: ['en', 'es', 'pl'],
     debug: import.meta.env.DEV, // Use Vite's environment variables
     
     interpolation: {
