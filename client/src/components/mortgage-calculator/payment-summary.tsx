@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/mortgage-calculator";
 import { LoanDetails, Schedule } from "@/lib/mortgage-calculator";
+import { getCurrencySymbol } from "@/components/ui/currency-selector";
 
 interface PaymentSummaryProps {
   monthlyPayment: number;
@@ -58,19 +59,19 @@ export default function PaymentSummary({
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-gray-500">Monthly Payment</p>
             <p className="text-2xl font-semibold text-gray-900 financial-figure">
-              {formatCurrency(monthlyPayment)}
+              {formatCurrency(monthlyPayment, 'en-US', loanDetails.currency || 'USD')}
             </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-gray-500">Total Interest</p>
             <p className="text-2xl font-semibold text-gray-900 financial-figure">
-              {formatCurrency(totalInterest)}
+              {formatCurrency(totalInterest, 'en-US', loanDetails.currency || 'USD')}
             </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-gray-500">Total Payment</p>
             <p className="text-2xl font-semibold text-gray-900 financial-figure">
-              {formatCurrency(totalPayment)}
+              {formatCurrency(totalPayment, 'en-US', loanDetails.currency || 'USD')}
             </p>
           </div>
         </div>
@@ -91,7 +92,7 @@ export default function PaymentSummary({
               <div className="bg-green-50 p-4 rounded-lg">
                 <p className="text-sm font-medium text-gray-600">Interest Savings</p>
                 <p className="text-lg font-semibold text-gray-900 financial-figure">
-                  {formatCurrency(interestSavings)}
+                  {formatCurrency(interestSavings, 'en-US', loanDetails.currency || 'USD')}
                 </p>
                 <p className="text-xs text-green-600 mt-1">
                   {savingsPercentage}% of original interest

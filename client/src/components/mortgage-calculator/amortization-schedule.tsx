@@ -9,14 +9,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Schedule, formatCurrency, formatDate } from "@/lib/mortgage-calculator";
+import { Schedule, formatCurrency, formatDate, LoanDetails } from "@/lib/mortgage-calculator";
 import { cn } from "@/lib/utils";
+import { getCurrencySymbol } from "@/components/ui/currency-selector";
 
 interface AmortizationScheduleProps {
   schedule: Schedule[];
+  loanDetails: LoanDetails;
 }
 
-export default function AmortizationSchedule({ schedule }: AmortizationScheduleProps) {
+export default function AmortizationSchedule({ schedule, loanDetails }: AmortizationScheduleProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
@@ -29,10 +31,10 @@ export default function AmortizationSchedule({ schedule }: AmortizationScheduleP
 
   // Calculate date from payment number
   const getPaymentDate = (paymentNum: number) => {
-    const startDate = new Date();
+    const startDate = loanDetails.startDate || new Date();
     const paymentDate = new Date(startDate);
-    paymentDate.setMonth(startDate.getMonth() + paymentNum - 1);
-    return paymentDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    paymentDate.setMonth(paymentDate.getMonth() + paymentNum - 1);
+    return formatDate(paymentDate);
   };
 
   const handlePreviousPage = () => {
@@ -94,16 +96,16 @@ export default function AmortizationSchedule({ schedule }: AmortizationScheduleP
                       {item.paymentDate ? formatDate(item.paymentDate) : getPaymentDate(item.paymentNum)}
                     </TableCell>
                     <TableCell className="text-sm font-medium text-gray-900 financial-figure">
-                      {formatCurrency(item.payment)}
+                      {formatCurrency(item.payment, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500 financial-figure">
-                      {formatCurrency(item.principalPayment)}
+                      {formatCurrency(item.principalPayment, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500 financial-figure">
-                      {formatCurrency(item.interestPayment)}
+                      {formatCurrency(item.interestPayment, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
                     <TableCell className="text-sm text-gray-900 financial-figure">
-                      {formatCurrency(item.remainingPrincipal)}
+                      {formatCurrency(item.remainingPrincipal, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
                   </TableRow>
                 ))}

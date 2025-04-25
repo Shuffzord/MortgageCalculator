@@ -231,7 +231,10 @@ export default function Home() {
                   </h2>
                 </div>
                 <div className="p-6">
-                  <AmortizationSchedule schedule={schedule} />
+                  <AmortizationSchedule 
+                    schedule={schedule} 
+                    loanDetails={loanDetails} 
+                  />
                 </div>
               </div>
             </div>
