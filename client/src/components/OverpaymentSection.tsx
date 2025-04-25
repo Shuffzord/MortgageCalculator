@@ -161,7 +161,14 @@ export default function OverpaymentSection({
           <div className="pt-2">
             <Button 
               type="submit" 
-              className="w-full bg-success-500 hover:bg-green-600"
+              className="w-full transition-colors duration-200"
+              style={{ 
+                backgroundColor: "#1A6B72", 
+                color: "#FFFFFF", 
+                border: "none" 
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#155A60"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#1A6B72"}
             >
               {t('overpayment.apply')}
             </Button>

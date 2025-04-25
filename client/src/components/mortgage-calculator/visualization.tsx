@@ -56,8 +56,8 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
           label: 'Total Amount',
           data: [totalPrincipal, totalInterest],
           backgroundColor: [
-            'hsl(var(--primary))',
-            'hsl(var(--accent))'
+            '#1A6B72', // Primary blue-green
+            '#E8A87C'  // Secondary warm accent
           ],
           borderWidth: 1,
           borderColor: '#ffffff'
@@ -111,12 +111,12 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
           {
             label: 'Principal',
             data: principalData,
-            backgroundColor: 'hsl(var(--primary))'
+            backgroundColor: '#1A6B72' // Primary blue-green
           },
           {
             label: 'Interest',
             data: interestData,
-            backgroundColor: 'hsl(var(--accent))'
+            backgroundColor: '#E8A87C' // Secondary warm accent
           }
         ]
       },
@@ -180,29 +180,27 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
 
   return (
     <Card className="bg-white shadow rounded-lg overflow-hidden mb-6">
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="px-6 py-4 border-b" style={{ borderColor: "#E5E7EB" }}>
         <div className="flex items-center">
-          <h2 className="text-lg font-medium text-gray-900">Visualizations</h2>
+          <h2 className="text-lg font-medium" style={{ color: "#111111" }}>Visualizations</h2>
           <div className="ml-auto flex">
             <button 
               onClick={() => setActiveTab('pie')}
-              className={cn(
-                "px-3 py-1.5 text-sm font-medium border-b-2",
-                activeTab === 'pie' 
-                  ? "text-primary border-primary" 
-                  : "text-gray-500 hover:text-gray-700 border-transparent"
-              )}
+              className="px-3 py-1.5 text-sm font-medium border-b-2 transition-colors duration-200"
+              style={{ 
+                color: activeTab === 'pie' ? '#1A6B72' : '#6B7280',
+                borderColor: activeTab === 'pie' ? '#1A6B72' : 'transparent'
+              }}
             >
               Total Breakdown
             </button>
             <button 
               onClick={() => setActiveTab('bar')}
-              className={cn(
-                "px-3 py-1.5 text-sm font-medium border-b-2",
-                activeTab === 'bar' 
-                  ? "text-primary border-primary" 
-                  : "text-gray-500 hover:text-gray-700 border-transparent"
-              )}
+              className="px-3 py-1.5 text-sm font-medium border-b-2 transition-colors duration-200"
+              style={{ 
+                color: activeTab === 'bar' ? '#1A6B72' : '#6B7280',
+                borderColor: activeTab === 'bar' ? '#1A6B72' : 'transparent'
+              }}
             >
               Yearly Breakdown
             </button>
