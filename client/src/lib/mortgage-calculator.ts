@@ -77,7 +77,8 @@ export function generateAmortizationSchedule(
   termYears: number,
   overpaymentAmount: number,
   overpaymentMonth: number,
-  reduceTermNotPayment: boolean
+  reduceTermNotPayment: boolean,
+  startDate?: Date
 ): Schedule[] {
   const monthlyRate = annualRate / 100 / 12;
   const originalTotalPayments = termYears * 12;
@@ -89,11 +90,25 @@ export function generateAmortizationSchedule(
   let overpaymentApplied = false;
   let newMonthlyPayment = monthlyPayment;
   
+  // Set up date calculation if start date is provided
+  let currentDate: Date | undefined;
+  if (startDate) {
+    currentDate = new Date(startDate);
+  }
+  
   // Generate schedule until principal is paid off
   while (remainingPrincipal > 0) {
     const interestPayment = remainingPrincipal * monthlyRate;
     let principalPayment = monthlyPayment - interestPayment;
     let payment = monthlyPayment;
+    
+    // Calculate payment date if start date is provided
+    let paymentDate: Date | undefined;
+    if (currentDate) {
+      paymentDate = new Date(currentDate);
+      // Move to next month for next iteration
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
     
     // Apply overpayment if this is the specified month
     if (paymentNum === overpaymentMonth && overpaymentAmount > 0 && !overpaymentApplied) {
@@ -115,7 +130,8 @@ export function generateAmortizationSchedule(
           principalPayment,
           interestPayment,
           remainingPrincipal,
-          isOverpayment: true
+          isOverpayment: true,
+          paymentDate
         });
         
         paymentNum++;
@@ -137,7 +153,8 @@ export function generateAmortizationSchedule(
       principalPayment,
       interestPayment,
       remainingPrincipal,
-      isOverpayment: paymentNum === overpaymentMonth && overpaymentAmount > 0
+      isOverpayment: paymentNum === overpaymentMonth && overpaymentAmount > 0,
+      paymentDate
     });
     
     paymentNum++;
@@ -161,11 +178,25 @@ export function generateAmortizationSchedule(
  * @param value Number to format
  * @returns Formatted currency string
  */
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('en-US', {
+export function formatCurrency(value: number, locale: string = 'en-US', currency: string = 'USD'): string {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'USD',
+    currency: currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(value);
+}
+
+/**
+ * Formats a date as a string
+ * @param date The date to format
+ * @param locale The locale to use for formatting
+ * @returns Formatted date string
+ */
+export function formatDate(date: Date, locale: string = 'en-US'): string {
+  return date.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 }

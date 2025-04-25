@@ -1,10 +1,18 @@
 import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Form,
   FormControl,
@@ -19,6 +27,7 @@ import {
 } from "@/components/ui/radio-group";
 import { LoanDetails } from "@/lib/mortgage-calculator";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 // Form validation schema
 const loanFormSchema = z.object({
@@ -30,6 +39,7 @@ const loanFormSchema = z.object({
   loanTerm: z.coerce.number()
     .min(1, "Loan term must be at least 1 year")
     .max(50, "Loan term must be at most 50 years"),
+  startDate: z.date().optional().default(() => new Date()),
   overpaymentAmount: z.coerce.number()
     .min(0, "Overpayment amount must be at least 0")
     .default(0),
@@ -152,6 +162,53 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Start Date */}
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <div className="flex justify-between">
+                    <FormLabel>Start Date</FormLabel>
+                    <div className="tooltip">
+                      <span className="material-icons text-gray-400 text-sm">help_outline</span>
+                      <span className="tooltip-text">The date when your mortgage begins. Monthly payments will be calculated from this date.</span>
+                    </div>
+                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                          style={{ borderColor: "#E5E7EB" }}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
