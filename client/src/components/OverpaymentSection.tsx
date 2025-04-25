@@ -23,10 +23,10 @@ import { useTranslation } from "react-i18next";
 
 const overpaymentFormSchema = z.object({
   amount: z.coerce.number()
-    .min(0, "Overpayment amount must be a positive number"),
+    .min(0, { message: "errors.minOverpayment" }),
   afterPayment: z.coerce.number()
-    .min(1, "Payment number must be at least 1")
-    .max(359, "Payment number must be less than 360"),
+    .min(1, { message: "Payment number must be at least 1" })
+    .max(359, { message: "Payment number must be less than 360" }),
   effect: z.enum(['reduceTerm', 'reducePayment'])
 });
 
@@ -81,7 +81,7 @@ export default function OverpaymentSection({
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
-                      <p className="text-xs">Additional one-time payment toward your loan principal.</p>
+                      <p className="text-xs">{t('overpayment.amountTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </FormLabel>
@@ -163,7 +163,7 @@ export default function OverpaymentSection({
               type="submit" 
               className="w-full bg-success-500 hover:bg-green-600"
             >
-              Apply Overpayment
+              {t('overpayment.apply')}
             </Button>
           </div>
         </form>

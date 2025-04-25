@@ -25,6 +25,7 @@
   "overpayment": {
     "title": "Pago Adicional",
     "amount": "Monto del Pago Adicional",
+    "amountTooltip": "Pago adicional único hacia el capital de su préstamo.",
     "afterPayment": "Después del Pago Número",
     "effect": "Efecto",
     "reduceTerm": "Reducir Plazo",

@@ -25,6 +25,7 @@
   "overpayment": {
     "title": "Overpayment",
     "amount": "Overpayment Amount",
+    "amountTooltip": "Additional one-time payment toward your loan principal.",
     "afterPayment": "After Payment Number",
     "effect": "Effect",
     "reduceTerm": "Reduce Term",
