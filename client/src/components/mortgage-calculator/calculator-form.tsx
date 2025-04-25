@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
-import CurrencySelector from "@/components/ui/currency-selector";
+import CurrencySelector, { getCurrencySymbol } from "@/components/ui/currency-selector";
 import {
   Popover,
   PopoverContent,
@@ -91,7 +91,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                   <FormControl>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">$</span>
+                        <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(form.getValues("currency") || "USD")}</span>
                       </div>
                       <Input
                         type="number"
@@ -258,7 +258,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                   <FormControl>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">$</span>
+                        <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(form.getValues("currency") || "USD")}</span>
                       </div>
                       <Input
                         type="number"
