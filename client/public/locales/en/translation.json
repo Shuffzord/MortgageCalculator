@@ -10,8 +10,11 @@
   "form": {
     "loanDetails": "Loan Details",
     "loanAmount": "Loan Amount",
+    "loanAmountTooltip": "The initial loan amount before interest.",
     "interestRate": "Interest Rate",
+    "interestRateTooltip": "Annual interest rate as a percentage.",
     "loanTerm": "Loan Term",
+    "loanTermTooltip": "The length of the loan in years.",
     "years": "years",
     "calculate": "Calculate",
     "saveCalculation": "Save Calculation",

@@ -79,14 +79,14 @@ export default function LoanInputForm({
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
-                      <p className="text-xs">The initial loan amount before interest.</p>
+                      <p className="text-xs">{t('form.loanAmountTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">$</span>
+                      <span className="text-gray-500 sm:text-sm">{t('form.currency')}</span>
                     </div>
                     <Input
                       {...field}
@@ -118,7 +118,7 @@ export default function LoanInputForm({
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
-                      <p className="text-xs">Annual interest rate as a percentage.</p>
+                      <p className="text-xs">{t('form.interestRateTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </FormLabel>
@@ -158,7 +158,7 @@ export default function LoanInputForm({
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
-                      <p className="text-xs">The length of the loan in years.</p>
+                      <p className="text-xs">{t('form.loanTermTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </FormLabel>
@@ -173,7 +173,7 @@ export default function LoanInputForm({
                       className="pr-12"
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">years</span>
+                      <span className="text-gray-500 sm:text-sm">{t('form.years')}</span>
                     </div>
                   </div>
                 </FormControl>
@@ -191,7 +191,7 @@ export default function LoanInputForm({
               type="submit" 
               className="w-full bg-primary-600 hover:bg-primary-700"
             >
-              Calculate
+              {t('form.calculate')}
             </Button>
           </div>
         </form>
