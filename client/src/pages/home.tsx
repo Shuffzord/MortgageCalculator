@@ -12,6 +12,17 @@ import {
   Schedule
 } from "@/lib/mortgage-calculator";
 import { loadCalculation, saveCalculation, getSavedCalculations } from "@/lib/storage";
+import { useTranslation } from "react-i18next";
+import { 
+  Calculator, 
+  Save, 
+  FolderOpen, 
+  Home as HomeIcon,
+  BarChart4, 
+  Calendar, 
+  HelpCircle 
+} from "lucide-react";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 // Initial loan details
 const defaultLoanDetails: LoanDetails = {
@@ -100,30 +111,33 @@ export default function Home() {
     setSavedCalculationsOpen(false);
   };
 
+  const { t } = useTranslation();
+  
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-card shadow-sm border-b border-border">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-gray-800 flex items-center">
-              <span className="material-icons mr-2 text-primary">calculate</span>
-              Mortgage Calculator
+            <h1 className="text-2xl font-semibold flex items-center">
+              <Calculator className="mr-2 h-6 w-6 text-primary" />
+              {t('app.title')}
             </h1>
-            <div>
+            <div className="flex items-center space-x-2">
+              <LanguageSwitcher />
               <button 
                 onClick={handleSave}
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary mr-2"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
               >
-                <span className="material-icons mr-1 text-sm">save</span>
-                Save
+                <Save className="mr-1.5 h-4 w-4" />
+                {t('form.saveCalculation')}
               </button>
               <button 
                 onClick={() => setSavedCalculationsOpen(true)}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                className="inline-flex items-center px-4 py-2 border border-input text-sm font-medium rounded-md text-foreground bg-card hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
               >
-                <span className="material-icons mr-1 text-sm">folder_open</span>
-                Load
+                <FolderOpen className="mr-1.5 h-4 w-4" />
+                {t('form.loadCalculation')}
               </button>
             </div>
           </div>
@@ -131,47 +145,96 @@ export default function Home() {
       </header>
 
       {/* Main content */}
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="flex-grow py-8">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Calculator form */}
-            <div className="lg:col-span-1">
-              <CalculatorForm 
-                loanDetails={loanDetails} 
-                onFormSubmit={handleFormSubmit} 
-              />
+            <div className="lg:col-span-4">
+              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
+                <div className="bg-primary/5 p-4 border-b border-border">
+                  <h2 className="flex items-center text-xl font-semibold">
+                    <HomeIcon className="mr-2 h-5 w-5 text-primary" />
+                    {t('form.loanDetails')}
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <CalculatorForm 
+                    loanDetails={loanDetails} 
+                    onFormSubmit={handleFormSubmit} 
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Results area */}
-            <div className="lg:col-span-2">
-              <PaymentSummary 
-                monthlyPayment={monthlyPayment}
-                totalInterest={totalInterest}
-                totalPayment={totalPayment}
-                loanDetails={loanDetails}
-                schedule={schedule}
-                savedMonths={savedMonths}
-                interestSavings={interestSavings}
-                originalTotalInterest={originalTotalInterest}
-              />
+            <div className="lg:col-span-8 space-y-8">
+              {/* Payment Summary */}
+              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
+                <div className="bg-secondary/10 p-4 border-b border-border">
+                  <h2 className="flex items-center text-xl font-semibold">
+                    <BarChart4 className="mr-2 h-5 w-5 text-secondary" />
+                    {t('summary.title')}
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <PaymentSummary 
+                    monthlyPayment={monthlyPayment}
+                    totalInterest={totalInterest}
+                    totalPayment={totalPayment}
+                    loanDetails={loanDetails}
+                    schedule={schedule}
+                    savedMonths={savedMonths}
+                    interestSavings={interestSavings}
+                    originalTotalInterest={originalTotalInterest}
+                  />
+                </div>
+              </div>
               
-              <Visualization 
-                schedule={schedule}
-                totalPrincipal={totalPrincipal}
-                totalInterest={totalInterest}
-              />
+              {/* Visualization */}
+              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
+                <div className="bg-info/10 p-4 border-b border-border">
+                  <h2 className="flex items-center text-xl font-semibold">
+                    <BarChart4 className="mr-2 h-5 w-5 text-info" />
+                    {t('chart.title')}
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <Visualization 
+                    schedule={schedule}
+                    totalPrincipal={totalPrincipal}
+                    totalInterest={totalInterest}
+                  />
+                </div>
+              </div>
               
-              <AmortizationSchedule schedule={schedule} />
+              {/* Amortization Schedule */}
+              <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden animate-fade-in">
+                <div className="bg-success/10 p-4 border-b border-border">
+                  <h2 className="flex items-center text-xl font-semibold">
+                    <Calendar className="mr-2 h-5 w-5 text-success" />
+                    {t('schedule.title')}
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <AmortizationSchedule schedule={schedule} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="text-center text-gray-500 text-sm">
-            <p>Mortgage Calculator POC | &copy; {new Date().getFullYear()} | All calculations are estimates only</p>
+      <footer className="bg-card border-t border-border py-6">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="text-muted-foreground text-sm mb-2 md:mb-0">
+              <p>{t('app.title')} | &copy; {new Date().getFullYear()}</p>
+            </div>
+            <div className="flex items-center text-muted-foreground text-sm">
+              <HelpCircle className="h-4 w-4 mr-1" />
+              <p>{t('app.description')}</p>
+            </div>
           </div>
         </div>
       </footer>
