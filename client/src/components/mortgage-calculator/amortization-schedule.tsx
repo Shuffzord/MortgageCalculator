@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Schedule, formatCurrency } from "@/lib/mortgage-calculator";
+import { Schedule, formatCurrency, formatDate } from "@/lib/mortgage-calculator";
 import { cn } from "@/lib/utils";
 
 interface AmortizationScheduleProps {
@@ -91,7 +91,7 @@ export default function AmortizationSchedule({ schedule }: AmortizationScheduleP
                       {item.paymentNum}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {getPaymentDate(item.paymentNum)}
+                      {item.paymentDate ? formatDate(item.paymentDate) : getPaymentDate(item.paymentNum)}
                     </TableCell>
                     <TableCell className="text-sm font-medium text-gray-900 financial-figure">
                       {formatCurrency(item.payment)}

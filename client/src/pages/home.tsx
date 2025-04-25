@@ -32,7 +32,8 @@ const defaultLoanDetails: LoanDetails = {
   overpaymentAmount: 10000,
   overpaymentMonth: 24,
   reduceTermNotPayment: true,
-  name: "Home Purchase - 30 Year"
+  name: "Home Purchase - 30 Year",
+  startDate: new Date()
 };
 
 export default function Home() {
@@ -45,7 +46,8 @@ export default function Home() {
       defaultLoanDetails.loanTerm,
       defaultLoanDetails.overpaymentAmount,
       defaultLoanDetails.overpaymentMonth,
-      defaultLoanDetails.reduceTermNotPayment
+      defaultLoanDetails.reduceTermNotPayment,
+      defaultLoanDetails.startDate
     )
   );
   const [savedCalculationsOpen, setSavedCalculationsOpen] = useState(false);
@@ -82,7 +84,8 @@ export default function Home() {
       newLoanDetails.loanTerm,
       newLoanDetails.overpaymentAmount,
       newLoanDetails.overpaymentMonth,
-      newLoanDetails.reduceTermNotPayment
+      newLoanDetails.reduceTermNotPayment,
+      newLoanDetails.startDate
     );
     setSchedule(newSchedule);
   };
@@ -105,7 +108,8 @@ export default function Home() {
       calculation.loanTerm,
       calculation.overpaymentAmount,
       calculation.overpaymentMonth,
-      calculation.reduceTermNotPayment
+      calculation.reduceTermNotPayment,
+      calculation.startDate
     );
     setSchedule(newSchedule);
     setSavedCalculationsOpen(false);
