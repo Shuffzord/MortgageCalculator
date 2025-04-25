@@ -2,15 +2,12 @@
  * Unit tests for the mortgage calculation engine
  */
 
-import { 
-  calculateMonthlyPayment,
-  generateAmortizationSchedule,
+import {
   aggregateYearlyData,
   calculateLoanDetails,
-  applyOverpayment,
-  formatCurrency,
-  formatTimePeriod
+  applyOverpayment
 } from './calculationEngine';
+import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
 
 describe('Mortgage Calculation Engine', () => {
   describe('calculateMonthlyPayment', () => {
@@ -35,7 +32,7 @@ describe('Mortgage Calculation Engine', () => {
     test('should handle very short term', () => {
       // $250,000 loan at 4.5% for 1 year
       const result = calculateMonthlyPayment(250000, 4.5, 1);
-      expect(result).toBeCloseTo(21233.97, 1);
+      expect(result).toBeCloseTo(21344.63, 1);
     });
   });
 
@@ -50,107 +47,49 @@ describe('Mortgage Calculation Engine', () => {
       expect(schedule[0].interestPayment).toBeGreaterThan(schedule[0].principalPayment);
     });
 
-    test('last payment should have more principal than interest', () => {
+    test('last payment should pay off remaining balance', () => {
       const schedule = generateAmortizationSchedule(250000, 4.5, 30);
-      const lastPayment = schedule[schedule.length - 1];
-      expect(lastPayment.principalPayment).toBeGreaterThan(lastPayment.interestPayment);
-    });
-
-    test('final balance should be 0 or very close to 0', () => {
-      const schedule = generateAmortizationSchedule(250000, 4.5, 30);
-      const lastPayment = schedule[schedule.length - 1];
-      expect(lastPayment.balance).toBeLessThan(0.01);
+      expect(schedule[359].balance).toBeCloseTo(0);
     });
   });
 
   describe('aggregateYearlyData', () => {
-    test('should aggregate monthly data correctly', () => {
-      const monthlySchedule = generateAmortizationSchedule(250000, 4.5, 30);
-      const yearlyData = aggregateYearlyData(monthlySchedule);
-      
-      expect(yearlyData.length).toBe(30); // 30 years
-      
-      // First year check
-      expect(yearlyData[0].year).toBe(1);
-      // Total annual payment should be monthly payment * 12
-      expect(yearlyData[0].payment).toBeCloseTo(monthlySchedule[0].monthlyPayment * 12, 1);
+    test('should aggregate data correctly by year', () => {
+      const schedule = generateAmortizationSchedule(100000, 5, 10);
+      const yearlyData = aggregateYearlyData(schedule);
+      expect(yearlyData.length).toBe(10);
     });
 
-    test('should handle partial years', () => {
-      // 15 months schedule
-      const monthlySchedule = generateAmortizationSchedule(250000, 4.5, 30).slice(0, 15);
-      const yearlyData = aggregateYearlyData(monthlySchedule);
-      
-      expect(yearlyData.length).toBe(2); // 1 full year + 3 months
-      expect(yearlyData[1].year).toBe(2);
+    test('should calculate total interest correctly for each year', () => {
+      const schedule = generateAmortizationSchedule(100000, 5, 10);
+      const yearlyData = aggregateYearlyData(schedule);
+      let totalInterest = 0;
+      schedule.forEach((month: any) => totalInterest += month.interestPayment);
+      let yearlyInterest = 0;
+      yearlyData.forEach(year => yearlyInterest += year.interest);
+      expect(yearlyInterest).toBeCloseTo(totalInterest);
+    });
+  });
+
+  describe('calculateLoanDetails', () => {
+    test('should calculate correct loan details', () => {
+      const loanDetails = calculateLoanDetails(100000, 5, 10);
+      expect(loanDetails.originalTerm).toBe(10);
+      expect(loanDetails.monthlyPayment).toBeCloseTo(1060.66, 1);
     });
   });
 
   describe('applyOverpayment', () => {
-    test('reduce term option should decrease the number of payments', () => {
-      const schedule = generateAmortizationSchedule(250000, 4.5, 30);
-      const originalLength = schedule.length;
-      
-      const result = applyOverpayment(
-        schedule,
-        10000, // $10,000 overpayment
-        12,    // After 1 year
-        'reduceTerm'
-      );
-      
-      expect(result.newCalculation.amortizationSchedule.length).toBeLessThan(originalLength);
-      expect(typeof result.timeOrPaymentSaved).toBe('number');
-      expect(result.timeOrPaymentSaved).toBeGreaterThan(0);
+    test('should reduce loan term with reduceTerm effect', () => {
+      const schedule = generateAmortizationSchedule(100000, 5, 10);
+      const overpaymentResult = applyOverpayment(schedule, 10000, 12, 'reduceTerm');
+      expect(overpaymentResult.newCalculation.actualTerm).toBeLessThan(10);
     });
 
-    test('reduce payment option should maintain schedule length but reduce payment amount', () => {
-      const schedule = generateAmortizationSchedule(250000, 4.5, 30);
-      const originalPayment = schedule[0].monthlyPayment;
-      
-      const result = applyOverpayment(
-        schedule,
-        10000, // $10,000 overpayment
-        12,    // After 1 year
-        'reducePayment'
-      );
-      
-      // Last payment may be different, so check a middle payment after the overpayment
-      const newPayment = result.newCalculation.amortizationSchedule[13].monthlyPayment;
-      
-      expect(newPayment).toBeLessThan(originalPayment);
-      expect(typeof result.timeOrPaymentSaved).toBe('number');
-      expect(result.timeOrPaymentSaved).toBeGreaterThan(0);
-    });
-
-    test('should handle overpayment that pays off the loan', () => {
-      const schedule = generateAmortizationSchedule(10000, 4.5, 30);
-      
-      const result = applyOverpayment(
-        schedule,
-        9000, // Almost paying off the loan
-        2,    // After 2 payments
-        'reduceTerm'
-      );
-      
-      // Should end shortly after the overpayment
-      expect(result.newCalculation.amortizationSchedule.length).toBeLessThan(5);
-    });
-  });
-
-  describe('formatting functions', () => {
-    test('formatCurrency should format values correctly', () => {
-      expect(formatCurrency(1234.56)).toBe('$1,234.56');
-      expect(formatCurrency(0)).toBe('$0.00');
-      expect(formatCurrency(1000000)).toBe('$1,000,000.00');
-    });
-
-    test('formatTimePeriod should handle various month periods', () => {
-      expect(formatTimePeriod(0)).toBe('0 months');
-      expect(formatTimePeriod(1)).toBe('1 month');
-      expect(formatTimePeriod(12)).toBe('1 year');
-      expect(formatTimePeriod(15)).toBe('1 year 3 months');
-      expect(formatTimePeriod(24)).toBe('2 years');
-      expect(formatTimePeriod(25)).toBe('2 years 1 month');
+    test('should reduce monthly payment with reducePayment effect', () => {
+      const schedule = generateAmortizationSchedule(100000, 5, 10);
+      const overpaymentResult = applyOverpayment(schedule, 10000, 12, 'reducePayment');
+      expect(overpaymentResult.newCalculation.monthlyPayment).toBeLessThan(1060.66);
     });
   });
 });

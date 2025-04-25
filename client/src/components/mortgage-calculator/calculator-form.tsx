@@ -26,7 +26,7 @@ import {
   RadioGroup,
   RadioGroupItem
 } from "@/components/ui/radio-group";
-import { LoanDetails } from "@/lib/mortgage-calculator";
+import { LoanDetails } from "@/lib/types";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
@@ -34,21 +34,25 @@ import { cn } from "@/lib/utils";
 const loanFormSchema = z.object({
   name: z.string().default("My Calculation"),
   principal: z.coerce.number().min(1000, "Loan amount must be at least $1,000"),
-  interestRate: z.coerce.number()
-    .min(0.1, "Interest rate must be at least 0.1%")
-    .max(20, "Interest rate must be at most 20%"),
   loanTerm: z.coerce.number()
     .min(1, "Loan term must be at least 1 year")
     .max(50, "Loan term must be at most 50 years"),
   startDate: z.date().optional().default(() => new Date()),
-  overpaymentAmount: z.coerce.number()
-    .min(0, "Overpayment amount must be at least 0")
-    .default(0),
-  overpaymentMonth: z.coerce.number()
-    .min(1, "Overpayment month must be at least 1")
-    .max(600, "Overpayment month cannot exceed 600")
-    .default(12),
-  reduceTermNotPayment: z.boolean().default(true),
+  interestRatePeriods: z.array(
+    z.object({
+      startMonth: z.coerce.number(),
+      interestRate: z.coerce.number()
+    })
+  ).default([{ startMonth: 0, interestRate: 5 }]),
+  overpaymentPlans: z.array(
+    z.object({
+      amount: z.coerce.number(),
+      startMonth: z.coerce.number(),
+      endMonth: z.coerce.number().optional(),
+      frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']),
+      effect: z.enum(['reduceTerm', 'reducePayment'])
+    })
+  ).default([])
 });
 
 interface CalculatorFormProps {
@@ -61,7 +65,14 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
   const form = useForm<LoanDetails>({
     // TODO: Add zodResolver back once the dependency is fixed
     // resolver: zodResolver(loanFormSchema),
-    defaultValues: loanDetails,
+    defaultValues: {
+      name: loanDetails.name || "My Calculation",
+      principal: loanDetails.principal,
+      loanTerm: loanDetails.loanTerm,
+      startDate: loanDetails.startDate || new Date(),
+      interestRatePeriods: loanDetails.interestRatePeriods || [{ startMonth: 0, interestRate: 5 }],
+      overpaymentPlans: loanDetails.overpaymentPlans || []
+    },
   });
 
   const handleSubmit = (values: LoanDetails) => {
@@ -76,7 +87,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             {/* Loan Amount */}
-            <FormField
+           <FormField
               control={form.control}
               name="principal"
               render={({ field }) => (
@@ -107,222 +118,148 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
               )}
             />
 
-            {/* Interest Rate */}
+            {/* Interest Rate Periods */}
             <FormField
               control={form.control}
-              name="interestRate"
+              name="interestRatePeriods"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex justify-between">
-                    <FormLabel>Interest Rate (% p.a.)</FormLabel>
-                    <div className="tooltip">
-                      <span className="material-icons text-gray-400 text-sm">help_outline</span>
-                      <span className="tooltip-text">The annual interest rate on your mortgage. This determines how much extra you pay beyond the principal amount.</span>
-                    </div>
-                  </div>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min={0.1}
-                        max={20}
-                        placeholder="0.00"
-                        className="pr-8"
-                        {...field}
-                      />
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">%</span>
+                  <FormLabel>Interest Rate Periods</FormLabel>
+                  {field.value.map((period, index) => (
+                    <div key={index} className="flex flex-col space-y-2">
+                      <div className="flex space-x-2">
+                        <div>
+                          <FormLabel>Period {index + 1} Start Month</FormLabel>
+                          <Input
+                            type="number"
+                            placeholder="Start Month"
+                            value={period.startMonth}
+                            onChange={(e) => {
+                              const newPeriods = [...field.value];
+                              newPeriods[index].startMonth = Number(e.target.value);
+                              field.onChange(newPeriods);
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <FormLabel>Interest Rate</FormLabel>
+                          <Input
+                            type="number"
+                            placeholder="Interest Rate"
+                            value={period.interestRate}
+                            onChange={(e) => {
+                              const newPeriods = [...field.value];
+                              newPeriods[index].interestRate = Number(e.target.value);
+                              field.onChange(newPeriods);
+                            }}
+                          />
+                        </div>
                       </div>
+                      <Button type="button" onClick={() => {
+                        const newPeriods = [...field.value];
+                        newPeriods.splice(index, 1);
+                        form.setValue("interestRatePeriods", newPeriods);
+                      }}>Remove Period</Button>
                     </div>
-                  </FormControl>
-                  <FormMessage />
+                  ))}
+                  <Button type="button" onClick={() => {
+                    form.setValue("interestRatePeriods", [...field.value, { startMonth: 0, interestRate: 5 }]);
+                  }}>Add Period</Button>
                 </FormItem>
               )}
             />
 
-            {/* Loan Term */}
+            {/* Overpayment Plans */}
             <FormField
               control={form.control}
-              name="loanTerm"
+              name="overpaymentPlans"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex justify-between">
-                    <FormLabel>Loan Term (years)</FormLabel>
-                    <div className="tooltip">
-                      <span className="material-icons text-gray-400 text-sm">help_outline</span>
-                      <span className="tooltip-text">The length of time you have to repay the loan. Longer terms mean lower monthly payments but more interest paid overall.</span>
-                    </div>
-                  </div>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={50}
-                      placeholder="30"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            {/* Currency Selector */}
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CurrencySelector 
-                      value={field.value || "USD"} 
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Start Date */}
-            <FormField
-              control={form.control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <div className="flex justify-between">
-                    <FormLabel>Start Date</FormLabel>
-                    <div className="tooltip">
-                      <span className="material-icons text-gray-400 text-sm">help_outline</span>
-                      <span className="tooltip-text">The date when your mortgage begins. Monthly payments will be calculated from this date.</span>
-                    </div>
-                  </div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                          style={{ borderColor: "#E5E7EB" }}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Divider for Overpayment section */}
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                <Separator />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="px-2 bg-white text-sm text-gray-500">Overpayment (Optional)</span>
-              </div>
-            </div>
-
-            {/* Overpayment Amount */}
-            <FormField
-              control={form.control}
-              name="overpaymentAmount"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex justify-between">
-                    <FormLabel>Overpayment Amount</FormLabel>
-                    <div className="tooltip">
-                      <span className="material-icons text-gray-400 text-sm">help_outline</span>
-                      <span className="tooltip-text">A one-time extra payment towards your principal. This can help reduce your total interest and either shorten your loan term or lower your monthly payments.</span>
-                    </div>
-                  </div>
-                  <FormControl>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(form.getValues("currency") || "USD")}</span>
+                  <FormLabel>Overpayment Plans</FormLabel>
+                  {field.value.map((plan, index) => (
+                    <div key={index} className="flex flex-col space-y-2">
+                      <FormLabel>Plan {index + 1}</FormLabel>
+                      <div className="flex space-x-2">
+                        <div>
+                          <FormLabel>Amount</FormLabel>
+                          <Input
+                            type="number"
+                            placeholder="Amount"
+                            value={plan.amount}
+                            onChange={(e) => {
+                              const newPlans = [...field.value];
+                              newPlans[index].amount = Number(e.target.value);
+                              field.onChange(newPlans);
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <FormLabel>Start Month</FormLabel>
+                          <Input
+                            type="number"
+                            placeholder="Start Month"
+                            value={plan.startMonth}
+                            onChange={(e) => {
+                              const newPlans = [...field.value];
+                              newPlans[index].startMonth = Number(e.target.value);
+                              field.onChange(newPlans);
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <FormLabel>End Month</FormLabel>
+                          <Input
+                            type="number"
+                            placeholder="End Month"
+                            value={plan.endMonth || ""}
+                            onChange={(e) => {
+                              const newPlans = [...field.value];
+                              newPlans[index].endMonth = Number(e.target.value);
+                              field.onChange(newPlans);
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <FormLabel>Frequency</FormLabel>
+                          <select
+                            value={plan.frequency}
+                            onChange={(e) => {
+                              const newPlans = [...field.value];
+                              newPlans[index].frequency = e.target.value as any;
+                              field.onChange(newPlans);
+                            }}
+                          >
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="annual">Annual</option>
+                            <option value="one-time">One-Time</option>
+                          </select>
+                        </div>
+                        <div>
+                          <FormLabel>Effect</FormLabel>
+                          <select
+                            value={plan.effect}
+                            onChange={(e) => {
+                              const newPlans = [...field.value];
+                              newPlans[index].effect = e.target.value as any;
+                              field.onChange(newPlans);
+                            }}
+                          >
+                            <option value="reduceTerm">Reduce Term</option>
+                            <option value="reducePayment">Reduce Payment</option>
+                          </select>
+                        </div>
                       </div>
-                      <Input
-                        type="number"
-                        min={0}
-                        placeholder="0.00"
-                        className="pl-7"
-                        {...field}
-                      />
+                      <Button type="button" onClick={() => {
+                        const newPlans = [...field.value];
+                        newPlans.splice(index, 1);
+                        form.setValue("overpaymentPlans", newPlans);
+                      }}>Remove Plan</Button>
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Overpayment Month */}
-            <FormField
-              control={form.control}
-              name="overpaymentMonth"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Apply at Month #</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={360}
-                      placeholder="12"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Overpayment Effect Selection */}
-            <FormField
-              control={form.control}
-              name="reduceTermNotPayment"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel>Effect of Overpayment</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={(value) => field.onChange(value === "true")}
-                      defaultValue={field.value ? "true" : "false"}
-                      className="flex items-center space-x-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="true" id="reduceTerm" />
-                        <label htmlFor="reduceTerm" className="text-sm text-gray-700">
-                          Reduce Term
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="false" id="reducePayment" />
-                        <label htmlFor="reducePayment" className="text-sm text-gray-700">
-                          Reduce Payment
-                        </label>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
+                  ))}
+                  <Button type="button" onClick={() => {
+                    form.setValue("overpaymentPlans", [...field.value, { amount: 0, startMonth: 0, endMonth: 0, frequency: "monthly", effect: "reduceTerm" }]);
+                  }}>Add Overpayment Plan</Button>
                 </FormItem>
               )}
             />

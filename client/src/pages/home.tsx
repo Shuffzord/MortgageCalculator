@@ -5,10 +5,8 @@ import Visualization from "@/components/mortgage-calculator/visualization";
 import AmortizationSchedule from "@/components/mortgage-calculator/amortization-schedule";
 import SavedCalculationsModal from "@/components/mortgage-calculator/saved-calculations-modal";
 import { useState } from "react";
-import { 
-  generateAmortizationSchedule, 
-  calculateMonthlyPayment, 
-  LoanDetails,
+import { LoanDetails } from "@/lib/types";
+import { generateAmortizationSchedule, calculateMonthlyPayment, formatCurrency } from "@/lib/utils";
   Schedule
 } from "@/lib/mortgage-calculator";
 import { loadCalculation, saveCalculation, getSavedCalculations } from "@/lib/storage";

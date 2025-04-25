@@ -1,4 +1,6 @@
-import { CalculationResults, MonthlyData, YearlyData } from "./types";
+import { CalculationResults, MonthlyData, OverpaymentDetails, YearlyData, CalculationPeriod } from "./types";
+import { validateInputs } from "./validation";
+import { calculateMonthlyPayment, generateAmortizationSchedule } from "./utils";
 
 /**
  * Calculate monthly payment using the formula: M = P[r(1+r)^n]/[(1+r)^n-1]
@@ -8,61 +10,81 @@ import { CalculationResults, MonthlyData, YearlyData } from "./types";
  * r = monthly interest rate (annual rate / 12 / 100)
  * n = number of payments (loan term in years * 12)
  */
-export function calculateMonthlyPayment(
-  principal: number,
-  interestRate: number,
-  loanTerm: number
-): number {
-  // Convert annual rate to monthly & decimal
-  const monthlyRate = interestRate / 100 / 12;
-  const numberOfPayments = loanTerm * 12;
-  
-  // Handle edge case of 0% interest rate
-  if (monthlyRate === 0) {
-    return principal / numberOfPayments;
-  }
-  
-  // Mortgage payment formula
-  const compoundedRate = Math.pow(1 + monthlyRate, numberOfPayments);
-  const monthlyPayment = principal * (monthlyRate * compoundedRate) / (compoundedRate - 1);
-  
-  return monthlyPayment;
+function roundToCents(amount: number): number {
+  return Math.round(amount * 100) / 100;
 }
+
 
 /**
  * Generate a complete amortization schedule for the loan
  */
-export function generateAmortizationSchedule(
+
+/**
+ * Generate amortization schedule with recurring overpayments
+ */
+export function generateScheduleWithRecurringOverpayments(
   principal: number,
   interestRate: number,
-  loanTerm: number
+  loanTerm: number,
+  overpaymentPlan: OverpaymentDetails
 ): MonthlyData[] {
   const monthlyRate = interestRate / 100 / 12;
   const numberOfPayments = loanTerm * 12;
-  const monthlyPayment = calculateMonthlyPayment(principal, interestRate, loanTerm);
+  const baseMonthlyPayment = calculateMonthlyPayment(principal, interestRate, loanTerm);
   
   let balance = principal;
   const schedule: MonthlyData[] = [];
   
-  for (let i = 1; i <= numberOfPayments; i++) {
+  // Pre-calculate frequency multiplier
+  const frequencyMultiplier = overpaymentPlan.frequency === 'monthly' ? 1 :
+    overpaymentPlan.frequency === 'quarterly' ? 3 :
+    overpaymentPlan.frequency === 'annual' ? 12 : 0;
+
+  const MAX_PAYMENTS = 600; // 50 years
+  for (let i = 1; i <= numberOfPayments && balance > 0; i++) {
+    if (i > MAX_PAYMENTS) {
+      throw new Error('Maximum payment limit exceeded');
+    }
     const interestPayment = balance * monthlyRate;
-    let principalPayment = monthlyPayment - interestPayment;
+    let principalPayment = baseMonthlyPayment - interestPayment;
+    let totalPayment = baseMonthlyPayment;
+    let overpaymentAmount = 0;
     
-    // Adjust final payment to handle rounding errors
-    if (i === numberOfPayments) {
-      principalPayment = balance;
+    // Optimized overpayment check
+    const isOverpaymentPeriod = i >= overpaymentPlan.startMonth && 
+      (!overpaymentPlan.endMonth || i <= overpaymentPlan.endMonth);
+      
+    const isFrequencyMatch = overpaymentPlan.frequency === 'monthly' || 
+      (i - overpaymentPlan.startMonth) % frequencyMultiplier === 0;
+    
+    if (isOverpaymentPeriod && isFrequencyMatch) {
+      overpaymentAmount = overpaymentPlan.amount;
+      principalPayment += overpaymentAmount;
+      totalPayment += overpaymentAmount;
     }
     
-    balance -= principalPayment;
-    if (balance < 0) balance = 0;
+    // Handle final payment
+    if (principalPayment >= balance) {
+      principalPayment = balance;
+      totalPayment = balance + interestPayment;
+      overpaymentAmount = Math.max(0, principalPayment - (baseMonthlyPayment - interestPayment));
+    }
+    
+    balance = Math.max(0, balance - principalPayment);
     
     schedule.push({
       payment: i,
-      monthlyPayment,
+      monthlyPayment: totalPayment,
       principalPayment,
       interestPayment,
-      balance
+      balance,
+      isOverpayment: overpaymentAmount > 0,
+      overpaymentAmount,
+      totalInterest: schedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+      totalPayment: totalPayment
     });
+    
+    if (balance === 0) break;
   }
   
   return schedule;
@@ -72,37 +94,32 @@ export function generateAmortizationSchedule(
  * Aggregate monthly payment data into yearly summaries for display
  */
 export function aggregateYearlyData(schedule: MonthlyData[]): YearlyData[] {
-  const yearlyData: YearlyData[] = [];
-  let currentYear = 1;
-  let yearlyPrincipal = 0;
-  let yearlyInterest = 0;
-  let yearlyPayment = 0;
-  let currentBalance = 0;
-  
-  schedule.forEach((month, index) => {
-    yearlyPrincipal += month.principalPayment;
-    yearlyInterest += month.interestPayment;
-    yearlyPayment += month.monthlyPayment;
-    currentBalance = month.balance;
+  if (!schedule || schedule.length === 0) {
+    return [];
+  }
+
+  return schedule.reduce((acc: YearlyData[], month: MonthlyData, index: number) => {
+    const yearIndex = Math.floor(index / 12);
     
-    // End of year or end of schedule
-    if ((index + 1) % 12 === 0 || index === schedule.length - 1) {
-      yearlyData.push({
-        year: currentYear,
-        principal: yearlyPrincipal,
-        interest: yearlyInterest,
-        payment: yearlyPayment,
-        balance: currentBalance
-      });
-      
-      currentYear++;
-      yearlyPrincipal = 0;
-      yearlyInterest = 0;
-      yearlyPayment = 0;
+    if (!acc[yearIndex]) {
+      acc[yearIndex] = {
+        year: yearIndex + 1,
+        principal: 0,
+        interest: 0,
+        payment: 0,
+        balance: month.balance,
+        totalInterest: 0
+      };
     }
-  });
-  
-  return yearlyData;
+    
+    acc[yearIndex].principal = roundToCents(acc[yearIndex].principal + month.principalPayment);
+    acc[yearIndex].interest = roundToCents(acc[yearIndex].interest + month.interestPayment);
+    acc[yearIndex].payment = roundToCents(acc[yearIndex].payment + month.monthlyPayment);
+    acc[yearIndex].balance = roundToCents(month.balance);
+    acc[yearIndex].totalInterest = roundToCents(acc[yearIndex].totalInterest + month.interestPayment);
+    
+    return acc;
+  }, []);
 }
 
 /**
@@ -111,21 +128,27 @@ export function aggregateYearlyData(schedule: MonthlyData[]): YearlyData[] {
 export function calculateLoanDetails(
   principal: number,
   interestRate: number,
-  loanTerm: number
+  loanTerm: number,
+  overpaymentPlan?: OverpaymentDetails
 ): CalculationResults {
-  const monthlyPayment = calculateMonthlyPayment(principal, interestRate, loanTerm);
-  const amortizationSchedule = generateAmortizationSchedule(principal, interestRate, loanTerm);
-  const yearlyData = aggregateYearlyData(amortizationSchedule);
-  
-  const totalInterest = amortizationSchedule.reduce(
-    (total, month) => total + month.interestPayment, 0
-  );
+  if (!validateInputs(principal, interestRate, loanTerm, overpaymentPlan)) {
+    throw new Error('Invalid input parameters');
+  }
+
+  const schedule = overpaymentPlan && overpaymentPlan.isRecurring
+    ? generateScheduleWithRecurringOverpayments(principal, interestRate, loanTerm, overpaymentPlan)
+    : generateAmortizationSchedule(principal, interestRate, loanTerm);
+    
+  const yearlyData = aggregateYearlyData(schedule);
+  const totalInterest = schedule.reduce((total, month) => total + month.interestPayment, 0);
   
   return {
-    monthlyPayment,
+    monthlyPayment: schedule[0].monthlyPayment,
     totalInterest,
-    amortizationSchedule,
-    yearlyData
+    amortizationSchedule: schedule,
+    yearlyData,
+    originalTerm: loanTerm,
+    actualTerm: schedule.length / 12
   };
 }
 
@@ -158,7 +181,9 @@ export function applyOverpayment(
         monthlyPayment: schedule[0].monthlyPayment,
         totalInterest: newSchedule.reduce((total, month) => total + month.interestPayment, 0),
         amortizationSchedule: newSchedule,
-        yearlyData: aggregateYearlyData(newSchedule)
+        yearlyData: aggregateYearlyData(newSchedule),
+        originalTerm: schedule.length / 12,
+        actualTerm: newSchedule.length / 12
       },
       timeOrPaymentSaved: schedule.length - afterPayment
     };
@@ -176,16 +201,22 @@ export function applyOverpayment(
       payment++;
       const interestPayment = remainingBalance * monthlyRate;
       let principalPayment = originalMonthlyPayment - interestPayment;
+      const currentPayment = originalMonthlyPayment;
       
-      // Final payment
       if (remainingBalance < originalMonthlyPayment) {
         principalPayment = remainingBalance;
+        const finalPayment = principalPayment + interestPayment;
+        
         newSchedule.push({
           payment,
-          monthlyPayment: principalPayment + interestPayment,
+          monthlyPayment: finalPayment,
           principalPayment,
           interestPayment,
-          balance: 0
+          balance: 0,
+          isOverpayment: false,
+          overpaymentAmount: 0,
+          totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+          totalPayment: finalPayment
         });
         break;
       }
@@ -194,22 +225,16 @@ export function applyOverpayment(
       
       newSchedule.push({
         payment,
-        monthlyPayment: originalMonthlyPayment,
+        monthlyPayment: currentPayment,
         principalPayment,
         interestPayment,
-        balance: remainingBalance
+        balance: remainingBalance,
+        isOverpayment: false,
+        overpaymentAmount: 0,
+        totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+        totalPayment: currentPayment
       });
     }
-    
-    return {
-      newCalculation: {
-        monthlyPayment: originalMonthlyPayment,
-        totalInterest: newSchedule.reduce((total, month) => total + month.interestPayment, 0),
-        amortizationSchedule: newSchedule,
-        yearlyData: aggregateYearlyData(newSchedule)
-      },
-      timeOrPaymentSaved: schedule.length - newSchedule.length
-    };
   } 
   // Reduced payment: same term, lower payment
   else {
@@ -226,15 +251,20 @@ export function applyOverpayment(
       const interestPayment = remainingBalance * monthlyRate;
       let principalPayment = newMonthlyPayment - interestPayment;
       
-      // Final payment
       if (i === schedule.length - 1 || remainingBalance < newMonthlyPayment) {
         principalPayment = remainingBalance;
+        const finalPayment = principalPayment + interestPayment;
+        
         newSchedule.push({
           payment,
-          monthlyPayment: principalPayment + interestPayment,
+          monthlyPayment: finalPayment,
           principalPayment,
           interestPayment,
-          balance: 0
+          balance: 0,
+          isOverpayment: false,
+          overpaymentAmount: 0,
+          totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+          totalPayment: finalPayment
         });
         break;
       }
@@ -246,48 +276,200 @@ export function applyOverpayment(
         monthlyPayment: newMonthlyPayment,
         principalPayment,
         interestPayment,
-        balance: remainingBalance
-      });
+        balance: remainingBalance,
+        isOverpayment: false,
+        overpaymentAmount: 0,
+        totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+        totalPayment: newMonthlyPayment
+        });
+      }
     }
     
     return {
       newCalculation: {
-        monthlyPayment: newMonthlyPayment,
+        monthlyPayment: effect === 'reduceTerm' ? originalMonthlyPayment : newMonthlyPayment,
         totalInterest: newSchedule.reduce((total, month) => total + month.interestPayment, 0),
         amortizationSchedule: newSchedule,
-        yearlyData: aggregateYearlyData(newSchedule)
+        yearlyData: aggregateYearlyData(newSchedule),
+        originalTerm: schedule.length / 12,
+        actualTerm: newSchedule.length / 12
       },
-      timeOrPaymentSaved: originalMonthlyPayment - newMonthlyPayment
+      timeOrPaymentSaved: effect === 'reduceTerm' 
+      ? schedule.length - newSchedule.length 
+      : originalMonthlyPayment - newMonthlyPayment
     };
   }
-}
-
-/**
- * Format currency for display
- */
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(amount);
-}
-
-/**
- * Format time period from months
- */
-export function formatTimePeriod(months: number): string {
-  const years = Math.floor(months / 12);
-  const remainingMonths = months % 12;
   
-  let result = '';
-  if (years > 0) {
-    result += years + (years === 1 ? ' year' : ' years');
-  }
-  if (remainingMonths > 0) {
-    result += (years > 0 ? ' ' : '') + remainingMonths + (remainingMonths === 1 ? ' month' : ' months');
+  /**
+   * Handle rate changes during the loan term
+   * @param originalSchedule The original amortization schedule
+   * @param changeAtMonth The month when the rate change occurs (1-based)
+   * @param newRate The new interest rate
+   * @param remainingTerm Optional override for the remaining term (in years)
+   * @returns A new amortization schedule with the rate change applied
+   */
+  export function applyRateChange(
+    originalSchedule: MonthlyData[],
+    changeAtMonth: number,
+    newRate: number,
+    remainingTerm?: number
+  ): MonthlyData[] {
+    if (changeAtMonth <= 0 || changeAtMonth >= originalSchedule.length) {
+      throw new Error('Invalid month for rate change');
+    }
+    
+    // Get the remaining balance at the change point
+    const remainingBalance = originalSchedule[changeAtMonth - 1].balance;
+    
+    // Calculate remaining term if not provided
+    const defaultRemainingTerm = (originalSchedule.length - changeAtMonth) / 12;
+    const termToUse = remainingTerm || defaultRemainingTerm;
+    
+    // Generate a new schedule with the new rate
+    const newSchedule = generateAmortizationSchedule(
+      remainingBalance,
+      newRate,
+      termToUse
+    );
+    
+    // Combine the schedules
+    const combinedSchedule = [
+      ...originalSchedule.slice(0, changeAtMonth),
+      ...newSchedule.map(item => ({
+        ...item,
+        payment: item.payment + changeAtMonth
+      }))
+    ];
+    
+    return combinedSchedule;
   }
   
-  return result || '0 months';
-}
+  /**
+   * Apply multiple overpayments to a schedule
+   * @param schedule The original amortization schedule
+   * @param overpayments Array of overpayment details
+   * @returns A new amortization schedule with all overpayments applied
+   */
+  export function applyMultipleOverpayments(
+    schedule: MonthlyData[],
+    overpayments: OverpaymentDetails[]
+  ): MonthlyData[] {
+    let modifiedSchedule = [...schedule];
+    
+    // Process each month
+    for (let month = 1; month <= schedule.length; month++) {
+      if (month > modifiedSchedule.length) break;
+      
+      // Check for applicable overpayments
+      const applicableOverpayments = overpayments.filter(op => {
+        const isAfterStart = month >= op.startMonth;
+        const isBeforeEnd = !op.endMonth || month <= op.endMonth;
+        
+        // Check frequency
+        let matchesFrequency = false;
+        if (op.frequency === 'monthly' && op.isRecurring) {
+          matchesFrequency = true;
+        } else if (op.frequency === 'quarterly' && op.isRecurring && (month - op.startMonth) % 3 === 0) {
+          matchesFrequency = true;
+        } else if (op.frequency === 'annual' && op.isRecurring && (month - op.startMonth) % 12 === 0) {
+          matchesFrequency = true;
+        } else if (op.frequency === 'one-time' && month === op.startMonth) {
+          matchesFrequency = true;
+        }
+        
+        return isAfterStart && isBeforeEnd && matchesFrequency;
+      });
+      
+      if (applicableOverpayments.length > 0) {
+        // Calculate total overpayment for this month
+        const totalOverpayment = applicableOverpayments.reduce(
+          (sum, op) => sum + op.amount, 0
+        );
+        
+        // Apply the overpayment
+        const currentBalance = modifiedSchedule[month - 1].balance;
+        const monthlyRate = (modifiedSchedule[month - 1].interestPayment / currentBalance);
+        const interestPayment = currentBalance * monthlyRate;
+        const regularPrincipalPayment = modifiedSchedule[month - 1].monthlyPayment - interestPayment;
+        const totalPrincipalPayment = regularPrincipalPayment + totalOverpayment;
+        
+        // Update the schedule entry
+        modifiedSchedule[month - 1] = {
+          ...modifiedSchedule[month - 1],
+          principalPayment: totalPrincipalPayment,
+          overpaymentAmount: totalOverpayment,
+          isOverpayment: totalOverpayment > 0,
+          monthlyPayment: modifiedSchedule[month - 1].monthlyPayment + totalOverpayment,
+          balance: Math.max(0, currentBalance - totalPrincipalPayment)
+        };
+        
+        // Recalculate remaining schedule if balance is not zero
+        if (modifiedSchedule[month - 1].balance > 0) {
+          const remainingMonths = schedule.length - month;
+          const newMonthlyPayment = calculateMonthlyPayment(
+            modifiedSchedule[month - 1].balance,
+            monthlyRate * 12 * 100,
+            remainingMonths / 12
+          );
+          
+          // Update remaining schedule
+          for (let i = month; i < modifiedSchedule.length; i++) {
+            const currentBalance = modifiedSchedule[i - 1].balance;
+            const interestPayment = currentBalance * monthlyRate;
+            let principalPayment = newMonthlyPayment - interestPayment;
+
+            if (principalPayment > currentBalance) {
+              principalPayment = currentBalance;
+            }
+            
+            modifiedSchedule[i] = {
+              payment: i + 1,
+              monthlyPayment: newMonthlyPayment,
+              principalPayment: principalPayment,
+              interestPayment: interestPayment,
+              balance: Math.max(0, currentBalance - principalPayment),
+              isOverpayment: modifiedSchedule[i].isOverpayment,
+              overpaymentAmount: modifiedSchedule[i].overpaymentAmount,
+              totalInterest: modifiedSchedule[i].totalInterest + interestPayment,
+              totalPayment: newMonthlyPayment
+            };
+          }
+        }
+      }
+    }
+    
+    return modifiedSchedule;
+  }
+  
+  /**
+   * Calculate complex scenario with rate changes and overpayments
+   */
+  export function calculateComplexScenario(
+    principal: number,
+    interestRate: number,
+    loanTerm: number,
+    overpayments: OverpaymentDetails[],
+    rateChanges: { month: number; newRate: number }[]
+  ): CalculationResults {
+    let initialSchedule = generateAmortizationSchedule(principal, interestRate, loanTerm);
+    
+    // Apply rate changes
+    let modifiedSchedule = [...initialSchedule];
+    rateChanges.forEach(change => {
+      modifiedSchedule = applyRateChange(modifiedSchedule, change.month, change.newRate);
+    });
+    
+    // Apply overpayments
+    modifiedSchedule = applyMultipleOverpayments(modifiedSchedule, overpayments);
+    
+    const totalInterest = modifiedSchedule.reduce((total, month) => total + month.interestPayment, 0);
+    
+    return {
+      monthlyPayment: modifiedSchedule[0].monthlyPayment,
+      totalInterest,
+      amortizationSchedule: modifiedSchedule,
+      yearlyData: aggregateYearlyData(modifiedSchedule),
+      originalTerm: loanTerm,
+      actualTerm: modifiedSchedule.length / 12
+    };
+  }
