@@ -7,6 +7,8 @@
     /* Main color palette */
     --primary: 26 107 114; /* #1A6B72 - deep blue-green */
     --primary-foreground: 255 255 255; /* White */
+    --button-bg: #1A6B72;
+    --button-hover: #155A60;
     
     --secondary: 232 168 124; /* #E8A87C - warm accent */
     --secondary-foreground: 17 17 17; /* Dark text on secondary */

@@ -189,7 +189,7 @@ export default function LoanInputForm({
           <div className="pt-2">
             <Button 
               type="submit" 
-              className="w-full bg-primary-600 hover:bg-primary-700"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
             >
               {t('form.calculate')}
             </Button>
