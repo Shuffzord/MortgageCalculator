@@ -1,0 +1,73 @@
+{
+  "app": {
+    "title": "Calculadora de Hipotecas",
+    "description": "Calcule sus pagos hipotecarios y vea su programa de amortización"
+  },
+  "language": {
+    "english": "Inglés",
+    "spanish": "Español"
+  },
+  "form": {
+    "loanDetails": "Detalles del Préstamo",
+    "loanAmount": "Monto del Préstamo",
+    "interestRate": "Tasa de Interés",
+    "loanTerm": "Plazo del Préstamo",
+    "years": "años",
+    "calculate": "Calcular",
+    "saveCalculation": "Guardar Cálculo",
+    "loadCalculation": "Cargar Cálculo",
+    "calculationName": "Nombre del Cálculo",
+    "currency": "€"
+  },
+  "overpayment": {
+    "title": "Pago Adicional",
+    "amount": "Monto del Pago Adicional",
+    "afterPayment": "Después del Pago Número",
+    "effect": "Efecto",
+    "reduceTerm": "Reducir Plazo",
+    "reducePayment": "Reducir Pago",
+    "apply": "Aplicar Pago Adicional"
+  },
+  "summary": {
+    "title": "Resumen del Préstamo",
+    "monthlyPayment": "Pago Mensual",
+    "totalInterest": "Interés Total",
+    "totalPayment": "Pago Total",
+    "loanDetails": "Detalles del Préstamo",
+    "principal": "Principal",
+    "interestRate": "Tasa de Interés",
+    "term": "Plazo",
+    "years": "años",
+    "monthsSaved": "Meses Ahorrados",
+    "interestSaved": "Interés Ahorrado"
+  },
+  "chart": {
+    "title": "Desglose de Pagos",
+    "principal": "Principal",
+    "interest": "Interés",
+    "balance": "Saldo",
+    "payment": "Pago"
+  },
+  "schedule": {
+    "title": "Programa de Amortización",
+    "payment": "Pago",
+    "principal": "Principal",
+    "interest": "Interés",
+    "balance": "Saldo",
+    "noData": "Calcule un préstamo para ver el programa de amortización"
+  },
+  "load": {
+    "title": "Cálculos Guardados",
+    "noSaved": "No se encontraron cálculos guardados",
+    "cancel": "Cancelar"
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "minAmount": "El monto del préstamo debe ser al menos 1.000",
+    "minRate": "La tasa de interés debe ser al menos 0,1%",
+    "maxRate": "La tasa de interés debe ser como máximo 20%",
+    "minTerm": "El plazo del préstamo debe ser al menos 1 año",
+    "maxTerm": "El plazo del préstamo debe ser como máximo 50 años",
+    "minOverpayment": "El monto del pago adicional debe ser al menos 0"
+  }
+}

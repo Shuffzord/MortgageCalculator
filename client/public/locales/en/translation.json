@@ -1,0 +1,73 @@
+{
+  "app": {
+    "title": "Mortgage Calculator",
+    "description": "Calculate your mortgage payments and view your amortization schedule"
+  },
+  "language": {
+    "english": "English",
+    "spanish": "Spanish"
+  },
+  "form": {
+    "loanDetails": "Loan Details",
+    "loanAmount": "Loan Amount",
+    "interestRate": "Interest Rate",
+    "loanTerm": "Loan Term",
+    "years": "years",
+    "calculate": "Calculate",
+    "saveCalculation": "Save Calculation",
+    "loadCalculation": "Load Calculation",
+    "calculationName": "Calculation Name",
+    "currency": "$"
+  },
+  "overpayment": {
+    "title": "Overpayment",
+    "amount": "Overpayment Amount",
+    "afterPayment": "After Payment Number",
+    "effect": "Effect",
+    "reduceTerm": "Reduce Term",
+    "reducePayment": "Reduce Payment",
+    "apply": "Apply Overpayment"
+  },
+  "summary": {
+    "title": "Loan Summary",
+    "monthlyPayment": "Monthly Payment",
+    "totalInterest": "Total Interest",
+    "totalPayment": "Total Payment",
+    "loanDetails": "Loan Details",
+    "principal": "Principal",
+    "interestRate": "Interest Rate",
+    "term": "Term",
+    "years": "years",
+    "monthsSaved": "Months Saved",
+    "interestSaved": "Interest Saved"
+  },
+  "chart": {
+    "title": "Payment Breakdown",
+    "principal": "Principal",
+    "interest": "Interest",
+    "balance": "Balance",
+    "payment": "Payment"
+  },
+  "schedule": {
+    "title": "Amortization Schedule",
+    "payment": "Payment",
+    "principal": "Principal",
+    "interest": "Interest",
+    "balance": "Balance",
+    "noData": "Calculate a loan to see the amortization schedule"
+  },
+  "load": {
+    "title": "Saved Calculations",
+    "noSaved": "No saved calculations found",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "required": "This field is required",
+    "minAmount": "Loan amount must be at least 1,000",
+    "minRate": "Interest rate must be at least 0.1%",
+    "maxRate": "Interest rate must be at most 20%",
+    "minTerm": "Loan term must be at least 1 year",
+    "maxTerm": "Loan term must be at most 50 years",
+    "minOverpayment": "Overpayment amount must be at least 0"
+  }
+}

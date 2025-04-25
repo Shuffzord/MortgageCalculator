@@ -1,0 +1,222 @@
+import React, { useState, useEffect, useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Schedule, formatCurrency } from "@/lib/mortgage-calculator";
+import { Chart, registerables } from 'chart.js';
+import { cn } from "@/lib/utils";
+
+// Register Chart.js components
+Chart.register(...registerables);
+
+interface VisualizationProps {
+  schedule: Schedule[];
+  totalPrincipal: number;
+  totalInterest: number;
+}
+
+export default function Visualization({ schedule, totalPrincipal, totalInterest }: VisualizationProps) {
+  const [activeTab, setActiveTab] = useState<'pie' | 'bar'>('pie');
+  const pieChartRef = useRef<HTMLCanvasElement>(null);
+  const pieChartInstanceRef = useRef<Chart | null>(null);
+  const barChartRef = useRef<HTMLCanvasElement>(null);
+  const barChartInstanceRef = useRef<Chart | null>(null);
+
+  // Group by year for the bar chart
+  const getYearlyData = () => {
+    const yearlyData: { [key: number]: { principal: number; interest: number } } = {};
+    
+    schedule.forEach(payment => {
+      const year = Math.ceil(payment.paymentNum / 12);
+      if (!yearlyData[year]) {
+        yearlyData[year] = { principal: 0, interest: 0 };
+      }
+      yearlyData[year].principal += payment.principalPayment;
+      yearlyData[year].interest += payment.interestPayment;
+    });
+    
+    return yearlyData;
+  };
+
+  // Create pie chart
+  const createPieChart = () => {
+    if (!pieChartRef.current) return;
+    
+    const ctx = pieChartRef.current.getContext('2d');
+    if (!ctx) return;
+    
+    // Destroy previous instance if it exists
+    if (pieChartInstanceRef.current) {
+      pieChartInstanceRef.current.destroy();
+    }
+    
+    pieChartInstanceRef.current = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Principal', 'Interest'],
+        datasets: [{
+          label: 'Total Amount',
+          data: [totalPrincipal, totalInterest],
+          backgroundColor: [
+            'hsl(var(--primary))',
+            'hsl(var(--accent))'
+          ],
+          borderWidth: 1,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw as number;
+                const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                const percentage = Math.round(value / total * 100);
+                return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  };
+
+  // Create bar chart
+  const createBarChart = () => {
+    if (!barChartRef.current) return;
+    
+    const ctx = barChartRef.current.getContext('2d');
+    if (!ctx) return;
+    
+    // Destroy previous instance if it exists
+    if (barChartInstanceRef.current) {
+      barChartInstanceRef.current.destroy();
+    }
+    
+    const yearlyData = getYearlyData();
+    const years = Object.keys(yearlyData).map(Number);
+    const principalData = years.map(year => yearlyData[year].principal);
+    const interestData = years.map(year => yearlyData[year].interest);
+    
+    barChartInstanceRef.current = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: 'Principal',
+            data: principalData,
+            backgroundColor: 'hsl(var(--primary))'
+          },
+          {
+            label: 'Interest',
+            data: interestData,
+            backgroundColor: 'hsl(var(--accent))'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: ${formatCurrency(context.raw as number)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Year'
+            },
+            stacked: true
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Amount'
+            },
+            stacked: true,
+            ticks: {
+              callback: function(value) {
+                if ((value as number) >= 1000) {
+                  return '$' + (value as number) / 1000 + 'k';
+                }
+                return '$' + value;
+              }
+            }
+          }
+        }
+      }
+    });
+  };
+
+  // Initialize and update charts when data changes
+  useEffect(() => {
+    createPieChart();
+    createBarChart();
+    
+    return () => {
+      if (pieChartInstanceRef.current) {
+        pieChartInstanceRef.current.destroy();
+      }
+      if (barChartInstanceRef.current) {
+        barChartInstanceRef.current.destroy();
+      }
+    };
+  }, [schedule, totalPrincipal, totalInterest]);
+
+  return (
+    <Card className="bg-white shadow rounded-lg overflow-hidden mb-6">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center">
+          <h2 className="text-lg font-medium text-gray-900">Visualizations</h2>
+          <div className="ml-auto flex">
+            <button 
+              onClick={() => setActiveTab('pie')}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium border-b-2",
+                activeTab === 'pie' 
+                  ? "text-primary border-primary" 
+                  : "text-gray-500 hover:text-gray-700 border-transparent"
+              )}
+            >
+              Total Breakdown
+            </button>
+            <button 
+              onClick={() => setActiveTab('bar')}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium border-b-2",
+                activeTab === 'bar' 
+                  ? "text-primary border-primary" 
+                  : "text-gray-500 hover:text-gray-700 border-transparent"
+              )}
+            >
+              Yearly Breakdown
+            </button>
+          </div>
+        </div>
+      </div>
+      <CardContent className="p-6">
+        <div className={cn("h-80", activeTab !== 'pie' && "hidden")}>
+          <canvas ref={pieChartRef}></canvas>
+        </div>
+        <div className={cn("h-80", activeTab !== 'bar' && "hidden")}>
+          <canvas ref={barChartRef}></canvas>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
