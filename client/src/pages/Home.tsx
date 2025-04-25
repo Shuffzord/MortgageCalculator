@@ -18,8 +18,11 @@ import {
 import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
 import { Button } from "@/components/ui/button";
 import { Save, FolderOpen } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
+  const { t } = useTranslation();
+  
   // State management
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({
     principal: 250000,
@@ -100,7 +103,7 @@ export default function Home() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-gray-900">Mortgage Calculator</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">{t('app.title')}</h1>
             <div className="flex space-x-4">
               <Button 
                 variant="outline"
@@ -108,7 +111,7 @@ export default function Home() {
                 className="flex items-center"
               >
                 <Save className="mr-1 h-4 w-4" />
-                Save
+                {t('form.saveCalculation')}
               </Button>
               <Button 
                 variant="outline"
@@ -116,7 +119,7 @@ export default function Home() {
                 className="flex items-center"
               >
                 <FolderOpen className="mr-1 h-4 w-4" />
-                Load
+                {t('form.loadCalculation')}
               </Button>
             </div>
           </div>

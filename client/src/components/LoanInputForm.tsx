@@ -63,7 +63,7 @@ export default function LoanInputForm({
 
   return (
     <div className="p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Loan Details</h2>
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('form.loanDetails')}</h2>
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -73,7 +73,7 @@ export default function LoanInputForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Principal Loan Amount
+                  {t('form.loanAmount')}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
@@ -112,7 +112,7 @@ export default function LoanInputForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Interest Rate
+                  {t('form.interestRate')}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
@@ -152,7 +152,7 @@ export default function LoanInputForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Loan Term
+                  {t('form.loanTerm')}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <HelpCircle className="h-4 w-4 text-gray-400 ml-1" />
