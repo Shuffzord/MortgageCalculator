@@ -28,7 +28,7 @@ export interface OverpaymentDetails {
 
 /**
  * Unified payment data structure for amortization schedule and calculations
- * Combines properties from both Schedule and MonthlyData
+ * Provides a consistent interface for all payment-related operations
  */
 export interface PaymentData {
   // Payment identifier
@@ -53,8 +53,7 @@ export interface PaymentData {
   currency?: string;           // Currency symbol for display purposes
 }
 
-// Keep MonthlyData for backward compatibility
-export type MonthlyData = PaymentData;
+
 
 export interface YearlyData {
   year: number;
