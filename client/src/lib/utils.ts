@@ -24,9 +24,10 @@ export function calculateMonthlyPayment(
   const monthlyRate = annualRate / 100 / 12;
   const totalPayments = termYears * 12;
 
-  // If interest rate is 0, simple division
-  if (monthlyRate === 0) {
-    return principal / totalPayments;
+  // If interest rate is 0 or near-zero (less than 0.2%), use simple division
+  // This prevents floating point precision issues with very small rates
+  if (monthlyRate === 0 || annualRate < 0.2) {
+    return Math.round((principal / totalPayments) * 100) / 100;
   }
 
   // Standard mortgage formula
