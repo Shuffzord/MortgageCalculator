@@ -16,7 +16,7 @@ export { formatCurrency, formatDate };
 export function convertLegacySchedule(schedule: any): PaymentData {
   return {
     payment: schedule.paymentNum || schedule.payment,
-    monthlyPayment: schedule.payment || schedule.monthlyPayment,
+    monthlyPayment: schedule.monthlyPayment || schedule.payment, // Fix: switched the order to prioritize monthlyPayment
     principalPayment: schedule.principalPayment,
     interestPayment: schedule.interestPayment,
     balance: schedule.remainingPrincipal || schedule.balance,

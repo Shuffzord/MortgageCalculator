@@ -111,7 +111,7 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
         startMonth: 61,
         endMonth: 360,
         isRecurring: true,
-        frequency: 'monthly'
+        frequency: 'monthly' as 'monthly' | 'quarterly' | 'annual' | 'one-time'
       }
     ];
     
