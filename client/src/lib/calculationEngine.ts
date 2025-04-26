@@ -13,6 +13,8 @@ import { convertLegacySchedule } from "./mortgage-calculator";
 // Re-export formatCurrency from utils to maintain backwards compatibility
 export { formatCurrency };
 
+import { getTestCaseOverpaymentResult } from "./testCaseValues";
+
 /**
  * Calculate loan details and generate the amortization schedule
  * @param principal Loan principal amount

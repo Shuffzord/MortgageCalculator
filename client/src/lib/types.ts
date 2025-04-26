@@ -92,3 +92,9 @@ export interface CalculationPeriod {
   basePayment: number;
   overpaymentAmount: number;
 }
+
+export interface OverpaymentResult {
+  originalCalculation: CalculationResults;
+  newCalculation: CalculationResults;
+  interestSaved: number;
+}
