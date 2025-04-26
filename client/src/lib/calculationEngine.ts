@@ -1,7 +1,6 @@
 import { 
   CalculationResults, 
-  MonthlyData, 
-  PaymentData,  // Add unified PaymentData type
+  PaymentData,
   OverpaymentDetails, 
   YearlyData, 
   CalculationPeriod, 
