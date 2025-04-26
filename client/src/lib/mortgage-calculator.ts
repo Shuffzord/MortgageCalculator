@@ -3,14 +3,12 @@
  * It handles amortization schedules, monthly payments and overpayment scenarios.
  */
 
-// Using the LoanDetails interface from types.ts for consistency
+// Using the types from types.ts for consistency
 import { LoanDetails, OverpaymentDetails, PaymentData } from './types';
+import { calculateMonthlyPayment, generateAmortizationSchedule, formatCurrency, formatDate } from './utils';
 
-import { calculateMonthlyPayment, generateAmortizationSchedule, formatCurrency } from './utils';
-import { OverpaymentDetails } from './types';
-
-// Import the unified PaymentData type
-import { PaymentData } from './types';
+// Re-export these utilities for backward compatibility
+export { formatCurrency, formatDate };
 
 // Schedule type has been removed, using PaymentData directly
 

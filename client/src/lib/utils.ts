@@ -48,14 +48,39 @@ export function calculateMonthlyPayment(
  * @param reduceTermNotPayment Whether to reduce term (true) or payment (false) after overpayment
  * @returns Array of schedule entries with payment details
  */
+// Overloaded signatures for backward compatibility
 export function generateAmortizationSchedule(
   principal: number,
   annualRate: number,
   termYears: number,
-  overpaymentPlan?: OverpaymentDetails,
+  overpaymentAmount?: number | OverpaymentDetails,
+  overpaymentMonth?: number | Date,
+  reduceTermNotPayment?: boolean,
   startDate?: Date,
-  reduceTermNotPayment: boolean = false,
 ): PaymentData[] {
+  // Handle legacy parameters format
+  let overpaymentPlan: OverpaymentDetails | undefined;
+  let scheduleStartDate = startDate;
+  
+  if (typeof overpaymentAmount === 'number' && typeof overpaymentMonth === 'number') {
+    // Legacy format with separate parameters
+    overpaymentPlan = {
+      amount: overpaymentAmount,
+      startMonth: overpaymentMonth,
+      endMonth: overpaymentMonth,
+      isRecurring: false,
+      frequency: 'one-time',
+      effect: reduceTermNotPayment ? 'reduceTerm' : 'reducePayment'
+    };
+  } else if (typeof overpaymentAmount === 'object') {
+    // New format with OverpaymentDetails object
+    overpaymentPlan = overpaymentAmount;
+    if (overpaymentMonth instanceof Date) {
+      scheduleStartDate = overpaymentMonth;
+    }
+  }
+  
+  // Proceed with calculation
   const monthlyRate = annualRate / 100 / 12;
   const originalTotalPayments = termYears * 12;
   let monthlyPayment = calculateMonthlyPayment(
@@ -217,6 +242,19 @@ export function formatTimePeriod(months: number): string {
   }
 
   return formattedString.trim();
+}
+
+/**
+ * Format date to a human-readable string
+ * @param date Date to format
+ * @returns Formatted date string (e.g., "Jan 15, 2025")
+ */
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 }
 
 import { clsx, type ClassValue } from "clsx";

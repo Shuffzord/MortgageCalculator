@@ -9,9 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDate } from "@/lib/mortgage-calculator";
-import { PaymentData } from "@/lib/types";
-import { LoanDetails } from "@/lib/mortgage-calculator";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { PaymentData, LoanDetails } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { getCurrencySymbol } from "@/components/ui/currency-selector";
 

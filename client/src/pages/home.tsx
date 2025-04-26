@@ -24,11 +24,16 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 // Initial loan details
 const defaultLoanDetails: LoanDetails = {
   principal: 250000,
-  interestRate: 4.5,
+  interestRatePeriods: [{ startMonth: 1, interestRate: 4.5 }],
   loanTerm: 30,
-  overpaymentAmount: 10000,
-  overpaymentMonth: 24,
-  reduceTermNotPayment: true,
+  overpaymentPlans: [{ 
+    amount: 10000, 
+    startMonth: 24, 
+    endMonth: 24, 
+    isRecurring: false, 
+    frequency: 'one-time',
+    effect: 'reduceTerm'
+  }],
   name: "Home Purchase - 30 Year",
   startDate: new Date(),
   currency: "USD"
@@ -40,11 +45,11 @@ export default function Home() {
   const [schedule, setSchedule] = useState<PaymentData[]>(() => 
     generateAmortizationSchedule(
       defaultLoanDetails.principal,
-      defaultLoanDetails.interestRate,
+      defaultLoanDetails.interestRatePeriods[0].interestRate,
       defaultLoanDetails.loanTerm,
-      defaultLoanDetails.overpaymentAmount,
-      defaultLoanDetails.overpaymentMonth,
-      defaultLoanDetails.reduceTermNotPayment,
+      defaultLoanDetails.overpaymentPlans[0].amount,
+      defaultLoanDetails.overpaymentPlans[0].startMonth,
+      defaultLoanDetails.overpaymentPlans[0].effect === 'reduceTerm',
       defaultLoanDetails.startDate
     )
   );
@@ -54,7 +59,7 @@ export default function Home() {
   // Calculate financial summaries
   const monthlyPayment = calculateMonthlyPayment(
     loanDetails.principal,
-    loanDetails.interestRate,
+    loanDetails.interestRatePeriods[0].interestRate,
     loanDetails.loanTerm
   );
 
@@ -62,7 +67,8 @@ export default function Home() {
   const totalInterest = schedule
     .filter(item => !item.isOverpayment)
     .reduce((sum, item) => sum + item.interestPayment, 0);
-  const totalPayment = totalPrincipal + totalInterest + (loanDetails.overpaymentAmount || 0);
+  const totalOverpayment = loanDetails.overpaymentPlans.reduce((sum, plan) => sum + plan.amount, 0);
+  const totalPayment = totalPrincipal + totalInterest + totalOverpayment;
 
   // Original expected total without overpayment
   const originalTotalInterest = monthlyPayment * (loanDetails.loanTerm * 12) - loanDetails.principal;
@@ -76,13 +82,21 @@ export default function Home() {
   // Handle form submission
   const handleFormSubmit = (newLoanDetails: LoanDetails) => {
     setLoanDetails(newLoanDetails);
+    // Get primary rate and overpayment from the updated structure
+    const interestRate = newLoanDetails.interestRatePeriods[0].interestRate;
+    const overpayment = newLoanDetails.overpaymentPlans.length > 0 ? {
+      amount: newLoanDetails.overpaymentPlans[0].amount,
+      startMonth: newLoanDetails.overpaymentPlans[0].startMonth,
+      effect: newLoanDetails.overpaymentPlans[0].effect || 'reduceTerm'
+    } : undefined;
+    
     const newSchedule = generateAmortizationSchedule(
       newLoanDetails.principal,
-      newLoanDetails.interestRate,
+      interestRate,
       newLoanDetails.loanTerm,
-      newLoanDetails.overpaymentAmount,
-      newLoanDetails.overpaymentMonth,
-      newLoanDetails.reduceTermNotPayment,
+      overpayment?.amount,
+      overpayment?.startMonth,
+      overpayment?.effect === 'reduceTerm',
       newLoanDetails.startDate
     );
     setSchedule(newSchedule);
@@ -100,13 +114,41 @@ export default function Home() {
   // Handle loading a saved calculation
   const handleLoad = (calculation: LoanDetails) => {
     setLoanDetails(calculation);
+    
+    // Handle both old and new format calculations
+    let interestRate = 0;
+    let overpaymentAmount = 0;
+    let overpaymentMonth = 1;
+    let reduceTerm = true;
+    
+    // Use new structure if available, otherwise fallback to legacy properties
+    if (calculation.interestRatePeriods && calculation.interestRatePeriods.length > 0) {
+      interestRate = calculation.interestRatePeriods[0].interestRate;
+    } else {
+      // @ts-ignore - handling legacy format
+      interestRate = calculation.interestRate || 4.5;
+    }
+    
+    if (calculation.overpaymentPlans && calculation.overpaymentPlans.length > 0) {
+      overpaymentAmount = calculation.overpaymentPlans[0].amount;
+      overpaymentMonth = calculation.overpaymentPlans[0].startMonth;
+      reduceTerm = calculation.overpaymentPlans[0].effect === 'reduceTerm';
+    } else {
+      // @ts-ignore - handling legacy format
+      overpaymentAmount = calculation.overpaymentAmount || 0;
+      // @ts-ignore - handling legacy format
+      overpaymentMonth = calculation.overpaymentMonth || 12;
+      // @ts-ignore - handling legacy format
+      reduceTerm = calculation.reduceTermNotPayment !== undefined ? calculation.reduceTermNotPayment : true;
+    }
+    
     const newSchedule = generateAmortizationSchedule(
       calculation.principal,
-      calculation.interestRate,
+      interestRate,
       calculation.loanTerm,
-      calculation.overpaymentAmount,
-      calculation.overpaymentMonth,
-      calculation.reduceTermNotPayment,
+      overpaymentAmount,
+      overpaymentMonth,
+      reduceTerm,
       calculation.startDate
     );
     setSchedule(newSchedule);
@@ -186,14 +228,16 @@ export default function Home() {
                 </div>
                 <div className="p-6">
                   <PaymentSummary 
-                    monthlyPayment={monthlyPayment}
-                    totalInterest={totalInterest}
-                    totalPayment={totalPayment}
+                    calculationResults={{
+                      monthlyPayment: monthlyPayment,
+                      totalInterest: totalInterest,
+                      amortizationSchedule: schedule,
+                      yearlyData: [],
+                      originalTerm: loanDetails.loanTerm * 12,
+                      actualTerm: schedule.length,
+                      timeOrPaymentSaved: savedMonths
+                    }}
                     loanDetails={loanDetails}
-                    schedule={schedule}
-                    savedMonths={savedMonths}
-                    interestSavings={interestSavings}
-                    originalTotalInterest={originalTotalInterest}
                   />
                 </div>
               </div>

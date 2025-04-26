@@ -7,6 +7,8 @@ export interface LoanDetails {
   overpaymentPlans: OverpaymentDetails[];
   startDate: Date;
   name: string;
+  currency?: string;
+  dateCreated?: string;
 }
 
 export interface InterestRatePeriod {

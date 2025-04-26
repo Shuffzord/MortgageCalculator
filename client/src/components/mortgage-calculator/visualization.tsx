@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/mortgage-calculator";
+import { formatCurrency } from "@/lib/utils";
 import { PaymentData } from "@/lib/types";
 import { Chart, registerables } from 'chart.js';
 import { cn } from "@/lib/utils";
