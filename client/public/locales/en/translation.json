@@ -21,7 +21,8 @@
     "saveCalculation": "Save Calculation",
     "loadCalculation": "Load Calculation",
     "calculationName": "Calculation Name",
-    "currency": "$"
+    "currency": "$",
+    "selectCurrency": "Select Currency"
   },
   "overpayment": {
     "title": "Overpayment",

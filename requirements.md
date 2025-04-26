@@ -73,7 +73,16 @@
 - Clear presentation of results
 - Forms with input data validation
 
-### 3.2. Accessibility
+### 3.2. User Stories
+- As a user, I want the loan amount field to display the currency symbol based on my selected currency so that I can easily understand the loan amount's currency.
+- As a user, I want to be able to add multiple interest rate periods with different start months and interest rates so that I can simulate loans with variable interest rates.
+- As a user, I want to be able to add multiple overpayment plans with different amounts, start months, end months, frequencies, and effects (reduce term or reduce payment) so that I can simulate the impact of overpayments on my loan.
+- As a user, I want clear and concise tooltips for each input field so that I can understand the purpose of each field and how it affects the loan calculation.
+- As a user, I want the form to validate my inputs and display appropriate error messages so that I can avoid entering invalid data.
+- As a user, I want to be able to specify additional costs such as loan origination fees and loan insurance so that I can get a more accurate calculation of the total cost of the loan.
+- As a user, I want the form to be accessible to users with disabilities, including readable labels, descriptions, and appropriate color contrast.
+
+### 3.3. Accessibility
 - Basic compliance with WCAG 2.1
 - Readable labels and descriptions
 - Appropriate color contrast

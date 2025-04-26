@@ -17,9 +17,14 @@ import { Button } from "@/components/ui/button";
 import { Save, FolderOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-export default function Home() {
+interface HomeProps {
+  selectedCurrency: string;
+  onCurrencyChange: (currency: string) => void;
+}
+
+export default function Home({ selectedCurrency, onCurrencyChange }: HomeProps) {
   const { t } = useTranslation();
-  
+
   // State management
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({
     name: "My Calculation",
@@ -27,7 +32,8 @@ export default function Home() {
     interestRatePeriods: [{ startMonth: 0, interestRate: 4.5 }],
     loanTerm: 30,
     overpaymentPlans: [],
-    startDate: new Date()
+    startDate: new Date(),
+    currency: selectedCurrency
   });
 
 const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
@@ -50,7 +56,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
   const handleCalculateLoan = () => {
     const results = calculateLoanDetails(
       loanDetails.principal,
-      loanDetails.interestRatePeriods[0].interestRate,
+      loanDetails.interestRatePeriods,
       loanDetails.loanTerm,
       loanDetails.overpaymentPlans[0]
     );
@@ -73,9 +79,9 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
   };
 
   const handleLoadCalculation = (calculation: SavedCalculation) => {
-    setLoanDetails(calculation.loanDetails);
+    setLoanDetails({ ...calculation.loanDetails, currency: selectedCurrency });
     setShowLoadModal(false);
-    
+
     // Recalculate with loaded values
     setTimeout(() => {
       handleCalculateLoan();
@@ -118,6 +124,8 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
                 loanDetails={loanDetails}
                 setLoanDetails={setLoanDetails}
                 onCalculate={handleCalculateLoan}
+                selectedCurrency={selectedCurrency}
+                onCurrencyChange={onCurrencyChange}
               />
             </div>
           </div>
