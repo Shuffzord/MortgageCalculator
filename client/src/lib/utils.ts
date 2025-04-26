@@ -52,10 +52,10 @@ export function generateAmortizationSchedule(
   principal: number,
   annualRate: number,
   termYears: number,
-  overpaymentPlan?: any, // OverpaymentDetails,
+  overpaymentPlan?: OverpaymentDetails,
   startDate?: Date,
   reduceTermNotPayment: boolean = false,
-): Schedule[] {
+): PaymentData[] {
   const monthlyRate = annualRate / 100 / 12;
   const originalTotalPayments = termYears * 12;
   let monthlyPayment = calculateMonthlyPayment(
