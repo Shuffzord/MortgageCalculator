@@ -38,12 +38,19 @@
   "overpayment": {
     "title": "Overpayment",
     "amount": "Overpayment Amount",
-    "amountTooltip": "Additional one-time payment toward your loan principal.",
+    "amountTooltip": "Additional payment toward your loan principal.",
     "afterPayment": "After Payment Number",
+    "endPayment": "End After Payment",
     "effect": "Effect",
     "reduceTerm": "Reduce Term",
     "reducePayment": "Reduce Payment",
-    "apply": "Apply Overpayment"
+    "apply": "Apply Overpayment",
+    "frequency": "Frequency",
+    "oneTime": "One Time",
+    "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "annual": "Annual",
+    "add": "Add Overpayment"
   },
   "summary": {
     "title": "Loan Summary",

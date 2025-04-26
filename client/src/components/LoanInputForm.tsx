@@ -37,6 +37,16 @@ const loanFormSchema = z.object({
         .max(20, "Interest rate must be less than 20%"),
     })
   ).min(1, "At least one interest rate period is required"),
+  overpaymentPlans: z.array(
+    z.object({
+      amount: z.coerce.number().min(0, "Overpayment amount must be at least 0"),
+      startMonth: z.coerce.number().min(0, "Start month must be at least 0"),
+      endMonth: z.coerce.number().optional(),
+      isRecurring: z.boolean().default(false),
+      frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']).default('one-time'),
+      effect: z.enum(['reduceTerm', 'reducePayment']).default('reduceTerm'),
+    })
+  ).optional().default([]),
 });
 
 type LoanFormValues = z.infer<typeof loanFormSchema>;
@@ -44,6 +54,15 @@ type LoanFormValues = z.infer<typeof loanFormSchema>;
 interface InterestRatePeriodFormValues {
   startMonth: number;
   interestRate: number;
+}
+
+interface OverpaymentFormValues {
+  amount: number;
+  startMonth: number;
+  endMonth?: number;
+  isRecurring: boolean;
+  frequency: 'monthly' | 'quarterly' | 'annual' | 'one-time';
+  effect: 'reduceTerm' | 'reducePayment';
 }
 
 interface LoanInputFormProps {
@@ -69,6 +88,7 @@ export default function LoanInputForm({
       principal: loanDetails.principal,
       loanTerm: loanDetails.loanTerm,
       interestRatePeriods: loanDetails.interestRatePeriods,
+      overpaymentPlans: loanDetails.overpaymentPlans || [],
     },
   });
 
@@ -80,6 +100,7 @@ export default function LoanInputForm({
       principal: values.principal,
       interestRatePeriods: values.interestRatePeriods,
       loanTerm: values.loanTerm,
+      overpaymentPlans: values.overpaymentPlans || [],
       startDate: date,
       currency: selectedCurrency
     });
@@ -245,6 +266,7 @@ export default function LoanInputForm({
                     {Array.isArray(field.value) && field.value.map((period: InterestRatePeriodFormValues, index: number) => {
                       // Get the next period's start month if it exists
                       const nextPeriodStartMonth = index + 1 < field.value.length ? field.value[index + 1].startMonth : null;
+                      const loanTermInMonths = form.getValues("loanTerm") * 12;
                       
                       // Format period range description
                       let periodDescription = '';
@@ -257,7 +279,7 @@ export default function LoanInputForm({
                           periodDescription = `${t('form.interestRate')} (${t('form.loanStartDate')} - Year ${endYear}, Month ${endMonth})`;
                         } else {
                           // Only one period, covers entire loan
-                          periodDescription = `${t('form.interestRate')} (${t('form.loanStartDate')} - End)`;
+                          periodDescription = `${t('form.interestRate')} (${t('form.loanStartDate')} - Year ${Math.floor(loanTermInMonths / 12)}, Month ${loanTermInMonths % 12})`;
                         }
                       } else {
                         // Not initial rate - show period number with optional end date
@@ -271,7 +293,7 @@ export default function LoanInputForm({
                           periodDescription = `${t('form.interestRate')} ${index + 1} (Year ${startYear}, Month ${startMonth} - Year ${endYear}, Month ${endMonth})`;
                         } else {
                           // Last period (to end of loan)
-                          periodDescription = `${t('form.interestRate')} ${index + 1} (Year ${startYear}, Month ${startMonth} - End)`;
+                          periodDescription = `${t('form.interestRate')} ${index + 1} (Year ${startYear}, Month ${startMonth} - Year ${Math.floor(loanTermInMonths / 12)}, Month ${loanTermInMonths % 12})`;
                         }
                       }
                       
@@ -389,6 +411,170 @@ export default function LoanInputForm({
           />
 
 
+
+          <FormField
+            control={form.control}
+            name="overpaymentPlans"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center">
+                  {t('overpayment.title')}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">{t('overpayment.amountTooltip')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </FormLabel>
+                <FormControl>
+                  <div className="space-y-4">
+                    {Array.isArray(field.value) && field.value.map((overpayment: OverpaymentFormValues, index: number) => {
+                      const loanTermInMonths = form.getValues("loanTerm") * 12;
+                      
+                      return (
+                        <div key={index} className="space-y-2 p-3 border border-gray-200 rounded-md">
+                          <FormLabel className="text-sm">{t('overpayment.title')} {index + 1}</FormLabel>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                            <div className="space-y-2">
+                              <FormLabel className="text-xs text-gray-500">{t('overpayment.amount')}</FormLabel>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                  <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(selectedCurrency)}</span>
+                                </div>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  placeholder={t('overpayment.amount')}
+                                  value={overpayment.amount}
+                                  onChange={(e) => {
+                                    const newOverpaymentPlans = [...field.value];
+                                    newOverpaymentPlans[index].amount = Number(e.target.value);
+                                    field.onChange(newOverpaymentPlans);
+                                  }}
+                                  className="pl-7"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <FormLabel className="text-xs text-gray-500">{t('overpayment.afterPayment')}</FormLabel>
+                              <Input
+                                type="number"
+                                min="1"
+                                max={loanTermInMonths}
+                                placeholder={t('overpayment.afterPayment')}
+                                value={overpayment.startMonth}
+                                onChange={(e) => {
+                                  const newOverpaymentPlans = [...field.value];
+                                  newOverpaymentPlans[index].startMonth = Number(e.target.value);
+                                  field.onChange(newOverpaymentPlans);
+                                }}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                            <div className="space-y-2">
+                              <FormLabel className="text-xs text-gray-500">{t('overpayment.frequency')}</FormLabel>
+                              <select
+                                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                value={overpayment.frequency}
+                                onChange={(e) => {
+                                  const newOverpaymentPlans = [...field.value];
+                                  newOverpaymentPlans[index].frequency = e.target.value as 'monthly' | 'quarterly' | 'annual' | 'one-time';
+                                  newOverpaymentPlans[index].isRecurring = e.target.value !== 'one-time';
+                                  field.onChange(newOverpaymentPlans);
+                                }}
+                              >
+                                <option value="one-time">{t('overpayment.oneTime')}</option>
+                                <option value="monthly">{t('overpayment.monthly')}</option>
+                                <option value="quarterly">{t('overpayment.quarterly')}</option>
+                                <option value="annual">{t('overpayment.annual')}</option>
+                              </select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <FormLabel className="text-xs text-gray-500">{t('overpayment.effect')}</FormLabel>
+                              <select
+                                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                value={overpayment.effect}
+                                onChange={(e) => {
+                                  const newOverpaymentPlans = [...field.value];
+                                  newOverpaymentPlans[index].effect = e.target.value as 'reduceTerm' | 'reducePayment';
+                                  field.onChange(newOverpaymentPlans);
+                                }}
+                              >
+                                <option value="reduceTerm">{t('overpayment.reduceTerm')}</option>
+                                <option value="reducePayment">{t('overpayment.reducePayment')}</option>
+                              </select>
+                            </div>
+                          </div>
+                          
+                          {overpayment.isRecurring && (
+                            <div className="space-y-2">
+                              <FormLabel className="text-xs text-gray-500">{t('overpayment.endPayment')}</FormLabel>
+                              <Input
+                                type="number"
+                                min={overpayment.startMonth}
+                                max={loanTermInMonths}
+                                placeholder={t('overpayment.endPayment')}
+                                value={overpayment.endMonth}
+                                onChange={(e) => {
+                                  const newOverpaymentPlans = [...field.value];
+                                  newOverpaymentPlans[index].endMonth = Number(e.target.value);
+                                  field.onChange(newOverpaymentPlans);
+                                }}
+                              />
+                            </div>
+                          )}
+                          
+                          {field.value.length > 0 && (
+                            <div className="flex justify-end mt-2">
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  const newOverpaymentPlans = [...field.value];
+                                  newOverpaymentPlans.splice(index, 1);
+                                  field.onChange(newOverpaymentPlans);
+                                }}
+                              >
+                                {t('form.remove')}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        const currentValue = Array.isArray(field.value) ? field.value : [];
+                        field.onChange([...currentValue, { 
+                          amount: 1000, 
+                          startMonth: 12, 
+                          isRecurring: false,
+                          frequency: 'one-time',
+                          effect: 'reduceTerm'
+                        }]);
+                      }}
+                      className="w-full"
+                    >
+                      {t('overpayment.add')}
+                    </Button>
+                  </div>
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
           <div className="pt-2">
             <Button
