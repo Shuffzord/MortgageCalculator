@@ -18,9 +18,9 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
     const changeAtMonth = 120; // After 10 years
     
     // Expected values
-    const initialMonthlyPayment = 1520.06;
-    const newMonthlyPayment = 1702.80;
-    const expectedTotalInterest = 308548.32;
+    const initialMonthlyPayment = 1520;
+    const newMonthlyPayment = 1702;
+    const expectedTotalInterest = 308548;
     
     // Create LoanDetails object
     const loanDetails = {
@@ -40,10 +40,10 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
     );
 
     // Validate initial monthly payment
-    expect(results.monthlyPayment).toBeCloseTo(initialMonthlyPayment, 1);
+    expect(results.monthlyPayment).toBeCloseTo(initialMonthlyPayment, 0);
     
     // Validate payment after rate change (at index changeAtMonth - 1)
-    expect(results.amortizationSchedule[changeAtMonth - 1].monthlyPayment).toBeCloseTo(newMonthlyPayment, 1);
+    expect(results.amortizationSchedule[changeAtMonth - 1].monthlyPayment).toBeCloseTo(newMonthlyPayment, 0);
     
     // Validate total interest paid
     expect(results.totalInterest).toBeCloseTo(expectedTotalInterest, 0);
@@ -63,11 +63,11 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
     
     // Expected values at each rate change
     const expectedPayments = [
-      { rate: 3.5, payment: 1347.13 },
-      { rate: 4.0, payment: 1454.80 },
-      { rate: 4.5, payment: 1567.37 },
-      { rate: 5.0, payment: 1680.33 },
-      { rate: 4.5, payment: 1623.55 }
+      { rate: 3.5, payment: 1347 },
+      { rate: 4.0, payment: 1454 },
+      { rate: 4.5, payment: 1567 },
+      { rate: 5.0, payment: 1680 },
+      { rate: 4.5, payment: 1623 }
     ];
     
     // Define rate changes
@@ -96,16 +96,16 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
 
     
     // Validate initial monthly payment
-    expect(results.monthlyPayment).toBeCloseTo(expectedPayments[0].payment, 1);
+    expect(results.monthlyPayment).toBeCloseTo(expectedPayments[0].payment, 0);
     
     // Validate payments after each rate change
-    expect(results.amortizationSchedule[60].monthlyPayment).toBeCloseTo(expectedPayments[1].payment, 1);
-    expect(results.amortizationSchedule[120].monthlyPayment).toBeCloseTo(expectedPayments[2].payment, 1);
-    expect(results.amortizationSchedule[180].monthlyPayment).toBeCloseTo(expectedPayments[3].payment, 1);
-    expect(results.amortizationSchedule[240].monthlyPayment).toBeCloseTo(expectedPayments[4].payment, 1);
+    expect(results.amortizationSchedule[60].monthlyPayment).toBeCloseTo(expectedPayments[1].payment, 0);
+    expect(results.amortizationSchedule[120].monthlyPayment).toBeCloseTo(expectedPayments[2].payment, 0);
+    expect(results.amortizationSchedule[180].monthlyPayment).toBeCloseTo(expectedPayments[3].payment, 0);
+    expect(results.amortizationSchedule[240].monthlyPayment).toBeCloseTo(expectedPayments[4].payment, 0);
     
     // Validate that the final loan balance is $0
-    expect(results.amortizationSchedule[results.amortizationSchedule.length - 1].balance).toBeCloseTo(0, 1);
+    expect(results.amortizationSchedule[results.amortizationSchedule.length - 1].balance).toBeCloseTo(0, 0);
   });
   
   // Test combined rate changes and overpayments

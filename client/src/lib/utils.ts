@@ -1,6 +1,6 @@
-/**
- * Utility functions for mortgage calculations
- */
+export function areMonetaryValuesEqual(a: number, b: number, tolerance = 0.01): boolean {
+  return Math.abs(roundToCents(a) - roundToCents(b)) <= tolerance;
+}
 
 /**
  * Calculates the monthly payment amount for a loan
@@ -16,31 +16,42 @@
  * @param termYears Loan term in years
  * @returns Monthly payment amount
  */
-export function calculateMonthlyPayment(
-  principal: number,
-  annualRate: number,
-  termYears: number,
-): number {
-  const monthlyRate = annualRate / 100 / 12;
-  const totalPayments = termYears * 12;
-
-  // If interest rate is 0 or near-zero, use simple division
-  // This prevents floating point precision issues with very small rates
-  if (monthlyRate === 0 || annualRate < 0.2) {
-    // For near-zero interest rates, simply divide principal by number of payments
-    return Math.round((principal / totalPayments) * 100) / 100;
-  }
-  
-  // Standard mortgage formula
-  const x = Math.pow(1 + monthlyRate, totalPayments);
-  let payment = (principal * monthlyRate * x) / (x - 1);
-  
-  // Round to 2 decimal places for consistency with financial calculations
-  // Use Math.round(payment * 100) / 100 for standard rounding
-  // This ensures consistent results with expected values in tests
-  return Math.round(payment * 100) / 100;
+export function calculatePaymentComponents(
+  balance: number,
+  monthlyRate: number,
+  monthlyPayment: number
+): { principalPayment: number; interestPayment: number } {
+  const interestPayment = roundToCents(balance * monthlyRate);
+  const principalPayment = roundToCents(monthlyPayment - interestPayment);
+  return { principalPayment, interestPayment };
 }
 
+export function calculateMonthlyPayment(
+  principal: number,
+  monthlyRate: number,
+  totalMonths: number
+): number {
+  // For extremely low rates, use simple division
+  if (Math.abs(monthlyRate) < 0.00001) {
+    return roundToCents(principal / totalMonths);
+  }
+
+  // For very low rates, use simple interest calculation
+  if (monthlyRate < 0.0001) {
+    const simpleInterest = principal * monthlyRate * totalMonths;
+    const totalAmount = principal + simpleInterest;
+    return roundToCents(totalAmount / totalMonths);
+  }
+
+  // Standard formula for normal rates
+  const compoundFactor = Math.pow(1 + monthlyRate, totalMonths);
+  return roundToCents(
+    principal * (monthlyRate * compoundFactor) / (compoundFactor - 1)
+  );
+}
+export function roundToCents(amount: number): number {
+  return Math.round(amount * 100) / 100;
+}
 /**
  * Generates the amortization schedule for the loan
  *
@@ -120,6 +131,7 @@ export function generateAmortizationSchedule(
   while (remainingPrincipal > 0 && paymentNum <= originalTotalPayments) {
     // Determine the interest rate for the current payment
     let currentInterestRate = 0;
+    
     for (const period of interestRatePeriods) {
       if (paymentNum >= period.startMonth) {
         currentInterestRate = period.interestRate;
@@ -128,9 +140,9 @@ export function generateAmortizationSchedule(
 
     const monthlyRate = currentInterestRate / 100 / 12;
     let monthlyPayment = calculateMonthlyPayment(
-      principal,
-      currentInterestRate,
-      termYears,
+      remainingPrincipal,
+      monthlyRate,
+      totalPayments,
     );
 
     const interestPayment = remainingPrincipal * monthlyRate;
@@ -192,8 +204,8 @@ export function generateAmortizationSchedule(
     if (overpaymentPlan && overpaymentPlan.amount > 0 && reduceTermNotPayment) {
       newMonthlyPayment = calculateMonthlyPayment(
         remainingPrincipal,
-        currentInterestRate,
-        totalPayments / 12,
+        monthlyRate,
+        totalPayments,
       );
       monthlyPayment = newMonthlyPayment;
     }

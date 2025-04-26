@@ -9,7 +9,7 @@ import { calculateLoanDetails } from '../calculationEngine';
 
 describe('Mortgage Calculator Edge Cases', () => {
   // Test E1: Extra-Long Term Mortgage
-  test('E1: Extra-Long Term Mortgage (40 years)', () => {
+  test('E1: Extra-Long Term Mortgage (40 years)', async () => {
     // Inputs
     const principal = 300000;
     const termYears = 40;
@@ -20,7 +20,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedTotalInterest = 354695.47;
     
     // Calculate
-    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const results = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);
@@ -36,7 +36,7 @@ describe('Mortgage Calculator Edge Cases', () => {
   });
   
   // Test E2: Very Large Principal Amount
-  test('E2: Very Large Principal Amount', () => {
+  test('E2: Very Large Principal Amount', async () => {
     // Inputs
     const principal = 5000000;
     const termYears = 30;
@@ -47,7 +47,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedTotalInterest = 4120372.51;
     
     // Calculate
-    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const results = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);
@@ -63,14 +63,14 @@ describe('Mortgage Calculator Edge Cases', () => {
   });
   
   // Test zero principal (should handle gracefully)
-  test('Zero Principal Amount', () => {
+  test('Zero Principal Amount', async () => {
     // Inputs
     const principal = 0;
     const termYears = 30;
     const interestRate = 4.5;
     
     // Calculate
-    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const results = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment is zero
     expect(results.monthlyPayment).toBe(0);
@@ -86,7 +86,7 @@ describe('Mortgage Calculator Edge Cases', () => {
   });
   
   // Test zero interest rate
-  test('Zero Interest Rate', () => {
+  test('Zero Interest Rate', async () => {
     // Inputs
     const principal = 300000;
     const termYears = 30;
@@ -96,7 +96,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedMonthlyPayment = principal / (termYears * 12);
     
     // Calculate
-    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const results = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment is simply principal divided by number of payments
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 2);
@@ -112,7 +112,7 @@ describe('Mortgage Calculator Edge Cases', () => {
   });
   
   // Test extremely short term (1 year)
-  test('Extremely Short Term (1 year)', () => {
+  test('Extremely Short Term (1 year)', async () => {
     // Inputs
     const principal = 300000;
     const termYears = 1;
@@ -122,7 +122,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedMonthlyPayment = 25548.49;
     
     // Calculate
-    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const results = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);

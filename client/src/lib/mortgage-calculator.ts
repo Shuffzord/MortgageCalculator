@@ -5,7 +5,7 @@
 
 // Using the types from types.ts for consistency
 import { LoanDetails, OverpaymentDetails, PaymentData } from './types';
-import { calculateMonthlyPayment, generateAmortizationSchedule, formatCurrency, formatDate } from './utils';
+import { generateAmortizationSchedule, formatCurrency, formatDate } from './utils';
 
 // Re-export these utilities for backward compatibility
 export { formatCurrency, formatDate };

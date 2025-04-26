@@ -23,7 +23,7 @@ describe('Mortgage Overpayment Calculations', () => {
     const expectedInterestSaved = 71500; // Approximate value
     
     // First calculate the standard loan
-    const standardResults = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const standardResults = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     const standardTotalInterest = standardResults.totalInterest;
     
     // Apply overpayment with term reduction
@@ -63,7 +63,7 @@ describe('Mortgage Overpayment Calculations', () => {
     const expectedInterestSaved = 38220; // Approximate value
     
     // First calculate the standard loan
-    const standardResults = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const standardResults = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     const standardTotalInterest = standardResults.totalInterest;
     
     // Apply overpayment with payment reduction
@@ -88,7 +88,6 @@ describe('Mortgage Overpayment Calculations', () => {
     expect(interestSavings).toBeGreaterThan(expectedInterestSaved * 0.8); // Allow 20% tolerance
   });
 
-  // Test O3: Regular Monthly Overpayments
   test('O3: Regular Monthly Overpayments', async () => {
     // Inputs
     const principal = 300000;
@@ -105,23 +104,29 @@ describe('Mortgage Overpayment Calculations', () => {
     };
     
     // Expected values
-    const expectedNewTerm = 25 * 12; // ~24 years 8 months (rounded to 25 years for easier testing)
+    const expectedNewTermMonths = 25 * 12; // ~25 years (300 months)
     const expectedInterestSaved = 53420; // Approximate value
     
     // Calculate with monthly overpayments
-    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears, overpaymentPlan);
+    const results = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears, overpaymentPlan);
     
     // Calculate standard loan for comparison
-    const standardResults = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
+    const standardResults = await calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
-    // Validate the new term is shorter than the original
+    // 1) Validate the new term is shorter than the original term
     expect(results.actualTerm).toBeLessThan(termYears);
     
-    // Verify that the new term is close to the expected term
-    expect(results.actualTerm * 12).toBeLessThanOrEqual(expectedNewTerm);
+    // 2) Verify that the new term is close to the expected term
+    expect(results.actualTerm * 12).toBeCloseTo(expectedNewTermMonths, 0); // Allow exact matching
     
-    // Verify interest savings
+    // 3) Verify interest savings within a reasonable tolerance (e.g., 20% tolerance)
     const interestSavings = standardResults.totalInterest - results.totalInterest;
     expect(interestSavings).toBeGreaterThan(expectedInterestSaved * 0.8); // Allow 20% tolerance
+    expect(interestSavings).toBeLessThan(expectedInterestSaved * 1.2); // Ensure savings do not exceed 120% of expected
+    
+    // Optionally log values to verify
+    console.log('Original Term:', standardResults.actualTerm, 'years');
+    console.log('New Term with Overpayment:', results.actualTerm, 'years');
+    console.log('Interest Saved:', interestSavings);
   });
 });
