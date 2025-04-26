@@ -27,7 +27,7 @@ describe('Mortgage Calculator', () => {
         frequency: 'one-time',
         endMonth: 60,
       };
-      const schedule = generateAmortizationSchedule(principal, annualRate, termYears, overpaymentPlan);
+      const schedule = generateAmortizationSchedule(principal, [{ startMonth: 1, interestRate: annualRate }], termYears, overpaymentPlan);
       expect(schedule.length).toBeGreaterThan(0);
     });
   });

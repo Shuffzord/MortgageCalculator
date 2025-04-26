@@ -1,91 +1,74 @@
-# Mortgage Calculator Review and Improvement Plan
+# Robust Step-by-Step Plan for Mortgage Calculation Engine Enhancement
 
-## Goals
+## Goal
+Enhance the mortgage calculation engine to correctly handle variable interest rates using the `interestRatePeriods` property in the `LoanDetails` interface.
 
-*   Check for potential business functionalities to add.
-*   Focus on both a general review and the calculation formulas.
-*   Review the front-end side to ensure it supports multiple periods or overpaying options.
+**1. Prioritize Data Structure Changes (plan-step-1.md):**
 
-## Plan
+*   **Rationale:** Modifying the `LoanDetails` interface is a foundational change. It affects how loan data is passed throughout the application.
+*   **Orchestration:**
+    *   Delegate to: `code` mode
+    *   Instructions:
+        *   Implement the changes outlined in `plan-step-1.md` to modify the `LoanDetails` interface in `client/src/lib/types.ts`.
+        *   Specifically, remove the `interestRate` property and ensure that the `interestRatePeriods` property is used for defining interest rates.
+        *   After making these changes, run `npm test` to identify any immediate type errors or broken tests.
+        *   Use `attempt_completion` to signal completion, including a summary of changes and any test results.
 
-### Back-End (Calculation Engine) Improvements
+**2. Implement Core Calculation Logic (plan-step-2.md):**
 
-1.  **[x] Eliminate Duplication:** [x]
-    *   [x] Move the `calculateMonthlyPayment` and `generateAmortizationSchedule` functions to a common utility file (e.g., `client/src/lib/utils.ts`) and import them where needed.
-    *   [x] Ensure that the tests are updated to use the consolidated functions.
-2.  **Standardize Overpayment Handling:** [x]
-    *   Review the overpayment logic in both `calculationEngine.ts` and `mortgage-calculator.ts` and identify any inconsistencies.
-    *   Consolidate the overpayment logic into a single, well-tested function.
-3.  **Improve Input Validation:**
-    *   Review the input validation logic in both `calculationEngine.ts` and `mortgage-calculator.ts` and identify any gaps.
-    *   Implement more robust input validation to prevent errors and potential security vulnerabilities.
-4.  **Implement Advanced Features (in `calculationEngine.ts`):**
-    *   Add support for ARMs by modifying the `calculateMonthlyPayment` and `generateAmortizationSchedule` functions to handle changing interest rates over time.
-    *   Add support for property tax and insurance payments by adding new input parameters and modifying the `calculateMonthlyPayment` and `generateAmortizationSchedule` functions to include these costs.
-    *   Add support for different compounding periods by modifying the `calculateMonthlyPayment` function to handle different compounding frequencies.
-    *   Add support for multiple overpayment plans by modifying the `calculateLoanDetails` and `generateScheduleWithRecurringOverpayments` functions to handle multiple `OverpaymentDetails` objects.
-5.  **Improve Test Coverage:**
-    *   Review the existing tests and identify any gaps in coverage.
-    *   Write new tests to cover all edge cases and potential error conditions.
-6.  **Improve Documentation:**
-    *   Add JSDoc comments to all functions and classes to explain their purpose and usage.
-7. **Reduce file size**
-    * Refactor solution - especially large files like engine to be smaller and easier to digest. Max of 400 lines of code
+*   **Rationale:** This step modifies the core calculation logic to handle variable interest rates. It's crucial to ensure that this logic is implemented correctly and that it doesn't break existing functionality.
+*   **Orchestration:**
+    *   Delegate to: `code` mode
+    *   Instructions:
+        *   Implement the changes outlined in `plan-step-2.md` to modify the `calculateLoanDetails` function in `client/src/lib/calculationEngine.ts`.
+        *   Update the function signature to accept a `LoanDetails` object.
+        *   Implement the variable interest rate logic as described in the plan.
+        *   Add logging statements to verify the calculated monthly payments and total interest for different interest rate periods.
+        *   After making these changes, run `npm test` to identify any errors or broken tests.
+        *   Use `attempt_completion` to signal completion, including a summary of changes, any test results, and the logging output.
 
-### Front-End Improvements
+**3. Adjust Existing Test Cases (plan-step-3.md - Part 1):**
 
-1.  **Update Data Types:**
-    *   Modify the `LoanDetails` type to include an array of interest rate periods, where each period has a start month and an interest rate.
-    *   Modify the `LoanDetails` type to include an array of overpayment plans, where each plan has an amount, start month, end month (optional), frequency, and effect.
-2.  **Update Loan Input Form:**
-    *   Modify the `LoanInputForm.tsx` component to allow the user to enter multiple interest rate periods. This could be done using a dynamic form with "Add Period" and "Remove Period" buttons.
-    *   Modify the `LoanInputForm.tsx` component to allow the user to enter multiple overpayment plans. This could be done using a dynamic form with "Add Overpayment" and "Remove Overpayment" buttons.
-3.  **Update Overpayment Section:**
-    *   Remove the `OverpaymentSection.tsx` component, as the overpayment functionality will be integrated into the `LoanInputForm.tsx` component.
-4.  **Update Amortization Schedule:**
-    *   Modify the `AmortizationSchedule.tsx` component to display information about interest rate periods and overpayment plans. This might require adding new columns to the table or using a more complex data visualization.
-5.  **Update Loan Summary:**
-    *   Modify the `LoanSummary.tsx` component to display information about interest rate periods and overpayment plans. This might require adding new sections to the component or using a more complex data visualization.
-6.  **Update Calculator Form:**
-    *   Modify the `client/src/components/mortgage-calculator/calculator-form.tsx` component to use the updated `LoanDetails` type and to handle multiple interest rate periods and overpayment plans.
-7.  **Integrate with Calculation Engine:**
-    *   Modify the front-end components to pass the necessary data to the calculation engine.
-    *   Ensure that the front-end components can properly display the results returned by the calculation engine.
-8.  **Test Thoroughly:**
-    *   Test the front-end components with a variety of mortgage scenarios to ensure that they are working correctly.
-    *   Pay close attention to the user experience and make sure that the front-end is easy to use and understand.
-9.  **Update Documentation:**
-    *   Update the documentation to reflect the changes made to the front-end components.
-    *   Provide clear instructions on how to use the new features.
+*   **Rationale:** Existing tests need to be adapted to the new data structure. This is a critical step to ensure that existing functionality remains intact.
+*   **Orchestration:**
+    *   Delegate to: `code` mode
+    *   Instructions:
+        *   Implement the changes outlined in `plan-step-3.md` (only the "Existing Test Cases" part) to modify the existing test cases in `client/src/lib/comprehensive-tests/basic-validation.test.ts` and `client/src/lib/simple-fixes-test.test.ts`.
+        *   Create `LoanDetails` objects with the appropriate properties in each test case.
+        *   Update the expected values in the test assertions to reflect the new functionality.
+        *   After making these changes, run `npm test` to ensure that the existing test cases still pass.
+        *   Use `attempt_completion` to signal completion, including a summary of changes and any test results.
 
-## Architecture Diagrams
+**4. Create New Test Cases (plan-step-3.md - Part 2):**
 
-### Overall Architecture
+*   **Rationale:** New tests are essential to validate the variable interest rate functionality.
+*   **Orchestration:**
+    *   Delegate to: `code` mode
+    *   Instructions:
+        *   Implement the changes outlined in `plan-step-3.md` (only the "New Test Cases" part) to create a new test file `client/src/lib/comprehensive-tests/variable-rate.test.ts` with the specified test cases.
+        *   Ensure that the new test cases cover all the different scenarios and edge cases for variable interest rates.
+        *   After making these changes, run `npm test` to ensure that the new test cases pass.
+        *   Use `attempt_completion` to signal completion, including a summary of changes and any test results.
 
-```mermaid
-graph TD
-    A[User Interface] --> B{Input Form};
-    B --> C[Calculation Engine];
-    C --> D[Amortization Schedule];
-    C --> E[Loan Summary];
-    B --> F[Data Validation];
-    F --> C;
-    D --> A;
-    E --> A;
-```
+**5. Comprehensive Verification (plan-step-4.md):**
 
-### Front-End Improvement Plan
+*   **Rationale:** This step ensures that all changes are working together correctly and that the engine is functioning as expected.
+*   **Orchestration:**
+    *   Delegate to: `debug` mode
+    *   Instructions:
+        *   Perform the unit testing and manual verification steps outlined in `plan-step-4.md`.
+        *   Analyze any failing test cases and identify the root cause of the failures.
+        *   Provide a detailed report of the verification results, including any identified issues and proposed solutions.
+        *   Use `attempt_completion` to signal completion, including the detailed report.
 
-```mermaid
-graph TD
-    A[Initial Front-End] --> B{Analyze Components};
-    B --> C{Update Data Types};
-    C --> D[Update Loan Input Form];
-    C --> E[Update Amortization Schedule];
-    C --> F[Update Loan Summary];
-    D --> G[Integrate with Calculation Engine];
-    E --> G;
-    F --> G;
-    G --> H[Test Thoroughly];
-    H --> I[Update Documentation];
-    I --> J[Final Front-End];
+**6. Code Submission (plan-step-5.md):**
+
+*   **Rationale:** This is the final step to submit the changes.
+*   **Orchestration:**
+    *   Delegate to: `code` mode
+    *   Instructions:
+        *   Ensure that all test cases pass.
+        *   Ensure that the code is well-formatted and easy to read.
+        *   Ensure that the code is properly documented.
+        *   Submit the changes to the code repository.
+        *   Use `attempt_completion` to signal completion.

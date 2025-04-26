@@ -58,7 +58,7 @@ export function calculateMonthlyPayment(
 // Overloaded signatures for backward compatibility
 export function generateAmortizationSchedule(
   principal: number,
-  annualRate: number,
+  interestRatePeriods: { startMonth: number; interestRate: number; }[],
   termYears: number,
   overpaymentAmount?: number | OverpaymentDetails,
   overpaymentMonth?: number | Date,
@@ -88,18 +88,13 @@ export function generateAmortizationSchedule(
   }
   
   // Proceed with calculation
-  const monthlyRate = annualRate / 100 / 12;
   const originalTotalPayments = termYears * 12;
-  let monthlyPayment = calculateMonthlyPayment(
-    principal,
-    annualRate,
-    termYears,
-  );
   const schedule: PaymentData[] = [];
+  let monthlyPayment = 0;
 
   let remainingPrincipal = principal;
   let paymentNum = 1;
-  let newMonthlyPayment = monthlyPayment;
+  let newMonthlyPayment = 0;
   let totalPayments = originalTotalPayments;
 
   // Set up date calculation if start date is provided
@@ -123,6 +118,21 @@ export function generateAmortizationSchedule(
 
   // Generate schedule until principal is paid off
   while (remainingPrincipal > 0 && paymentNum <= originalTotalPayments) {
+    // Determine the interest rate for the current payment
+    let currentInterestRate = 0;
+    for (const period of interestRatePeriods) {
+      if (paymentNum >= period.startMonth) {
+        currentInterestRate = period.interestRate;
+      }
+    }
+
+    const monthlyRate = currentInterestRate / 100 / 12;
+    let monthlyPayment = calculateMonthlyPayment(
+      principal,
+      currentInterestRate,
+      termYears,
+    );
+
     const interestPayment = remainingPrincipal * monthlyRate;
     let principalPayment = monthlyPayment - interestPayment;
     let payment = monthlyPayment;
@@ -182,7 +192,7 @@ export function generateAmortizationSchedule(
     if (overpaymentPlan && overpaymentPlan.amount > 0 && reduceTermNotPayment) {
       newMonthlyPayment = calculateMonthlyPayment(
         remainingPrincipal,
-        annualRate,
+        currentInterestRate,
         totalPayments / 12,
       );
       monthlyPayment = newMonthlyPayment;

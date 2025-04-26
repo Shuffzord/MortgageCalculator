@@ -23,7 +23,7 @@ describe('Mortgage Overpayment Calculations', () => {
     const expectedInterestSaved = 71500; // Approximate value
     
     // First calculate the standard loan
-    const standardResults = calculateLoanDetails(principal, interestRate, termYears);
+    const standardResults = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     const standardTotalInterest = standardResults.totalInterest;
     
     // Apply overpayment with term reduction
@@ -63,7 +63,7 @@ describe('Mortgage Overpayment Calculations', () => {
     const expectedInterestSaved = 38220; // Approximate value
     
     // First calculate the standard loan
-    const standardResults = calculateLoanDetails(principal, interestRate, termYears);
+    const standardResults = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     const standardTotalInterest = standardResults.totalInterest;
     
     // Apply overpayment with payment reduction
@@ -109,10 +109,10 @@ describe('Mortgage Overpayment Calculations', () => {
     const expectedInterestSaved = 53420; // Approximate value
     
     // Calculate with monthly overpayments
-    const results = calculateLoanDetails(principal, interestRate, termYears, overpaymentPlan);
+    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears, overpaymentPlan);
     
     // Calculate standard loan for comparison
-    const standardResults = calculateLoanDetails(principal, interestRate, termYears);
+    const standardResults = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate the new term is shorter than the original
     expect(results.actualTerm).toBeLessThan(termYears);

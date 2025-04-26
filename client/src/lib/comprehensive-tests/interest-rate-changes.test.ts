@@ -22,20 +22,28 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
     const newMonthlyPayment = 1702.80;
     const expectedTotalInterest = 308548.32;
     
+    // Create LoanDetails object
+    const loanDetails = {
+      principal: principal,
+      loanTerm: termYears,
+      overpaymentPlans: [],
+      startDate: new Date(),
+      name: 'Test Loan',
+      interestRatePeriods: [{ startMonth: 1, interestRate: initialRate }]
+    };
+
     // Calculate using complex scenario function
     const results = await calculateComplexScenario(
-      principal,
-      initialRate,
-      termYears,
-      [], // No overpayments
-      [{ month: changeAtMonth, newRate: newRate }]
+      loanDetails,
+      [{ month: changeAtMonth, newRate: newRate }],
+      [] // No overpayments
     );
-    
+
     // Validate initial monthly payment
     expect(results.monthlyPayment).toBeCloseTo(initialMonthlyPayment, 1);
     
     // Validate payment after rate change (at index changeAtMonth - 1)
-    expect(results.amortizationSchedule[changeAtMonth].monthlyPayment).toBeCloseTo(newMonthlyPayment, 1);
+    expect(results.amortizationSchedule[changeAtMonth - 1].monthlyPayment).toBeCloseTo(newMonthlyPayment, 1);
     
     // Validate total interest paid
     expect(results.totalInterest).toBeCloseTo(expectedTotalInterest, 0);
@@ -69,15 +77,23 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
       { month: 180, newRate: 5.0 },  // 15 years
       { month: 240, newRate: 4.5 }   // 20 years
     ];
-    
+    // Create LoanDetails object
+    const loanDetails = {
+      principal: principal,
+      loanTerm: termYears,
+      overpaymentPlans: [],
+      startDate: new Date(),
+      name: 'Test Loan',
+      interestRatePeriods: [{ startMonth: 1, interestRate: initialRate }]
+    };
+
     // Calculate using complex scenario function
     const results = await calculateComplexScenario(
-      principal,
-      initialRate,
-      termYears,
-      [], // No overpayments
-      rateChanges
+      loanDetails,
+      rateChanges,
+      [] // No overpayments
     );
+
     
     // Validate initial monthly payment
     expect(results.monthlyPayment).toBeCloseTo(expectedPayments[0].payment, 1);
@@ -114,24 +130,30 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
         frequency: 'monthly' as 'monthly' | 'quarterly' | 'annual' | 'one-time'
       }
     ];
-    
+    // Create LoanDetails object
+    const loanDetails = {
+      principal: principal,
+      loanTerm: termYears,
+      overpaymentPlans: [],
+      startDate: new Date(),
+      name: 'Test Loan',
+      interestRatePeriods: [{ startMonth: 1, interestRate: initialRate }]
+    };
+
     // First calculate with just the rate change
     const resultsWithRateChangeOnly = await calculateComplexScenario(
-      principal,
-      initialRate,
-      termYears,
-      [], // No overpayments
-      rateChanges
+      loanDetails,
+      rateChanges,
+      [] // No overpayments
     );
-    
+
     // Then calculate with both rate change and overpayments
     const resultsWithBoth = await calculateComplexScenario(
-      principal,
-      initialRate,
-      termYears,
-      overpayments,
-      rateChanges
+      loanDetails,
+      rateChanges,
+      overpayments
     );
+
     
     // Validate that adding overpayments reduces the term
     expect(resultsWithBoth.actualTerm).toBeLessThan(resultsWithRateChangeOnly.actualTerm);

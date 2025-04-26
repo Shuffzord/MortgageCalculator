@@ -20,7 +20,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedTotalInterest = 354695.47;
     
     // Calculate
-    const results = calculateLoanDetails(principal, interestRate, termYears);
+    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);
@@ -47,7 +47,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedTotalInterest = 4120372.51;
     
     // Calculate
-    const results = calculateLoanDetails(principal, interestRate, termYears);
+    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);
@@ -70,7 +70,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const interestRate = 4.5;
     
     // Calculate
-    const results = calculateLoanDetails(principal, interestRate, termYears);
+    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment is zero
     expect(results.monthlyPayment).toBe(0);
@@ -96,7 +96,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedMonthlyPayment = principal / (termYears * 12);
     
     // Calculate
-    const results = calculateLoanDetails(principal, interestRate, termYears);
+    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment is simply principal divided by number of payments
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 2);
@@ -122,7 +122,7 @@ describe('Mortgage Calculator Edge Cases', () => {
     const expectedMonthlyPayment = 25548.49;
     
     // Calculate
-    const results = calculateLoanDetails(principal, interestRate, termYears);
+    const results = calculateLoanDetails(principal, [{ startMonth: 1, interestRate: interestRate }], termYears);
     
     // Validate monthly payment
     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);

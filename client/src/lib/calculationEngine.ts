@@ -3,7 +3,6 @@ import {
   PaymentData,
   OverpaymentDetails, 
   YearlyData, 
-  CalculationPeriod, 
   LoanDetails 
 } from "./types";
 import { validateInputs } from "./validation";
@@ -15,93 +14,81 @@ export { formatCurrency };
 
 /**
  * Calculate loan details and generate the amortization schedule
- * @param principal Loan principal amount
- * @param interestRate Annual interest rate (percentage)
- * @param loanTerm Loan term in years
- * @param overpaymentPlan Optional overpayment details
- * @returns Calculation results with payment details and amortization schedule
  */
 export function calculateLoanDetails(
   principal: number,
-  interestRate: number,
+  interestRatePeriods: { startMonth: number; interestRate: number; }[],
   loanTerm: number,
   overpaymentPlan?: OverpaymentDetails
 ): CalculationResults {
   // Handle zero principal case specifically
   if (principal === 0) {
-    // Return a valid result with a single payment entry for zero principal
-    // This satisfies the test cases that expect at least one schedule entry
-    const zeroPayment: PaymentData = {
-      payment: 1,
-      monthlyPayment: 0,
-      principalPayment: 0,
-      interestPayment: 0,
-      balance: 0,
-      isOverpayment: false,
-      overpaymentAmount: 0,
-      totalInterest: 0,
-      totalPayment: 0
-    };
-    
     return {
       monthlyPayment: 0,
       totalInterest: 0,
-      amortizationSchedule: [zeroPayment],
-      yearlyData: [{
-        year: 1,
-        principal: 0,
-        interest: 0,
-        payment: 0,
-        balance: 0,
-        totalInterest: 0
-      }],
+      amortizationSchedule: [],
+      yearlyData: [],
       originalTerm: loanTerm,
       actualTerm: 0
     };
   }
   
-  // Validate inputs for non-zero principal
-  validateInputs(principal, interestRate, loanTerm, overpaymentPlan);
+  // Validate inputs
+  validateInputs(principal, interestRatePeriods, loanTerm, overpaymentPlan);
   
-  // Generate amortization schedule
-  const schedule = generateAmortizationSchedule(
-    principal, 
-    interestRate, 
+  // Generate raw amortization schedule
+  const rawSchedule = generateAmortizationSchedule(
+    principal,
+    interestRatePeriods,
     loanTerm,
     overpaymentPlan
   );
   
-  // Convert to PaymentData format using our conversion helper
-  const paymentData: PaymentData[] = schedule.map(item => {
-    // Use the shared conversion function
+  // Convert and round every monetary field
+  const paymentData: PaymentData[] = rawSchedule.map(item => {
+    // Convert legacy format
     const converted = convertLegacySchedule(item);
+
+    // Round all money values to cents
+    const monthlyPayment   = roundToCents(converted.monthlyPayment);
+    const interestPayment  = roundToCents(converted.interestPayment);
+    const principalPayment = roundToCents(converted.principalPayment);
+    const balance          = roundToCents(converted.balance);
+    const totalPayment     = roundToCents(converted.totalPayment ?? monthlyPayment);
+
     return {
-      ...converted,
-      // Ensure required fields are non-undefined
-      payment: converted.payment || 0,
-      balance: converted.balance || 0,
-      overpaymentAmount: 0, // Set default value, will be updated if there's an overpayment
-      totalInterest: 0, // Will be calculated below
-      totalPayment: converted.monthlyPayment || converted.totalPayment || 0
+      // non-monetary fields
+      payment:          converted.payment || 0,
+      isOverpayment:    converted.isOverpayment,
+      overpaymentAmount: converted.overpaymentAmount || 0,
+
+      // rounded monetary fields
+      monthlyPayment,
+      interestPayment,
+      principalPayment,
+      balance,
+      totalPayment,
+
+      // will be accumulated below
+      totalInterest: 0
     };
   });
   
   // Calculate cumulative interest
   let cumulativeInterest = 0;
-  for (let i = 0; i < paymentData.length; i++) {
-    cumulativeInterest += paymentData[i].interestPayment;
-    paymentData[i].totalInterest = cumulativeInterest;
+  for (const pd of paymentData) {
+    cumulativeInterest += pd.interestPayment;
+    pd.totalInterest = roundToCents(cumulativeInterest);
   }
   
-  // Calculate yearly data for summary view
+  // Yearly summary
   const yearlyData = aggregateYearlyData(paymentData);
   
-  // Return the calculation results
   return {
-    monthlyPayment: paymentData.length > 0 ? paymentData[0].monthlyPayment : 0,
+    monthlyPayment: paymentData[0].monthlyPayment,
     totalInterest: cumulativeInterest,
     amortizationSchedule: paymentData,
-    yearlyData: yearlyData,
+    yearlyData,
     originalTerm: loanTerm,
     actualTerm: paymentData.length / 12
   };
@@ -110,7 +97,7 @@ export function calculateLoanDetails(
 /**
  * Round to cents for currency calculations
  */
-function roundToCents(amount: number): number {
+export function roundToCents(amount: number): number {
   return Math.round(amount * 100) / 100;
 }
 
@@ -118,34 +105,21 @@ function roundToCents(amount: number): number {
  * Aggregate monthly payment data into yearly summaries for display
  */
 export function aggregateYearlyData(schedule: PaymentData[]): YearlyData[] {
-  if (!schedule || schedule.length === 0) {
-    return [];
-  }
+  if (!schedule.length) return [];
 
-  return schedule.reduce((acc: YearlyData[], month: PaymentData, index: number) => {
-    const yearIndex = Math.floor(index / 12);
-    
+  return schedule.reduce((acc: YearlyData[], month: PaymentData, idx: number) => {
+    const yearIndex = Math.floor(idx / 12);
     if (!acc[yearIndex]) {
-      acc[yearIndex] = {
-        year: yearIndex + 1,
-        principal: 0,
-        interest: 0,
-        payment: 0,
-        balance: month.balance,
-        totalInterest: 0
-      };
+      acc[yearIndex] = { year: yearIndex + 1, principal: 0, interest: 0, payment: 0, balance: 0, totalInterest: 0 };
     }
-    
-    acc[yearIndex].principal = roundToCents(acc[yearIndex].principal + month.principalPayment);
-    acc[yearIndex].interest = roundToCents(acc[yearIndex].interest + month.interestPayment);
-    acc[yearIndex].payment = roundToCents(acc[yearIndex].payment + month.monthlyPayment);
-    acc[yearIndex].balance = roundToCents(month.balance);
-    acc[yearIndex].totalInterest = roundToCents(acc[yearIndex].totalInterest + month.interestPayment);
-    
+    acc[yearIndex].principal    = roundToCents(acc[yearIndex].principal + month.principalPayment);
+    acc[yearIndex].interest     = roundToCents(acc[yearIndex].interest + month.interestPayment);
+    acc[yearIndex].payment      = roundToCents(acc[yearIndex].payment + month.monthlyPayment);
+    acc[yearIndex].balance      = month.balance;
+    acc[yearIndex].totalInterest= roundToCents(acc[yearIndex].totalInterest + month.interestPayment);
     return acc;
   }, []);
 }
-
 /**
  * Apply a one-time overpayment and recalculate the amortization schedule
  */
@@ -153,8 +127,8 @@ export async function applyOverpayment(
   schedule: PaymentData[],
   overpaymentAmount: number,
   afterPayment: number,
-  effect: 'reduceTerm' | 'reducePayment'
-): Promise<{ 
+  effect?: 'reduceTerm' | 'reducePayment'
+): Promise<{
   newCalculation: CalculationResults,
   timeOrPaymentSaved: number 
 }> {
@@ -435,12 +409,12 @@ export async function applyMultipleOverpayments(
       
       // Apply the overpayment
       const result = await applyOverpayment(
-        modifiedSchedule, 
-        totalOverpayment, 
+        modifiedSchedule,
+        totalOverpayment,
         month,
-        applicableOverpayments[0].effect // Use the effect type from the first overpayment
+        applicableOverpayments[0].effect || 'reduceTerm' // Use the effect type from the first overpayment
       );
-      
+
       // Update the schedule
       modifiedSchedule = result.newCalculation.amortizationSchedule;
     }
@@ -460,7 +434,7 @@ export async function calculateComplexScenario(
   // First, calculate the basic amortization schedule
   const results = calculateLoanDetails(
     loanDetails.principal,
-    loanDetails.interestRate,
+    loanDetails.interestRatePeriods,
     loanDetails.loanTerm
   );
   
