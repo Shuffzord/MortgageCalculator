@@ -1,6 +1,8 @@
-import { formatTimePeriod } from "@/lib/utils";
+import { formatTimePeriod, getCurrencySymbol } from "@/lib/utils";
 import { formatCurrency } from "@/lib/utils";
-import { CalculationResults, LoanDetails } from "@/lib/types";
+import { CalculationResults, LoanDetails, InterestRatePeriod } from "@/lib/types";
+import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 
 interface LoanSummaryProps {
   calculationResults: CalculationResults | null;
@@ -13,11 +15,13 @@ export default function LoanSummary({
   overpaymentResults,
   loanDetails
 }: LoanSummaryProps) {
+  const { t } = useTranslation();
+  
   if (!calculationResults) {
     return (
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Loan Summary</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('summary.title')}</h2>
           <p>Please calculate loan details first.</p>
         </div>
       </div>
@@ -27,6 +31,33 @@ export default function LoanSummary({
   const interestSaved = overpaymentResults 
     ? calculationResults.totalInterest - overpaymentResults.totalInterest 
     : 0;
+    
+  // Format a date to show month and year
+  const formatDate = (date: Date, monthsToAdd: number = 0): string => {
+    const newDate = new Date(date);
+    newDate.setMonth(newDate.getMonth() + monthsToAdd);
+    return format(newDate, 'MMM yyyy');
+  }
+  
+  // Get month range text for interest rate periods
+  const getInterestPeriodMonthRange = (period: InterestRatePeriod, index: number): string => {
+    if (!loanDetails.startDate) return '';
+    
+    const startMonth = period.startMonth;
+    const startDate = new Date(loanDetails.startDate);
+    startDate.setMonth(startDate.getMonth() + startMonth);
+    
+    // If this is the last period or the only period
+    const nextPeriod = loanDetails.interestRatePeriods[index + 1];
+    if (!nextPeriod) {
+      return `${formatDate(startDate)} - ${formatDate(loanDetails.startDate, loanDetails.loanTerm * 12)}`;
+    }
+    
+    // If there's a next period
+    const endDate = new Date(loanDetails.startDate);
+    endDate.setMonth(endDate.getMonth() + nextPeriod.startMonth - 1);
+    return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+  };
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
