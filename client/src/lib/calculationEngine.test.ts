@@ -7,8 +7,8 @@ import {
   applyOverpayment
 } from './calculationEngine';
 import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
-import { MonthlyData } from './types';
-import { Schedule } from './mortgage-calculator';
+import { MonthlyData, PaymentData } from './types';
+import { Schedule, convertLegacySchedule } from './mortgage-calculator';
 
 // Helper function to convert Schedule to PaymentData/MonthlyData
 function convertScheduleToMonthlyData(schedule: Schedule[]): MonthlyData[] {

@@ -39,37 +39,38 @@ export function calculateLoanDetails(
     overpaymentPlan
   );
   
-  // Convert to MonthlyData format for compatibility
-  const monthlyData: MonthlyData[] = schedule.map(item => ({
-    payment: item.paymentNum,
-    monthlyPayment: item.payment,
-    principalPayment: item.principalPayment,
-    interestPayment: item.interestPayment,
-    balance: item.remainingPrincipal,
-    isOverpayment: item.isOverpayment || false,
-    overpaymentAmount: 0, // Set default value, will be updated if there's an overpayment
-    totalInterest: 0, // Will be calculated below
-    totalPayment: item.payment,
-    paymentDate: item.paymentDate
-  }));
+  // Convert to PaymentData format using our conversion helper
+  const paymentData: PaymentData[] = schedule.map(item => {
+    // Use the shared conversion function
+    const converted = convertLegacySchedule(item);
+    return {
+      ...converted,
+      // Ensure required fields are non-undefined
+      payment: converted.payment || 0,
+      balance: converted.balance || 0,
+      overpaymentAmount: 0, // Set default value, will be updated if there's an overpayment
+      totalInterest: 0, // Will be calculated below
+      totalPayment: converted.monthlyPayment || converted.totalPayment || 0
+    };
+  });
   
   // Calculate cumulative interest
   let cumulativeInterest = 0;
-  for (let i = 0; i < monthlyData.length; i++) {
-    cumulativeInterest += monthlyData[i].interestPayment;
-    monthlyData[i].totalInterest = cumulativeInterest;
+  for (let i = 0; i < paymentData.length; i++) {
+    cumulativeInterest += paymentData[i].interestPayment;
+    paymentData[i].totalInterest = cumulativeInterest;
   }
   
   // Calculate yearly data for summary view
-  const yearlyData = aggregateYearlyData(monthlyData);
+  const yearlyData = aggregateYearlyData(paymentData);
   
   return {
-    monthlyPayment: schedule[0].payment,
+    monthlyPayment: paymentData[0].monthlyPayment,
     totalInterest: cumulativeInterest,
-    amortizationSchedule: monthlyData,
+    amortizationSchedule: paymentData,
     yearlyData: yearlyData,
     originalTerm: loanTerm,
-    actualTerm: schedule.length / 12
+    actualTerm: paymentData.length / 12
   };
 }
 
