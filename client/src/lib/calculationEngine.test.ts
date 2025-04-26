@@ -12,18 +12,27 @@ import { convertLegacySchedule } from './mortgage-calculator';
 
 // Helper function to ensure all PaymentData fields are properly set
 function convertScheduleToPaymentData(schedule: PaymentData[]): PaymentData[] {
+  // Calculate running totals once to optimize performance
+  let runningTotalInterest = 0;
+  let runningTotalPayment = 0;
+  
   return schedule.map(item => {
-    // Use the convertLegacySchedule function from mortgage-calculator.ts
-    const converted = convertLegacySchedule(item);
+    // Calculate running totals before converting
+    runningTotalInterest += item.interestPayment;
+    runningTotalPayment += item.monthlyPayment;
     
-    // Calculate totalInterest if needed (accumulate it in a loop after conversion)
+    // Create properly structured PaymentData object
     return {
-      ...converted,
-      // Ensure non-optional fields have proper values
-      payment: converted.payment || 0,
-      balance: converted.balance || 0,
-      totalInterest: converted.totalInterest || 0,
-      totalPayment: converted.totalPayment || 0
+      payment: item.payment || 0,
+      monthlyPayment: item.monthlyPayment || 0,
+      principalPayment: item.principalPayment || 0,
+      interestPayment: item.interestPayment || 0,
+      balance: item.balance || 0,
+      isOverpayment: item.isOverpayment || false,
+      overpaymentAmount: item.overpaymentAmount || 0,
+      totalInterest: runningTotalInterest,
+      totalPayment: runningTotalPayment,
+      paymentDate: item.paymentDate
     };
   });
 }
