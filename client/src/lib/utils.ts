@@ -24,68 +24,15 @@ export function calculateMonthlyPayment(
   const monthlyRate = annualRate / 100 / 12;
   const totalPayments = termYears * 12;
 
-  // If interest rate is 0 or near-zero (less than 0.2%), use simple division
+  // If interest rate is 0 or near-zero, use simple division
   // This prevents floating point precision issues with very small rates
-  if (monthlyRate === 0 || annualRate < 0.2) {
+  if (monthlyRate === 0 || annualRate < 0.01) {
     return Math.round((principal / totalPayments) * 100) / 100;
-  }
-
-  // Check for specific test cases from test files
-  // This ensures our calculator exactly matches the expected test values
-  
-  // E1: Extra-Long Term Mortgage (40 years) - $300,000, 5.25%, 40 years
-  if (Math.abs(principal - 300000) < 10 && Math.abs(annualRate - 5.25) < 0.01 && Math.abs(termYears - 40) < 0.1) {
-    return 1363.95;
-  }
-  
-  // E1: Edge case at 4.5% rate
-  if (Math.abs(principal - 300000) < 10 && Math.abs(annualRate - 4.5) < 0.01 && Math.abs(termYears - 40) < 0.1) {
-    return 1363.95;
-  }
-  
-  // E2: Very Large Principal Amount - $5,000,000, 6%, 30 years
-  if (Math.abs(principal - 5000000) < 100 && Math.abs(annualRate - 6) < 0.01 && Math.abs(termYears - 30) < 0.1) {
-    return 25334.37;
-  }
-  
-  // E2: Very Large Principal at 4.5%
-  if (Math.abs(principal - 5000000) < 100 && Math.abs(annualRate - 4.5) < 0.01 && Math.abs(termYears - 30) < 0.1) {
-    return 25334.37;
-  }
-  
-  // Extremely Short Term (1 year) - $300,000, 6%, 1 year
-  if (Math.abs(principal - 300000) < 10 && Math.abs(annualRate - 6) < 0.01 && Math.abs(termYears - 1) < 0.1) {
-    return 25548.49;
-  }
-  
-  // Extremely Short Term (1 year) at 4.5%
-  if (Math.abs(principal - 300000) < 10 && Math.abs(annualRate - 4.5) < 0.01 && Math.abs(termYears - 1) < 0.1) {
-    return 25548.49;
-  }
-  
-  // A1: Amortization Schedule Validation for 15-year 3.5% Loan
-  if (Math.abs(principal - 300000) < 10 && Math.abs(annualRate - 3.5) < 0.01 && Math.abs(termYears - 15) < 0.1) {
-    return 1429.77;
-  }
-  
-  // A3: Round-Off Error Accumulation Test - $175,000, 6.8%, 15 years
-  if (Math.abs(principal - 175000) < 10 && Math.abs(annualRate - 6.8) < 0.01 && Math.abs(termYears - 15) < 0.1) {
-    return 1654.55;
   }
   
   // Standard mortgage formula
   const x = Math.pow(1 + monthlyRate, totalPayments);
   let payment = (principal * monthlyRate * x) / (x - 1);
-  
-  // Standard test case: $300,000, 4.5%, 30 years
-  if (Math.abs(principal - 300000) < 10 && Math.abs(annualRate - 4.5) < 0.01 && Math.abs(termYears - 30) < 0.1) {
-    payment = 1520.06;
-  }
-  
-  // A1: Amortization Schedule Validation for 15-year 3.5% Loan
-  if (Math.abs(principal - 300000) < 10 && Math.abs(annualRate - 3.5) < 0.01 && Math.abs(termYears - 15) < 0.1) {
-    payment = 1429.77;
-  }
   
   // Round to 2 decimal places for consistency with financial calculations
   // Use Math.round(payment * 100) / 100 for standard rounding
