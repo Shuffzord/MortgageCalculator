@@ -26,8 +26,14 @@
     "interestRatePeriods": "Interest Rate Periods",
     "interestRatePeriodsTooltip": "Define different interest rates for specific periods of your loan.",
     "startMonth": "Start Month",
+    "startYear": "Start Year",
     "remove": "Remove",
-    "add": "Add Period"
+    "add": "Add Period",
+    "loanStartDate": "Loan Start Date",
+    "loanStartDateTooltip": "The date when your mortgage begins.",
+    "pickDate": "Pick a date",
+    "month": "Month",
+    "year": "Year"
   },
   "overpayment": {
     "title": "Overpayment",

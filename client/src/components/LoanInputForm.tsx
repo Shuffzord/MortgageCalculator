@@ -1,21 +1,26 @@
 import { useState } from "react";
-import { LoanDetails } from "@/lib/types";
+import { LoanDetails, InterestRatePeriod } from "@/lib/types";
 import { 
   Form, 
   FormField, 
   FormItem, 
   FormLabel, 
-  FormControl 
+  FormControl,
+  FormDescription
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import CurrencySelector, { getCurrencySymbol } from "@/components/ui/currency-selector";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const loanFormSchema = z.object({
   principal: z.coerce.number()
@@ -67,12 +72,15 @@ export default function LoanInputForm({
     },
   });
 
+  const [date, setDate] = useState<Date>(loanDetails.startDate || new Date());
+
   const onSubmit = (values: LoanFormValues) => {
     setLoanDetails({
       ...loanDetails,
       principal: values.principal,
       interestRatePeriods: values.interestRatePeriods,
       loanTerm: values.loanTerm,
+      startDate: date,
       currency: selectedCurrency
     });
     onCalculate();
@@ -167,6 +175,46 @@ export default function LoanInputForm({
             )}
           />
 
+          <FormItem className="flex flex-col">
+            <FormLabel className="flex items-center">
+              {t('form.loanStartDate')}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p className="text-xs">{t('form.loanStartDateTooltip')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </FormLabel>
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full pl-3 text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    {date ? format(date, "PPP") : t('form.pickDate')}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate) => setDate(newDate || new Date())}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </FormItem>
+
           <FormField
             control={form.control}
             name="interestRatePeriods"
@@ -186,49 +234,88 @@ export default function LoanInputForm({
                   </TooltipProvider>
                 </FormLabel>
                 <FormControl>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {Array.isArray(field.value) && field.value.map((period: InterestRatePeriodFormValues, index: number) => (
-                      <div key={index} className="flex space-x-2">
-                        <Input
-                          type="number"
-                          min="0"
-                          placeholder={t('form.startMonth')}
-                          value={period.startMonth}
-                          onChange={(e) => {
-                            const newInterestRatePeriods = [...field.value];
-                            newInterestRatePeriods[index].startMonth = Number(e.target.value);
-                            field.onChange(newInterestRatePeriods);
-                          }}
-                          className="w-24"
-                        />
-                        <Input
-                          type="number"
-                          min="0.1"
-                          max="20"
-                          step="0.1"
-                          placeholder={t('form.interestRate')}
-                          value={period.interestRate}
-                          onChange={(e) => {
-                            const newInterestRatePeriods = [...field.value];
-                            newInterestRatePeriods[index].interestRate = Number(e.target.value);
-                            field.onChange(newInterestRatePeriods);
-                          }}
-                          className="w-24"
-                        />
-                        {field.value.length > 1 && (
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => {
-                              const newInterestRatePeriods = [...field.value];
-                              newInterestRatePeriods.splice(index, 1);
-                              field.onChange(newInterestRatePeriods);
-                            }}
-                          >
-                            {t('form.remove')}
-                          </Button>
-                        )}
+                      <div key={index} className="space-y-2 p-3 border border-gray-200 rounded-md">
+                        <FormLabel className="text-sm">{index === 0 ? t('form.interestRate') : `${t('form.interestRate')} ${index + 1}`}</FormLabel>
+                        <div className="flex space-x-3">
+                          <div className="space-y-2">
+                            <FormLabel className="text-xs text-gray-500">{t('form.startYear')}</FormLabel>
+                            <Input
+                              type="number"
+                              min="0"
+                              placeholder={t('form.year')}
+                              value={Math.floor(period.startMonth / 12)}
+                              onChange={(e) => {
+                                const years = Number(e.target.value);
+                                const months = period.startMonth % 12;
+                                const newStartMonth = (years * 12) + months;
+                                
+                                const newInterestRatePeriods = [...field.value];
+                                newInterestRatePeriods[index].startMonth = newStartMonth;
+                                field.onChange(newInterestRatePeriods);
+                              }}
+                              className="w-24"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <FormLabel className="text-xs text-gray-500">{t('form.month')}</FormLabel>
+                            <Input
+                              type="number"
+                              min="0"
+                              max="11"
+                              placeholder={t('form.month')}
+                              value={period.startMonth % 12}
+                              onChange={(e) => {
+                                const years = Math.floor(period.startMonth / 12);
+                                const months = Number(e.target.value) % 12;
+                                const newStartMonth = (years * 12) + months;
+                                
+                                const newInterestRatePeriods = [...field.value];
+                                newInterestRatePeriods[index].startMonth = newStartMonth;
+                                field.onChange(newInterestRatePeriods);
+                              }}
+                              className="w-24"
+                            />
+                          </div>
+                          <div className="space-y-2 flex-1">
+                            <FormLabel className="text-xs text-gray-500">{t('form.interestRate')}</FormLabel>
+                            <div className="flex items-center">
+                              <Input
+                                type="number"
+                                min="0.1"
+                                max="20"
+                                step="0.1"
+                                placeholder={t('form.interestRate')}
+                                value={period.interestRate}
+                                onChange={(e) => {
+                                  const newInterestRatePeriods = [...field.value];
+                                  newInterestRatePeriods[index].interestRate = Number(e.target.value);
+                                  field.onChange(newInterestRatePeriods);
+                                }}
+                                className="flex-1"
+                              />
+                              <span className="ml-2">%</span>
+                            </div>
+                          </div>
+                          
+                          {field.value.length > 1 && (
+                            <div className="flex items-end">
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  const newInterestRatePeriods = [...field.value];
+                                  newInterestRatePeriods.splice(index, 1);
+                                  field.onChange(newInterestRatePeriods);
+                                }}
+                              >
+                                {t('form.remove')}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                     <Button
@@ -237,9 +324,11 @@ export default function LoanInputForm({
                       size="sm"
                       onClick={() => {
                         const currentValue = Array.isArray(field.value) ? field.value : [];
-                        field.onChange([...currentValue, { startMonth: 0, interestRate: 5 }]);
+                        const newStartMonth = currentValue.length > 0 ? 
+                          Math.max(...currentValue.map(p => p.startMonth)) + 12 : 0;
+                        field.onChange([...currentValue, { startMonth: newStartMonth, interestRate: 5 }]);
                       }}
-                      className="mt-2"
+                      className="w-full"
                     >
                       {t('form.add')}
                     </Button>
