@@ -1,5 +1,5 @@
 import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
-import { OverpaymentDetails } from './types';
+import { OverpaymentDetails, MonthlyData } from './types';
 
 describe('Mortgage Calculator', () => {
   describe('calculateMonthlyPayment', () => {

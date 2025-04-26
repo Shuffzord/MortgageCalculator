@@ -2,8 +2,6 @@
  * Utility functions for mortgage calculations
  */
 
-import { Schedule } from "./types";
-
 /**
  * Calculates the monthly payment amount for a loan
  *
@@ -21,7 +19,7 @@ import { Schedule } from "./types";
 export function calculateMonthlyPayment(
   principal: number,
   annualRate: number,
-  termYears: number
+  termYears: number,
 ): number {
   const monthlyRate = annualRate / 100 / 12;
   const totalPayments = termYears * 12;
@@ -33,7 +31,7 @@ export function calculateMonthlyPayment(
 
   // Standard mortgage formula
   const x = Math.pow(1 + monthlyRate, totalPayments);
-  return principal * monthlyRate * x / (x - 1);
+  return (principal * monthlyRate * x) / (x - 1);
 }
 
 /**
@@ -56,11 +54,15 @@ export function generateAmortizationSchedule(
   termYears: number,
   overpaymentPlan?: any, // OverpaymentDetails,
   startDate?: Date,
-  reduceTermNotPayment: boolean = false
+  reduceTermNotPayment: boolean = false,
 ): Schedule[] {
   const monthlyRate = annualRate / 100 / 12;
   const originalTotalPayments = termYears * 12;
-  let monthlyPayment = calculateMonthlyPayment(principal, annualRate, termYears);
+  let monthlyPayment = calculateMonthlyPayment(
+    principal,
+    annualRate,
+    termYears,
+  );
   const schedule: Schedule[] = [];
 
   let remainingPrincipal = principal;
@@ -77,9 +79,14 @@ export function generateAmortizationSchedule(
   // Pre-calculate frequency multiplier
   let frequencyMultiplier = 0;
   if (overpaymentPlan && overpaymentPlan.frequency) {
-    frequencyMultiplier = overpaymentPlan.frequency === 'monthly' ? 1 :
-      overpaymentPlan.frequency === 'quarterly' ? 3 :
-      overpaymentPlan.frequency === 'annual' ? 12 : 0;
+    frequencyMultiplier =
+      overpaymentPlan.frequency === "monthly"
+        ? 1
+        : overpaymentPlan.frequency === "quarterly"
+          ? 3
+          : overpaymentPlan.frequency === "annual"
+            ? 12
+            : 0;
   }
 
   // Generate schedule until principal is paid off
@@ -98,9 +105,13 @@ export function generateAmortizationSchedule(
     }
 
     // Apply overpayment
-    if (overpaymentPlan && paymentNum >= overpaymentPlan.startMonth &&
+    if (
+      overpaymentPlan &&
+      paymentNum >= overpaymentPlan.startMonth &&
       (!overpaymentPlan.endMonth || paymentNum <= overpaymentPlan.endMonth) &&
-      (overpaymentPlan.frequency === 'monthly' || (paymentNum - overpaymentPlan.startMonth) % frequencyMultiplier === 0)) {
+      (overpaymentPlan.frequency === "monthly" ||
+        (paymentNum - overpaymentPlan.startMonth) % frequencyMultiplier === 0)
+    ) {
       overpaymentAmount = overpaymentPlan.amount;
       principalPayment += overpaymentAmount;
       payment += overpaymentAmount;
@@ -121,21 +132,26 @@ export function generateAmortizationSchedule(
       interestPayment,
       remainingPrincipal,
       isOverpayment: overpaymentAmount > 0,
-      paymentDate
+      paymentDate,
     });
 
     paymentNum++;
 
     // If reducing payment not term, recalculate monthly payment
     if (overpaymentPlan && overpaymentPlan.amount > 0 && reduceTermNotPayment) {
-      newMonthlyPayment = calculateMonthlyPayment(remainingPrincipal, annualRate, totalPayments / 12);
+      newMonthlyPayment = calculateMonthlyPayment(
+        remainingPrincipal,
+        annualRate,
+        totalPayments / 12,
+      );
       monthlyPayment = newMonthlyPayment;
     }
 
     totalPayments--;
 
     // Break if we've reached a reasonable limit to prevent infinite loops
-    if (paymentNum > 600) { // 50 years maximum
+    if (paymentNum > 600) {
+      // 50 years maximum
       break;
     }
 
@@ -153,12 +169,16 @@ export function generateAmortizationSchedule(
  * @param value Number to format
  * @returns Formatted currency string
  */
-export function formatCurrency(value: number, locale: string = 'en-US', currency: string = 'USD'): string {
+export function formatCurrency(
+  value: number,
+  locale: string = "en-US",
+  currency: string = "USD",
+): string {
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency: currency,
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(value);
 }
 
@@ -186,7 +206,8 @@ export function formatTimePeriod(months: number): string {
 
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Schedule } from "./mortgage-calculator";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
