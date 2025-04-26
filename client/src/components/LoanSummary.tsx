@@ -63,25 +63,25 @@ export default function LoanSummary({
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Loan Summary</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('summary.title')}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-500">Monthly Payment</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('summary.monthlyPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
               {formatCurrency(calculationResults.monthlyPayment)}
             </p>
           </div>
           
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-500">Total Interest</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('summary.totalInterest')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
               {formatCurrency(calculationResults.totalInterest)}
             </p>
           </div>
           
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-500">Total Cost</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('summary.totalPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
               {formatCurrency(loanDetails.principal + calculationResults.totalInterest)}
             </p>
@@ -95,10 +95,10 @@ export default function LoanSummary({
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-blue-50">
                   <tr>
-                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Range</th>
-                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Rate</th>
-                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Payment</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('summary.period')}</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('schedule.dateRange', 'Date Range')}</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('summary.interestRate')}</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('summary.monthlyPayment')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">

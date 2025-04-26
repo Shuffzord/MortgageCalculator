@@ -80,6 +80,7 @@
     "principal": "Principal",
     "interest": "Interés",
     "balance": "Saldo",
+    "dateRange": "Rango de Fechas",
     "noData": "Calcule un préstamo para ver el programa de amortización"
   },
   "load": {

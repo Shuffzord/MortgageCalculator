@@ -81,6 +81,7 @@
     "principal": "Principal",
     "interest": "Interest",
     "balance": "Balance",
+    "dateRange": "Date Range",
     "noData": "Calculate a loan to see the amortization schedule"
   },
   "load": {

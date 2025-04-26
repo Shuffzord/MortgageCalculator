@@ -32,12 +32,24 @@
   "overpayment": {
     "title": "Nadpłata",
     "amount": "Kwota Nadpłaty",
-    "amountTooltip": "Dodatkowa jednorazowa płatność na poczet kapitału kredytu.",
+    "amountTooltip": "Dodatkowa płatność na poczet kapitału kredytu.",
     "afterPayment": "Po Płatności Numer",
+    "endPayment": "Zakończ Po Płatności",
     "effect": "Efekt",
     "reduceTerm": "Skróć Okres",
     "reducePayment": "Zmniejsz Ratę",
-    "apply": "Zastosuj Nadpłatę"
+    "apply": "Zastosuj Nadpłatę",
+    "frequency": "Częstotliwość",
+    "oneTime": "Jednorazowo",
+    "monthly": "Miesięcznie",
+    "quarterly": "Kwartalnie",
+    "annual": "Rocznie",
+    "add": "Dodaj Nadpłatę",
+    "results": "Wyniki z Nadpłatą",
+    "newMonthlyPayment": "Nowa Rata Miesięczna",
+    "interestSaved": "Zaoszczędzone Odsetki",
+    "timeSaved": "Zaoszczędzony Czas",
+    "paymentReduced": "Zmniejszona Rata"
   },
   "summary": {
     "title": "Podsumowanie Kredytu",
@@ -68,6 +80,7 @@
     "principal": "Kapitał",
     "interest": "Odsetki",
     "balance": "Pozostało",
+    "dateRange": "Zakres Dat",
     "noData": "Oblicz kredyt, aby zobaczyć harmonogram amortyzacji"
   },
   "load": {
