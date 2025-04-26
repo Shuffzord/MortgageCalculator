@@ -67,8 +67,41 @@ function testBasicLoanCalculation() {
   console.log(`Total interest calculation success: ${interestSuccess ? 'YES' : 'NO'}`);
 }
 
+// Test for schedule length and zero principal issues
+function testFixedIssues() {
+  console.log('\nTesting fixed issues...');
+  
+  // Test schedule length for 30-year loan (should be exactly 360 payments)
+  const results30Year = calculateLoanDetails(300000, 4.5, 30);
+  console.log(`30-year loan schedule length: ${results30Year.amortizationSchedule.length} (expected: 360)`);
+  console.log(`Success: ${results30Year.amortizationSchedule.length === 360 ? 'YES' : 'NO'}`);
+  
+  // Test schedule length for 5-year loan (should be exactly 60 payments)
+  const results5Year = calculateLoanDetails(50000, 12, 5);
+  console.log(`5-year loan schedule length: ${results5Year.amortizationSchedule.length} (expected: 60)`);
+  console.log(`Success: ${results5Year.amortizationSchedule.length === 60 ? 'YES' : 'NO'}`);
+  
+  // Test zero principal case
+  const resultsZeroPrincipal = calculateLoanDetails(0, 4.5, 30);
+  console.log(`Zero principal monthly payment: $${resultsZeroPrincipal.monthlyPayment.toFixed(2)} (expected: $0.00)`);
+  console.log(`Zero principal total interest: $${resultsZeroPrincipal.totalInterest.toFixed(2)} (expected: $0.00)`);
+  console.log(`Zero principal schedule length: ${resultsZeroPrincipal.amortizationSchedule.length} (expected: 0)`);
+  console.log(`Success: ${resultsZeroPrincipal.monthlyPayment === 0 && resultsZeroPrincipal.totalInterest === 0 ? 'YES' : 'NO'}`);
+  
+  // Test near-zero interest rate
+  const principal = 300000;
+  const termYears = 30;
+  const interestRate = 0.1;
+  const expectedMonthlyPayment = principal / (termYears * 12);
+  
+  const resultsNearZeroRate = calculateLoanDetails(principal, interestRate, termYears);
+  console.log(`Near-zero rate (${interestRate}%) monthly payment: $${resultsNearZeroRate.monthlyPayment.toFixed(2)} (expected: $${expectedMonthlyPayment.toFixed(2)})`);
+  console.log(`Success: ${Math.abs(resultsNearZeroRate.monthlyPayment - expectedMonthlyPayment) < 5 ? 'YES' : 'NO'}`);
+}
+
 // Run tests
 console.log('=== MORTGAGE CALCULATOR DIRECT TESTS ===');
 testPaymentCalculation();
 testBasicLoanCalculation();
+testFixedIssues();
 console.log('=== TESTS COMPLETE ===');

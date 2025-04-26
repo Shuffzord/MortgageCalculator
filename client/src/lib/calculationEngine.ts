@@ -27,7 +27,20 @@ export function calculateLoanDetails(
   loanTerm: number,
   overpaymentPlan?: OverpaymentDetails
 ): CalculationResults {
-  // Validate inputs
+  // Handle zero principal case specifically
+  if (principal === 0) {
+    // Return a valid but empty result for zero principal
+    return {
+      monthlyPayment: 0,
+      totalInterest: 0,
+      amortizationSchedule: [],
+      yearlyData: [],
+      originalTerm: loanTerm,
+      actualTerm: 0
+    };
+  }
+  
+  // Validate inputs for non-zero principal
   validateInputs(principal, interestRate, loanTerm, overpaymentPlan);
   
   // Generate amortization schedule
@@ -64,7 +77,7 @@ export function calculateLoanDetails(
   const yearlyData = aggregateYearlyData(paymentData);
   
   return {
-    monthlyPayment: paymentData[0].monthlyPayment,
+    monthlyPayment: paymentData.length > 0 ? paymentData[0].monthlyPayment : 0,
     totalInterest: cumulativeInterest,
     amortizationSchedule: paymentData,
     yearlyData: yearlyData,

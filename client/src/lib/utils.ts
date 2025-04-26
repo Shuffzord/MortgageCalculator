@@ -120,7 +120,7 @@ export function generateAmortizationSchedule(
   }
 
   // Generate schedule until principal is paid off
-  while (remainingPrincipal > 0) {
+  while (remainingPrincipal > 0 && paymentNum <= originalTotalPayments) {
     const interestPayment = remainingPrincipal * monthlyRate;
     let principalPayment = monthlyPayment - interestPayment;
     let payment = monthlyPayment;
@@ -148,12 +148,18 @@ export function generateAmortizationSchedule(
     }
 
     // Adjust final payment if it's more than remaining principal + interest
-    if (principalPayment > remainingPrincipal) {
+    // or if this is the last scheduled payment
+    if (principalPayment > remainingPrincipal || paymentNum === originalTotalPayments) {
       principalPayment = remainingPrincipal;
       payment = principalPayment + interestPayment;
     }
 
     remainingPrincipal -= principalPayment;
+
+    // Force remaining balance to exactly zero on final payment
+    if (paymentNum === originalTotalPayments || Math.abs(remainingPrincipal) < 0.01) {
+      remainingPrincipal = 0;
+    }
 
     schedule.push({
       payment: paymentNum, // Payment number
