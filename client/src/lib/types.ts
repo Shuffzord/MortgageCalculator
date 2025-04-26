@@ -68,7 +68,7 @@ export interface YearlyData {
 export interface CalculationResults {
   monthlyPayment: number;
   totalInterest: number;
-  amortizationSchedule: MonthlyData[];
+  amortizationSchedule: PaymentData[];
   yearlyData: YearlyData[];
   originalTerm: number;
   actualTerm: number;

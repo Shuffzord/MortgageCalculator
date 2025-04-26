@@ -94,12 +94,12 @@ function roundToCents(amount: number): number {
 /**
  * Aggregate monthly payment data into yearly summaries for display
  */
-export function aggregateYearlyData(schedule: MonthlyData[]): YearlyData[] {
+export function aggregateYearlyData(schedule: PaymentData[]): YearlyData[] {
   if (!schedule || schedule.length === 0) {
     return [];
   }
 
-  return schedule.reduce((acc: YearlyData[], month: MonthlyData, index: number) => {
+  return schedule.reduce((acc: YearlyData[], month: PaymentData, index: number) => {
     const yearIndex = Math.floor(index / 12);
     
     if (!acc[yearIndex]) {
@@ -128,7 +128,7 @@ export function aggregateYearlyData(schedule: MonthlyData[]): YearlyData[] {
  * Apply a one-time overpayment and recalculate the amortization schedule
  */
 export async function applyOverpayment(
-  schedule: MonthlyData[],
+  schedule: PaymentData[],
   overpaymentAmount: number,
   afterPayment: number,
   effect: 'reduceTerm' | 'reducePayment'
@@ -282,11 +282,11 @@ export async function applyOverpayment(
  * @returns A new amortization schedule with the rate change applied
  */
 export async function applyRateChange(
-    originalSchedule: MonthlyData[],
+    originalSchedule: PaymentData[],
     changeAtMonth: number,
     newRate: number,
     remainingTerm?: number
-  ): Promise<MonthlyData[]> {
+  ): Promise<PaymentData[]> {
     if (changeAtMonth <= 0 || changeAtMonth >= originalSchedule.length) {
       throw new Error('Invalid month for rate change');
     }
@@ -340,9 +340,9 @@ export async function applyRateChange(
    * @returns A new amortization schedule with all overpayments applied
    */
   export async function applyMultipleOverpayments(
-    schedule: MonthlyData[],
+    schedule: PaymentData[],
     overpayments: OverpaymentDetails[]
-  ): Promise<MonthlyData[]> {
+  ): Promise<PaymentData[]> {
     let modifiedSchedule = [...schedule];
     
     // Process each month
@@ -445,21 +445,22 @@ export async function applyRateChange(
     let initialSchedule = generateAmortizationSchedule(principal, interestRate, loanTerm);
     
     // Apply rate changes
-    // Convert initialSchedule to MonthlyData[]
-    const initialMonthlyData: MonthlyData[] = initialSchedule.map(item => ({
-      payment: item.paymentNum,
-      monthlyPayment: item.payment,
-      principalPayment: item.principalPayment,
-      interestPayment: item.interestPayment,
-      balance: item.remainingPrincipal,
-      isOverpayment: item.isOverpayment || false,
-      overpaymentAmount: 0,
-      totalInterest: 0,
-      totalPayment: item.payment,
-      paymentDate: item.paymentDate
-    }));
+    // Convert initialSchedule to PaymentData using our unified approach
+    const initialPaymentData: PaymentData[] = initialSchedule.map(item => {
+      // Use the shared conversion function
+      const converted = convertLegacySchedule(item);
+      return {
+        ...converted,
+        // Ensure required fields are non-undefined
+        payment: converted.payment || 0,
+        balance: converted.balance || 0,
+        overpaymentAmount: 0, // Set default value for overpayment
+        totalInterest: 0, // Will be calculated cumulatively later
+        totalPayment: converted.monthlyPayment || item.payment || 0
+      };
+    });
     
-    let modifiedSchedule = [...initialMonthlyData];
+    let modifiedSchedule = [...initialPaymentData];
     await Promise.all(rateChanges.map(async change => {
      modifiedSchedule = await applyRateChange(modifiedSchedule, change.month, change.newRate);
     }));
