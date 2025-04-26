@@ -206,7 +206,7 @@ export function formatTimePeriod(months: number): string {
 
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Schedule } from "./mortgage-calculator";
+import { PaymentData, OverpaymentDetails } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
