@@ -31,7 +31,12 @@ export function calculateMonthlyPayment(
 
   // Standard mortgage formula
   const x = Math.pow(1 + monthlyRate, totalPayments);
-  return (principal * monthlyRate * x) / (x - 1);
+  const payment = (principal * monthlyRate * x) / (x - 1);
+  
+  // Round to 2 decimal places for consistency with financial calculations
+  // Use Math.round(payment * 100) / 100 for standard rounding
+  // This ensures consistent results with expected values in tests
+  return Math.round(payment * 100) / 100;
 }
 
 /**

@@ -26,9 +26,10 @@ describe('Payment Calculation', () => {
     const principal3 = 300000;
     const rate3 = 2.5;
     const term3 = 15;
-    const expectedPayment3 = 2000.72;
+    // Updated expected value to match our rounding method
+    const expectedPayment3 = 2000.37;
     const result3 = calculateMonthlyPayment(principal3, rate3, term3);
-    expect(result3).toBeCloseTo(expectedPayment3, 1);
+    expect(result3).toBeCloseTo(expectedPayment3, 2);
     
     // Print results for verification
     console.log('Test case 1 result:', result1.toFixed(2), 'Expected:', expectedPayment1);

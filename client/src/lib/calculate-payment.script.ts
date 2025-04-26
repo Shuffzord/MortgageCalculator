@@ -16,8 +16,11 @@ function calculateMonthlyPayment(principal: number, annualRate: number, termYear
   const payments = termYears * 12;
   
   // Calculate monthly payment using the formula: M = P[r(1+r)^n]/[(1+r)^n-1]
-  return (principal * monthlyRate * Math.pow(1 + monthlyRate, payments)) / 
-         (Math.pow(1 + monthlyRate, payments) - 1);
+  const payment = (principal * monthlyRate * Math.pow(1 + monthlyRate, payments)) / 
+                 (Math.pow(1 + monthlyRate, payments) - 1);
+  
+  // Round to 2 decimal places for consistency with financial calculations
+  return Math.round(payment * 100) / 100;
 }
 
 // Test cases
