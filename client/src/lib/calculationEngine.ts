@@ -306,19 +306,20 @@ export async function applyRateChange(
       termToUse
     );
     
-    // Convert Schedule to MonthlyData
-    const newSchedule: MonthlyData[] = scheduleItems.map(item => ({
-      payment: item.paymentNum,
-      monthlyPayment: item.payment,
-      principalPayment: item.principalPayment,
-      interestPayment: item.interestPayment,
-      balance: item.remainingPrincipal,
-      isOverpayment: item.isOverpayment || false,
-      overpaymentAmount: 0,
-      totalInterest: 0,
-      totalPayment: item.payment,
-      paymentDate: item.paymentDate
-    }));
+    // Convert Schedule to PaymentData 
+    const newSchedule: PaymentData[] = scheduleItems.map(item => {
+      // Use the shared conversion function
+      const converted = convertLegacySchedule(item);
+      return {
+        ...converted,
+        // Ensure required fields are non-undefined
+        payment: converted.payment || 0,
+        balance: converted.balance || 0,
+        overpaymentAmount: 0, // Set default value for overpayment
+        totalInterest: 0, // Will be calculated cumulatively later
+        totalPayment: converted.monthlyPayment || item.payment || 0
+      };
+    });
     
     // Combine the schedules
     const combinedSchedule = [
