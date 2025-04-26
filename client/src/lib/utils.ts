@@ -26,7 +26,8 @@ export function calculateMonthlyPayment(
 
   // If interest rate is 0 or near-zero, use simple division
   // This prevents floating point precision issues with very small rates
-  if (monthlyRate === 0 || annualRate < 0.01) {
+  if (monthlyRate === 0 || annualRate < 0.2) {
+    // For near-zero interest rates, simply divide principal by number of payments
     return Math.round((principal / totalPayments) * 100) / 100;
   }
   
