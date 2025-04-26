@@ -34,10 +34,22 @@
     "amount": "Monto del Pago Adicional",
     "amountTooltip": "Pago adicional único hacia el capital de su préstamo.",
     "afterPayment": "Después del Pago Número",
+    "endPayment": "Terminar Después del Pago",
     "effect": "Efecto",
     "reduceTerm": "Reducir Plazo",
     "reducePayment": "Reducir Pago",
-    "apply": "Aplicar Pago Adicional"
+    "apply": "Aplicar Pago Adicional",
+    "frequency": "Frecuencia",
+    "oneTime": "Una Vez",
+    "monthly": "Mensual",
+    "quarterly": "Trimestral",
+    "annual": "Anual",
+    "add": "Agregar Pago Adicional",
+    "results": "Resultados con Pago Adicional",
+    "newMonthlyPayment": "Nuevo Pago Mensual",
+    "interestSaved": "Interés Ahorrado",
+    "timeSaved": "Tiempo Ahorrado",
+    "paymentReduced": "Pago Reducido"
   },
   "summary": {
     "title": "Resumen del Préstamo",
@@ -50,7 +62,10 @@
     "term": "Plazo",
     "years": "años",
     "monthsSaved": "Meses Ahorrados",
-    "interestSaved": "Interés Ahorrado"
+    "interestSaved": "Interés Ahorrado",
+    "interestRatePeriods": "Períodos de Tasa de Interés",
+    "initialRate": "Tasa Inicial",
+    "period": "Período"
   },
   "chart": {
     "title": "Desglose de Pagos",

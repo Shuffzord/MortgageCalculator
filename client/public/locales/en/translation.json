@@ -63,7 +63,10 @@
     "term": "Term",
     "years": "years",
     "monthsSaved": "Months Saved",
-    "interestSaved": "Interest Saved"
+    "interestSaved": "Interest Saved",
+    "interestRatePeriods": "Interest Rate Periods",
+    "initialRate": "Initial Rate",
+    "period": "Period"
   },
   "chart": {
     "title": "Payment Breakdown",
