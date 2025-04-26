@@ -16,39 +16,28 @@ export function areMonetaryValuesEqual(a: number, b: number, tolerance = 0.01): 
  * @param termYears Loan term in years
  * @returns Monthly payment amount
  */
-export function calculatePaymentComponents(
-  balance: number,
-  monthlyRate: number,
-  monthlyPayment: number
-): { principalPayment: number; interestPayment: number } {
-  const interestPayment = roundToCents(balance * monthlyRate);
-  const principalPayment = roundToCents(monthlyPayment - interestPayment);
-  return { principalPayment, interestPayment };
-}
-
 export function calculateMonthlyPayment(
   principal: number,
   monthlyRate: number,
   totalMonths: number
 ): number {
-  // For extremely low rates, use simple division
-  if (Math.abs(monthlyRate) < 0.00001) {
+  // For extremely low rates (near-zero), use simple division
+  if (Math.abs(monthlyRate) < 0.0001) { // 0.01% annual rate threshold
     return roundToCents(principal / totalMonths);
   }
-
-  // For very low rates, use simple interest calculation
-  if (monthlyRate < 0.0001) {
-    const simpleInterest = principal * monthlyRate * totalMonths;
-    const totalAmount = principal + simpleInterest;
-    return roundToCents(totalAmount / totalMonths);
+  
+  // For very low rates, use simplified calculation
+  if (monthlyRate < 0.001) { // 0.12% annual rate threshold
+    const totalPayment = principal * (1 + (monthlyRate * totalMonths));
+    return roundToCents(totalPayment / totalMonths);
   }
-
-  // Standard formula for normal rates
+  
+  // Standard formula for normal interest rates
   const compoundFactor = Math.pow(1 + monthlyRate, totalMonths);
-  return roundToCents(
-    principal * (monthlyRate * compoundFactor) / (compoundFactor - 1)
-  );
+  const payment = principal * (monthlyRate * compoundFactor) / (compoundFactor - 1);
+  return roundToCents(payment);
 }
+
 export function roundToCents(amount: number): number {
   return Math.round(amount * 100) / 100;
 }
@@ -131,7 +120,6 @@ export function generateAmortizationSchedule(
   while (remainingPrincipal > 0 && paymentNum <= originalTotalPayments) {
     // Determine the interest rate for the current payment
     let currentInterestRate = 0;
-    
     for (const period of interestRatePeriods) {
       if (paymentNum >= period.startMonth) {
         currentInterestRate = period.interestRate;

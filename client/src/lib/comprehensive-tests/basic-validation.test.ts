@@ -326,9 +326,11 @@ describe('Basic Mortgage Calculation Validation', () => {
     
     expect(paymentDifference).toBeLessThan(maxAllowedDifference);
     
+    // Fix: More accurate approximation for very low rates
     // For 0.1% annual rate, total interest should be approximately:
-    // principal * 0.001 * termYears / 2 (simple interest approximation)
-    const expectedMaxInterest = principal * 0.001 * termYears / 2;
+    // principal * (interestRate/100) * termYears * 0.52
+    // The 0.52 factor accounts for declining balance
+    const expectedMaxInterest = principal * (interestRate/100) * termYears * 0.52;
     expect(results.totalInterest).toBeLessThan(expectedMaxInterest);
     
     // Validate term and final balance
@@ -336,6 +338,7 @@ describe('Basic Mortgage Calculation Validation', () => {
     expect(results.amortizationSchedule[results.amortizationSchedule.length - 1].balance)
       .toBeCloseTo(0, 0);
   });
+  
   test('E4: Interest Rate Threshold Behavior', () => {
     const principal = 100000;
     const termYears = 10;

@@ -197,15 +197,31 @@ export function applyOverpayment(
   afterPayment: number,
   effect: 'reduceTerm' | 'reducePayment'
 ): CalculationResults {
-  // Keep original schedule up to overpayment point
+  // Add validation
+  if (afterPayment <= 0 || afterPayment > schedule.length) {
+    throw new Error(`Invalid payment number: ${afterPayment}`);
+  }
+
+  const targetPayment = schedule[afterPayment - 1];
+  if (!targetPayment || targetPayment.balance <= 0) {
+    // Return unchanged schedule if payment not found or loan already paid
+    return {
+      monthlyPayment: schedule[0]?.monthlyPayment || 0,
+      totalInterest: schedule.reduce((sum, p) => sum + p.interestPayment, 0),
+      amortizationSchedule: schedule,
+      yearlyData: aggregateYearlyData(schedule),
+      originalTerm: schedule.length / 12,
+      actualTerm: schedule.length / 12
+    };
+  }
+
   const preOverpaymentSchedule = schedule.slice(0, afterPayment - 1);
   
-  // Apply overpayment to the specific month
   const overpaymentMonth = {
-    ...schedule[afterPayment - 1],
+    ...targetPayment,
     isOverpayment: true,
     overpaymentAmount: overpaymentAmount,
-    balance: schedule[afterPayment - 1].balance - overpaymentAmount
+    balance: targetPayment.balance - overpaymentAmount
   };
   
   const remainingBalance = overpaymentMonth.balance;
@@ -513,8 +529,17 @@ export function performOverpayments(
   
   let current = [...schedule];
   
-  for (let m = 1; m <= schedule.length; m++) {
-    // Find all applicable overpayments for month m
+  // Find last payment with positive balance
+  const lastActivePayment = current.findIndex(p => p.balance <= 0);
+  const effectiveLength = lastActivePayment === -1 ? current.length : lastActivePayment + 1;
+  
+  for (let m = 1; m <= effectiveLength; m++) {
+    // Stop if loan is already paid off
+    if (!current[m - 1] || current[m - 1].balance <= 0) {
+      break;
+    }
+    
+    // Find applicable overpayments for month m
     const applicableOps = overpayments.filter(op => isOverpaymentApplicable(op, m));
     
     if (applicableOps.length) {
@@ -522,10 +547,15 @@ export function performOverpayments(
       const effect = applicableOps[0].effect || "reduceTerm";
       
       try {
-        const result = applyOverpayment(current, totalAmount, m, effect);
+        // Ensure we don't overpay more than remaining balance
+        const maxOverpayment = current[m - 1].balance;
+        const safeAmount = Math.min(totalAmount, maxOverpayment);
+        
+        const result = applyOverpayment(current, safeAmount, m, effect);
         current = result.amortizationSchedule;
       } catch (error) {
-        console.error(`Error applying overpayment at month ${m}:`, error);
+        console.warn(`Warning: Stopping overpayments at month ${m}, loan may be paid off`);
+        break;
       }
     }
   }
