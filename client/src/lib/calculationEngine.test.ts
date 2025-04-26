@@ -8,7 +8,7 @@ import {
 } from './calculationEngine';
 import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
 import { PaymentData } from './types';
-import { Schedule, convertLegacySchedule } from './mortgage-calculator';
+import { convertLegacySchedule } from './mortgage-calculator';
 
 // Helper function to convert Schedule to PaymentData
 function convertScheduleToPaymentData(schedule: Schedule[]): PaymentData[] {
@@ -75,8 +75,8 @@ describe('Mortgage Calculation Engine', () => {
     test('last payment should pay off remaining balance', () => {
       console.log('Running generateAmortizationSchedule test: last payment pays off balance');
       const schedule = generateAmortizationSchedule(250000, 4.5, 30);
-      // Uses the remainingPrincipal property from Schedule
-      expect(schedule[359].remainingPrincipal).toBeCloseTo(0);
+      // Now using balance property from PaymentData
+      expect(schedule[359].balance).toBeCloseTo(0);
     });
   });
 

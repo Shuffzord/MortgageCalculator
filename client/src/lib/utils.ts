@@ -63,7 +63,7 @@ export function generateAmortizationSchedule(
     annualRate,
     termYears,
   );
-  const schedule: Schedule[] = [];
+  const schedule: PaymentData[] = [];
 
   let remainingPrincipal = principal;
   let paymentNum = 1;
@@ -126,13 +126,16 @@ export function generateAmortizationSchedule(
     remainingPrincipal -= principalPayment;
 
     schedule.push({
-      paymentNum,
-      payment,
+      payment: paymentNum, // Payment number
+      monthlyPayment: payment, // Monthly payment amount
       principalPayment,
       interestPayment,
-      remainingPrincipal,
+      balance: remainingPrincipal, // Remaining balance
       isOverpayment: overpaymentAmount > 0,
-      paymentDate,
+      overpaymentAmount: overpaymentAmount,
+      totalInterest: 0, // This will be calculated in a separate pass
+      totalPayment: 0, // This will be calculated in a separate pass
+      paymentDate
     });
 
     paymentNum++;
@@ -161,6 +164,18 @@ export function generateAmortizationSchedule(
     }
   }
 
+  // Calculate running totals for interest and payments
+  let runningTotalInterest = 0;
+  let runningTotalPayment = 0;
+  
+  for (let i = 0; i < schedule.length; i++) {
+    runningTotalInterest += schedule[i].interestPayment;
+    runningTotalPayment += schedule[i].monthlyPayment;
+    
+    schedule[i].totalInterest = runningTotalInterest;
+    schedule[i].totalPayment = runningTotalPayment;
+  }
+  
   return schedule;
 }
 

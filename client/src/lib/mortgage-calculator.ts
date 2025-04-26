@@ -21,12 +21,7 @@ import { OverpaymentDetails } from './types';
 // Import the unified PaymentData type
 import { PaymentData } from './types';
 
-// Use PaymentData for Schedule and add backward compatibility for old property names
-export interface Schedule extends PaymentData {
-  // For backward compatibility (these will be mapped to PaymentData properties)
-  paymentNum?: number;        // Maps to payment
-  remainingPrincipal?: number; // Maps to balance
-}
+// Schedule type has been removed, using PaymentData directly
 
 // Convert legacy Schedule format to PaymentData
 export function convertLegacySchedule(schedule: any): PaymentData {
