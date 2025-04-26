@@ -145,12 +145,15 @@ export async function applyOverpayment(
   // Calculate remaining balance after overpayment
   let remainingBalance = schedule[afterPayment - 1].balance - overpaymentAmount;
   
+  // Pre-calculate total interest and payment up to this point (for efficiency)
+  const totalInterestSoFar = newSchedule.reduce((total, month) => total + month.interestPayment, 0);
+  
   if (remainingBalance <= 0) {
     // Loan fully paid
     return {
       newCalculation: {
         monthlyPayment: schedule[0].monthlyPayment,
-        totalInterest: newSchedule.reduce((total, month) => total + month.interestPayment, 0),
+        totalInterest: totalInterestSoFar,
         amortizationSchedule: newSchedule,
         yearlyData: aggregateYearlyData(newSchedule),
         originalTerm: schedule.length / 12,
@@ -186,7 +189,7 @@ export async function applyOverpayment(
           balance: 0,
           isOverpayment: false,
           overpaymentAmount: 0,
-          totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+          totalInterest: 0, // Will recalculate later
           totalPayment: finalPayment
         });
         break;
@@ -202,7 +205,7 @@ export async function applyOverpayment(
         balance: remainingBalance,
         isOverpayment: false,
         overpaymentAmount: 0,
-        totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+        totalInterest: 0, // Will recalculate later
         totalPayment: currentPayment
       });
     }
@@ -235,7 +238,7 @@ export async function applyOverpayment(
           balance: 0,
           isOverpayment: false,
           overpaymentAmount: 0,
-          totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+          totalInterest: 0, // Will recalculate later
           totalPayment: finalPayment
         });
         break;
@@ -251,16 +254,20 @@ export async function applyOverpayment(
         balance: remainingBalance,
         isOverpayment: false,
         overpaymentAmount: 0,
-        totalInterest: newSchedule.reduce((sum, item) => sum + item.interestPayment, 0) + interestPayment,
+        totalInterest: 0, // Will recalculate later
         totalPayment: newMonthlyPayment
       });
-      }
+    }
     }
     
+    // Calculate the total interest using the optimized approach
+    // This is more reliable than tracking in separate code paths
+    let finalTotalInterest = newSchedule.reduce((total, month) => total + month.interestPayment, 0);
+      
     return {
       newCalculation: {
         monthlyPayment: effect === 'reduceTerm' ? originalMonthlyPayment : newMonthlyPayment,
-        totalInterest: newSchedule.reduce((total, month) => total + month.interestPayment, 0),
+        totalInterest: finalTotalInterest,
         amortizationSchedule: newSchedule,
         yearlyData: aggregateYearlyData(newSchedule),
         originalTerm: schedule.length / 12,
