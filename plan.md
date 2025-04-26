@@ -2,7 +2,6 @@
 
 ## Goals
 
-*   Review the architecture and solution, focusing on technical proficiency, extendability, security, and maintainability.
 *   Check for potential business functionalities to add.
 *   Focus on both a general review and the calculation formulas.
 *   Review the front-end side to ensure it supports multiple periods or overpaying options.
@@ -11,10 +10,10 @@
 
 ### Back-End (Calculation Engine) Improvements
 
-1.  **[x] Eliminate Duplication:**
+1.  **[x] Eliminate Duplication:** [x]
     *   [x] Move the `calculateMonthlyPayment` and `generateAmortizationSchedule` functions to a common utility file (e.g., `client/src/lib/utils.ts`) and import them where needed.
     *   [x] Ensure that the tests are updated to use the consolidated functions.
-2.  **Standardize Overpayment Handling:**
+2.  **Standardize Overpayment Handling:** [x]
     *   Review the overpayment logic in both `calculationEngine.ts` and `mortgage-calculator.ts` and identify any inconsistencies.
     *   Consolidate the overpayment logic into a single, well-tested function.
 3.  **Improve Input Validation:**

@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
 import LoanInputForm from "@/components/LoanInputForm";
-import OverpaymentSection from "@/components/OverpaymentSection";
 import LoanSummary from "@/components/LoanSummary";
 import ChartSection from "@/components/ChartSection";
 import AmortizationSchedule from "@/components/AmortizationSchedule";
 import LoadModal from "@/components/LoadModal";
 import { 
   CalculationResults, 
-  LoanDetails, 
-  OverpaymentDetails,
+  LoanDetails,
   SavedCalculation
 } from "@/lib/types";
 import { 
-  calculateLoanDetails, 
-  applyOverpayment 
+  calculateLoanDetails
 } from "@/lib/calculationEngine";
 import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
 import { Button } from "@/components/ui/button";
@@ -25,21 +22,17 @@ export default function Home() {
   
   // State management
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({
+    name: "My Calculation",
     principal: 250000,
-    interestRate: 4.5,
-    loanTerm: 30
+    interestRatePeriods: [{ startMonth: 0, interestRate: 4.5 }],
+    loanTerm: 30,
+    overpaymentPlans: [],
+    startDate: new Date()
   });
 
-  const [overpaymentDetails, setOverpaymentDetails] = useState<OverpaymentDetails>({
-    amount: 10000,
-    afterPayment: 12,
-    effect: 'reduceTerm'
-  });
-
-  const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
-  const [overpaymentResults, setOverpaymentResults] = useState<CalculationResults | null>(null);
-  const [showLoadModal, setShowLoadModal] = useState(false);
-  const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([]);
+const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
+const [showLoadModal, setShowLoadModal] = useState(false);
+const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([]);
 
   // Calculate loan details on initial load
   useEffect(() => {
@@ -57,39 +50,30 @@ export default function Home() {
   const handleCalculateLoan = () => {
     const results = calculateLoanDetails(
       loanDetails.principal,
-      loanDetails.interestRate,
-      loanDetails.loanTerm
+      loanDetails.interestRatePeriods[0].interestRate,
+      loanDetails.loanTerm,
+      loanDetails.overpaymentPlans[0]
     );
     setCalculationResults(results);
-    setOverpaymentResults(null); // Reset overpayment results when recalculating
-  };
-
-  const handleApplyOverpayment = () => {
-    if (!calculationResults) return;
-
-    const results = applyOverpayment(
-      calculationResults.amortizationSchedule,
-      overpaymentDetails.amount,
-      overpaymentDetails.afterPayment,
-      overpaymentDetails.effect
-    );
-
-    setOverpaymentResults({
-      ...results.newCalculation,
-      timeOrPaymentSaved: results.timeOrPaymentSaved
-    });
   };
 
   const handleSaveCalculation = () => {
-    if (!calculationResults) return;
-    
-    const savedCalc = saveCalculation(loanDetails, overpaymentDetails);
-    alert("Calculation saved successfully!");
+    if (calculationResults) {
+      const savedCalc = saveCalculation(loanDetails, {
+        amount: 0,
+        startMonth: 0,
+        endMonth: 0,
+        isRecurring: false,
+        frequency: 'one-time'
+      });
+      
+      // Update local state with newly saved calculation
+      setSavedCalculations([...savedCalculations, savedCalc]);
+    }
   };
 
   const handleLoadCalculation = (calculation: SavedCalculation) => {
     setLoanDetails(calculation.loanDetails);
-    setOverpaymentDetails(calculation.overpayment);
     setShowLoadModal(false);
     
     // Recalculate with loaded values
@@ -130,36 +114,28 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow overflow-hidden">
-              <LoanInputForm 
-                loanDetails={loanDetails} 
-                setLoanDetails={setLoanDetails} 
-                onCalculate={handleCalculateLoan} 
-              />
-              <OverpaymentSection 
-                overpaymentDetails={overpaymentDetails}
-                setOverpaymentDetails={setOverpaymentDetails}
-                onApplyOverpayment={handleApplyOverpayment}
+              <LoanInputForm
+                loanDetails={loanDetails}
+                setLoanDetails={setLoanDetails}
+                onCalculate={handleCalculateLoan}
               />
             </div>
           </div>
           
           <div className="lg:col-span-2 space-y-8">
-            <LoanSummary 
-              calculationResults={calculationResults} 
-              overpaymentResults={overpaymentResults}
+            <LoanSummary
+              calculationResults={calculationResults}
+              overpaymentResults={null}
               loanDetails={loanDetails}
             />
             
-            <ChartSection 
+            <ChartSection
               loanDetails={loanDetails}
-              calculationResults={
-                overpaymentResults || calculationResults
-              }
+              calculationResults={calculationResults}
             />
             
-            <AmortizationSchedule 
+            <AmortizationSchedule
               yearlyData={
-                overpaymentResults?.yearlyData || 
                 calculationResults?.yearlyData || []
               }
             />

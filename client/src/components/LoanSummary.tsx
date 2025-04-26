@@ -1,4 +1,5 @@
-import { formatCurrency, formatTimePeriod } from "@/lib/calculationEngine";
+import { formatTimePeriod } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { CalculationResults, LoanDetails } from "@/lib/types";
 
 interface LoanSummaryProps {
@@ -81,7 +82,7 @@ export default function LoanSummary({
                     {typeof overpaymentResults.timeOrPaymentSaved === 'number' && 
                      overpaymentResults.timeOrPaymentSaved > 100 
                       ? formatTimePeriod(overpaymentResults.timeOrPaymentSaved)
-                      : formatCurrency(overpaymentResults.timeOrPaymentSaved)}
+                      : formatCurrency(overpaymentResults.timeOrPaymentSaved ?? 0)}
                   </p>
                 </div>
               </div>

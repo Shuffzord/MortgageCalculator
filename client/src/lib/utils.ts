@@ -55,7 +55,8 @@ export function generateAmortizationSchedule(
   annualRate: number,
   termYears: number,
   overpaymentPlan?: any, // OverpaymentDetails,
-  startDate?: Date
+  startDate?: Date,
+  reduceTermNotPayment: boolean = false
 ): Schedule[] {
   const monthlyRate = annualRate / 100 / 12;
   const originalTotalPayments = termYears * 12;
@@ -64,8 +65,8 @@ export function generateAmortizationSchedule(
 
   let remainingPrincipal = principal;
   let paymentNum = 1;
-  let overpaymentApplied = false;
   let newMonthlyPayment = monthlyPayment;
+  let totalPayments = originalTotalPayments;
 
   // Set up date calculation if start date is provided
   let currentDate: Date | undefined;
@@ -73,11 +74,20 @@ export function generateAmortizationSchedule(
     currentDate = new Date(startDate);
   }
 
+  // Pre-calculate frequency multiplier
+  let frequencyMultiplier = 0;
+  if (overpaymentPlan && overpaymentPlan.frequency) {
+    frequencyMultiplier = overpaymentPlan.frequency === 'monthly' ? 1 :
+      overpaymentPlan.frequency === 'quarterly' ? 3 :
+      overpaymentPlan.frequency === 'annual' ? 12 : 0;
+  }
+
   // Generate schedule until principal is paid off
   while (remainingPrincipal > 0) {
     const interestPayment = remainingPrincipal * monthlyRate;
     let principalPayment = monthlyPayment - interestPayment;
     let payment = monthlyPayment;
+    let overpaymentAmount = 0;
 
     // Calculate payment date if start date is provided
     let paymentDate: Date | undefined;
@@ -87,33 +97,13 @@ export function generateAmortizationSchedule(
       currentDate.setMonth(currentDate.getMonth() + 1);
     }
 
-    // Apply overpayment if this is the specified month
-    if (overpaymentPlan && paymentNum === overpaymentPlan.startMonth && overpaymentPlan.amount > 0 && !overpaymentApplied) {
-      principalPayment += overpaymentPlan.amount;
-      payment += overpaymentPlan.amount;
-      overpaymentApplied = true;
-
-      // If reducing payment not term, recalculate monthly payment
-      if (!overpaymentPlan.isRecurring) {
-        remainingPrincipal -= principalPayment;
-        const remainingMonths = originalTotalPayments - paymentNum;
-        newMonthlyPayment = calculateMonthlyPayment(remainingPrincipal, annualRate, remainingMonths / 12);
-        monthlyPayment = newMonthlyPayment;
-
-        // Add to schedule and continue to next iteration to use updated monthly payment
-        schedule.push({
-          paymentNum,
-          payment,
-          principalPayment,
-          interestPayment,
-          remainingPrincipal,
-          isOverpayment: true,
-          paymentDate
-        });
-
-        paymentNum++;
-        continue;
-      }
+    // Apply overpayment
+    if (overpaymentPlan && paymentNum >= overpaymentPlan.startMonth &&
+      (!overpaymentPlan.endMonth || paymentNum <= overpaymentPlan.endMonth) &&
+      (overpaymentPlan.frequency === 'monthly' || (paymentNum - overpaymentPlan.startMonth) % frequencyMultiplier === 0)) {
+      overpaymentAmount = overpaymentPlan.amount;
+      principalPayment += overpaymentAmount;
+      payment += overpaymentAmount;
     }
 
     // Adjust final payment if it's more than remaining principal + interest
@@ -130,11 +120,19 @@ export function generateAmortizationSchedule(
       principalPayment,
       interestPayment,
       remainingPrincipal,
-      isOverpayment: (overpaymentPlan && paymentNum === overpaymentPlan.startMonth && overpaymentPlan.amount > 0) ?? false,
+      isOverpayment: overpaymentAmount > 0,
       paymentDate
     });
 
     paymentNum++;
+
+    // If reducing payment not term, recalculate monthly payment
+    if (overpaymentPlan && overpaymentPlan.amount > 0 && reduceTermNotPayment) {
+      newMonthlyPayment = calculateMonthlyPayment(remainingPrincipal, annualRate, totalPayments / 12);
+      monthlyPayment = newMonthlyPayment;
+    }
+
+    totalPayments--;
 
     // Break if we've reached a reasonable limit to prevent infinite loops
     if (paymentNum > 600) { // 50 years maximum
@@ -184,4 +182,11 @@ export function formatTimePeriod(months: number): string {
   }
 
   return formattedString.trim();
+}
+
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }

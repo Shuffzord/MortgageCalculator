@@ -32,23 +32,23 @@ import { cn } from "@/lib/utils";
 
 // Form validation schema
 const loanFormSchema = z.object({
-  name: z.string().default("My Calculation"),
+  name: z.string().min(1, "Name is required").default("My Calculation"),
   principal: z.coerce.number().min(1000, "Loan amount must be at least $1,000"),
   loanTerm: z.coerce.number()
     .min(1, "Loan term must be at least 1 year")
     .max(50, "Loan term must be at most 50 years"),
-  startDate: z.date().optional().default(() => new Date()),
+  startDate: z.date().default(() => new Date()),
   interestRatePeriods: z.array(
     z.object({
-      startMonth: z.coerce.number(),
-      interestRate: z.coerce.number()
+      startMonth: z.coerce.number().min(0, "Start month must be at least 0"),
+      interestRate: z.coerce.number().min(0, "Interest rate must be at least 0")
     })
   ).default([{ startMonth: 0, interestRate: 5 }]),
   overpaymentPlans: z.array(
     z.object({
-      amount: z.coerce.number(),
-      startMonth: z.coerce.number(),
-      endMonth: z.coerce.number().optional(),
+      amount: z.coerce.number().min(0, "Amount must be at least 0"),
+      startMonth: z.coerce.number().min(0, "Start month must be at least 0"),
+      endMonth: z.coerce.number().min(0, "End month must be at least 0"),
       frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']),
       effect: z.enum(['reduceTerm', 'reducePayment'])
     })
@@ -66,12 +66,12 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
     // TODO: Add zodResolver back once the dependency is fixed
     // resolver: zodResolver(loanFormSchema),
     defaultValues: {
-      name: loanDetails.name || "My Calculation",
+      name: loanDetails.name,
       principal: loanDetails.principal,
       loanTerm: loanDetails.loanTerm,
-      startDate: loanDetails.startDate || new Date(),
-      interestRatePeriods: loanDetails.interestRatePeriods || [{ startMonth: 0, interestRate: 5 }],
-      overpaymentPlans: loanDetails.overpaymentPlans || []
+      startDate: loanDetails.startDate,
+      interestRatePeriods: loanDetails.interestRatePeriods,
+      overpaymentPlans: loanDetails.overpaymentPlans
     },
   });
 
@@ -126,12 +126,23 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                 <FormItem>
                   <FormLabel>Interest Rate Periods</FormLabel>
                   {field.value.map((period, index) => (
-                    <div key={index} className="flex flex-col space-y-2">
-                      <div className="flex space-x-2">
-                        <div>
-                          <FormLabel>Period {index + 1} Start Month</FormLabel>
+                    <div key={index} className="flex flex-col space-y-2 border p-4 rounded-md">
+                      <div className="flex justify-between items-center">
+                        <FormLabel>Period {index + 1}</FormLabel>
+                        <Button variant="ghost" size="sm" onClick={() => {
+                          const newPeriods = [...field.value];
+                          newPeriods.splice(index, 1);
+                          form.setValue("interestRatePeriods", newPeriods);
+                        }}>
+                          Remove
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <FormLabel htmlFor={`startMonth-${index}`}>Start Month</FormLabel>
                           <Input
                             type="number"
+                            id={`startMonth-${index}`}
                             placeholder="Start Month"
                             value={period.startMonth}
                             onChange={(e) => {
@@ -141,10 +152,11 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                             }}
                           />
                         </div>
-                        <div>
-                          <FormLabel>Interest Rate</FormLabel>
+                        <div className="space-y-2">
+                          <FormLabel htmlFor={`interestRate-${index}`}>Interest Rate</FormLabel>
                           <Input
                             type="number"
+                            id={`interestRate-${index}`}
                             placeholder="Interest Rate"
                             value={period.interestRate}
                             onChange={(e) => {
@@ -155,11 +167,6 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                           />
                         </div>
                       </div>
-                      <Button type="button" onClick={() => {
-                        const newPeriods = [...field.value];
-                        newPeriods.splice(index, 1);
-                        form.setValue("interestRatePeriods", newPeriods);
-                      }}>Remove Period</Button>
                     </div>
                   ))}
                   <Button type="button" onClick={() => {

@@ -19,10 +19,13 @@ export function saveCalculation(
   // Create a new calculation object
   const newCalculation: SavedCalculation = {
     id: Date.now(),
-    name: `Mortgage - $${loanDetails.principal.toLocaleString()} at ${loanDetails.interestRate}%`,
+    name: `Mortgage - $${loanDetails.principal.toLocaleString()} at ${loanDetails.interestRatePeriods[0].interestRate}%`,
     date: new Date().toISOString(),
-    loanDetails: { ...loanDetails },
-    overpayment: { ...overpaymentDetails }
+    loanDetails: { 
+      ...loanDetails,
+      // Ensure we have the proper structure
+      overpaymentPlans: loanDetails.overpaymentPlans || [overpaymentDetails]
+    }
   };
   
   // Add to list of saved calculations

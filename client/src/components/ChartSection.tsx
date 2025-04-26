@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalculationResults, LoanDetails, YearlyData } from "@/lib/types";
 import Chart from "chart.js/auto";
+import { formatCurrency } from "@/lib/utils";
 
 interface ChartSectionProps {
   loanDetails: LoanDetails;
@@ -49,10 +50,7 @@ export default function ChartSection({
             callbacks: {
               label: function(context) {
                 const value = context.raw as number;
-                return context.label + ': ' + new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD'
-                }).format(value);
+                return context.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
               }
             }
           }

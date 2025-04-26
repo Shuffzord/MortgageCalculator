@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatCurrency } from "@/lib/calculationEngine";
+import { formatCurrency } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { YearlyData } from "@/lib/types";

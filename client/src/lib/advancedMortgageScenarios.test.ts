@@ -28,13 +28,15 @@ describe('Advanced Mortgage Scenarios', () => {
         amount: 100,
         startMonth: 60, // 5 years
         isRecurring: true,
-        frequency: 'monthly'
+        frequency: 'monthly',
+        endMonth: 120,
       },
       {
         amount: 300,
         startMonth: 60, // 5 years
         isRecurring: true,
-        frequency: 'quarterly'
+        frequency: 'quarterly',
+        endMonth: 120,
       }
     ];
     
@@ -108,7 +110,8 @@ describe('Advanced Mortgage Scenarios', () => {
         amount: 50000,
         startMonth: 60, // 5 years
         isRecurring: false,
-        frequency: 'one-time'
+        frequency: 'one-time',
+        endMonth: 60
       }
     ];
     
@@ -175,7 +178,8 @@ describe('Advanced Mortgage Scenarios', () => {
         amount: baseMonthlyPayment,
         startMonth: year * 12 + 6, // Middle of each year
         isRecurring: false,
-        frequency: 'one-time'
+        frequency: 'one-time',
+        endMonth: year * 12 + 6
       });
     }
     
