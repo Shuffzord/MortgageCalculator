@@ -290,11 +290,25 @@ export async function applyRateChange(
     
     // Generate a new schedule with the new rate
     // Use imported generateAmortizationSchedule function
-    const newSchedule = generateAmortizationSchedule(
+    const scheduleItems = generateAmortizationSchedule(
       remainingBalance,
       newRate,
       termToUse
     );
+    
+    // Convert Schedule to MonthlyData
+    const newSchedule: MonthlyData[] = scheduleItems.map(item => ({
+      payment: item.paymentNum,
+      monthlyPayment: item.payment,
+      principalPayment: item.principalPayment,
+      interestPayment: item.interestPayment,
+      balance: item.remainingPrincipal,
+      isOverpayment: item.isOverpayment || false,
+      overpaymentAmount: 0,
+      totalInterest: 0,
+      totalPayment: item.payment,
+      paymentDate: item.paymentDate
+    }));
     
     // Combine the schedules
     const combinedSchedule = [
@@ -420,7 +434,21 @@ export async function applyRateChange(
     let initialSchedule = generateAmortizationSchedule(principal, interestRate, loanTerm);
     
     // Apply rate changes
-    let modifiedSchedule = [...initialSchedule];
+    // Convert initialSchedule to MonthlyData[]
+    const initialMonthlyData: MonthlyData[] = initialSchedule.map(item => ({
+      payment: item.paymentNum,
+      monthlyPayment: item.payment,
+      principalPayment: item.principalPayment,
+      interestPayment: item.interestPayment,
+      balance: item.remainingPrincipal,
+      isOverpayment: item.isOverpayment || false,
+      overpaymentAmount: 0,
+      totalInterest: 0,
+      totalPayment: item.payment,
+      paymentDate: item.paymentDate
+    }));
+    
+    let modifiedSchedule = [...initialMonthlyData];
     await Promise.all(rateChanges.map(async change => {
      modifiedSchedule = await applyRateChange(modifiedSchedule, change.month, change.newRate);
     }));

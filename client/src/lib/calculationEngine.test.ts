@@ -7,6 +7,24 @@ import {
   applyOverpayment
 } from './calculationEngine';
 import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
+import { MonthlyData } from './types';
+import { Schedule } from './mortgage-calculator';
+
+// Helper function to convert Schedule to MonthlyData
+function convertScheduleToMonthlyData(schedule: Schedule[]): MonthlyData[] {
+  return schedule.map(item => ({
+    payment: item.paymentNum,
+    monthlyPayment: item.payment,
+    principalPayment: item.principalPayment,
+    interestPayment: item.interestPayment,
+    balance: item.remainingPrincipal,
+    isOverpayment: item.isOverpayment || false,
+    overpaymentAmount: 0,
+    totalInterest: 0, // This will be calculated cumulatively as needed
+    totalPayment: item.payment,
+    paymentDate: item.paymentDate
+  }));
+}
 
 describe('Mortgage Calculation Engine', () => {
   describe('calculateMonthlyPayment', () => {
@@ -55,7 +73,8 @@ describe('Mortgage Calculation Engine', () => {
     test('last payment should pay off remaining balance', () => {
       console.log('Running generateAmortizationSchedule test: last payment pays off balance');
       const schedule = generateAmortizationSchedule(250000, 4.5, 30);
-      expect(schedule[359].balance).toBeCloseTo(0);
+      // Uses the remainingPrincipal property from Schedule
+      expect(schedule[359].remainingPrincipal).toBeCloseTo(0);
     });
   });
 
@@ -63,16 +82,18 @@ describe('Mortgage Calculation Engine', () => {
     test('should aggregate data correctly by year', () => {
       console.log('Running aggregateYearlyData test: aggregate data correctly');
       const schedule = generateAmortizationSchedule(100000, 5, 10);
-      const yearlyData = aggregateYearlyData(schedule);
+      const monthlyData = convertScheduleToMonthlyData(schedule);
+      const yearlyData = aggregateYearlyData(monthlyData);
       expect(yearlyData.length).toBe(10);
     });
 
     test('should calculate total interest correctly for each year', () => {
       console.log('Running aggregateYearlyData test: calculate total interest correctly');
       const schedule = generateAmortizationSchedule(100000, 5, 10);
-      const yearlyData = aggregateYearlyData(schedule);
+      const monthlyData = convertScheduleToMonthlyData(schedule);
+      const yearlyData = aggregateYearlyData(monthlyData);
       let totalInterest = 0;
-      schedule.forEach((month: any) => totalInterest += month.interestPayment);
+      schedule.forEach((month) => totalInterest += month.interestPayment);
       let yearlyInterest = 0;
       yearlyData.forEach(year => yearlyInterest += year.interest);
       expect(yearlyInterest).toBeCloseTo(totalInterest);
