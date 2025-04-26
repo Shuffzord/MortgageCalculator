@@ -9,12 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Schedule, formatCurrency, formatDate, LoanDetails } from "@/lib/mortgage-calculator";
+import { formatCurrency, formatDate } from "@/lib/mortgage-calculator";
+import { PaymentData } from "@/lib/types";
+import { LoanDetails } from "@/lib/mortgage-calculator";
 import { cn } from "@/lib/utils";
 import { getCurrencySymbol } from "@/components/ui/currency-selector";
 
 interface AmortizationScheduleProps {
-  schedule: Schedule[];
+  schedule: PaymentData[];
   loanDetails: LoanDetails;
 }
 
@@ -86,17 +88,17 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
               <TableBody>
                 {currentItems.map((item) => (
                   <TableRow 
-                    key={item.paymentNum} 
+                    key={item.payment} 
                     className={cn(item.isOverpayment && "bg-green-50")}
                   >
                     <TableCell className="text-sm text-gray-500">
-                      {item.paymentNum}
+                      {item.payment}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {item.paymentDate ? formatDate(item.paymentDate) : getPaymentDate(item.paymentNum)}
+                      {item.paymentDate ? formatDate(item.paymentDate) : getPaymentDate(item.payment)}
                     </TableCell>
                     <TableCell className="text-sm font-medium text-gray-900 financial-figure">
-                      {formatCurrency(item.payment, 'en-US', loanDetails.currency || 'USD')}
+                      {formatCurrency(item.monthlyPayment, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500 financial-figure">
                       {formatCurrency(item.principalPayment, 'en-US', loanDetails.currency || 'USD')}
@@ -105,7 +107,7 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
                       {formatCurrency(item.interestPayment, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
                     <TableCell className="text-sm text-gray-900 financial-figure">
-                      {formatCurrency(item.remainingPrincipal, 'en-US', loanDetails.currency || 'USD')}
+                      {formatCurrency(item.balance, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
                   </TableRow>
                 ))}

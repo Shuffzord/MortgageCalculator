@@ -7,8 +7,7 @@ import SavedCalculationsModal from "@/components/mortgage-calculator/saved-calcu
 import { useState } from "react";
 import { LoanDetails } from "@/lib/types";
 import { generateAmortizationSchedule, calculateMonthlyPayment, formatCurrency } from "@/lib/utils";
-  Schedule
-} from "@/lib/mortgage-calculator";
+import { PaymentData } from "@/lib/types";
 import { loadCalculation, saveCalculation, getSavedCalculations } from "@/lib/storage";
 import { useTranslation } from "react-i18next";
 import { 
@@ -38,7 +37,7 @@ const defaultLoanDetails: LoanDetails = {
 export default function Home() {
   // State management
   const [loanDetails, setLoanDetails] = useState<LoanDetails>(defaultLoanDetails);
-  const [schedule, setSchedule] = useState<Schedule[]>(() => 
+  const [schedule, setSchedule] = useState<PaymentData[]>(() => 
     generateAmortizationSchedule(
       defaultLoanDetails.principal,
       defaultLoanDetails.interestRate,

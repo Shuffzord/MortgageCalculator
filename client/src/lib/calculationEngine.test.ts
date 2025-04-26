@@ -10,8 +10,8 @@ import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
 import { PaymentData } from './types';
 import { convertLegacySchedule } from './mortgage-calculator';
 
-// Helper function to convert Schedule to PaymentData
-function convertScheduleToPaymentData(schedule: Schedule[]): PaymentData[] {
+// Helper function to ensure all PaymentData fields are properly set
+function convertScheduleToPaymentData(schedule: PaymentData[]): PaymentData[] {
   return schedule.map(item => {
     // Use the convertLegacySchedule function from mortgage-calculator.ts
     const converted = convertLegacySchedule(item);
