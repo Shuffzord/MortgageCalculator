@@ -92,46 +92,53 @@ export default function LoanInputForm({
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="principal"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center">
-                  {t('form.loanAmount')}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('form.loanAmountTooltip')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(selectedCurrency)}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="principal"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center">
+                    {t('form.loanAmount')}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p className="text-xs">{t('form.loanAmountTooltip')}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(selectedCurrency)}</span>
+                      </div>
+                      <Input
+                        {...field}
+                        type="number"
+                        min="1000"
+                        step="1000"
+                        className="pl-7"
+                      />
                     </div>
-                    <Input
-                      {...field}
-                      type="number"
-                      min="1000"
-                      step="1000"
-                      className="pl-7"
-                    />
-                  </div>
-                </FormControl>
-                {form.formState.errors.principal && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {form.formState.errors.principal.message}
-                  </p>
-                )}
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  {form.formState.errors.principal && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {form.formState.errors.principal.message}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <CurrencySelector
+              value={selectedCurrency}
+              onChange={onCurrencyChange}
+            />
+          </div>
 
           <FormField
             control={form.control}
@@ -235,89 +242,127 @@ export default function LoanInputForm({
                 </FormLabel>
                 <FormControl>
                   <div className="space-y-4">
-                    {Array.isArray(field.value) && field.value.map((period: InterestRatePeriodFormValues, index: number) => (
-                      <div key={index} className="space-y-2 p-3 border border-gray-200 rounded-md">
-                        <FormLabel className="text-sm">{index === 0 ? t('form.interestRate') : `${t('form.interestRate')} ${index + 1}`}</FormLabel>
-                        <div className="flex space-x-3">
-                          <div className="space-y-2">
-                            <FormLabel className="text-xs text-gray-500">{t('form.startYear')}</FormLabel>
-                            <Input
-                              type="number"
-                              min="0"
-                              placeholder={t('form.year')}
-                              value={Math.floor(period.startMonth / 12)}
-                              onChange={(e) => {
-                                const years = Number(e.target.value);
-                                const months = period.startMonth % 12;
-                                const newStartMonth = (years * 12) + months;
-                                
-                                const newInterestRatePeriods = [...field.value];
-                                newInterestRatePeriods[index].startMonth = newStartMonth;
-                                field.onChange(newInterestRatePeriods);
-                              }}
-                              className="w-24"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <FormLabel className="text-xs text-gray-500">{t('form.month')}</FormLabel>
-                            <Input
-                              type="number"
-                              min="0"
-                              max="11"
-                              placeholder={t('form.month')}
-                              value={period.startMonth % 12}
-                              onChange={(e) => {
-                                const years = Math.floor(period.startMonth / 12);
-                                const months = Number(e.target.value) % 12;
-                                const newStartMonth = (years * 12) + months;
-                                
-                                const newInterestRatePeriods = [...field.value];
-                                newInterestRatePeriods[index].startMonth = newStartMonth;
-                                field.onChange(newInterestRatePeriods);
-                              }}
-                              className="w-24"
-                            />
-                          </div>
-                          <div className="space-y-2 flex-1">
-                            <FormLabel className="text-xs text-gray-500">{t('form.interestRate')}</FormLabel>
-                            <div className="flex items-center">
-                              <Input
-                                type="number"
-                                min="0.1"
-                                max="20"
-                                step="0.1"
-                                placeholder={t('form.interestRate')}
-                                value={period.interestRate}
-                                onChange={(e) => {
-                                  const newInterestRatePeriods = [...field.value];
-                                  newInterestRatePeriods[index].interestRate = Number(e.target.value);
-                                  field.onChange(newInterestRatePeriods);
-                                }}
-                                className="flex-1"
-                              />
-                              <span className="ml-2">%</span>
+                    {Array.isArray(field.value) && field.value.map((period: InterestRatePeriodFormValues, index: number) => {
+                      // Get the next period's start month if it exists
+                      const nextPeriodStartMonth = index + 1 < field.value.length ? field.value[index + 1].startMonth : null;
+                      
+                      // Format period range description
+                      let periodDescription = '';
+                      if (index === 0) {
+                        // Initial rate - starts at loan start date
+                        if (nextPeriodStartMonth !== null) {
+                          // Show with end date (up to next period)
+                          const endYear = Math.floor(nextPeriodStartMonth / 12);
+                          const endMonth = nextPeriodStartMonth % 12;
+                          periodDescription = `${t('form.interestRate')} (${t('form.loanStartDate')} - Year ${endYear}, Month ${endMonth})`;
+                        } else {
+                          // Only one period, covers entire loan
+                          periodDescription = `${t('form.interestRate')} (${t('form.loanStartDate')} - End)`;
+                        }
+                      } else {
+                        // Not initial rate - show period number with optional end date
+                        const startYear = Math.floor(period.startMonth / 12);
+                        const startMonth = period.startMonth % 12;
+                        
+                        if (nextPeriodStartMonth !== null) {
+                          // Has end date (next period)
+                          const endYear = Math.floor(nextPeriodStartMonth / 12);
+                          const endMonth = nextPeriodStartMonth % 12;
+                          periodDescription = `${t('form.interestRate')} ${index + 1} (Year ${startYear}, Month ${startMonth} - Year ${endYear}, Month ${endMonth})`;
+                        } else {
+                          // Last period (to end of loan)
+                          periodDescription = `${t('form.interestRate')} ${index + 1} (Year ${startYear}, Month ${startMonth} - End)`;
+                        }
+                      }
+                      
+                      return (
+                        <div key={index} className="space-y-2 p-3 border border-gray-200 rounded-md">
+                          <FormLabel className="text-sm">{periodDescription}</FormLabel>
+                          <div className="flex space-x-3">
+                            {index > 0 && (
+                              <>
+                                <div className="space-y-2">
+                                  <FormLabel className="text-xs text-gray-500">{t('form.startYear')}</FormLabel>
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    placeholder={t('form.year')}
+                                    value={Math.floor(period.startMonth / 12)}
+                                    onChange={(e) => {
+                                      const years = Number(e.target.value);
+                                      const months = period.startMonth % 12;
+                                      const newStartMonth = (years * 12) + months;
+                                      
+                                      const newInterestRatePeriods = [...field.value];
+                                      newInterestRatePeriods[index].startMonth = newStartMonth;
+                                      field.onChange(newInterestRatePeriods);
+                                    }}
+                                    className="w-24"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <FormLabel className="text-xs text-gray-500">{t('form.month')}</FormLabel>
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    max="11"
+                                    placeholder={t('form.month')}
+                                    value={period.startMonth % 12}
+                                    onChange={(e) => {
+                                      const years = Math.floor(period.startMonth / 12);
+                                      const months = Number(e.target.value) % 12;
+                                      const newStartMonth = (years * 12) + months;
+                                      
+                                      const newInterestRatePeriods = [...field.value];
+                                      newInterestRatePeriods[index].startMonth = newStartMonth;
+                                      field.onChange(newInterestRatePeriods);
+                                    }}
+                                    className="w-24"
+                                  />
+                                </div>
+                              </>
+                            )}
+                            <div className="space-y-2 flex-1">
+                              <FormLabel className="text-xs text-gray-500">{t('form.interestRate')}</FormLabel>
+                              <div className="flex items-center">
+                                <Input
+                                  type="number"
+                                  min="0.1"
+                                  max="20"
+                                  step="0.1"
+                                  placeholder={t('form.interestRate')}
+                                  value={period.interestRate}
+                                  onChange={(e) => {
+                                    const newInterestRatePeriods = [...field.value];
+                                    newInterestRatePeriods[index].interestRate = Number(e.target.value);
+                                    field.onChange(newInterestRatePeriods);
+                                  }}
+                                  className="flex-1"
+                                />
+                                <span className="ml-2">%</span>
+                              </div>
                             </div>
+                            
+                            {field.value.length > 1 && (
+                              <div className="flex items-end">
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => {
+                                    const newInterestRatePeriods = [...field.value];
+                                    newInterestRatePeriods.splice(index, 1);
+                                    field.onChange(newInterestRatePeriods);
+                                  }}
+                                >
+                                  {t('form.remove')}
+                                </Button>
+                              </div>
+                            )}
                           </div>
-                          
-                          {field.value.length > 1 && (
-                            <div className="flex items-end">
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                size="sm"
-                                onClick={() => {
-                                  const newInterestRatePeriods = [...field.value];
-                                  newInterestRatePeriods.splice(index, 1);
-                                  field.onChange(newInterestRatePeriods);
-                                }}
-                              >
-                                {t('form.remove')}
-                              </Button>
-                            </div>
-                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     <Button
                       type="button"
                       variant="secondary"
@@ -343,10 +388,7 @@ export default function LoanInputForm({
             )}
           />
 
-          <CurrencySelector
-            value={selectedCurrency}
-            onChange={onCurrencyChange}
-          />
+
 
           <div className="pt-2">
             <Button
