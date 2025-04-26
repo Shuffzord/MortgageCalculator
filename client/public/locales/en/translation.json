@@ -50,7 +50,8 @@
     "monthly": "Monthly",
     "quarterly": "Quarterly",
     "annual": "Annual",
-    "add": "Add Overpayment"
+    "add": "Add Overpayment",
+    "until": "until"
   },
   "summary": {
     "title": "Loan Summary",

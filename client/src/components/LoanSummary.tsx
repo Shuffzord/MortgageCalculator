@@ -134,10 +134,10 @@ export default function LoanSummary({
                   <thead className="bg-amber-50">
                     <tr>
                       <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start</th>
-                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Frequency</th>
-                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Effect</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('overpayment.amount')}</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('form.startMonth')}</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('overpayment.frequency')}</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('overpayment.effect')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -152,10 +152,13 @@ export default function LoanSummary({
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                           {loanDetails.startDate && formatDate(new Date(loanDetails.startDate), plan.startMonth)}
                         </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 capitalize">
-                          {plan.frequency}
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                          {plan.frequency === 'monthly' && t('overpayment.monthly')}
+                          {plan.frequency === 'quarterly' && t('overpayment.quarterly')}
+                          {plan.frequency === 'annual' && t('overpayment.annual')}
+                          {plan.frequency === 'one-time' && t('overpayment.oneTime')}
                           {plan.isRecurring && plan.endMonth && 
-                           ` (until ${loanDetails.startDate && formatDate(new Date(loanDetails.startDate), plan.endMonth)})`}
+                           ` (${t('until')} ${loanDetails.startDate && formatDate(new Date(loanDetails.startDate), plan.endMonth)})`}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                           {plan.effect === 'reduceTerm' ? t('overpayment.reduceTerm') : t('overpayment.reducePayment')}
