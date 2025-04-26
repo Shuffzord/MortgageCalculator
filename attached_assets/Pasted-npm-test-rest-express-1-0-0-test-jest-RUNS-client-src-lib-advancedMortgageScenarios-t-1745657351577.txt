@@ -1,0 +1,196 @@
+npm test
+
+> rest-express@1.0.0 test
+> jest
+
+
+ RUNS  client/src/lib/advancedMortgageScenarios.test.ts
+ RUNS  client/src/lib/calculationEngine.test.ts
+ RUNS  client/src/lib/mortgage-calculato
+ PASS  client/src/lib/mortgage-calculator.test.ts (16.025 s)
+  ● Console
+
+    console.log
+      Running calculateMonthlyPayment test in mortgage-calculator.test.ts
+
+      at Object.<anonymous> (client/src/lib/mortgage-calculator.test.ts:7:15)
+
+    console.log
+      Running generateAmortizationSchedule test in mortgage-calculator.test.ts
+
+      at Object.<anonymous> (client/src/lib/mortgage-calculator.test.ts:19:15)
+
+ FAIL  client/src/lib/calculationEngine.test.ts (24.058 s)
+  ● Console
+
+    console.log
+      Running calculateMonthlyPayment test: standard case
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:43:15)
+
+    console.log
+      Running calculateMonthlyPayment test: 0% interest rate
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:50:15)
+
+    console.log
+      Running calculateMonthlyPayment test: very high interest rates
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:57:15)
+
+    console.log
+      Running calculateMonthlyPayment test: very short term
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:64:15)
+
+    console.log
+      Running generateAmortizationSchedule test: correct schedule length
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:73:15)
+
+    console.log
+      Running generateAmortizationSchedule test: first payment interest > principal
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:79:15)
+
+    console.log
+      Running generateAmortizationSchedule test: last payment pays off balance
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:85:15)
+
+    console.log
+      Running aggregateYearlyData test: aggregate data correctly
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:94:15)
+
+    console.log
+      Running aggregateYearlyData test: calculate total interest correctly
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:102:15)
+
+    console.log
+      Running applyOverpayment test: reduce loan term
+
+      at client/src/lib/calculationEngine.test.ts:116:15
+
+    console.log
+      Running applyOverpayment test: reduce monthly payment
+
+      at client/src/lib/calculationEngine.test.ts:124:15
+
+  ● Mortgage Calculation Engine › aggregateYearlyData › should calculate total interest correctly for each year
+
+    expect(received).toBeCloseTo(expected)
+
+    Expected: 27278.618286890167
+    Received: 27278.659999999996
+
+    Expected precision:    2
+    Expected difference: < 0.005
+    Received difference:   0.04171310982928844
+
+      108 |       let yearlyInterest = 0;
+      109 |       yearlyData.forEach(year => yearlyInterest += year.interest);
+    > 110 |       expect(yearlyInterest).toBeCloseTo(totalInterest);
+          |                              ^
+      111 |     });
+      112 |   });
+      113 |
+
+      at Object.<anonymous> (client/src/lib/calculationEngine.test.ts:110:30)
+
+ FAIL  client/src/lib/advancedMortgageScenarios.test.ts (24.112 s)
+  ● Console
+
+    console.log
+      Lump sum payment scenario:
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:147:13
+
+    console.log
+      Original term: 30.00 years
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:148:13
+
+    console.log
+      Term with lump sum payment: 30.00 years
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:149:13
+
+    console.log
+      Years saved: 0.00
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:150:13
+
+    console.log
+      Original total interest: $376,955.39
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:151:13
+
+    console.log
+      Total interest with lump sum: $349,178.96
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:152:13
+
+    console.log
+      Interest saved: $27,776.43
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:153:13
+
+    console.log
+      Interest saved percentage: 7.37%
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:154:13
+
+    console.log
+      Bi-weekly payment scenario:
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:211:13
+
+    console.log
+      Term with rate change only: 15 years
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:212:13
+
+    console.log
+      Term with bi-weekly payments: 15 years
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:213:13
+
+    console.log
+      Time saved:
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:214:13
+
+    console.log
+      Interest saved: $1,945.06
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:215:13
+
+  ● Advanced Mortgage Scenarios › Scenario 1: Rate change after 2 years and multiple overpayments after 5 years
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 4216.04
+    Received: 1
+
+    Expected precision:    1
+    Expected difference: < 0.05
+    Received difference:   4215.04
+
+      52 |     // Verify initial monthly payment
+      53 |     const expectedInitialPayment = 4216.04; // Calculated with standard formula
+    > 54 |     expect(result.amortizationSchedule[0].monthlyPayment).toBeCloseTo(expectedInitialPayment, 1);
+         |                                                           ^
+      55 |     
+      56 |     // Verify new monthly payment after rate change
+      57 |     const expectedNewPayment = 4474.91; // Calculated with remaining balance and new rate
+
+      at client/src/lib/advancedMortgageScenarios.test.ts:54:59
+      at fulfilled (client/src/lib/advancedMortgageScenarios.test.ts:9:58)
+
+Test Suites: 2 failed, 1 passed, 3 total
+Tests:       2 failed, 14 passed, 16 total
+Snapshots:   0 total
+Time:        25.432 s, estimated 28 s
+Ran all test suites.

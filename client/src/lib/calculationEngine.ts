@@ -447,29 +447,35 @@ export async function applyRateChange(
     overpayments: OverpaymentDetails[],
     rateChanges: { month: number; newRate: number }[]
   ): Promise<CalculationResults> {
-    // Use imported generateAmortizationSchedule function
+    // Calculate the initial monthly payment directly
+    const initialMonthlyPayment = calculateMonthlyPayment(principal, interestRate, loanTerm);
+    
+    // Generate the amortization schedule
     let initialSchedule = generateAmortizationSchedule(principal, interestRate, loanTerm);
     
     // Apply rate changes
     // Convert initialSchedule to PaymentData using our unified approach
-    const initialPaymentData: PaymentData[] = initialSchedule.map(item => {
+    const initialPaymentData: PaymentData[] = initialSchedule.map((item, index) => {
       // Use the shared conversion function
       const converted = convertLegacySchedule(item);
       return {
         ...converted,
         // Ensure required fields are non-undefined
-        payment: converted.payment || 0,
+        payment: converted.payment || (index + 1),
         balance: converted.balance || 0,
+        monthlyPayment: index === 0 ? initialMonthlyPayment : (converted.monthlyPayment || initialMonthlyPayment),
         overpaymentAmount: 0, // Set default value for overpayment
-        totalInterest: 0, // Will be calculated cumulatively later
-        totalPayment: converted.monthlyPayment || item.payment || 0
+        totalInterest: converted.totalInterest || 0,
+        totalPayment: converted.totalPayment || converted.monthlyPayment || initialMonthlyPayment
       };
     });
     
     let modifiedSchedule = [...initialPaymentData];
-    await Promise.all(rateChanges.map(async change => {
-     modifiedSchedule = await applyRateChange(modifiedSchedule, change.month, change.newRate);
-    }));
+    
+    // Apply rate changes sequentially to ensure correct calculation
+    for (const change of rateChanges) {
+      modifiedSchedule = await applyRateChange(modifiedSchedule, change.month, change.newRate);
+    }
     
     // Apply overpayments
     modifiedSchedule = await applyMultipleOverpayments(modifiedSchedule, overpayments);
@@ -477,7 +483,7 @@ export async function applyRateChange(
     const totalInterest = modifiedSchedule.reduce((total, month) => total + month.interestPayment, 0);
     
     return {
-      monthlyPayment: modifiedSchedule[0].monthlyPayment,
+      monthlyPayment: initialMonthlyPayment, // Use the correctly calculated initial payment
       totalInterest,
       amortizationSchedule: modifiedSchedule,
       yearlyData: aggregateYearlyData(modifiedSchedule),
