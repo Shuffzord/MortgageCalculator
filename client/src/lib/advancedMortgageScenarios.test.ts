@@ -11,7 +11,7 @@ import { formatCurrency, formatTimePeriod } from './utils';
 import { OverpaymentDetails } from './types';
 
 describe('Advanced Mortgage Scenarios', () => {
-  test('Scenario 1: Rate change after 2 years and multiple overpayments after 5 years', () => {
+  test('Scenario 1: Rate change after 2 years and multiple overpayments after 5 years', async () => {
     // Initial setup: $1,000,000 at 3% for 30 years
     const initialPrincipal = 1000000;
     const initialRate = 3;
@@ -41,7 +41,7 @@ describe('Advanced Mortgage Scenarios', () => {
     ];
     
     // Calculate the complex scenario
-    const result = calculateComplexScenario(
+    const result = await calculateComplexScenario(
       initialPrincipal,
       initialRate,
       initialTerm,

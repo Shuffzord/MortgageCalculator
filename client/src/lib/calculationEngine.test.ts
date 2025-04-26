@@ -80,17 +80,17 @@ describe('Mortgage Calculation Engine', () => {
   });
 
   describe('applyOverpayment', () => {
-    test('should reduce loan term with reduceTerm effect', () => {
+    test('should reduce loan term with reduceTerm effect', async () => {
       console.log('Running applyOverpayment test: reduce loan term');
       const schedule = generateAmortizationSchedule(100000, 5, 10);
-      const overpaymentResult = applyOverpayment(schedule, 10000, 12, 'reduceTerm');
+      const overpaymentResult = await applyOverpayment(schedule, 10000, 12, 'reduceTerm');
       expect(overpaymentResult.newCalculation.actualTerm).toBeLessThan(10);
     });
 
-    test('should reduce monthly payment with reducePayment effect', () => {
+    test('should reduce monthly payment with reducePayment effect', async () => {
       console.log('Running applyOverpayment test: reduce monthly payment');
       const schedule = generateAmortizationSchedule(100000, 5, 10);
-      const overpaymentResult = applyOverpayment(schedule, 10000, 12, 'reducePayment');
+      const overpaymentResult = await applyOverpayment(schedule, 10000, 12, 'reducePayment');
       expect(overpaymentResult.newCalculation.monthlyPayment).toBeLessThan(1060.66);
     });
   });
