@@ -71,7 +71,7 @@ describe('Advanced Mortgage Scenarios', () => {
     expect(result.actualTerm).toBeLessThanOrEqual(initialTerm);
     
     // Calculate what the total interest would be without overpayments
-    const resultWithoutOverpayments = calculateComplexScenario(
+    const resultWithoutOverpayments = await calculateComplexScenario(
       initialPrincipal,
       initialRate,
       initialTerm,
@@ -93,7 +93,7 @@ describe('Advanced Mortgage Scenarios', () => {
     console.log('Interest saved:', formatCurrency(resultWithoutOverpayments.totalInterest - result.totalInterest));
   });
 
-  test('Scenario 2: Decreasing rate with lump sum payment', () => {
+  test('Scenario 2: Decreasing rate with lump sum payment', async () => {
     // Initial setup: $500,000 at 5% for 30 years
     const initialPrincipal = 500000;
     const initialRate = 5;
@@ -116,7 +116,7 @@ describe('Advanced Mortgage Scenarios', () => {
     ];
     
     // Calculate the complex scenario
-    const result = calculateComplexScenario(
+    const result = await calculateComplexScenario(
       initialPrincipal,
       initialRate,
       initialTerm,
@@ -125,7 +125,7 @@ describe('Advanced Mortgage Scenarios', () => {
     );
     
     // Calculate scenario with only rate change for comparison
-    const resultWithoutOverpayment = calculateComplexScenario(
+    const resultWithoutOverpayment = await calculateComplexScenario(
       initialPrincipal,
       initialRate,
       initialTerm,
@@ -135,7 +135,7 @@ describe('Advanced Mortgage Scenarios', () => {
     
     // Verify lump sum payment is applied correctly
     // Check if any overpayment was applied around month 60
-    const hasOverpayment = result.amortizationSchedule.some(month =>
+    const hasOverpayment = result.amortizationSchedule.some((month: any) =>
       month.payment >= 59 && month.payment <= 61 && month.overpaymentAmount > 0
     );
     expect(hasOverpayment).toBe(true);
@@ -154,7 +154,7 @@ describe('Advanced Mortgage Scenarios', () => {
     console.log('Interest saved percentage:', ((1 - result.totalInterest / resultWithoutOverpayment.totalInterest) * 100).toFixed(2) + '%');
   });
 
-  test('Scenario 3: Increasing rate with bi-weekly payments', () => {
+  test('Scenario 3: Increasing rate with bi-weekly payments', async () => {
     // Initial setup: $300,000 at 2.5% for 15 years
     const initialPrincipal = 300000;
     const initialRate = 2.5;
@@ -184,7 +184,7 @@ describe('Advanced Mortgage Scenarios', () => {
     }
     
     // Calculate the complex scenario
-    const result = calculateComplexScenario(
+    const result = await calculateComplexScenario(
       initialPrincipal,
       initialRate,
       initialTerm,
@@ -193,7 +193,7 @@ describe('Advanced Mortgage Scenarios', () => {
     );
     
     // Calculate scenario with only rate change for comparison
-    const resultWithoutExtraPayments = calculateComplexScenario(
+    const resultWithoutExtraPayments = await calculateComplexScenario(
       initialPrincipal,
       initialRate,
       initialTerm,
