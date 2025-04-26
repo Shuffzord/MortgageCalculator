@@ -1,6 +1,15 @@
-import { CalculationResults, MonthlyData, OverpaymentDetails, YearlyData, CalculationPeriod, LoanDetails } from "./types";
+import { 
+  CalculationResults, 
+  MonthlyData, 
+  PaymentData,  // Add unified PaymentData type
+  OverpaymentDetails, 
+  YearlyData, 
+  CalculationPeriod, 
+  LoanDetails 
+} from "./types";
 import { validateInputs } from "./validation";
 import { calculateMonthlyPayment, generateAmortizationSchedule, formatCurrency } from "./utils";
+import { convertLegacySchedule } from "./mortgage-calculator";
 
 // Re-export formatCurrency from utils to maintain backwards compatibility
 export { formatCurrency };

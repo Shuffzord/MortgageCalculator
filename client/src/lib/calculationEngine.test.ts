@@ -10,20 +10,22 @@ import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
 import { MonthlyData } from './types';
 import { Schedule } from './mortgage-calculator';
 
-// Helper function to convert Schedule to MonthlyData
+// Helper function to convert Schedule to PaymentData/MonthlyData
 function convertScheduleToMonthlyData(schedule: Schedule[]): MonthlyData[] {
-  return schedule.map(item => ({
-    payment: item.paymentNum,
-    monthlyPayment: item.payment,
-    principalPayment: item.principalPayment,
-    interestPayment: item.interestPayment,
-    balance: item.remainingPrincipal,
-    isOverpayment: item.isOverpayment || false,
-    overpaymentAmount: 0,
-    totalInterest: 0, // This will be calculated cumulatively as needed
-    totalPayment: item.payment,
-    paymentDate: item.paymentDate
-  }));
+  return schedule.map(item => {
+    // Use the convertLegacySchedule function from mortgage-calculator.ts
+    const converted = convertLegacySchedule(item);
+    
+    // Calculate totalInterest if needed (accumulate it in a loop after conversion)
+    return {
+      ...converted,
+      // Ensure non-optional fields have proper values
+      payment: converted.payment || 0,
+      balance: converted.balance || 0,
+      totalInterest: converted.totalInterest || 0,
+      totalPayment: converted.totalPayment || 0
+    };
+  });
 }
 
 describe('Mortgage Calculation Engine', () => {

@@ -26,18 +26,35 @@ export interface OverpaymentDetails {
 
 // Data Structure Types
 
-export interface MonthlyData {
-  payment: number;
-  monthlyPayment: number;
-  principalPayment: number;
-  interestPayment: number;
-  balance: number;
-  isOverpayment: boolean;
-  overpaymentAmount: number;
-  totalInterest: number;
-  totalPayment: number;
-  paymentDate?: Date;  // Optional payment date
+/**
+ * Unified payment data structure for amortization schedule and calculations
+ * Combines properties from both Schedule and MonthlyData
+ */
+export interface PaymentData {
+  // Payment identifier
+  payment: number;             // Payment number (1-based index)
+  
+  // Payment amounts
+  monthlyPayment: number;      // Total monthly payment amount
+  principalPayment: number;    // Portion of payment going to principal
+  interestPayment: number;     // Portion of payment going to interest
+  
+  // Balances and totals
+  balance: number;             // Remaining loan balance after payment
+  totalInterest: number;       // Cumulative interest paid up to this payment
+  totalPayment: number;        // Total amount paid up to this payment
+  
+  // Overpayment related
+  isOverpayment: boolean;      // Whether this payment includes an overpayment
+  overpaymentAmount: number;   // Extra amount paid toward principal
+  
+  // Additional data
+  paymentDate?: Date;          // Date when payment is made
+  currency?: string;           // Currency symbol for display purposes
 }
+
+// Keep MonthlyData for backward compatibility
+export type MonthlyData = PaymentData;
 
 export interface YearlyData {
   year: number;

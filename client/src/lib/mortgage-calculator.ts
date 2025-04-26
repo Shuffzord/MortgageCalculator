@@ -15,21 +15,34 @@ export interface LoanDetails {
   dateCreated?: string;
 }
 
-import { calculateMonthlyPayment, generateAmortizationSchedule, formatCurrency, formatDate } from './utils';
+import { calculateMonthlyPayment, generateAmortizationSchedule, formatCurrency } from './utils';
 import { OverpaymentDetails } from './types';
 
-export interface Schedule {
-  currency?: string;
+// Import the unified PaymentData type
+import { PaymentData } from './types';
+
+// Use PaymentData for Schedule and add backward compatibility for old property names
+export interface Schedule extends PaymentData {
+  // For backward compatibility (these will be mapped to PaymentData properties)
+  paymentNum?: number;        // Maps to payment
+  remainingPrincipal?: number; // Maps to balance
 }
 
-export interface Schedule {
-  paymentNum: number;
-  payment: number;
-  principalPayment: number;
-  interestPayment: number;
-  remainingPrincipal: number;
-  isOverpayment: boolean;
-  paymentDate?: Date;
+// Convert legacy Schedule format to PaymentData
+export function convertLegacySchedule(schedule: any): PaymentData {
+  return {
+    payment: schedule.paymentNum || schedule.payment,
+    monthlyPayment: schedule.payment || schedule.monthlyPayment,
+    principalPayment: schedule.principalPayment,
+    interestPayment: schedule.interestPayment,
+    balance: schedule.remainingPrincipal || schedule.balance,
+    isOverpayment: schedule.isOverpayment || false,
+    overpaymentAmount: schedule.overpaymentAmount || 0,
+    totalInterest: schedule.totalInterest || 0,
+    totalPayment: schedule.totalPayment || schedule.payment,
+    paymentDate: schedule.paymentDate,
+    currency: schedule.currency
+  };
 }
 
 /**
@@ -45,6 +58,7 @@ export interface Schedule {
  * @param annualRate Annual interest rate (percentage)
  * @param termYears Loan term in years
  * @returns Monthly payment amount
+ */
 
 /**
  * Generates the amortization schedule for the loan
@@ -59,4 +73,4 @@ export interface Schedule {
  * @param overpaymentMonth Month number when overpayment is applied
  * @param reduceTermNotPayment Whether to reduce term (true) or payment (false) after overpayment
  * @returns Array of schedule entries with payment details
-
+ */
