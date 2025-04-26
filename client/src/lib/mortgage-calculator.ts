@@ -3,17 +3,8 @@
  * It handles amortization schedules, monthly payments and overpayment scenarios.
  */
 
-export interface LoanDetails {
-  name: string;
-  principal: number;
-  interestRate: number;
-  loanTerm: number;
-  overpaymentAmount: number;
-  overpaymentMonth: number;
-  reduceTermNotPayment: boolean;
-  startDate?: Date;
-  dateCreated?: string;
-}
+// Using the LoanDetails interface from types.ts for consistency
+import { LoanDetails, OverpaymentDetails, PaymentData } from './types';
 
 import { calculateMonthlyPayment, generateAmortizationSchedule, formatCurrency } from './utils';
 import { OverpaymentDetails } from './types';

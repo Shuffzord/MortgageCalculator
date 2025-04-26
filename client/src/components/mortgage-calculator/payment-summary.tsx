@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { LoanDetails, Schedule, CalculationResults } from "@/lib/types";
+import { LoanDetails, PaymentData, CalculationResults } from "@/lib/types";
 import { getCurrencySymbol } from "@/components/ui/currency-selector";
 import { formatCurrency, formatTimePeriod } from "@/lib/utils";
 

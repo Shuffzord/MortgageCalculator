@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Schedule, formatCurrency } from "@/lib/mortgage-calculator";
+import { formatCurrency } from "@/lib/mortgage-calculator";
+import { PaymentData } from "@/lib/types";
 import { Chart, registerables } from 'chart.js';
 import { cn } from "@/lib/utils";
 
@@ -8,7 +9,7 @@ import { cn } from "@/lib/utils";
 Chart.register(...registerables);
 
 interface VisualizationProps {
-  schedule: Schedule[];
+  schedule: PaymentData[];
   totalPrincipal: number;
   totalInterest: number;
 }
@@ -25,7 +26,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
     const yearlyData: { [key: number]: { principal: number; interest: number } } = {};
     
     schedule.forEach(payment => {
-      const year = Math.ceil(payment.paymentNum / 12);
+      const year = Math.ceil(payment.payment / 12);
       if (!yearlyData[year]) {
         yearlyData[year] = { principal: 0, interest: 0 };
       }
