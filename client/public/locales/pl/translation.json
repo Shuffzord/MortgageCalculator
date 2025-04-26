@@ -21,7 +21,13 @@
     "saveCalculation": "Zapisz Obliczenia",
     "loadCalculation": "Wczytaj Obliczenia",
     "calculationName": "Nazwa Obliczeń",
-    "currency": "zł"
+    "currency": "zł",
+    "selectCurrency": "Wybierz Walutę",
+    "interestRatePeriods": "Okresy Stopy Procentowej",
+    "interestRatePeriodsTooltip": "Zdefiniuj różne stopy procentowe dla określonych okresów kredytu.",
+    "startMonth": "Miesiąc Początkowy",
+    "remove": "Usuń",
+    "add": "Dodaj Okres"
   },
   "overpayment": {
     "title": "Nadpłata",

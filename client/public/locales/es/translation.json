@@ -21,7 +21,13 @@
     "saveCalculation": "Guardar Cálculo",
     "loadCalculation": "Cargar Cálculo",
     "calculationName": "Nombre del Cálculo",
-    "currency": "€"
+    "currency": "€",
+    "selectCurrency": "Seleccionar Moneda",
+    "interestRatePeriods": "Períodos de Tasa de Interés",
+    "interestRatePeriodsTooltip": "Defina diferentes tasas de interés para períodos específicos de su préstamo.",
+    "startMonth": "Mes de Inicio",
+    "remove": "Eliminar",
+    "add": "Agregar Período"
   },
   "overpayment": {
     "title": "Pago Adicional",

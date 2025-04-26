@@ -22,7 +22,12 @@
     "loadCalculation": "Load Calculation",
     "calculationName": "Calculation Name",
     "currency": "$",
-    "selectCurrency": "Select Currency"
+    "selectCurrency": "Select Currency",
+    "interestRatePeriods": "Interest Rate Periods",
+    "interestRatePeriodsTooltip": "Define different interest rates for specific periods of your loan.",
+    "startMonth": "Start Month",
+    "remove": "Remove",
+    "add": "Add Period"
   },
   "overpayment": {
     "title": "Overpayment",
