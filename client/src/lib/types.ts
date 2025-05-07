@@ -120,3 +120,87 @@ export interface OverpaymentResult {
   newCalculation: CalculationResults;
   interestSaved: number;
 }
+
+/**
+ * Types for Comparative Analysis feature
+ */
+export interface ScenarioComparison {
+  scenarios: {
+    id: string;
+    name: string;
+    loanDetails: LoanDetails;
+    results: CalculationResults;
+  }[];
+  differences: {
+    totalInterestDiff: number;
+    monthlyPaymentDiff: number;
+    termDiff: number;
+    totalCostDiff: number;
+  }[];
+  breakEvenPoint?: number; // Month number where scenarios break even
+}
+
+export interface ScenarioComparisonOptions {
+  includeBreakEvenAnalysis: boolean;
+  includeAmortizationComparison: boolean;
+  includeMonthlyPaymentComparison: boolean;
+  includeTotalCostComparison: boolean;
+}
+
+/**
+ * Types for Overpayment Optimization feature
+ */
+export interface OptimizationResult {
+  optimizedOverpayments: OverpaymentDetails[];
+  interestSaved: number;
+  timeOrPaymentSaved: number;
+  optimizationValue: number;
+  optimizationFee: number;
+  comparisonChart?: {
+    labels: string[];
+    originalData: number[];
+    optimizedData: number[];
+  };
+}
+
+export interface OptimizationParameters {
+  maxMonthlyOverpayment: number;
+  maxOneTimeOverpayment: number;
+  optimizationStrategy: 'maximizeInterestSavings' | 'minimizeTime' | 'balanced';
+  feePercentage: number;
+}
+
+export interface OverpaymentStrategy {
+  name: string;
+  description: string;
+  overpayments: OverpaymentDetails[];
+  results: {
+    interestSaved: number;
+    termReduction: number;
+    effectivenessRatio: number;
+  };
+}
+
+/**
+ * Types for Data Export feature
+ */
+export type ExportFormat = 'csv' | 'json' | 'pdf';
+
+export interface ExportOptions {
+  format: ExportFormat;
+  includeAmortizationSchedule: boolean;
+  includeCharts: boolean;
+  includeSummary: boolean;
+  includeComparisonData?: boolean;
+  dateRange?: {
+    startMonth: number;
+    endMonth: number;
+  };
+  selectedColumns?: string[];
+}
+
+export interface ExportData {
+  loanDetails: LoanDetails;
+  results: CalculationResults;
+  comparisonData?: ScenarioComparison;
+}

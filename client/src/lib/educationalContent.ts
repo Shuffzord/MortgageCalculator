@@ -1,0 +1,242 @@
+export interface GlossaryTerm {
+  term: string;
+  definition: string;
+  example?: string;
+}
+
+export interface ConceptExplanation {
+  concept: string;
+  explanation: string;
+  impact: string;
+  example?: string;
+  relatedTerms?: string[];
+}
+
+export const financialGlossary: Record<string, GlossaryTerm> = {
+  'principal': {
+    term: 'Principal',
+    definition: 'The original amount of money borrowed in a loan, excluding interest and other fees.',
+    example: 'If you take out a $200,000 mortgage, the principal is $200,000.'
+  },
+  'interest': {
+    term: 'Interest',
+    definition: 'The cost of borrowing money, usually expressed as a percentage of the loan amount. Interest is calculated based on the remaining principal balance.',
+    example: 'A 4% interest rate on a $200,000 loan means you pay approximately $8,000 in interest during the first year, with this amount decreasing as you pay down the principal.'
+  },
+  'apr': {
+    term: 'Annual Percentage Rate (APR)',
+    definition: 'The yearly cost of a loan including interest and fees, expressed as a percentage. APR provides a more comprehensive view of borrowing costs than the interest rate alone.',
+    example: 'While your interest rate might be 4%, your APR could be 4.25% when including loan origination fees, mortgage insurance, and other costs.'
+  },
+  'amortization': {
+    term: 'Amortization',
+    definition: 'The process of gradually paying off a loan through regular payments that cover both principal and interest. Early in the loan, payments are mostly interest; later, they become mostly principal.',
+    example: 'In a 30-year mortgage with equal installments, during the first year about 70% of each payment might go toward interest, while in the last year about 95% goes toward principal.'
+  },
+  'equalInstallments': {
+    term: 'Equal Installments (Annuity)',
+    definition: 'A repayment model where the total monthly payment remains constant throughout the loan term, but the proportion of principal and interest changes over time.',
+    example: "With a $200,000 30-year mortgage at 4%, your payment remains $955 monthly, but initially $667 goes to interest and $288 to principal. By year 15, it's roughly equal."
+  },
+  'decreasingInstallments': {
+    term: 'Decreasing Installments',
+    definition: 'A repayment model where the principal portion remains constant, but the interest portion decreases over time, resulting in gradually decreasing total payments.',
+    example: 'With decreasing installments, you might pay $1,222 in the first month, but only $677 in the final month of a 30-year mortgage.'
+  },
+  'overpayment': {
+    term: 'Overpayment',
+    definition: 'Additional payments made beyond the required monthly payment, applied directly to the principal balance, reducing the total interest paid and potentially shortening the loan term.',
+    example: 'Making an extra $100 monthly payment on a $200,000 mortgage could save over $25,000 in interest and pay off the loan 4 years earlier.'
+  },
+  'loanTerm': {
+    term: 'Loan Term',
+    definition: 'The length of time over which you agree to repay your mortgage, typically expressed in years. Common mortgage terms are 15, 20, or 30 years.',
+    example: 'A shorter 15-year term means higher monthly payments but significantly less interest paid overall compared to a 30-year term.'
+  },
+  'interestRatePeriods': {
+    term: 'Interest Rate Periods',
+    definition: 'Specific timeframes during which different interest rates apply to your mortgage. These can be fixed for the entire loan term or change at predetermined intervals.',
+    example: 'An adjustable-rate mortgage might start with a 3.5% rate for 5 years, then adjust annually based on market conditions.'
+  },
+  'originationFee': {
+    term: 'Origination Fee',
+    definition: 'A fee charged by lenders to process a new loan application, typically 0.5% to 1% of the loan amount. This fee covers the cost of underwriting and preparing loan documents.',
+    example: 'On a $300,000 mortgage, a 1% origination fee would cost $3,000, paid at closing.'
+  },
+  'loanInsurance': {
+    term: 'Loan Insurance',
+    definition: 'Insurance that protects the lender if the borrower defaults. For mortgages, this is often called Private Mortgage Insurance (PMI) and is typically required when the down payment is less than 20%.',
+    example: 'PMI might cost 0.5% to 1% of the loan amount annually, adding $125-$250 monthly to a $300,000 mortgage.'
+  },
+  'earlyRepaymentFee': {
+    term: 'Early Repayment Fee',
+    definition: 'A penalty charged by some lenders when a borrower pays off all or part of their mortgage earlier than scheduled. Also known as a prepayment penalty.',
+    example: 'A 2% early repayment fee on a $200,000 remaining balance would cost $4,000 if you pay off the loan early.'
+  },
+  'breakEvenPoint': {
+    term: 'Break-Even Point',
+    definition: 'The point at which the costs of refinancing a mortgage equal the savings generated by the lower interest rate or other beneficial terms.',
+    example: 'If refinancing costs $6,000 and saves $200 monthly, the break-even point is 30 months (6,000 ÷ 200).'
+  }
+};
+
+export const mortgageConcepts: Record<string, ConceptExplanation> = {
+  'repaymentModels': {
+    concept: 'Repayment Models',
+    explanation: 'Different methods of structuring loan payments over time, affecting how principal and interest portions are calculated and how total payments change throughout the loan term.',
+    impact: 'The repayment model significantly affects your monthly cash flow, total interest paid, and how quickly you build equity in your home.',
+    example: 'Equal installments keep your payment the same throughout the loan, while decreasing installments start higher but decrease over time, potentially better matching income that increases with inflation.',
+    relatedTerms: ['equalInstallments', 'decreasingInstallments', 'amortization']
+  },
+  'overpayments': {
+    concept: 'Overpayments',
+    explanation: 'Additional payments made beyond the required monthly payment, applied directly to reduce the principal balance of your loan.',
+    impact: 'Overpayments reduce the principal faster, saving interest and potentially shortening the loan term significantly. Even small regular overpayments can have a dramatic effect over time.',
+    example: 'Paying an extra $200 per month on a 30-year $300,000 mortgage at 4% could shorten the term by 8 years and save over $60,000 in interest.',
+    relatedTerms: ['principal', 'interest', 'loanTerm']
+  },
+  'interestRateChanges': {
+    concept: 'Interest Rate Changes',
+    explanation: 'Variations in the interest rate applied to your mortgage, either through refinancing, adjustable-rate mortgages, or predefined rate periods.',
+    impact: 'Even small changes in interest rates can significantly affect total interest paid over the life of a loan and your monthly payment amount.',
+    example: 'A 1% reduction in interest rate on a $300,000 30-year mortgage could save over $60,000 in total interest and reduce monthly payments by approximately $170.',
+    relatedTerms: ['interestRatePeriods', 'apr']
+  },
+  'additionalCosts': {
+    concept: 'Additional Mortgage Costs',
+    explanation: 'Various fees and expenses beyond the principal and interest that contribute to the total cost of a mortgage.',
+    impact: 'Additional costs can significantly increase the effective cost of borrowing and should be considered when comparing loan options or calculating the true cost of homeownership.',
+    example: 'On a $300,000 mortgage, additional costs might include a $3,000 origination fee, $1,500 annual property insurance, $3,600 annual property taxes, and potentially $1,800 annual PMI.',
+    relatedTerms: ['originationFee', 'loanInsurance', 'earlyRepaymentFee', 'apr']
+  },
+  'amortizationSchedule': {
+    concept: 'Amortization Schedule',
+    explanation: 'A complete table showing the scheduled payments for a mortgage, including how each payment is divided between principal and interest, and the remaining balance after each payment.',
+    impact: 'Understanding your amortization schedule helps you see how much of your payment goes to interest versus principal at different points in the loan, and how additional payments would affect the loan.',
+    example: 'An amortization schedule would show that in the first payment of a 30-year $300,000 mortgage at 4%, about $1,000 goes to interest and only $432 to principal, while in year 25, about $300 goes to interest and $1,132 to principal.',
+    relatedTerms: ['amortization', 'principal', 'interest']
+  },
+  'comparativeAnalysis': {
+    concept: 'Comparative Mortgage Analysis',
+    explanation: 'The process of evaluating different mortgage scenarios to determine which option provides the best financial outcome based on your specific circumstances and goals.',
+    impact: 'Comparing different loan terms, interest rates, and repayment strategies can help you save tens of thousands of dollars over the life of your mortgage.',
+    example: 'Comparing a 30-year mortgage at 4% with a 15-year at 3.5% shows the 15-year option saves over $150,000 in interest but requires about $700 more in monthly payments.',
+    relatedTerms: ['breakEvenPoint', 'loanTerm', 'interestRatePeriods']
+  }
+};
+
+// Interactive educational content that demonstrates how changing parameters affects mortgage outcomes
+export interface InteractiveExample {
+  id: string;
+  title: string;
+  description: string;
+  defaultValues: {
+    principal: number;
+    interestRate: number;
+    term: number;
+    [key: string]: any;
+  };
+  scenarios: {
+    name: string;
+    values: {
+      [key: string]: any;
+    };
+    outcome: string;
+  }[];
+}
+
+export const interactiveExamples: InteractiveExample[] = [
+  {
+    id: 'term-comparison',
+    title: 'Loan Term Comparison',
+    description: 'See how different loan terms affect your monthly payment and total interest paid.',
+    defaultValues: {
+      principal: 300000,
+      interestRate: 4.0,
+      term: 30
+    },
+    scenarios: [
+      {
+        name: '15-Year Mortgage',
+        values: {
+          term: 15
+        },
+        outcome: 'Higher monthly payments but significantly less total interest paid.'
+      },
+      {
+        name: '30-Year Mortgage',
+        values: {
+          term: 30
+        },
+        outcome: 'Lower monthly payments but much more total interest paid over the life of the loan.'
+      }
+    ]
+  },
+  {
+    id: 'overpayment-impact',
+    title: 'Overpayment Impact',
+    description: 'Understand how making regular overpayments affects your mortgage.',
+    defaultValues: {
+      principal: 300000,
+      interestRate: 4.0,
+      term: 30,
+      overpayment: 0
+    },
+    scenarios: [
+      {
+        name: 'No Overpayment',
+        values: {
+          overpayment: 0
+        },
+        outcome: 'Standard 30-year payoff with full interest.'
+      },
+      {
+        name: 'Small Overpayment',
+        values: {
+          overpayment: 100
+        },
+        outcome: 'Modest reduction in loan term and interest paid.'
+      },
+      {
+        name: 'Large Overpayment',
+        values: {
+          overpayment: 500
+        },
+        outcome: 'Significant reduction in loan term and substantial interest savings.'
+      }
+    ]
+  },
+  {
+    id: 'interest-rate-impact',
+    title: 'Interest Rate Impact',
+    description: 'Explore how different interest rates affect your mortgage costs.',
+    defaultValues: {
+      principal: 300000,
+      interestRate: 4.0,
+      term: 30
+    },
+    scenarios: [
+      {
+        name: 'Lower Rate',
+        values: {
+          interestRate: 3.0
+        },
+        outcome: 'Lower monthly payments and significantly reduced total interest.'
+      },
+      {
+        name: 'Standard Rate',
+        values: {
+          interestRate: 4.0
+        },
+        outcome: 'Baseline scenario for comparison.'
+      },
+      {
+        name: 'Higher Rate',
+        values: {
+          interestRate: 5.0
+        },
+        outcome: 'Higher monthly payments and substantially increased total interest.'
+      }
+    ]
+  }
+];

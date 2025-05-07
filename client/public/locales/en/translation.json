@@ -103,5 +103,28 @@
     "minTerm": "Loan term must be at least 1 year",
     "maxTerm": "Loan term must be at most 50 years",
     "minOverpayment": "Overpayment amount must be at least 0"
+  },
+  "education": {
+    "title": "Mortgage Education Center",
+    "description": "Learn about mortgage concepts and how different factors affect your loan.",
+    "search": "Search terms, concepts, or examples...",
+    "glossary": "Glossary",
+    "concepts": "Key Concepts",
+    "interactive": "Interactive Examples",
+    "noResults": "No matching results found",
+    "example": "Example",
+    "impact": "Impact",
+    "relatedTerms": "Related Terms",
+    "tooltips": {
+      "principal": "The original amount of money borrowed in a loan, excluding interest and other fees.",
+      "interestRate": "The cost of borrowing money, expressed as a percentage of the loan amount. It determines how much extra you pay beyond the principal.",
+      "loanTerm": "The length of time over which you agree to repay your mortgage, typically expressed in years. Common mortgage terms are 15, 20, or 30 years.",
+      "repaymentModel": "Different methods of structuring loan payments over time. Equal installments keep your payment the same throughout the loan, while decreasing installments start higher but decrease over time.",
+      "loanStartDate": "The date when your mortgage begins and interest starts accruing. This determines your payment schedule.",
+      "overpayment": "Additional payments made beyond the required monthly payment, applied directly to the principal balance. This reduces the total interest paid and can shorten the loan term.",
+      "originationFee": "A fee charged by lenders to process a new loan application, typically 0.5% to 1% of the loan amount.",
+      "loanInsurance": "Insurance that protects the lender if the borrower defaults. For mortgages, this is often called Private Mortgage Insurance (PMI).",
+      "administrativeFees": "Various fees charged by the lender for managing your loan, such as annual service fees or statement fees."
+    }
   }
 }

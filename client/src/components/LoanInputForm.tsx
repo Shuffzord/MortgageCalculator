@@ -154,7 +154,7 @@ export default function LoanInputForm({
                           <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p className="text-xs">{t('form.loanAmountTooltip')}</p>
+                          <p className="text-xs">{t('education.tooltips.principal') || t('form.loanAmountTooltip')}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -201,7 +201,7 @@ export default function LoanInputForm({
                         <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('form.loanTermTooltip')}</p>
+                        <p className="text-xs">{t('education.tooltips.loanTerm') || t('form.loanTermTooltip')}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -243,7 +243,7 @@ export default function LoanInputForm({
                         <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('form.repaymentModelTooltip')}</p>
+                        <p className="text-xs">{t('education.tooltips.repaymentModel') || t('form.repaymentModelTooltip')}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -272,7 +272,7 @@ export default function LoanInputForm({
                     <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p className="text-xs">{t('form.loanStartDateTooltip')}</p>
+                    <p className="text-xs">{t('education.tooltips.loanStartDate') || t('form.loanStartDateTooltip')}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

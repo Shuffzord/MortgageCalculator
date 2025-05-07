@@ -7,22 +7,31 @@ import { formatCurrency } from "@/lib/utils";
 interface ChartSectionProps {
   loanDetails: LoanDetails;
   calculationResults: CalculationResults | null;
+  comparisonResults?: {
+    name: string;
+    loanDetails: LoanDetails;
+    calculationResults: CalculationResults;
+  }[];
 }
 
-export default function ChartSection({ 
-  loanDetails, 
-  calculationResults 
+export default function ChartSection({
+  loanDetails,
+  calculationResults,
+  comparisonResults
 }: ChartSectionProps) {
   const pieChartRef = useRef<HTMLCanvasElement | null>(null);
   const barChartRef = useRef<HTMLCanvasElement | null>(null);
+  const comparisonChartRef = useRef<HTMLCanvasElement | null>(null);
   const [pieChart, setPieChart] = useState<Chart | null>(null);
   const [barChart, setBarChart] = useState<Chart | null>(null);
+  const [comparisonChart, setComparisonChart] = useState<Chart | null>(null);
 
   useEffect(() => {
     // Cleanup function to destroy charts on unmount
     return () => {
       if (pieChart) pieChart.destroy();
       if (barChart) barChart.destroy();
+      if (comparisonChart) comparisonChart.destroy();
     };
   }, []);
 
@@ -98,7 +107,7 @@ export default function ChartSection({
             stacked: true,
             ticks: {
               callback: function(value) {
-                return '$' + (value as number).toLocaleString();
+                return formatCurrency(value as number, 'en-US', loanDetails.currency || 'USD');
               }
             }
           }
@@ -108,10 +117,7 @@ export default function ChartSection({
             callbacks: {
               label: function(context) {
                 const value = context.raw as number;
-                return context.dataset.label + ': ' + new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD'
-                }).format(value);
+                return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
               }
             }
           }
@@ -121,6 +127,101 @@ export default function ChartSection({
     
     setBarChart(newBarChart);
   }, [calculationResults, loanDetails]);
+
+  // Create comparison chart when comparison data is available
+  useEffect(() => {
+    if (!comparisonChartRef.current || !comparisonResults || comparisonResults.length === 0) return;
+    
+    if (comparisonChart) comparisonChart.destroy();
+    
+    // Prepare data for comparison chart
+    const scenarios = [
+      { name: 'Current', loanDetails, calculationResults },
+      ...comparisonResults
+    ].filter(s => s.calculationResults); // Filter out scenarios without results
+    
+    // Find the maximum number of years across all scenarios
+    const maxYears = Math.max(
+      ...scenarios.map(s => Math.ceil(s.calculationResults!.actualTerm))
+    );
+    
+    // Create labels for all years
+    const years = Array.from({ length: maxYears }, (_, i) => `Year ${i + 1}`);
+    
+    // Create datasets for each scenario
+    const datasets = scenarios.map((scenario, index) => {
+      // Get yearly data or create empty array
+      const yearlyData = scenario.calculationResults?.yearlyData || [];
+      
+      // Create color based on index
+      const colors = [
+        '#3b82f6', // blue
+        '#ef4444', // red
+        '#22c55e', // green
+        '#f59e0b', // amber
+        '#8b5cf6'  // purple
+      ];
+      const color = colors[index % colors.length];
+      
+      // Map yearly data to total payments (principal + interest)
+      const payments = years.map((_, yearIndex) => {
+        const yearData = yearlyData.find(d => d.year === yearIndex + 1);
+        return yearData ? yearData.principal + yearData.interest : 0;
+      });
+      
+      return {
+        label: scenario.name,
+        data: payments,
+        backgroundColor: color,
+        borderColor: color,
+        borderWidth: 2,
+        fill: false,
+        tension: 0.1
+      };
+    });
+    
+    // Create the comparison chart
+    const newComparisonChart = new Chart(comparisonChartRef.current, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            title: {
+              display: true,
+              text: 'Yearly Payment'
+            },
+            ticks: {
+              callback: function(value) {
+                return formatCurrency(value as number, 'en-US', loanDetails.currency || 'USD');
+              }
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const value = context.raw as number;
+                return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
+              }
+            }
+          },
+          title: {
+            display: true,
+            text: 'Scenario Comparison - Yearly Payments'
+          }
+        }
+      }
+    });
+    
+    setComparisonChart(newComparisonChart);
+  }, [comparisonResults, calculationResults, loanDetails]);
 
   if (!calculationResults) {
     return (
@@ -153,6 +254,16 @@ export default function ChartSection({
             </div>
           </div>
         </div>
+        
+        {/* Comparison chart - only shown when comparison data is available */}
+        {comparisonResults && comparisonResults.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Scenario Comparison</h3>
+            <div className="h-64 relative">
+              <canvas ref={comparisonChartRef}></canvas>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -3,6 +3,9 @@ import LoanInputForm from "@/components/LoanInputForm";
 import LoanSummary from "@/components/LoanSummary";
 import ChartSection from "@/components/ChartSection";
 import AmortizationSchedule from "@/components/AmortizationSchedule";
+import OverpaymentOptimizationPanel from "@/components/OverpaymentOptimizationPanel";
+import ExportPanel from "@/components/ExportPanel";
+import EducationalPanel from "@/components/EducationalPanel";
 import LoadModal from "@/components/LoadModal";
 import { 
   CalculationResults, 
@@ -147,6 +150,31 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
                 calculationResults?.yearlyData || []
               }
             />
+            
+            <OverpaymentOptimizationPanel
+              loanDetails={loanDetails}
+              onApplyOptimization={(optimizedOverpayments) => {
+                // Apply the optimized overpayments to the loan details
+                setLoanDetails({
+                  ...loanDetails,
+                  overpaymentPlans: optimizedOverpayments
+                });
+                
+                // Recalculate with the new overpayment plan
+                setTimeout(() => {
+                  handleCalculateLoan();
+                }, 0);
+              }}
+            />
+            
+            {calculationResults && (
+              <ExportPanel
+                loanDetails={loanDetails}
+                results={calculationResults}
+              />
+            )}
+            
+            <EducationalPanel />
           </div>
         </div>
       </main>
