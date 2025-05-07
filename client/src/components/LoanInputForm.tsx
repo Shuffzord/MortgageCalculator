@@ -32,6 +32,7 @@ const loanFormSchema = z.object({
   interestRatePeriods: z.array(
     z.object({
       startMonth: z.coerce.number(),
+      endMonth: z.coerce.number().optional(),
       interestRate: z.coerce.number()
         .min(0.1, "Interest rate must be at least 0.1%")
         .max(20, "Interest rate must be less than 20%"),
@@ -41,8 +42,8 @@ const loanFormSchema = z.object({
   overpaymentPlans: z.array(
     z.object({
       amount: z.coerce.number().min(0, "Overpayment amount must be at least 0"),
-      startMonth: z.coerce.number().min(0, "Start month must be at least 0"),
-      endMonth: z.coerce.number().optional(),
+      startDate: z.date(),
+      endDate: z.date().optional(),
       isRecurring: z.boolean().default(false),
       frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']).default('one-time'),
       effect: z.enum(['reduceTerm', 'reducePayment']).default('reduceTerm'),
@@ -69,13 +70,14 @@ type LoanFormValues = z.infer<typeof loanFormSchema>;
 
 interface InterestRatePeriodFormValues {
   startMonth: number;
+  endMonth?: number;
   interestRate: number;
 }
 
 interface OverpaymentFormValues {
   amount: number;
-  startMonth: number;
-  endMonth?: number;
+  startDate: Date;
+  endDate?: Date;
   isRecurring: boolean;
   frequency: 'monthly' | 'quarterly' | 'annual' | 'one-time';
   effect: 'reduceTerm' | 'reducePayment';
@@ -120,13 +122,36 @@ export default function LoanInputForm({
   const [date, setDate] = useState<Date>(loanDetails.startDate || new Date());
 
   const onSubmit = (values: LoanFormValues) => {
+    // Convert overpayment plans to include both date and month formats for compatibility
+    const convertedOverpaymentPlans = (values.overpaymentPlans || []).map(plan => {
+      // Calculate startMonth as months from loan start date
+      const startDate = plan.startDate;
+      const monthDiff =
+        (startDate.getFullYear() - date.getFullYear()) * 12 +
+        (startDate.getMonth() - date.getMonth());
+      
+      // Calculate endMonth if endDate exists
+      let endMonth: number | undefined = undefined;
+      if (plan.endDate) {
+        endMonth =
+          (plan.endDate.getFullYear() - date.getFullYear()) * 12 +
+          (plan.endDate.getMonth() - date.getMonth());
+      }
+      
+      return {
+        ...plan,
+        startMonth: monthDiff > 0 ? monthDiff : 0,
+        endMonth: endMonth
+      };
+    });
+    
     setLoanDetails({
       ...loanDetails,
       principal: values.principal,
       interestRatePeriods: values.interestRatePeriods,
       loanTerm: values.loanTerm,
       repaymentModel: values.repaymentModel,
-      overpaymentPlans: values.overpaymentPlans || [],
+      overpaymentPlans: convertedOverpaymentPlans,
       additionalCosts: values.additionalCosts,
       startDate: date,
       currency: selectedCurrency
@@ -141,50 +166,56 @@ export default function LoanInputForm({
       <TooltipProvider>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="principal"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    {t('form.loanAmount')}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('education.tooltips.principal') || t('form.loanAmountTooltip')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(selectedCurrency)}</span>
-                      </div>
-                      <Input
-                        {...field}
-                        type="number"
-                        min="1000"
-                        step="1000"
-                        className="pl-7"
-                      />
-                    </div>
-                  </FormControl>
-                  {form.formState.errors.principal && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {form.formState.errors.principal.message}
-                    </p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
+              <div className="sm:col-span-2">
+                <FormField
+                  control={form.control}
+                  name="principal"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        {t('form.loanAmount')}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p className="text-xs">{t('education.tooltips.principal') || t('form.loanAmountTooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(selectedCurrency)}</span>
+                          </div>
+                          <Input
+                            {...field}
+                            type="number"
+                            min="1000"
+                            step="1000"
+                            className="pl-7"
+                          />
+                        </div>
+                      </FormControl>
+                      {form.formState.errors.principal && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {form.formState.errors.principal.message}
+                        </p>
+                      )}
+                    </FormItem>
                   )}
-                </FormItem>
-              )}
-            />
-
-            <CurrencySelector
-              value={selectedCurrency}
-              onChange={onCurrencyChange}
-            />
+                />
+              </div>
+              
+              <div className="sm:col-span-1">
+                <CurrencySelector
+                  value={selectedCurrency}
+                  onChange={onCurrencyChange}
+                />
+              </div>
+            </div>
           </div>
 
           <FormField
@@ -315,124 +346,250 @@ export default function LoanInputForm({
                 <FormControl>
                   <div className="space-y-4">
                     {Array.isArray(field.value) && field.value.map((period: InterestRatePeriodFormValues, index: number) => {
-                      // Get the next period's start month if it exists
-                      const nextPeriodStartMonth = index + 1 < field.value.length ? field.value[index + 1].startMonth : null;
                       const loanTermInMonths = form.getValues("loanTerm") * 12;
                       
-                      // Format period range description
-                      let periodDescription = '';
-                      if (index === 0) {
-                        // Initial rate - starts at loan start date
-                        if (nextPeriodStartMonth !== null) {
-                          // Show with end date (up to next period)
-                          const endYear = Math.floor(nextPeriodStartMonth / 12);
-                          const endMonth = nextPeriodStartMonth % 12;
-                          periodDescription = `${t('form.interestRate')} (${t('form.loanStartDate')} - Year ${endYear}, Month ${endMonth})`;
-                        } else {
-                          // Only one period, covers entire loan
-                          periodDescription = `${t('form.interestRate')} (${t('form.loanStartDate')} - Year ${Math.floor(loanTermInMonths / 12)}, Month ${loanTermInMonths % 12})`;
+                      // Format period description
+                      let periodDescription = index === 0
+                        ? `${t('form.interestRate')} (${t('form.initialRate')})`
+                        : `${t('form.interestRate')} ${index + 1}`;
+                      
+                      // Calculate default end month if not set
+                      if (period.endMonth === undefined) {
+                        // If this is the last period, end month is the loan term
+                        if (index === field.value.length - 1) {
+                          period.endMonth = loanTermInMonths;
                         }
-                      } else {
-                        // Not initial rate - show period number with optional end date
-                        const startYear = Math.floor(period.startMonth / 12);
-                        const startMonth = period.startMonth % 12;
-                        
-                        if (nextPeriodStartMonth !== null) {
-                          // Has end date (next period)
-                          const endYear = Math.floor(nextPeriodStartMonth / 12);
-                          const endMonth = nextPeriodStartMonth % 12;
-                          periodDescription = `${t('form.interestRate')} ${index + 1} (Year ${startYear}, Month ${startMonth} - Year ${endYear}, Month ${endMonth})`;
-                        } else {
-                          // Last period (to end of loan)
-                          periodDescription = `${t('form.interestRate')} ${index + 1} (Year ${startYear}, Month ${startMonth} - Year ${Math.floor(loanTermInMonths / 12)}, Month ${loanTermInMonths % 12})`;
+                        // Otherwise, end month is the start month of the next period
+                        else if (index + 1 < field.value.length) {
+                          period.endMonth = field.value[index + 1].startMonth;
                         }
                       }
                       
                       return (
                         <div key={index} className="space-y-2 p-3 border border-gray-200 rounded-md">
                           <FormLabel className="text-sm">{periodDescription}</FormLabel>
-                          <div className="flex space-x-3">
-                            {index > 0 && (
-                              <>
-                                <div className="space-y-2">
-                                  <FormLabel className="text-xs text-gray-500">{t('form.startYear')}</FormLabel>
-                                  <Input
-                                    type="number"
-                                    min="0"
-                                    placeholder={t('form.year')}
-                                    value={Math.floor(period.startMonth / 12)}
-                                    onChange={(e) => {
-                                      const years = Number(e.target.value);
-                                      const months = period.startMonth % 12;
-                                      const newStartMonth = (years * 12) + months;
-                                      
-                                      const newInterestRatePeriods = [...field.value];
-                                      newInterestRatePeriods[index].startMonth = newStartMonth;
-                                      field.onChange(newInterestRatePeriods);
-                                    }}
-                                    className="w-24"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <FormLabel className="text-xs text-gray-500">{t('form.month')}</FormLabel>
-                                  <Input
-                                    type="number"
-                                    min="0"
-                                    max="11"
-                                    placeholder={t('form.month')}
-                                    value={period.startMonth % 12}
-                                    onChange={(e) => {
-                                      const years = Math.floor(period.startMonth / 12);
-                                      const months = Number(e.target.value) % 12;
-                                      const newStartMonth = (years * 12) + months;
-                                      
-                                      const newInterestRatePeriods = [...field.value];
-                                      newInterestRatePeriods[index].startMonth = newStartMonth;
-                                      field.onChange(newInterestRatePeriods);
-                                    }}
-                                    className="w-24"
-                                  />
-                                </div>
-                              </>
-                            )}
-                            <div className="space-y-2 flex-1">
-                              <FormLabel className="text-xs text-gray-500">{t('form.interestRate')}</FormLabel>
-                              <div className="flex items-center">
-                                <Input
-                                  type="number"
-                                  min="0.1"
-                                  max="20"
-                                  step="0.1"
-                                  placeholder={t('form.interestRate')}
-                                  value={period.interestRate}
-                                  onChange={(e) => {
-                                    const newInterestRatePeriods = [...field.value];
-                                    newInterestRatePeriods[index].interestRate = Number(e.target.value);
-                                    field.onChange(newInterestRatePeriods);
-                                  }}
-                                  className="flex-1"
-                                />
-                                <span className="ml-2">%</span>
-                              </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                            {/* Start Date */}
+                            <div className="space-y-2">
+                              <FormLabel className="text-xs text-gray-500">{t('form.startDate')}</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        "text-muted-foreground"
+                                      )}
+                                    >
+                                      {period.startMonth === 0 ?
+                                        t('form.loanStart') :
+                                        `${Math.floor(period.startMonth / 12)}y ${period.startMonth % 12}m`
+                                      }
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <div className="p-4 space-y-2">
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <div>
+                                        <FormLabel className="text-xs">{t('form.year')}</FormLabel>
+                                        <Input
+                                          type="number"
+                                          min="0"
+                                          placeholder={t('form.year')}
+                                          value={Math.floor(period.startMonth / 12)}
+                                          onChange={(e) => {
+                                            const years = Number(e.target.value);
+                                            const months = period.startMonth % 12;
+                                            const newStartMonth = (years * 12) + months;
+                                            
+                                            const newInterestRatePeriods = [...field.value];
+                                            newInterestRatePeriods[index].startMonth = newStartMonth;
+                                            
+                                            // Ensure start month is not after end month
+                                            if (period.endMonth !== undefined && newStartMonth >= period.endMonth) {
+                                              newInterestRatePeriods[index].endMonth = newStartMonth + 1;
+                                            }
+                                            
+                                            field.onChange(newInterestRatePeriods);
+                                          }}
+                                          className="w-full"
+                                        />
+                                      </div>
+                                      <div>
+                                        <FormLabel className="text-xs">{t('form.month')}</FormLabel>
+                                        <Input
+                                          type="number"
+                                          min="0"
+                                          max="11"
+                                          placeholder={t('form.month')}
+                                          value={period.startMonth % 12}
+                                          onChange={(e) => {
+                                            const years = Math.floor(period.startMonth / 12);
+                                            const months = Number(e.target.value) % 12;
+                                            const newStartMonth = (years * 12) + months;
+                                            
+                                            const newInterestRatePeriods = [...field.value];
+                                            newInterestRatePeriods[index].startMonth = newStartMonth;
+                                            
+                                            // Ensure start month is not after end month
+                                            if (period.endMonth !== undefined && newStartMonth >= period.endMonth) {
+                                              newInterestRatePeriods[index].endMonth = newStartMonth + 1;
+                                            }
+                                            
+                                            field.onChange(newInterestRatePeriods);
+                                          }}
+                                          className="w-full"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
                             </div>
                             
-                            {field.value.length > 1 && (
-                              <div className="flex items-end">
-                                <Button
-                                  type="button"
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={() => {
-                                    const newInterestRatePeriods = [...field.value];
-                                    newInterestRatePeriods.splice(index, 1);
-                                    field.onChange(newInterestRatePeriods);
-                                  }}
-                                >
-                                  {t('form.remove')}
-                                </Button>
-                              </div>
-                            )}
+                            {/* End Date */}
+                            <div className="space-y-2">
+                              <FormLabel className="text-xs text-gray-500">{t('form.endDate')}</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        "text-muted-foreground"
+                                      )}
+                                    >
+                                      {!period.endMonth ?
+                                        t('form.loanEnd') :
+                                        `${Math.floor(period.endMonth / 12)}y ${period.endMonth % 12}m`
+                                      }
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <div className="p-4 space-y-2">
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <div>
+                                        <FormLabel className="text-xs">{t('form.year')}</FormLabel>
+                                        <Input
+                                          type="number"
+                                          min={Math.floor(period.startMonth / 12)}
+                                          max={Math.floor(loanTermInMonths / 12)}
+                                          placeholder={t('form.year')}
+                                          value={Math.floor((period.endMonth || loanTermInMonths) / 12)}
+                                          onChange={(e) => {
+                                            const years = Number(e.target.value);
+                                            const months = (period.endMonth || loanTermInMonths) % 12;
+                                            const newEndMonth = (years * 12) + months;
+                                            
+                                            const newInterestRatePeriods = [...field.value];
+                                            
+                                            // Ensure end month is after start month
+                                            if (newEndMonth <= period.startMonth) {
+                                              newInterestRatePeriods[index].endMonth = period.startMonth + 1;
+                                            } else {
+                                              newInterestRatePeriods[index].endMonth = newEndMonth;
+                                            }
+                                            
+                                            // If this is not the last period, ensure the next period's start month is updated
+                                            if (index < field.value.length - 1) {
+                                              newInterestRatePeriods[index + 1].startMonth = newInterestRatePeriods[index].endMonth;
+                                            }
+                                            
+                                            field.onChange(newInterestRatePeriods);
+                                          }}
+                                          className="w-full"
+                                        />
+                                      </div>
+                                      <div>
+                                        <FormLabel className="text-xs">{t('form.month')}</FormLabel>
+                                        <Input
+                                          type="number"
+                                          min="0"
+                                          max="11"
+                                          placeholder={t('form.month')}
+                                          value={(period.endMonth || loanTermInMonths) % 12}
+                                          onChange={(e) => {
+                                            const years = Math.floor((period.endMonth || loanTermInMonths) / 12);
+                                            const months = Number(e.target.value) % 12;
+                                            const newEndMonth = (years * 12) + months;
+                                            
+                                            const newInterestRatePeriods = [...field.value];
+                                            
+                                            // Ensure end month is after start month
+                                            if (newEndMonth <= period.startMonth) {
+                                              newInterestRatePeriods[index].endMonth = period.startMonth + 1;
+                                            } else {
+                                              newInterestRatePeriods[index].endMonth = newEndMonth;
+                                            }
+                                            
+                                            // If this is not the last period, ensure the next period's start month is updated
+                                            if (index < field.value.length - 1) {
+                                              newInterestRatePeriods[index + 1].startMonth = newInterestRatePeriods[index].endMonth;
+                                            }
+                                            
+                                            field.onChange(newInterestRatePeriods);
+                                          }}
+                                          className="w-full"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
                           </div>
+                          
+                          {/* Interest Rate */}
+                          <div className="space-y-2">
+                            <FormLabel className="text-xs text-gray-500">{t('form.interestRate')}</FormLabel>
+                            <div className="flex items-center">
+                              <Input
+                                type="number"
+                                min="0.1"
+                                max="20"
+                                step="0.1"
+                                placeholder={t('form.interestRate')}
+                                value={period.interestRate}
+                                onChange={(e) => {
+                                  const newInterestRatePeriods = [...field.value];
+                                  newInterestRatePeriods[index].interestRate = Number(e.target.value);
+                                  field.onChange(newInterestRatePeriods);
+                                }}
+                                className="flex-1"
+                              />
+                              <span className="ml-2">%</span>
+                            </div>
+                          </div>
+                          
+                          {field.value.length > 1 && (
+                            <div className="flex justify-end mt-4">
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  const newInterestRatePeriods = [...field.value];
+                                  
+                                  // If removing a middle period, update the previous period's end month
+                                  if (index > 0 && index < field.value.length - 1) {
+                                    newInterestRatePeriods[index - 1].endMonth = newInterestRatePeriods[index + 1].startMonth;
+                                  }
+                                  
+                                  newInterestRatePeriods.splice(index, 1);
+                                  field.onChange(newInterestRatePeriods);
+                                }}
+                              >
+                                {t('form.remove')}
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -442,9 +599,34 @@ export default function LoanInputForm({
                       size="sm"
                       onClick={() => {
                         const currentValue = Array.isArray(field.value) ? field.value : [];
-                        const newStartMonth = currentValue.length > 0 ? 
-                          Math.max(...currentValue.map(p => p.startMonth)) + 12 : 0;
-                        field.onChange([...currentValue, { startMonth: newStartMonth, interestRate: 5 }]);
+                        let newStartMonth = 0;
+                        let newEndMonth = form.getValues("loanTerm") * 12;
+                        
+                        if (currentValue.length > 0) {
+                          // Get the last period
+                          const lastPeriod = currentValue[currentValue.length - 1];
+                          
+                          // If the last period has an end month, use it as the start month for the new period
+                          if (lastPeriod.endMonth !== undefined) {
+                            newStartMonth = lastPeriod.endMonth;
+                            // Update the previous period's end month to match the new period's start month
+                            lastPeriod.endMonth = newStartMonth;
+                          } else {
+                            // Otherwise, use the last period's start month + 12 months
+                            newStartMonth = lastPeriod.startMonth + 12;
+                            // Set the last period's end month
+                            lastPeriod.endMonth = newStartMonth;
+                          }
+                        }
+                        
+                        field.onChange([
+                          ...currentValue,
+                          {
+                            startMonth: newStartMonth,
+                            endMonth: newEndMonth,
+                            interestRate: 5
+                          }
+                        ]);
                       }}
                       className="w-full"
                     >
@@ -511,19 +693,45 @@ export default function LoanInputForm({
                             </div>
                             
                             <div className="space-y-2">
-                              <FormLabel className="text-xs text-gray-500">{t('overpayment.afterPayment')}</FormLabel>
-                              <Input
-                                type="number"
-                                min="1"
-                                max={loanTermInMonths}
-                                placeholder={t('overpayment.afterPayment')}
-                                value={overpayment.startMonth}
-                                onChange={(e) => {
-                                  const newOverpaymentPlans = [...field.value];
-                                  newOverpaymentPlans[index].startMonth = Number(e.target.value);
-                                  field.onChange(newOverpaymentPlans);
-                                }}
-                              />
+                              <FormLabel className="text-xs text-gray-500">{t('overpayment.startDate')}</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !overpayment.startDate && "text-muted-foreground"
+                                      )}
+                                    >
+                                      {overpayment.startDate ? format(overpayment.startDate, "PPP") : t('form.pickDate')}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <Calendar
+                                    mode="single"
+                                    selected={overpayment.startDate}
+                                    onSelect={(newDate) => {
+                                      if (newDate) {
+                                        const newOverpaymentPlans = [...field.value];
+                                        newOverpaymentPlans[index].startDate = newDate;
+                                        
+                                        // If there's an end date and it's before the new start date, update it
+                                        if (overpayment.endDate && newDate > overpayment.endDate) {
+                                          newOverpaymentPlans[index].endDate = new Date(newDate);
+                                          // Add one month to end date
+                                          newOverpaymentPlans[index].endDate.setMonth(newDate.getMonth() + 1);
+                                        }
+                                        
+                                        field.onChange(newOverpaymentPlans);
+                                      }
+                                    }}
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
                             </div>
                           </div>
                           
@@ -566,19 +774,47 @@ export default function LoanInputForm({
                           
                           {overpayment.isRecurring && (
                             <div className="space-y-2">
-                              <FormLabel className="text-xs text-gray-500">{t('overpayment.endPayment')}</FormLabel>
-                              <Input
-                                type="number"
-                                min={overpayment.startMonth}
-                                max={loanTermInMonths}
-                                placeholder={t('overpayment.endPayment')}
-                                value={overpayment.endMonth}
-                                onChange={(e) => {
-                                  const newOverpaymentPlans = [...field.value];
-                                  newOverpaymentPlans[index].endMonth = Number(e.target.value);
-                                  field.onChange(newOverpaymentPlans);
-                                }}
-                              />
+                              <FormLabel className="text-xs text-gray-500">{t('overpayment.endDate')}</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !overpayment.endDate && "text-muted-foreground"
+                                      )}
+                                    >
+                                      {overpayment.endDate ? format(overpayment.endDate, "PPP") : t('form.pickDate')}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <Calendar
+                                    mode="single"
+                                    selected={overpayment.endDate}
+                                    onSelect={(newDate) => {
+                                      if (newDate) {
+                                        const newOverpaymentPlans = [...field.value];
+                                        
+                                        // Ensure end date is after start date
+                                        if (newDate < overpayment.startDate) {
+                                          newOverpaymentPlans[index].endDate = new Date(overpayment.startDate);
+                                          // Add one month to start date
+                                          newOverpaymentPlans[index].endDate.setMonth(overpayment.startDate.getMonth() + 1);
+                                        } else {
+                                          newOverpaymentPlans[index].endDate = newDate;
+                                        }
+                                        
+                                        field.onChange(newOverpaymentPlans);
+                                      }
+                                    }}
+                                    initialFocus
+                                    disabled={(date) => date < overpayment.startDate}
+                                  />
+                                </PopoverContent>
+                              </Popover>
                             </div>
                           )}
                           
@@ -607,9 +843,14 @@ export default function LoanInputForm({
                       size="sm"
                       onClick={() => {
                         const currentValue = Array.isArray(field.value) ? field.value : [];
-                        field.onChange([...currentValue, { 
-                          amount: 1000, 
-                          startMonth: 12, 
+                        
+                        // Create a start date 3 months from loan start date
+                        const startDate = new Date(date);
+                        startDate.setMonth(startDate.getMonth() + 3);
+                        
+                        field.onChange([...currentValue, {
+                          amount: 1000,
+                          startDate: startDate,
                           isRecurring: false,
                           frequency: 'one-time',
                           effect: 'reduceTerm'

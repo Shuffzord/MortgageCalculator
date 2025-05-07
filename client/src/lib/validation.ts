@@ -16,8 +16,10 @@ try {
   
   if (overpaymentPlan) {
       if (overpaymentPlan.amount <= 0) throw new Error('Overpayment amount must be greater than 0');
-      if (overpaymentPlan.startMonth < 1) throw new Error('Start month must be greater than 0');
-      if (overpaymentPlan.endMonth && overpaymentPlan.endMonth <= overpaymentPlan.startMonth) {
+      if (overpaymentPlan.startMonth !== undefined && overpaymentPlan.startMonth < 1)
+        throw new Error('Start month must be greater than 0');
+      if (overpaymentPlan.endMonth && overpaymentPlan.startMonth !== undefined &&
+          overpaymentPlan.endMonth <= overpaymentPlan.startMonth) {
         throw new Error('End month must be after start month');
       }
     }

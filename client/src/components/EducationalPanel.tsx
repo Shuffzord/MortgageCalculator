@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,11 +9,33 @@ import { financialGlossary, mortgageConcepts, interactiveExamples } from '@/lib/
 import { useTranslation } from 'react-i18next';
 import { Search, BookOpen, Lightbulb, Calculator } from 'lucide-react';
 
-export default function EducationalPanel() {
-  const { t } = useTranslation();
+interface EducationalPanelProps {
+  activeLanguage: string;
+  onLanguageChange?: (language: string) => void;
+}
+
+export default function EducationalPanel({
+  activeLanguage,
+  onLanguageChange
+}: EducationalPanelProps) {
+  const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('glossary');
   const [selectedExample, setSelectedExample] = useState<string | null>(null);
+  
+  // Change language when activeLanguage prop changes
+  useEffect(() => {
+    if (activeLanguage && i18n.language !== activeLanguage) {
+      i18n.changeLanguage(activeLanguage);
+    }
+  }, [activeLanguage, i18n]);
+  
+  const handleLanguageChange = (language: string) => {
+    i18n.changeLanguage(language);
+    if (onLanguageChange) {
+      onLanguageChange(language);
+    }
+  };
   
   // Filter glossary terms based on search
   const filteredGlossary = Object.values(financialGlossary).filter(term => 
@@ -40,7 +62,32 @@ export default function EducationalPanel() {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('education.title') || 'Mortgage Education Center'}</h2>
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-xl font-semibold text-gray-900">{t('education.title') || 'Mortgage Education Center'}</h2>
+          <div className="flex space-x-2">
+            <Button
+              variant={activeLanguage === 'en' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleLanguageChange('en')}
+            >
+              EN
+            </Button>
+            <Button
+              variant={activeLanguage === 'es' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleLanguageChange('es')}
+            >
+              ES
+            </Button>
+            <Button
+              variant={activeLanguage === 'pl' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleLanguageChange('pl')}
+            >
+              PL
+            </Button>
+          </div>
+        </div>
         <p className="text-gray-600 mb-4">{t('education.description') || 'Learn about mortgage concepts and how different factors affect your loan.'}</p>
         
         <div className="relative mb-6">

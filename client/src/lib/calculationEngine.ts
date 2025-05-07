@@ -156,7 +156,8 @@ export function calculateLoanDetails(
   overpaymentPlan?: OverpaymentDetails,
   repaymentModel: RepaymentModel = 'equalInstallments',
   additionalCosts?: AdditionalCosts,
-  overpaymentPlans?: OverpaymentDetails[]
+  overpaymentPlans?: OverpaymentDetails[],
+  startDate?: Date
 ): CalculationResults {
   if (principal === 0) {
     return {
@@ -187,10 +188,10 @@ export function calculateLoanDetails(
 
   // If there are overpayments, apply them immediately
   if (overpaymentPlans && overpaymentPlans.length > 0) {
-    rawSchedule = applyMultipleOverpayments(rawSchedule, overpaymentPlans);
+    rawSchedule = applyMultipleOverpayments(rawSchedule, overpaymentPlans, startDate);
   } else if (overpaymentPlan) {
     // For backward compatibility
-    rawSchedule = applyMultipleOverpayments(rawSchedule, [overpaymentPlan]);
+    rawSchedule = applyMultipleOverpayments(rawSchedule, [overpaymentPlan], startDate);
   }
 
   // Process the schedule and add fees
@@ -645,9 +646,10 @@ export function applyRateChange(
  */
 export function applyMultipleOverpayments(
   schedule: PaymentData[],
-  overpayments: OverpaymentDetails[]
+  overpayments: OverpaymentDetails[],
+  loanStartDate?: Date
 ): PaymentData[] {
-  return performOverpayments(schedule, overpayments);
+  return performOverpayments(schedule, overpayments, loanStartDate);
 }
 
 /**
@@ -697,17 +699,50 @@ export function performRateChanges(
  */
 export function isOverpaymentApplicable(
   overpayment: OverpaymentDetails,
-  month: number
+  month: number,
+  loanStartDate?: Date
 ): boolean {
-  const inWindow = month >= overpayment.startMonth && 
-                  (!overpayment.endMonth || month <= overpayment.endMonth);
+  // Get the startMonth and endMonth
+  let startMonth = overpayment.startMonth;
+  let endMonth = overpayment.endMonth;
   
-  if (!inWindow) return false;
-  if (!overpayment.isRecurring) return month === overpayment.startMonth;
+  // If startMonth is not explicitly provided but we have date-based overpayment and loan start date
+  if (startMonth === undefined && overpayment.startDate && loanStartDate) {
+    // Calculate months difference between loan start date and overpayment start date
+    startMonth = (overpayment.startDate.getFullYear() - loanStartDate.getFullYear()) * 12 +
+                 (overpayment.startDate.getMonth() - loanStartDate.getMonth());
+    
+    // If we have an end date but no explicit endMonth, calculate end month as well
+    if (overpayment.endDate && endMonth === undefined) {
+      endMonth = (overpayment.endDate.getFullYear() - loanStartDate.getFullYear()) * 12 +
+                 (overpayment.endDate.getMonth() - loanStartDate.getMonth());
+    }
+  }
   
-  if (overpayment.frequency === "monthly") return true;
-  if (overpayment.frequency === "quarterly") return (month - overpayment.startMonth) % 3 === 0;
-  if (overpayment.frequency === "annual") return (month - overpayment.startMonth) % 12 === 0;
+  // Ensure we have valid startMonth (default to 0 if undefined)
+  startMonth = startMonth ?? 0;
+  
+  // Check if month is within the valid range
+  if (month < startMonth) return false;
+  if (endMonth && month > endMonth) return false;
+  
+  // For one-time payments, only apply at the exact start month
+  if (!overpayment.isRecurring) return month === startMonth;
+  
+  // For recurring payments, apply based on frequency
+  if (overpayment.frequency === "monthly") {
+    return month >= startMonth && (!endMonth || month <= endMonth); // Apply every month within the range
+  }
+  
+  if (overpayment.frequency === "quarterly") {
+    // Apply at start month and every 3 months after
+    return month === startMonth || (month - startMonth) % 3 === 0;
+  }
+  
+  if (overpayment.frequency === "annual") {
+    // Apply at start month and every 12 months after
+    return month === startMonth || (month - startMonth) % 12 === 0;
+  }
   
   return false;
 }
@@ -717,7 +752,8 @@ export function isOverpaymentApplicable(
  */
 export function performOverpayments(
   schedule: PaymentData[],
-  overpayments: OverpaymentDetails[]
+  overpayments: OverpaymentDetails[],
+  loanStartDate?: Date
 ): PaymentData[] {
   if (!overpayments.length) return schedule;
   
@@ -734,7 +770,7 @@ export function performOverpayments(
     }
     
     // Find applicable overpayments for month m
-    const applicableOps = overpayments.filter(op => isOverpaymentApplicable(op, m));
+    const applicableOps = overpayments.filter(op => isOverpaymentApplicable(op, m, loanStartDate));
     
     if (applicableOps.length) {
       const totalAmount = applicableOps.reduce((sum, op) => sum + op.amount, 0);

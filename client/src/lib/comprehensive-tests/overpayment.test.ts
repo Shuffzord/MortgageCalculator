@@ -127,8 +127,10 @@ describe('Mortgage Overpayment Calculations', () => {
       amount: 200,
       startMonth: 1,
       endMonth: 360,
+      startDate: new Date(),
       isRecurring: true,
-      frequency: 'monthly'
+      frequency: 'monthly',
+      effect: 'reduceTerm'
     };
     
     // Calculate with monthly overpayments

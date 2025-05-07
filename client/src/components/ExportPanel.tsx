@@ -5,21 +5,31 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { exportToCSV, exportToJSON, exportToPDF } from '@/lib/exportEngine';
-import { LoanDetails, CalculationResults, ExportOptions, ExportFormat, ScenarioComparison } from '@/lib/types';
+import { exportToCSV, exportToJSON } from '@/lib/exportEngine';
+import { LoanDetails, CalculationResults, ExportOptions, ExportFormat, ScenarioComparison, SavedCalculation } from '@/lib/types';
 import { useTranslation } from 'react-i18next';
-import { Download, FileText, FileCode, File } from 'lucide-react';
+import { Download, FileText, FileCode, Save, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { saveCalculation, getSavedCalculations } from '@/lib/storageService';
 
 interface ExportPanelProps {
   loanDetails: LoanDetails;
   results: CalculationResults;
   comparisonData?: ScenarioComparison;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  savedCalculations: SavedCalculation[];
+  onSaveCalculation: () => void;
 }
 
 export default function ExportPanel({
   loanDetails,
   results,
-  comparisonData
+  comparisonData,
+  open,
+  onOpenChange,
+  savedCalculations,
+  onSaveCalculation
 }: ExportPanelProps) {
   const { t } = useTranslation();
   const [options, setOptions] = useState<ExportOptions>({
@@ -38,7 +48,7 @@ export default function ExportPanel({
     setIsExporting(true);
     
     try {
-      let content: string | Blob;
+      let content: string;
       let filename: string;
       let mimeType: string;
       
@@ -65,11 +75,6 @@ export default function ExportPanel({
           mimeType = 'application/json';
           break;
           
-        case 'pdf':
-          content = await exportToPDF(loanDetails, results, exportOptions, options.includeComparisonData ? comparisonData : undefined);
-          filename = `mortgage-calculation-${new Date().toISOString().split('T')[0]}.pdf`;
-          mimeType = 'application/pdf';
-          break;
           
         default:
           setIsExporting(false);
@@ -77,7 +82,7 @@ export default function ExportPanel({
       }
       
       // Create download link
-      const blob = content instanceof Blob ? content : new Blob([content], { type: mimeType });
+      const blob = new Blob([content], { type: mimeType });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -107,11 +112,18 @@ export default function ExportPanel({
   ];
   
   return (
-    <Card>
-      <CardContent className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          {t('export.title', 'Export Data')}
-        </h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-semibold text-gray-900 flex justify-between items-center">
+            {t('export.title', 'Export & Save Data')}
+            <DialogClose asChild>
+              <Button variant="ghost" size="icon">
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogClose>
+          </DialogTitle>
+        </DialogHeader>
         
         <div className="space-y-6">
           {/* Format selection */}
@@ -131,13 +143,6 @@ export default function ExportPanel({
               >
                 <FileCode className="h-6 w-6 mb-1" />
                 <span>JSON</span>
-              </div>
-              <div 
-                className={`flex flex-col items-center p-3 border rounded-md cursor-pointer ${options.format === 'pdf' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}
-                onClick={() => setOptions({ ...options, format: 'pdf' })}
-              >
-                <File className="h-6 w-6 mb-1" />
-                <span>PDF</span>
               </div>
             </div>
           </div>
@@ -245,8 +250,36 @@ export default function ExportPanel({
               ? t('export.exporting', 'Exporting...') 
               : t('export.download', 'Download')}
           </Button>
+          
+          <div className="border-t border-gray-200 mt-6 pt-6">
+            <h3 className="text-sm font-medium mb-4">{t('export.saveToCache', 'Save to Browser Cache')}</h3>
+            <Button
+              onClick={onSaveCalculation}
+              variant="outline"
+              className="w-full"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {t('form.saveCalculation', 'Save Calculation')}
+            </Button>
+            
+            {savedCalculations.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2">{t('export.savedCalculations', 'Saved Calculations')}</h4>
+                <div className="max-h-40 overflow-y-auto">
+                  {savedCalculations.map((calc) => (
+                    <div key={calc.id} className="text-sm py-2 border-b border-gray-100">
+                      <div className="font-medium">{calc.name}</div>
+                      <div className="text-gray-500 text-xs">
+                        {new Date(calc.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

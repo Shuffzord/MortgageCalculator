@@ -120,8 +120,11 @@ describe('Overpayment handling', () => {
   }
   
   test('isOverpaymentApplicable correctly identifies applicable overpayments', () => {
+    const baseDate = new Date(2023, 0, 1); // January 1, 2023
+    
     const monthlyOp: OverpaymentDetails = {
       amount: 100,
+      startDate: new Date(2024, 0, 1), // January 1, 2024
       startMonth: 13,
       endMonth: 48,
       isRecurring: true,
@@ -131,6 +134,7 @@ describe('Overpayment handling', () => {
     
     const quarterlyOp: OverpaymentDetails = {
       amount: 200,
+      startDate: new Date(2024, 0, 1), // January 1, 2024
       startMonth: 13,
       endMonth: 48,
       isRecurring: true,
@@ -140,6 +144,7 @@ describe('Overpayment handling', () => {
     
     const annualOp: OverpaymentDetails = {
       amount: 500,
+      startDate: new Date(2024, 0, 1), // January 1, 2024
       startMonth: 13,
       endMonth: 48,
       isRecurring: true,
@@ -149,6 +154,7 @@ describe('Overpayment handling', () => {
     
     const oneTimeOp: OverpaymentDetails = {
       amount: 1000,
+      startDate: new Date(2024, 0, 1), // January 1, 2024
       startMonth: 13,
       isRecurring: false,
       effect: "reduceTerm",
@@ -157,26 +163,26 @@ describe('Overpayment handling', () => {
     };
     
     // Test monthly recurring
-    expect(engine.isOverpaymentApplicable(monthlyOp, 12)).toBe(false);
-    expect(engine.isOverpaymentApplicable(monthlyOp, 13)).toBe(true);
-    expect(engine.isOverpaymentApplicable(monthlyOp, 14)).toBe(true);
-    expect(engine.isOverpaymentApplicable(monthlyOp, 48)).toBe(true);
-    expect(engine.isOverpaymentApplicable(monthlyOp, 49)).toBe(false);
+    expect(engine.isOverpaymentApplicable(monthlyOp, 12, baseDate)).toBe(false);
+    expect(engine.isOverpaymentApplicable(monthlyOp, 13, baseDate)).toBe(true);
+    expect(engine.isOverpaymentApplicable(monthlyOp, 14, baseDate)).toBe(true);
+    expect(engine.isOverpaymentApplicable(monthlyOp, 48, baseDate)).toBe(true);
+    expect(engine.isOverpaymentApplicable(monthlyOp, 49, baseDate)).toBe(false);
     
     // Test quarterly recurring
-    expect(engine.isOverpaymentApplicable(quarterlyOp, 13)).toBe(true);
-    expect(engine.isOverpaymentApplicable(quarterlyOp, 14)).toBe(false);
-    expect(engine.isOverpaymentApplicable(quarterlyOp, 16)).toBe(true);
+    expect(engine.isOverpaymentApplicable(quarterlyOp, 13, baseDate)).toBe(true);
+    expect(engine.isOverpaymentApplicable(quarterlyOp, 14, baseDate)).toBe(false);
+    expect(engine.isOverpaymentApplicable(quarterlyOp, 16, baseDate)).toBe(true);
     
     // Test annual recurring
-    expect(engine.isOverpaymentApplicable(annualOp, 13)).toBe(true);
-    expect(engine.isOverpaymentApplicable(annualOp, 14)).toBe(false);
-    expect(engine.isOverpaymentApplicable(annualOp, 25)).toBe(true);
+    expect(engine.isOverpaymentApplicable(annualOp, 13, baseDate)).toBe(true);
+    expect(engine.isOverpaymentApplicable(annualOp, 14, baseDate)).toBe(false);
+    expect(engine.isOverpaymentApplicable(annualOp, 25, baseDate)).toBe(true);
     
     // Test one-time
-    expect(engine.isOverpaymentApplicable(oneTimeOp, 12)).toBe(false);
-    expect(engine.isOverpaymentApplicable(oneTimeOp, 13)).toBe(true);
-    expect(engine.isOverpaymentApplicable(oneTimeOp, 14)).toBe(false);
+    expect(engine.isOverpaymentApplicable(oneTimeOp, 12, baseDate)).toBe(false);
+    expect(engine.isOverpaymentApplicable(oneTimeOp, 13, baseDate)).toBe(true);
+    expect(engine.isOverpaymentApplicable(oneTimeOp, 14, baseDate)).toBe(false);
   });
   
   test('applyOverpayment with reduceTerm effect shortens the loan', async () => {

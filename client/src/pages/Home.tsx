@@ -17,7 +17,7 @@ import {
 } from "@/lib/calculationEngine";
 import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
 import { Button } from "@/components/ui/button";
-import { Save, FolderOpen } from "lucide-react";
+import { Save, FolderOpen, Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface HomeProps {
@@ -26,7 +26,8 @@ interface HomeProps {
 }
 
 export default function Home({ selectedCurrency, onCurrencyChange }: HomeProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [activeLanguage, setActiveLanguage] = useState<string>(i18n.language || 'en');
 
   // State management
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({
@@ -41,6 +42,7 @@ export default function Home({ selectedCurrency, onCurrencyChange }: HomeProps) 
 
 const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
 const [showLoadModal, setShowLoadModal] = useState(false);
+const [showExportModal, setShowExportModal] = useState(false);
 const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([]);
 
   // Calculate loan details on initial load
@@ -64,7 +66,8 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
       undefined, // Don't pass a single overpayment plan
       loanDetails.repaymentModel,
       loanDetails.additionalCosts,
-      loanDetails.overpaymentPlans // Pass all overpayment plans
+      loanDetails.overpaymentPlans, // Pass all overpayment plans
+      loanDetails.startDate // Pass the loan start date for date-based overpayments
     );
     setCalculationResults(results);
   };
@@ -73,6 +76,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
     if (calculationResults) {
       const savedCalc = saveCalculation(loanDetails, {
         amount: 0,
+        startDate: new Date(),
         startMonth: 0,
         endMonth: 0,
         isRecurring: false,
@@ -101,15 +105,15 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-semibold text-gray-900">{t('app.title')}</h1>
             <div className="flex space-x-4">
-              <Button 
+              <Button
                 variant="outline"
-                onClick={handleSaveCalculation}
+                onClick={() => setShowExportModal(true)}
                 className="flex items-center"
               >
-                <Save className="mr-1 h-4 w-4" />
-                {t('form.saveCalculation')}
+                <Download className="mr-1 h-4 w-4" />
+                {t('export.title')}
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 onClick={() => setShowLoadModal(true)}
                 className="flex items-center"
@@ -170,14 +174,11 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
               }}
             />
             
-            {calculationResults && (
-              <ExportPanel
-                loanDetails={loanDetails}
-                results={calculationResults}
-              />
-            )}
             
-            <EducationalPanel />
+            <EducationalPanel
+              activeLanguage={activeLanguage}
+              onLanguageChange={setActiveLanguage}
+            />
           </div>
         </div>
       </main>
@@ -195,6 +196,17 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
           savedCalculations={savedCalculations}
           onLoadCalculation={handleLoadCalculation}
           onClose={() => setShowLoadModal(false)}
+        />
+      )}
+      
+      {calculationResults && (
+        <ExportPanel
+          loanDetails={loanDetails}
+          results={calculationResults}
+          open={showExportModal}
+          onOpenChange={setShowExportModal}
+          savedCalculations={savedCalculations}
+          onSaveCalculation={handleSaveCalculation}
         />
       )}
     </div>

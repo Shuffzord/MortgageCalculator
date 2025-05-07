@@ -20,12 +20,15 @@ describe('Advanced Mortgage Scenarios', () => {
     // Calculate the expected monthly payment using the standard formula
     const expectedInitialPayment = calculateMonthlyPayment(initialPrincipal, initialRate, initialTerm);
     
+    // Set a fixed start date for consistency
+    const loanStartDate = new Date(2023, 0, 1); // January 1, 2023
+    
     // Create LoanDetails object
     const loanDetails = {
       principal: initialPrincipal,
       loanTerm: initialTerm,
       overpaymentPlans: [],
-      startDate: new Date(),
+      startDate: loanStartDate,
       name: 'Test Loan',
       interestRatePeriods: [{ startMonth: 1, interestRate: initialRate }]
     };
@@ -51,9 +54,12 @@ describe('Advanced Mortgage Scenarios', () => {
       { month: 36, newRate: 4 } // After month 36 → rate drops starting month 37
     ];
   
+    const loanStartDate = new Date(2023, 0, 1); // January 1, 2023
+    
     const overpayments: OverpaymentDetails[] = [
       {
         amount: 50000,
+        startDate: new Date(2028, 0, 1), // January 1, 2028 (5 years after start)
         startMonth: 60,
         isRecurring: false,
         frequency: 'one-time',
@@ -65,7 +71,7 @@ describe('Advanced Mortgage Scenarios', () => {
       principal: initialPrincipal,
       loanTerm: initialTerm,
       overpaymentPlans: [],
-      startDate: new Date(),
+      startDate: loanStartDate,
       name: 'Test Loan',
       interestRatePeriods: [{ startMonth: 1, interestRate: initialRate }]
     };
@@ -114,9 +120,17 @@ describe('Advanced Mortgage Scenarios', () => {
     const baseMonthlyPayment = calculateMonthlyPayment(initialPrincipal, initialRate, initialTerm);
     
     // Add extra payment in middle of each year starting from year 5
+    const loanStartDate = new Date(2023, 0, 1); // January 1, 2023
+    
     for (let year = 5; year < 15; year++) {
+      // Calculate the date for this overpayment (middle of the year)
+      const overpaymentDate = new Date(loanStartDate);
+      overpaymentDate.setFullYear(loanStartDate.getFullYear() + year);
+      overpaymentDate.setMonth(loanStartDate.getMonth() + 6);
+      
       overpayments.push({
         amount: baseMonthlyPayment,
+        startDate: overpaymentDate,
         startMonth: year * 12 + 6, // Middle of each year
         isRecurring: false,
         frequency: 'one-time',
@@ -128,7 +142,7 @@ describe('Advanced Mortgage Scenarios', () => {
       principal: initialPrincipal,
       loanTerm: initialTerm,
       overpaymentPlans: [],
-      startDate: new Date(),
+      startDate: loanStartDate,
       name: 'Test Loan',
       interestRatePeriods: [{ startMonth: 1, interestRate: initialRate }]
     };

@@ -9,10 +9,12 @@ describe('Overpayment Fixes', () => {
     const loanTerm = 30;
     
     // Create a recurring monthly overpayment
+    const startDate = new Date(2023, 0, 1); // January 1, 2023
     const overpaymentPlans: OverpaymentDetails[] = [
       {
         amount: 200,
-        startMonth: 12, // Start after 1 year
+        startDate: new Date(2024, 0, 1), // January 1, 2024 (1 year after start)
+        startMonth: 12, // Start after 1 year (for backward compatibility)
         isRecurring: true,
         frequency: 'monthly',
         effect: 'reduceTerm'
@@ -27,7 +29,8 @@ describe('Overpayment Fixes', () => {
       undefined,
       'equalInstallments',
       undefined,
-      overpaymentPlans
+      overpaymentPlans,
+      startDate
     );
     
     // Verify the results
@@ -55,17 +58,20 @@ describe('Overpayment Fixes', () => {
     const loanTerm = 30;
     
     // Create multiple overpayments
+    const startDate = new Date(2023, 0, 1); // January 1, 2023
     const overpaymentPlans: OverpaymentDetails[] = [
       {
         amount: 5000,
-        startMonth: 12, // One-time payment after 1 year
+        startDate: new Date(2024, 0, 1), // January 1, 2024 (1 year after start)
+        startMonth: 12, // One-time payment after 1 year (for backward compatibility)
         isRecurring: false,
         frequency: 'one-time',
         effect: 'reduceTerm'
       },
       {
         amount: 200,
-        startMonth: 24, // Monthly payment starting after 2 years
+        startDate: new Date(2025, 0, 1), // January 1, 2025 (2 years after start)
+        startMonth: 24, // Monthly payment starting after 2 years (for backward compatibility)
         isRecurring: true,
         frequency: 'monthly',
         effect: 'reduceTerm'
@@ -80,7 +86,8 @@ describe('Overpayment Fixes', () => {
       undefined,
       'equalInstallments',
       undefined,
-      overpaymentPlans
+      overpaymentPlans,
+      startDate
     );
     
     // Verify the results
@@ -109,12 +116,18 @@ describe('Overpayment Fixes', () => {
     const principal = 200000;
     const interestRatePeriods = [{ startMonth: 0, interestRate: 4.5 }];
     const loanTerm = 30;
+    const startDate = new Date(2023, 0, 1); // January 1, 2023
     
     // Calculate loan details
     const results = calculateLoanDetails(
       principal,
       interestRatePeriods,
-      loanTerm
+      loanTerm,
+      undefined,
+      'equalInstallments',
+      undefined,
+      undefined,
+      startDate
     );
     
     // Verify APR is calculated and is greater than or equal to the interest rate

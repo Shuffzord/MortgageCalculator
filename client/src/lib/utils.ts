@@ -80,6 +80,7 @@ export function generateAmortizationSchedule(
       amount: overpaymentAmount,
       startMonth: overpaymentMonth,
       endMonth: overpaymentMonth,
+      startDate: scheduleStartDate || new Date(),
       isRecurring: false,
       frequency: 'one-time',
       effect: reduceTermNotPayment ? 'reduceTerm' : 'reducePayment'
@@ -167,6 +168,7 @@ export function generateAmortizationSchedule(
     // Apply overpayment
     if (
       overpaymentPlan &&
+      overpaymentPlan.startMonth !== undefined &&
       paymentNum >= overpaymentPlan.startMonth &&
       (!overpaymentPlan.endMonth || paymentNum <= overpaymentPlan.endMonth) &&
       (overpaymentPlan.frequency === "monthly" ||

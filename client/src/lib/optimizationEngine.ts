@@ -84,6 +84,7 @@ function generateOverpaymentStrategies(
       overpayments: [{
         amount: params.maxOneTimeOverpayment,
         startMonth: 1,
+        startDate: new Date(),
         isRecurring: false,
         frequency: 'one-time',
         effect: 'reduceTerm'
@@ -100,6 +101,7 @@ function generateOverpaymentStrategies(
       overpayments: [{
         amount: params.maxMonthlyOverpayment,
         startMonth: 1,
+        startDate: new Date(),
         isRecurring: true,
         frequency: 'monthly',
         effect: 'reduceTerm'
@@ -117,6 +119,7 @@ function generateOverpaymentStrategies(
         {
           amount: params.maxOneTimeOverpayment,
           startMonth: 1,
+          startDate: new Date(),
           isRecurring: false,
           frequency: 'one-time',
           effect: 'reduceTerm'
@@ -124,6 +127,7 @@ function generateOverpaymentStrategies(
         {
           amount: params.maxMonthlyOverpayment,
           startMonth: 1,
+          startDate: new Date(),
           isRecurring: true,
           frequency: 'monthly',
           effect: 'reduceTerm'
@@ -147,6 +151,7 @@ function generateOverpaymentStrategies(
           amount: initialAmount,
           startMonth: 1,
           endMonth: 24,
+          startDate: new Date(),
           isRecurring: true,
           frequency: 'monthly',
           effect: 'reduceTerm'
@@ -155,6 +160,7 @@ function generateOverpaymentStrategies(
           amount: secondStageAmount,
           startMonth: 25,
           endMonth: 60,
+          startDate: new Date(),
           isRecurring: true,
           frequency: 'monthly',
           effect: 'reduceTerm'
@@ -162,6 +168,7 @@ function generateOverpaymentStrategies(
         {
           amount: finalAmount,
           startMonth: 61,
+          startDate: new Date(),
           isRecurring: true,
           frequency: 'monthly',
           effect: 'reduceTerm'
@@ -181,6 +188,7 @@ function generateOverpaymentStrategies(
       overpayments: [{
         amount: quarterlyAmount,
         startMonth: 1,
+        startDate: new Date(),
         isRecurring: true,
         frequency: 'quarterly',
         effect: 'reduceTerm'
@@ -344,6 +352,7 @@ export function analyzeOverpaymentImpact(
     const overpaymentPlan: OverpaymentDetails = {
       amount,
       startMonth: 1,
+      startDate: new Date(),
       isRecurring: true,
       frequency: 'monthly',
       effect: 'reduceTerm'
@@ -399,6 +408,7 @@ export function compareLumpSumVsRegular(
   const lumpSumPlan: OverpaymentDetails = {
     amount: lumpSumAmount,
     startMonth: 1,
+    startDate: new Date(),
     isRecurring: false,
     frequency: 'one-time',
     effect: 'reduceTerm'
@@ -418,6 +428,7 @@ export function compareLumpSumVsRegular(
   const monthlyPlan: OverpaymentDetails = {
     amount: monthlyAmount,
     startMonth: 1,
+    startDate: new Date(),
     isRecurring: true,
     frequency: 'monthly',
     effect: 'reduceTerm'

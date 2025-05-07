@@ -33,10 +33,12 @@ export interface InterestRatePeriod {
 
 export interface OverpaymentDetails {
   amount: number;
-  startMonth: number;
-  endMonth?: number;
+  startDate: Date;
+  endDate?: Date;
   isRecurring: boolean;
   frequency: 'monthly' | 'quarterly' | 'annual' | 'one-time';
+  startMonth?: number; // For backwards compatibility
+  endMonth?: number; // For backwards compatibility
   afterPayment?: number; // For backwards compatibility
   effect?: 'reduceTerm' | 'reducePayment';
 }

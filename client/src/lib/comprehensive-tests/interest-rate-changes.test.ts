@@ -123,6 +123,7 @@ describe('Mortgage Calculations with Interest Rate Changes', () => {
         amount: 200,
         startMonth: 61,
         endMonth: 360,
+        startDate: new Date(),
         isRecurring: true,
         frequency: 'monthly' as 'monthly' | 'quarterly' | 'annual' | 'one-time'
       }
