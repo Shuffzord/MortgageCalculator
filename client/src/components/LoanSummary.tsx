@@ -65,7 +65,7 @@ export default function LoanSummary({
       <div className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('summary.title')}</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.monthlyPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
@@ -84,6 +84,13 @@ export default function LoanSummary({
             <h3 className="text-sm font-medium text-gray-500">{t('summary.totalPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
               {formatCurrency(loanDetails.principal + calculationResults.totalInterest)}
+            </p>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-sm font-medium text-gray-500">{t('summary.apr') || "APR"}</h3>
+            <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
+              {calculationResults.apr ? `${calculationResults.apr.toFixed(2)}%` : 'N/A'}
             </p>
           </div>
           

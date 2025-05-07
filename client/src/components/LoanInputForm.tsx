@@ -138,8 +138,9 @@ export default function LoanInputForm({
     <div className="p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('form.loanDetails')}</h2>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <TooltipProvider>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -148,16 +149,14 @@ export default function LoanInputForm({
                 <FormItem>
                   <FormLabel className="flex items-center">
                     {t('form.loanAmount')}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p className="text-xs">{t('education.tooltips.principal') || t('form.loanAmountTooltip')}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">{t('education.tooltips.principal') || t('form.loanAmountTooltip')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
@@ -195,16 +194,14 @@ export default function LoanInputForm({
               <FormItem>
                 <FormLabel className="flex items-center">
                   {t('form.loanTerm')}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('education.tooltips.loanTerm') || t('form.loanTermTooltip')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-xs">{t('education.tooltips.loanTerm') || t('form.loanTermTooltip')}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
@@ -237,16 +234,14 @@ export default function LoanInputForm({
               <FormItem>
                 <FormLabel className="flex items-center">
                   {t('form.repaymentModel')}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('education.tooltips.repaymentModel') || t('form.repaymentModelTooltip')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-xs">{t('education.tooltips.repaymentModel') || t('form.repaymentModelTooltip')}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </FormLabel>
                 <FormControl>
                   <select
@@ -266,16 +261,14 @@ export default function LoanInputForm({
           <FormItem className="flex flex-col">
             <FormLabel className="flex items-center">
               {t('form.loanStartDate')}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p className="text-xs">{t('education.tooltips.loanStartDate') || t('form.loanStartDateTooltip')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-xs">{t('education.tooltips.loanStartDate') || t('form.loanStartDateTooltip')}</p>
+                </TooltipContent>
+              </Tooltip>
             </FormLabel>
             <Popover>
               <PopoverTrigger asChild>
@@ -310,16 +303,14 @@ export default function LoanInputForm({
               <FormItem>
                 <FormLabel className="flex items-center">
                   {t('form.interestRatePeriods')}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('form.interestRatePeriodsTooltip')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-xs">{t('form.interestRatePeriodsTooltip')}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </FormLabel>
                 <FormControl>
                   <div className="space-y-4">
@@ -479,16 +470,14 @@ export default function LoanInputForm({
               <FormItem>
                 <FormLabel className="flex items-center">
                   {t('overpayment.title')}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('overpayment.amountTooltip')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-xs">{t('overpayment.amountTooltip')}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </FormLabel>
                 <FormControl>
                   <div className="space-y-4">
@@ -643,16 +632,14 @@ export default function LoanInputForm({
               <FormItem>
                 <FormLabel className="flex items-center">
                   {t('form.additionalCosts') || "Additional Costs"}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">{t('form.additionalCostsTooltip') || "Fees and costs associated with your loan"}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-xs">{t('form.additionalCostsTooltip') || "Fees and costs associated with your loan"}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </FormLabel>
                 <FormControl>
                   <div className="space-y-4 p-3 border border-gray-200 rounded-md">
@@ -778,8 +765,9 @@ export default function LoanInputForm({
               {t('form.calculate')}
             </Button>
           </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </TooltipProvider>
     </div>
   );
 }

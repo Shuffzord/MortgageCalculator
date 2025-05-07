@@ -155,7 +155,8 @@ export function calculateLoanDetails(
   loanTerm: number,
   overpaymentPlan?: OverpaymentDetails,
   repaymentModel: RepaymentModel = 'equalInstallments',
-  additionalCosts?: AdditionalCosts
+  additionalCosts?: AdditionalCosts,
+  overpaymentPlans?: OverpaymentDetails[]
 ): CalculationResults {
   if (principal === 0) {
     return {
@@ -185,7 +186,10 @@ export function calculateLoanDetails(
   );
 
   // If there are overpayments, apply them immediately
-  if (overpaymentPlan) {
+  if (overpaymentPlans && overpaymentPlans.length > 0) {
+    rawSchedule = applyMultipleOverpayments(rawSchedule, overpaymentPlans);
+  } else if (overpaymentPlan) {
+    // For backward compatibility
     rawSchedule = applyMultipleOverpayments(rawSchedule, [overpaymentPlan]);
   }
 
@@ -734,7 +738,13 @@ export function performOverpayments(
     
     if (applicableOps.length) {
       const totalAmount = applicableOps.reduce((sum, op) => sum + op.amount, 0);
-      const effect = applicableOps[0].effect || "reduceTerm";
+      
+      // Use the effect from the largest overpayment if multiple are applied
+      const primaryOverpayment = applicableOps.reduce(
+        (prev, current) => (current.amount > prev.amount ? current : prev),
+        applicableOps[0]
+      );
+      const effect = primaryOverpayment.effect || "reduceTerm";
       
       try {
         // Ensure we don't overpay more than remaining balance
@@ -743,6 +753,13 @@ export function performOverpayments(
         
         const result = applyOverpayment(current, safeAmount, m, effect);
         current = result.amortizationSchedule;
+        
+        // Recalculate totalInterest for all payments after this overpayment
+        let cumulativeInterest = m > 1 ? current[m - 2].totalInterest : 0;
+        for (let i = m - 1; i < current.length; i++) {
+          cumulativeInterest += current[i].interestPayment;
+          current[i].totalInterest = roundToCents(cumulativeInterest);
+        }
       } catch (error) {
         console.warn(`Warning: Stopping overpayments at month ${m}, loan may be paid off`);
         break;

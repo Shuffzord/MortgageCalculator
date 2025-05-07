@@ -36,12 +36,16 @@ export default function ChartSection({
   }, []);
 
   useEffect(() => {
-    if (!calculationResults || !pieChartRef.current || !barChartRef.current) return;
-
-    // Create or update the pie chart
-    if (pieChart) pieChart.destroy();
+    if (!calculationResults) return;
     
-    const newPieChart = new Chart(pieChartRef.current, {
+    // Wait for the DOM to be ready
+    setTimeout(() => {
+      if (!pieChartRef.current) return;
+      
+      // Create or update the pie chart
+      if (pieChart) pieChart.destroy();
+      
+      const newPieChart = new Chart(pieChartRef.current, {
       type: 'pie',
       data: {
         labels: ['Principal', 'Interest'],
@@ -67,17 +71,21 @@ export default function ChartSection({
       }
     });
     
-    setPieChart(newPieChart);
-
+      setPieChart(newPieChart);
+    }, 0);
+    
     // Create or update the bar chart
-    if (barChart) barChart.destroy();
-    
-    const yearlyData = calculationResults.yearlyData;
-    const years = yearlyData.map(data => 'Year ' + data.year);
-    const principalData = yearlyData.map(data => data.principal);
-    const interestData = yearlyData.map(data => data.interest);
-    
-    const newBarChart = new Chart(barChartRef.current, {
+    setTimeout(() => {
+      if (!barChartRef.current) return;
+      
+      if (barChart) barChart.destroy();
+      
+      const yearlyData = calculationResults.yearlyData;
+      const years = yearlyData.map(data => 'Year ' + data.year);
+      const principalData = yearlyData.map(data => data.principal);
+      const interestData = yearlyData.map(data => data.interest);
+      
+      const newBarChart = new Chart(barChartRef.current, {
       type: 'bar',
       data: {
         labels: years,
@@ -125,14 +133,18 @@ export default function ChartSection({
       }
     });
     
-    setBarChart(newBarChart);
-  }, [calculationResults, loanDetails]);
+      setBarChart(newBarChart);
+    }, 0);
+  }, [calculationResults, loanDetails, pieChart, barChart]);
 
   // Create comparison chart when comparison data is available
   useEffect(() => {
-    if (!comparisonChartRef.current || !comparisonResults || comparisonResults.length === 0) return;
+    if (!comparisonResults || comparisonResults.length === 0) return;
     
-    if (comparisonChart) comparisonChart.destroy();
+    setTimeout(() => {
+      if (!comparisonChartRef.current) return;
+      
+      if (comparisonChart) comparisonChart.destroy();
     
     // Prepare data for comparison chart
     const scenarios = [
@@ -220,8 +232,9 @@ export default function ChartSection({
       }
     });
     
-    setComparisonChart(newComparisonChart);
-  }, [comparisonResults, calculationResults, loanDetails]);
+      setComparisonChart(newComparisonChart);
+    }, 0);
+  }, [comparisonResults, calculationResults, loanDetails, comparisonChart]);
 
   if (!calculationResults) {
     return (

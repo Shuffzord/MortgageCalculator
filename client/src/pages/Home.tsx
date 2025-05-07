@@ -61,7 +61,10 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
       loanDetails.principal,
       loanDetails.interestRatePeriods,
       loanDetails.loanTerm,
-      loanDetails.overpaymentPlans[0]
+      undefined, // Don't pass a single overpayment plan
+      loanDetails.repaymentModel,
+      loanDetails.additionalCosts,
+      loanDetails.overpaymentPlans // Pass all overpayment plans
     );
     setCalculationResults(results);
   };
