@@ -27,7 +27,18 @@
     "interestRatePeriodsTooltip": "Defina diferentes tasas de interés para períodos específicos de su préstamo.",
     "startMonth": "Mes de Inicio",
     "remove": "Eliminar",
-    "add": "Agregar Período"
+    "add": "Agregar Período",
+    "startYear": "Año de Inicio",
+    "loanStartDate": "Fecha de Inicio del Préstamo",
+    "loanStartDateTooltip": "La fecha en que comienza su hipoteca.",
+    "pickDate": "Seleccionar fecha",
+    "month": "Mes",
+    "year": "Año",
+    "repaymentModel": "Modelo de Reembolso",
+    "repaymentModelTooltip": "Elija cómo se estructuran sus pagos del préstamo a lo largo del tiempo.",
+    "equalInstallments": "Cuotas Iguales (Anualidad)",
+    "decreasingInstallments": "Cuotas Decrecientes",
+    "customRepayment": "Reembolso Personalizado"
   },
   "overpayment": {
     "title": "Pago Adicional",
@@ -97,5 +108,28 @@
     "minTerm": "El plazo del préstamo debe ser al menos 1 año",
     "maxTerm": "El plazo del préstamo debe ser como máximo 50 años",
     "minOverpayment": "El monto del pago adicional debe ser al menos 0"
+  },
+  "education": {
+    "title": "Centro Educativo de Hipotecas",
+    "description": "Aprenda sobre conceptos hipotecarios y cómo diferentes factores afectan su préstamo.",
+    "search": "Buscar términos, conceptos o ejemplos...",
+    "glossary": "Glosario",
+    "concepts": "Conceptos Clave",
+    "interactive": "Ejemplos Interactivos",
+    "noResults": "No se encontraron resultados coincidentes",
+    "example": "Ejemplo",
+    "impact": "Impacto",
+    "relatedTerms": "Términos Relacionados",
+    "tooltips": {
+      "principal": "La cantidad original de dinero prestada en un préstamo, excluyendo intereses y otras tarifas.",
+      "interestRate": "El costo de pedir dinero prestado, expresado como porcentaje del monto del préstamo. Determina cuánto paga adicional más allá del principal.",
+      "loanTerm": "El período de tiempo durante el cual acuerda pagar su hipoteca, típicamente expresado en años. Los plazos hipotecarios comunes son 15, 20 o 30 años.",
+      "repaymentModel": "Diferentes métodos de estructurar los pagos del préstamo a lo largo del tiempo. Las cuotas iguales mantienen su pago igual durante todo el préstamo, mientras que las cuotas decrecientes comienzan más altas pero disminuyen con el tiempo.",
+      "loanStartDate": "La fecha en que comienza su hipoteca y comienzan a acumularse los intereses. Esto determina su calendario de pagos.",
+      "overpayment": "Pagos adicionales realizados más allá del pago mensual requerido, aplicados directamente al saldo principal. Esto reduce el interés total pagado y puede acortar el plazo del préstamo.",
+      "originationFee": "Una tarifa cobrada por los prestamistas para procesar una nueva solicitud de préstamo, típicamente del 0.5% al 1% del monto del préstamo.",
+      "loanInsurance": "Seguro que protege al prestamista si el prestatario incumple. Para hipotecas, esto a menudo se llama Seguro Hipotecario Privado (PMI).",
+      "administrativeFees": "Varias tarifas cobradas por el prestamista por administrar su préstamo, como tarifas de servicio anual o tarifas de estado de cuenta."
+    }
   }
 }
