@@ -5,7 +5,9 @@ import {
   OverpaymentDetails,
   YearlyData,
   LoanDetails,
-  RepaymentModel
+  RepaymentModel,
+  AdditionalCosts,
+  FeeType
 } from "./types";
 import { validateInputs } from "./validation";
 import { calculateMonthlyPayment, generateAmortizationSchedule, roundToCents } from "./utils";
@@ -50,12 +52,110 @@ export function calculateDecreasingInstallment(
   return roundToCents(principalPortion + interestPortion);
 }
 
+/**
+ * Calculate one-time fees
+ */
+export function calculateOneTimeFees(
+  principal: number,
+  additionalCosts?: AdditionalCosts
+): number {
+  if (!additionalCosts) return 0;
+  
+  let totalFees = 0;
+  
+  // Origination fee
+  if (additionalCosts.originationFeeType === 'fixed') {
+    totalFees += additionalCosts.originationFee;
+  } else {
+    totalFees += (principal * additionalCosts.originationFee / 100);
+  }
+  
+  return roundToCents(totalFees);
+}
+
+/**
+ * Calculate recurring fees for a specific payment
+ */
+export function calculateRecurringFees(
+  remainingBalance: number,
+  additionalCosts?: AdditionalCosts
+): number {
+  if (!additionalCosts) return 0;
+  
+  let monthlyFees = 0;
+  
+  // Loan insurance
+  if (additionalCosts.loanInsuranceType === 'fixed') {
+    monthlyFees += additionalCosts.loanInsurance;
+  } else {
+    monthlyFees += (remainingBalance * additionalCosts.loanInsurance / 100 / 12);
+  }
+  
+  // Administrative fees
+  if (additionalCosts.administrativeFeesType === 'fixed') {
+    monthlyFees += additionalCosts.administrativeFees;
+  } else {
+    monthlyFees += (remainingBalance * additionalCosts.administrativeFees / 100 / 12);
+  }
+  
+  return roundToCents(monthlyFees);
+}
+
+/**
+ * Calculate Annual Percentage Rate (APR)
+ * Uses iterative approach to find the rate that makes the present value
+ * of all cash flows equal to the initial loan amount
+ */
+export function calculateAPR(
+  principal: number,
+  monthlyPayment: number,
+  loanTermMonths: number,
+  oneTimeFees: number,
+  recurringFees: number
+): number {
+  // Initial guess: standard interest rate + 1%
+  let guess = 0.05;
+  let step = 0.01;
+  let tolerance = 0.0001;
+  let maxIterations = 100;
+  
+  // Newton-Raphson method to find APR
+  for (let i = 0; i < maxIterations; i++) {
+    // Calculate present value with current guess
+    let pv = 0;
+    for (let month = 1; month <= loanTermMonths; month++) {
+      pv += (monthlyPayment + recurringFees) / Math.pow(1 + guess / 12, month);
+    }
+    
+    // Calculate difference from principal
+    const diff = pv - (principal - oneTimeFees);
+    
+    if (Math.abs(diff) < tolerance) {
+      break;
+    }
+    
+    // Adjust guess
+    if (diff > 0) {
+      guess += step;
+    } else {
+      guess -= step;
+    }
+    
+    // Reduce step size
+    step *= 0.9;
+  }
+  
+  // Convert to annual percentage rate
+  return roundToCents(guess * 12 * 100);
+}
+
 export function calculateLoanDetails(
   principal: number,
   interestRatePeriods: { startMonth: number; interestRate: number; }[],
   loanTerm: number,
   overpaymentPlan?: OverpaymentDetails,
-  repaymentModel: RepaymentModel = 'equalInstallments'
+  repaymentModel: RepaymentModel = 'equalInstallments',
+  additionalCosts?: AdditionalCosts
 ): CalculationResults {
   if (principal === 0) {
     return {
@@ -69,6 +169,9 @@ export function calculateLoanDetails(
   }
 
   validateInputs(principal, interestRatePeriods, loanTerm, overpaymentPlan);
+
+  // Calculate one-time fees
+  const oneTimeFees = calculateOneTimeFees(principal, additionalCosts);
 
   let rawSchedule = generateAmortizationSchedule(
     principal,
@@ -86,16 +189,40 @@ export function calculateLoanDetails(
     rawSchedule = applyMultipleOverpayments(rawSchedule, [overpaymentPlan]);
   }
 
-  const paymentData = convertAndProcessSchedule(rawSchedule);
+  // Process the schedule and add fees
+  const paymentData = convertAndProcessScheduleWithFees(rawSchedule, additionalCosts);
   const yearlyData = aggregateYearlyData(paymentData);
+
+  // Calculate total recurring fees
+  const recurringFees = paymentData.reduce((sum, payment) => sum + (payment.fees || 0), 0);
+
+  // Calculate total cost (principal + interest + fees)
+  const totalInterest = paymentData.length > 0 ? paymentData[paymentData.length - 1].totalInterest : 0;
+  const totalCost = principal + totalInterest + oneTimeFees + recurringFees;
+
+  // Calculate APR if we have all the necessary data
+  let apr;
+  if (paymentData.length > 0) {
+    apr = calculateAPR(
+      principal,
+      paymentData[0].monthlyPayment,
+      loanTerm * 12,
+      oneTimeFees,
+      recurringFees / paymentData.length // average monthly recurring fees
+    );
+  }
 
   return {
     monthlyPayment: paymentData[0]?.monthlyPayment || 0,
-    totalInterest: paymentData.length > 0 ? paymentData[paymentData.length - 1].totalInterest : 0,
+    totalInterest: totalInterest,
     amortizationSchedule: paymentData,
     yearlyData,
     originalTerm: loanTerm,
-    actualTerm: paymentData.length / 12
+    actualTerm: paymentData.length / 12,
+    oneTimeFees,
+    recurringFees,
+    totalCost,
+    apr
   };
 }
 
@@ -115,6 +242,40 @@ export function convertAndProcessSchedule(rawSchedule: any[]): PaymentData[] {
       balance: roundToCents(converted.balance),
       totalPayment: roundToCents(converted.totalPayment ?? converted.monthlyPayment),
       totalInterest: 0
+    };
+  });
+
+  // Calculate cumulative interest
+  let cumulativeInterest = 0;
+  for (const pd of paymentData) {
+    cumulativeInterest += pd.interestPayment;
+    pd.totalInterest = roundToCents(cumulativeInterest);
+  }
+
+  return paymentData;
+}
+
+/**
+ * Convert raw schedule to payment data, calculate cumulative interest, and add fees
+ */
+export function convertAndProcessScheduleWithFees(rawSchedule: any[], additionalCosts?: AdditionalCosts): PaymentData[] {
+  const paymentData: PaymentData[] = rawSchedule.map(item => {
+    const converted = convertLegacySchedule(item);
+    
+    // Calculate recurring fees for this payment
+    const fees = additionalCosts ? calculateRecurringFees(converted.balance, additionalCosts) : 0;
+    
+    return {
+      payment: converted.payment || 0,
+      isOverpayment: converted.isOverpayment,
+      overpaymentAmount: converted.overpaymentAmount || 0,
+      monthlyPayment: roundToCents(converted.monthlyPayment),
+      interestPayment: roundToCents(converted.interestPayment),
+      principalPayment: roundToCents(converted.principalPayment),
+      balance: roundToCents(converted.balance),
+      totalPayment: roundToCents((converted.totalPayment ?? converted.monthlyPayment) + fees),
+      totalInterest: 0,
+      fees: fees
     };
   });
 

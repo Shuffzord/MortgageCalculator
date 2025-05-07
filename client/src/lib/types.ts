@@ -2,6 +2,17 @@
 
 export type RepaymentModel = 'equalInstallments' | 'decreasingInstallments' | 'custom';
 
+export type FeeType = 'fixed' | 'percentage';
+
+export interface AdditionalCosts {
+  originationFee: number;           // One-time fee at loan start
+  originationFeeType: FeeType;
+  loanInsurance: number;            // Recurring fee
+  loanInsuranceType: FeeType;
+  administrativeFees: number;       // Other recurring fees
+  administrativeFeesType: FeeType;
+}
+
 export interface LoanDetails {
   principal: number;
   interestRatePeriods: InterestRatePeriod[];
@@ -12,6 +23,7 @@ export interface LoanDetails {
   currency?: string;
   dateCreated?: string;
   repaymentModel?: RepaymentModel;
+  additionalCosts?: AdditionalCosts;
 }
 
 export interface InterestRatePeriod {
@@ -53,6 +65,9 @@ export interface PaymentData {
   isOverpayment: boolean;      // Whether this payment includes an overpayment
   overpaymentAmount: number;   // Extra amount paid toward principal
   
+  // Additional costs related
+  fees?: number;               // Additional fees for this payment period
+  
   // Additional data
   paymentDate?: Date;          // Date when payment is made
   currency?: string;           // Currency symbol for display purposes
@@ -77,6 +92,10 @@ export interface CalculationResults {
   originalTerm: number;
   actualTerm: number;
   timeOrPaymentSaved?: number;
+  oneTimeFees?: number;
+  recurringFees?: number;
+  totalCost?: number;
+  apr?: number;
 }
 
 // Storage Related Types

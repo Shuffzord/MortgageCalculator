@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LoanDetails, InterestRatePeriod, RepaymentModel } from "@/lib/types";
+import { LoanDetails, InterestRatePeriod, RepaymentModel, AdditionalCosts, FeeType } from "@/lib/types";
 import { 
   Form, 
   FormField, 
@@ -48,6 +48,21 @@ const loanFormSchema = z.object({
       effect: z.enum(['reduceTerm', 'reducePayment']).default('reduceTerm'),
     })
   ).optional().default([]),
+  additionalCosts: z.object({
+    originationFee: z.coerce.number().min(0, "Fee must be at least 0"),
+    originationFeeType: z.enum(['fixed', 'percentage']).default('fixed'),
+    loanInsurance: z.coerce.number().min(0, "Fee must be at least 0"),
+    loanInsuranceType: z.enum(['fixed', 'percentage']).default('fixed'),
+    administrativeFees: z.coerce.number().min(0, "Fee must be at least 0"),
+    administrativeFeesType: z.enum(['fixed', 'percentage']).default('fixed'),
+  }).optional().default({
+    originationFee: 0,
+    originationFeeType: 'fixed',
+    loanInsurance: 0,
+    loanInsuranceType: 'fixed',
+    administrativeFees: 0,
+    administrativeFeesType: 'fixed'
+  }),
 });
 
 type LoanFormValues = z.infer<typeof loanFormSchema>;
@@ -91,6 +106,14 @@ export default function LoanInputForm({
       interestRatePeriods: loanDetails.interestRatePeriods,
       repaymentModel: loanDetails.repaymentModel || 'equalInstallments',
       overpaymentPlans: loanDetails.overpaymentPlans || [],
+      additionalCosts: loanDetails.additionalCosts || {
+        originationFee: 0,
+        originationFeeType: 'fixed',
+        loanInsurance: 0,
+        loanInsuranceType: 'fixed',
+        administrativeFees: 0,
+        administrativeFeesType: 'fixed'
+      },
     },
   });
 
@@ -104,6 +127,7 @@ export default function LoanInputForm({
       loanTerm: values.loanTerm,
       repaymentModel: values.repaymentModel,
       overpaymentPlans: values.overpaymentPlans || [],
+      additionalCosts: values.additionalCosts,
       startDate: date,
       currency: selectedCurrency
     });
@@ -606,6 +630,140 @@ export default function LoanInputForm({
                     >
                       {t('overpayment.add')}
                     </Button>
+                  </div>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+{/* Additional Costs Section */}
+          <FormField
+            control={form.control}
+            name="additionalCosts"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center">
+                  {t('form.additionalCosts') || "Additional Costs"}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">{t('form.additionalCostsTooltip') || "Fees and costs associated with your loan"}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </FormLabel>
+                <FormControl>
+                  <div className="space-y-4 p-3 border border-gray-200 rounded-md">
+                    {/* Origination Fee */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <FormLabel className="text-xs text-gray-500">{t('form.originationFee') || "Origination Fee"}</FormLabel>
+                        <div className="flex items-center">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={field.value?.originationFee || 0}
+                            onChange={(e) => {
+                              const newValue = { 
+                                ...field.value, 
+                                originationFee: Number(e.target.value) 
+                              };
+                              field.onChange(newValue);
+                            }}
+                            className="flex-1"
+                          />
+                          <select
+                            className="ml-2 h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+                            value={field.value?.originationFeeType || 'fixed'}
+                            onChange={(e) => {
+                              const newValue = { 
+                                ...field.value, 
+                                originationFeeType: e.target.value as FeeType 
+                              };
+                              field.onChange(newValue);
+                            }}
+                          >
+                            <option value="fixed">{getCurrencySymbol(selectedCurrency)}</option>
+                            <option value="percentage">%</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      {/* Loan Insurance */}
+                      <div className="space-y-2">
+                        <FormLabel className="text-xs text-gray-500">{t('form.loanInsurance') || "Loan Insurance"}</FormLabel>
+                        <div className="flex items-center">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={field.value?.loanInsurance || 0}
+                            onChange={(e) => {
+                              const newValue = { 
+                                ...field.value, 
+                                loanInsurance: Number(e.target.value) 
+                              };
+                              field.onChange(newValue);
+                            }}
+                            className="flex-1"
+                          />
+                          <select
+                            className="ml-2 h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+                            value={field.value?.loanInsuranceType || 'fixed'}
+                            onChange={(e) => {
+                              const newValue = { 
+                                ...field.value, 
+                                loanInsuranceType: e.target.value as FeeType 
+                              };
+                              field.onChange(newValue);
+                            }}
+                          >
+                            <option value="fixed">{getCurrencySymbol(selectedCurrency)}</option>
+                            <option value="percentage">%</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Administrative Fees */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <FormLabel className="text-xs text-gray-500">{t('form.administrativeFees') || "Administrative Fees"}</FormLabel>
+                        <div className="flex items-center">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={field.value?.administrativeFees || 0}
+                            onChange={(e) => {
+                              const newValue = { 
+                                ...field.value, 
+                                administrativeFees: Number(e.target.value) 
+                              };
+                              field.onChange(newValue);
+                            }}
+                            className="flex-1"
+                          />
+                          <select
+                            className="ml-2 h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+                            value={field.value?.administrativeFeesType || 'fixed'}
+                            onChange={(e) => {
+                              const newValue = { 
+                                ...field.value, 
+                                administrativeFeesType: e.target.value as FeeType 
+                              };
+                              field.onChange(newValue);
+                            }}
+                          >
+                            <option value="fixed">{getCurrencySymbol(selectedCurrency)}</option>
+                            <option value="percentage">%</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </FormControl>
               </FormItem>

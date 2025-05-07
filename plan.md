@@ -18,19 +18,19 @@ This document provides a comprehensive technical plan for implementing missing f
 - ✅ Create a framework for custom repayment models
 - ✅ Implement model switching logic
 
-### 1.2. Additional Costs Handling
+### 1.2. Additional Costs Handling ✅
 
 **Current State:**
-- No implementation for loan origination fees
-- No support for loan insurance
-- No early repayment fee calculation
-- No administrative fee handling
+- ~~No implementation for loan origination fees~~
+- ~~No support for loan insurance~~
+- ~~No early repayment fee calculation~~
+- ~~No administrative fee handling~~
 
 **Required Implementation:**
-- Add data structures for various fee types
-- Implement fee calculation logic
-- Integrate fees into total cost calculations
-- Update UI to allow fee input
+- ✅ Add data structures for various fee types
+- ✅ Implement fee calculation logic
+- ✅ Integrate fees into total cost calculations
+- ✅ Update UI to allow fee input
 
 ### 1.3. APR Calculation
 
