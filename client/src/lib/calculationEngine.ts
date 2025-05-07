@@ -4,7 +4,8 @@ import {
   PaymentData,
   OverpaymentDetails,
   YearlyData,
-  LoanDetails
+  LoanDetails,
+  RepaymentModel
 } from "./types";
 import { validateInputs } from "./validation";
 import { calculateMonthlyPayment, generateAmortizationSchedule, roundToCents } from "./utils";
@@ -26,11 +27,35 @@ export function formatCurrency(amount: number): string {
 /**
  * Calculate loan details and generate the amortization schedule
  */
+/**
+ * Calculate monthly payment for decreasing installments model
+ * In this model, the principal portion remains constant and the interest portion decreases over time
+ */
+export function calculateDecreasingInstallment(
+  principal: number,
+  monthlyRate: number,
+  totalMonths: number,
+  currentMonth: number
+): number {
+  // Fixed principal portion
+  const principalPortion = principal / totalMonths;
+  
+  // Remaining balance after previous payments
+  const remainingBalance = principal - (principalPortion * (currentMonth - 1));
+  
+  // Interest portion based on remaining balance
+  const interestPortion = remainingBalance * monthlyRate;
+  
+  // Total payment for this month
+  return roundToCents(principalPortion + interestPortion);
+}
+
 export function calculateLoanDetails(
   principal: number,
   interestRatePeriods: { startMonth: number; interestRate: number; }[],
   loanTerm: number,
-  overpaymentPlan?: OverpaymentDetails
+  overpaymentPlan?: OverpaymentDetails,
+  repaymentModel: RepaymentModel = 'equalInstallments'
 ): CalculationResults {
   if (principal === 0) {
     return {
@@ -49,7 +74,11 @@ export function calculateLoanDetails(
     principal,
     interestRatePeriods,
     loanTerm,
-    overpaymentPlan
+    overpaymentPlan,
+    undefined, // overpaymentMonth (not used)
+    undefined, // reduceTermNotPayment (not used)
+    undefined, // startDate (not used)
+    repaymentModel
   );
 
   // If there are overpayments, apply them immediately
@@ -367,7 +396,7 @@ export function calculateReducedPaymentSchedule(
       totalInterest: schedule.reduce((sum, p) => sum + p.interestPayment, 0) + interestPayment,
       totalPayment: currentPayment
     });
-  }
+2  }
 
   return schedule;
 }

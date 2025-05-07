@@ -1,3 +1,7 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { PaymentData, OverpaymentDetails, RepaymentModel } from "./types";
+
 export function areMonetaryValuesEqual(a: number, b: number, tolerance = 0.01): boolean {
   return Math.abs(roundToCents(a) - roundToCents(b)) <= tolerance;
 }
@@ -64,6 +68,7 @@ export function generateAmortizationSchedule(
   overpaymentMonth?: number | Date,
   reduceTermNotPayment?: boolean,
   startDate?: Date,
+  repaymentModel?: RepaymentModel,
 ): PaymentData[] {
   // Handle legacy parameters format
   let overpaymentPlan: OverpaymentDetails | undefined;
@@ -127,15 +132,28 @@ export function generateAmortizationSchedule(
     }
 
     const monthlyRate = currentInterestRate / 100 / 12;
-    let monthlyPayment = calculateMonthlyPayment(
-      remainingPrincipal,
-      monthlyRate,
-      totalPayments,
-    );
+    let monthlyPayment: number;
+    let interestPayment: number;
+    let principalPayment: number;
+    let payment: number;
 
-    const interestPayment = remainingPrincipal * monthlyRate;
-    let principalPayment = monthlyPayment - interestPayment;
-    let payment = monthlyPayment;
+    if (repaymentModel === 'decreasingInstallments') {
+      // For decreasing installments, principal portion is fixed and interest portion decreases
+      principalPayment = roundToCents(principal / originalTotalPayments);
+      interestPayment = roundToCents(remainingPrincipal * monthlyRate);
+      monthlyPayment = principalPayment + interestPayment;
+      payment = monthlyPayment;
+    } else {
+      // Default: equal installments (annuity) model
+      monthlyPayment = calculateMonthlyPayment(
+        remainingPrincipal,
+        monthlyRate,
+        totalPayments,
+      );
+      interestPayment = remainingPrincipal * monthlyRate;
+      principalPayment = monthlyPayment - interestPayment;
+      payment = monthlyPayment;
+    }
     let overpaymentAmount = 0;
 
     // Calculate payment date if start date is provided
@@ -280,9 +298,6 @@ export function formatDate(date: Date): string {
   });
 }
 
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { PaymentData, OverpaymentDetails } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

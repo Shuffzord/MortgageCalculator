@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LoanDetails, InterestRatePeriod } from "@/lib/types";
+import { LoanDetails, InterestRatePeriod, RepaymentModel } from "@/lib/types";
 import { 
   Form, 
   FormField, 
@@ -37,6 +37,7 @@ const loanFormSchema = z.object({
         .max(20, "Interest rate must be less than 20%"),
     })
   ).min(1, "At least one interest rate period is required"),
+  repaymentModel: z.enum(['equalInstallments', 'decreasingInstallments', 'custom']).default('equalInstallments'),
   overpaymentPlans: z.array(
     z.object({
       amount: z.coerce.number().min(0, "Overpayment amount must be at least 0"),
@@ -88,6 +89,7 @@ export default function LoanInputForm({
       principal: loanDetails.principal,
       loanTerm: loanDetails.loanTerm,
       interestRatePeriods: loanDetails.interestRatePeriods,
+      repaymentModel: loanDetails.repaymentModel || 'equalInstallments',
       overpaymentPlans: loanDetails.overpaymentPlans || [],
     },
   });
@@ -100,6 +102,7 @@ export default function LoanInputForm({
       principal: values.principal,
       interestRatePeriods: values.interestRatePeriods,
       loanTerm: values.loanTerm,
+      repaymentModel: values.repaymentModel,
       overpaymentPlans: values.overpaymentPlans || [],
       startDate: date,
       currency: selectedCurrency
@@ -199,6 +202,39 @@ export default function LoanInputForm({
                     {form.formState.errors.loanTerm.message}
                   </p>
                 )}
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="repaymentModel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center">
+                  {t('form.repaymentModel')}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">{t('form.repaymentModelTooltip')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </FormLabel>
+                <FormControl>
+                  <select
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    value={field.value}
+                    onChange={field.onChange}
+                  >
+                    <option value="equalInstallments">{t('form.equalInstallments')}</option>
+                    <option value="decreasingInstallments">{t('form.decreasingInstallments')}</option>
+                    <option value="custom">{t('form.customRepayment')}</option>
+                  </select>
+                </FormControl>
               </FormItem>
             )}
           />

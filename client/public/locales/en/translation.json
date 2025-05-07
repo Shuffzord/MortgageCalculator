@@ -33,7 +33,12 @@
     "loanStartDateTooltip": "The date when your mortgage begins.",
     "pickDate": "Pick a date",
     "month": "Month",
-    "year": "Year"
+    "year": "Year",
+    "repaymentModel": "Repayment Model",
+    "repaymentModelTooltip": "Choose how your loan payments are structured over time.",
+    "equalInstallments": "Equal Installments (Annuity)",
+    "decreasingInstallments": "Decreasing Installments",
+    "customRepayment": "Custom Repayment"
   },
   "overpayment": {
     "title": "Overpayment",

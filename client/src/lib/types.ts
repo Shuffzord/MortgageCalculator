@@ -1,5 +1,7 @@
 // Core Types
 
+export type RepaymentModel = 'equalInstallments' | 'decreasingInstallments' | 'custom';
+
 export interface LoanDetails {
   principal: number;
   interestRatePeriods: InterestRatePeriod[];
@@ -9,6 +11,7 @@ export interface LoanDetails {
   name: string;
   currency?: string;
   dateCreated?: string;
+  repaymentModel?: RepaymentModel;
 }
 
 export interface InterestRatePeriod {
