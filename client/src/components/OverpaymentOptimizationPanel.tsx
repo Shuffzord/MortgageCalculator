@@ -18,7 +18,7 @@ import {
 import { formatCurrency } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import Chart from "chart.js/auto";
-import { HelpCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface OverpaymentOptimizationPanelProps {
@@ -323,7 +323,7 @@ export default function OverpaymentOptimizationPanel({
   return (
     <Card>
       <CardContent className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Overpayment Optimization
           <TooltipProvider>
             <Tooltip>
@@ -337,15 +337,33 @@ export default function OverpaymentOptimizationPanel({
           </TooltipProvider>
         </h2>
         
-        <Tabs defaultValue="optimize" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full mb-4">
-            <TabsTrigger value="optimize" className="flex-1">Optimize</TabsTrigger>
-            <TabsTrigger value="compare" className="flex-1">Compare Strategies</TabsTrigger>
-            <TabsTrigger value="analyze" className="flex-1">Analyze Impact</TabsTrigger>
-          </TabsList>
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            onClick={() => setActiveTab(prev => prev === "optimize" ? "analyze" : prev === "analyze" ? "compare" : "optimize")}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Previous visualization"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
           
-          <TabsContent value="optimize" className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="text-sm font-medium">
+            {activeTab === "optimize" ? "Optimization Strategy" : 
+             activeTab === "compare" ? "Strategy Comparison" : "Impact Analysis"}
+          </div>
+          
+          <button 
+            onClick={() => setActiveTab(prev => prev === "optimize" ? "compare" : prev === "compare" ? "analyze" : "optimize")}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Next visualization"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          {/* Optimization View */}
+          <div className={activeTab === "optimize" ? "block" : "hidden"}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="space-y-2">
                 <Label className="flex items-center">
                   Max Monthly Overpayment
@@ -430,12 +448,12 @@ export default function OverpaymentOptimizationPanel({
               </select>
             </div>
             
-            <Button onClick={handleOptimize} className="w-full">
+            <Button onClick={handleOptimize} className="w-full mb-4">
               Calculate Optimal Strategy
             </Button>
             
             {result && (
-              <div className="mt-4 space-y-4">
+              <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-md">
                   <h3 className="font-medium mb-2">Optimization Results</h3>
                   
@@ -478,16 +496,17 @@ export default function OverpaymentOptimizationPanel({
                 </div>
                 
                 {result.comparisonChart && (
-                  <div className="h-64 relative">
+                  <div className="aspect-[16/9] w-full min-h-[400px] relative bg-white p-4 rounded-lg shadow-sm">
                     <canvas ref={optimizationChartRef}></canvas>
                   </div>
                 )}
               </div>
             )}
-          </TabsContent>
-          
-          <TabsContent value="compare" className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          </div>
+
+          {/* Comparison View */}
+          <div className={activeTab === "compare" ? "block" : "hidden"}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="space-y-2">
                 <Label>Lump Sum Amount</Label>
                 <div className="relative">
@@ -523,12 +542,12 @@ export default function OverpaymentOptimizationPanel({
               </div>
             </div>
             
-            <Button onClick={handleCompare} className="w-full">
+            <Button onClick={handleCompare} className="w-full mb-4">
               Compare Strategies
             </Button>
             
             {comparisonData && (
-              <div className="mt-4 space-y-4">
+              <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-md">
                   <h3 className="font-medium mb-2">Comparison Results</h3>
                   
@@ -556,37 +575,40 @@ export default function OverpaymentOptimizationPanel({
                   </div>
                 </div>
                 
-                <div className="h-64 relative">
+                <div className="aspect-[16/9] w-full min-h-[400px] relative bg-white p-4 rounded-lg shadow-sm">
                   <canvas ref={comparisonChartRef}></canvas>
                 </div>
               </div>
             )}
-          </TabsContent>
-          
-          <TabsContent value="analyze" className="space-y-4">
-            <div className="space-y-2">
-              <Label>Maximum Monthly Overpayment to Analyze</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">$</span>
+          </div>
+
+          {/* Impact Analysis View */}
+          <div className={activeTab === "analyze" ? "block" : "hidden"}>
+            <div className="space-y-4 mb-4">
+              <div className="space-y-2">
+                <Label>Maximum Monthly Overpayment to Analyze</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 sm:text-sm">$</span>
+                  </div>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="50"
+                    value={params.maxMonthlyOverpayment}
+                    onChange={(e) => setParams({...params, maxMonthlyOverpayment: Number(e.target.value)})}
+                    className="pl-7"
+                  />
                 </div>
-                <Input
-                  type="number"
-                  min="0"
-                  step="50"
-                  value={params.maxMonthlyOverpayment}
-                  onChange={(e) => setParams({...params, maxMonthlyOverpayment: Number(e.target.value)})}
-                  className="pl-7"
-                />
               </div>
             </div>
             
-            <Button onClick={handleAnalyzeImpact} className="w-full">
+            <Button onClick={handleAnalyzeImpact} className="w-full mb-4">
               Analyze Impact
             </Button>
             
             {impactData && (
-              <div className="mt-4 space-y-4">
+              <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-md">
                   <h3 className="font-medium mb-2">Impact Analysis</h3>
                   
@@ -616,13 +638,13 @@ export default function OverpaymentOptimizationPanel({
                   </div>
                 </div>
                 
-                <div className="h-64 relative">
+                <div className="aspect-[16/9] w-full min-h-[400px] relative bg-white p-4 rounded-lg shadow-sm">
                   <canvas ref={impactChartRef}></canvas>
                 </div>
               </div>
             )}
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

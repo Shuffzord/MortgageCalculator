@@ -182,25 +182,25 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
   return (
     <Card className="bg-white shadow rounded-lg overflow-hidden mb-6">
       <div className="px-6 py-4 border-b" style={{ borderColor: "#E5E7EB" }}>
-        <div className="flex items-center">
-          <h2 className="text-lg font-medium" style={{ color: "#111111" }}>Visualizations</h2>
-          <div className="ml-auto flex">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-medium" style={{ color: "#111111" }}>Visualizations</h2>
+          <div className="flex gap-4">
             <button 
               onClick={() => setActiveTab('pie')}
-              className="px-3 py-1.5 text-sm font-medium border-b-2 transition-colors duration-200"
+              className="px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200"
               style={{ 
                 color: activeTab === 'pie' ? '#1A6B72' : '#6B7280',
-                borderColor: activeTab === 'pie' ? '#1A6B72' : 'transparent'
+                backgroundColor: activeTab === 'pie' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
               }}
             >
               Total Breakdown
             </button>
             <button 
               onClick={() => setActiveTab('bar')}
-              className="px-3 py-1.5 text-sm font-medium border-b-2 transition-colors duration-200"
+              className="px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200"
               style={{ 
                 color: activeTab === 'bar' ? '#1A6B72' : '#6B7280',
-                borderColor: activeTab === 'bar' ? '#1A6B72' : 'transparent'
+                backgroundColor: activeTab === 'bar' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
               }}
             >
               Yearly Breakdown
@@ -209,10 +209,10 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
         </div>
       </div>
       <CardContent className="p-6">
-        <div className={cn("h-80", activeTab !== 'pie' && "hidden")}>
+        <div className={cn("aspect-[4/3] w-full min-h-[400px]", activeTab !== 'pie' && "hidden")}>
           <canvas ref={pieChartRef}></canvas>
         </div>
-        <div className={cn("h-80", activeTab !== 'bar' && "hidden")}>
+        <div className={cn("aspect-[4/3] w-full min-h-[400px]", activeTab !== 'bar' && "hidden")}>
           <canvas ref={barChartRef}></canvas>
         </div>
       </CardContent>

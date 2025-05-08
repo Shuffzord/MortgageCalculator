@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { CalculationResults, LoanDetails, YearlyData } from "@/lib/types";
+import { CalculationResults, LoanDetails } from "@/lib/types";
 import Chart from "chart.js/auto";
 import { formatCurrency } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ChartSectionProps {
   loanDetails: LoanDetails;
@@ -19,15 +20,22 @@ export default function ChartSection({
   calculationResults,
   comparisonResults
 }: ChartSectionProps) {
+  const [activeChart, setActiveChart] = useState<'pie' | 'bar' | 'comparison'>('pie');
   const pieChartRef = useRef<HTMLCanvasElement | null>(null);
   const barChartRef = useRef<HTMLCanvasElement | null>(null);
   const comparisonChartRef = useRef<HTMLCanvasElement | null>(null);
+
   const [pieChart, setPieChart] = useState<Chart | null>(null);
   const [barChart, setBarChart] = useState<Chart | null>(null);
   const [comparisonChart, setComparisonChart] = useState<Chart | null>(null);
 
+  const chartTitles = {
+    pie: "Principal vs. Interest Distribution",
+    bar: "Yearly Breakdown",
+    comparison: "Scenario Comparison"
+  };
+
   useEffect(() => {
-    // Cleanup function to destroy charts on unmount
     return () => {
       if (pieChart) pieChart.destroy();
       if (barChart) barChart.destroy();
@@ -37,22 +45,21 @@ export default function ChartSection({
 
   useEffect(() => {
     if (!calculationResults) return;
-    
-    // Destroy existing charts before creating new ones
+
     if (pieChart) {
       pieChart.destroy();
       setPieChart(null);
     }
-    
+
     if (barChart) {
       barChart.destroy();
       setBarChart(null);
     }
-    
-    // Create pie chart - Wait for the DOM to be ready
+
+    // Create pie chart
     const pieChartTimer = setTimeout(() => {
       if (!pieChartRef.current) return;
-            
+
       const newPieChart = new Chart(pieChartRef.current, {
         type: 'pie',
         data: {
@@ -74,23 +81,32 @@ export default function ChartSection({
                   return context.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
                 }
               }
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  size: 14
+                },
+                padding: 20
+              }
             }
           }
         }
       });
-      
+
       setPieChart(newPieChart);
     }, 0);
-    
+
     // Create bar chart
     const barChartTimer = setTimeout(() => {
       if (!barChartRef.current) return;
-            
+
       const yearlyData = calculationResults.yearlyData;
       const years = yearlyData.map(data => 'Year ' + data.year);
       const principalData = yearlyData.map(data => data.principal);
       const interestData = yearlyData.map(data => data.interest);
-      
+
       const newBarChart = new Chart(barChartRef.current, {
         type: 'bar',
         data: {
@@ -115,7 +131,10 @@ export default function ChartSection({
           maintainAspectRatio: false,
           scales: {
             x: {
-              stacked: true
+              stacked: true,
+              grid: {
+                display: false
+              }
             },
             y: {
               stacked: true,
@@ -134,85 +153,51 @@ export default function ChartSection({
                   return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
                 }
               }
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  size: 14
+                },
+                padding: 20
+              }
             }
           }
         }
       });
-      
+
       setBarChart(newBarChart);
     }, 0);
-    
-    // Cleanup timers
+
     return () => {
       clearTimeout(pieChartTimer);
       clearTimeout(barChartTimer);
     };
   }, [calculationResults, loanDetails]);
 
-  // Create comparison chart when comparison data is available
   useEffect(() => {
-    if (!comparisonResults || comparisonResults.length === 0) return;
-    
-    // Destroy existing comparison chart
+    if (!comparisonResults?.length || !comparisonChartRef.current) return;
+
     if (comparisonChart) {
       comparisonChart.destroy();
       setComparisonChart(null);
     }
-    
-    const comparisonTimer = setTimeout(() => {
-      if (!comparisonChartRef.current) return;
-      
-      // Prepare data for comparison chart
-      const scenarios = [
-        { name: 'Current', loanDetails, calculationResults },
-        ...comparisonResults
-      ].filter(s => s.calculationResults); // Filter out scenarios without results
-      
-      // Find the maximum number of years across all scenarios
-      const maxYears = Math.max(
-        ...scenarios.map(s => Math.ceil(s.calculationResults!.actualTerm))
-      );
-      
-      // Create labels for all years
-      const years = Array.from({ length: maxYears }, (_, i) => `Year ${i + 1}`);
-      
-      // Create datasets for each scenario
-      const datasets = scenarios.map((scenario, index) => {
-        // Get yearly data or create empty array
-        const yearlyData = scenario.calculationResults?.yearlyData || [];
-        
-        // Create color based on index
-        const colors = [
-          '#3b82f6', // blue
-          '#ef4444', // red
-          '#22c55e', // green
-          '#f59e0b', // amber
-          '#8b5cf6'  // purple
-        ];
-        const color = colors[index % colors.length];
-        
-        // Map yearly data to total payments (principal + interest)
-        const payments = years.map((_, yearIndex) => {
-          const yearData = yearlyData.find(d => d.year === yearIndex + 1);
-          return yearData ? yearData.principal + yearData.interest : 0;
-        });
-        
-        return {
-          label: scenario.name,
-          data: payments,
-          backgroundColor: color,
-          borderColor: color,
-          borderWidth: 2,
-          fill: false,
-          tension: 0.1
-        };
-      });
-      
-      // Create the comparison chart
+
+    const comparisonChartTimer = setTimeout(() => {
+      const labels = Array.from({ length: Math.max(...comparisonResults.map(r => r.calculationResults.yearlyData.length)) }, (_, i) => `Year ${i + 1}`);
+      const datasets = comparisonResults.map((result, index) => ({
+        label: result.name,
+        data: result.calculationResults.yearlyData.map(year => year.totalInterest),
+        borderColor: index === 0 ? '#3b82f6' : index === 1 ? '#ef4444' : '#22c55e',
+        backgroundColor: index === 0 ? 'rgba(59, 130, 246, 0.1)' : index === 1 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+        fill: true
+      }));
+
       const newComparisonChart = new Chart(comparisonChartRef.current, {
         type: 'line',
         data: {
-          labels: years,
+          labels,
           datasets
         },
         options: {
@@ -222,7 +207,7 @@ export default function ChartSection({
             y: {
               title: {
                 display: true,
-                text: 'Yearly Payment'
+                text: 'Cumulative Interest'
               },
               ticks: {
                 callback: function(value) {
@@ -240,22 +225,26 @@ export default function ChartSection({
                 }
               }
             },
-            title: {
-              display: true,
-              text: 'Scenario Comparison - Yearly Payments'
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  size: 14
+                },
+                padding: 20
+              }
             }
           }
         }
       });
-      
+
       setComparisonChart(newComparisonChart);
     }, 0);
-    
-    // Cleanup
+
     return () => {
-      clearTimeout(comparisonTimer);
+      clearTimeout(comparisonChartTimer);
     };
-  }, [comparisonResults, calculationResults, loanDetails]);
+  }, [comparisonResults, loanDetails.currency]);
 
   if (!calculationResults) {
     return (
@@ -268,36 +257,66 @@ export default function ChartSection({
     );
   }
 
+  const handlePrevChart = () => {
+    setActiveChart(current => {
+      if (current === 'pie') return comparisonResults?.length ? 'comparison' : 'bar';
+      if (current === 'bar') return 'pie';
+      return 'bar';
+    });
+  };
+
+  const handleNextChart = () => {
+    setActiveChart(current => {
+      if (current === 'pie') return 'bar';
+      if (current === 'bar') return comparisonResults?.length ? 'comparison' : 'pie';
+      return 'pie';
+    });
+  };
+
   return (
     <Card>
       <CardContent className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Visualization</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Principal vs. Interest Distribution</h3>
-            <div className="h-64 relative">
-              <canvas key={`pie-chart-${loanDetails.principal}-${calculationResults?.totalInterest || 0}`} ref={pieChartRef}></canvas>
-            </div>
-          </div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900">Visualization</h2>
           
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Yearly Breakdown</h3>
-            <div className="h-64 relative">
-              <canvas key={`bar-chart-${loanDetails.principal}-${calculationResults?.totalInterest || 0}`} ref={barChartRef}></canvas>
-            </div>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={handlePrevChart}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Previous chart"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            
+            <span className="text-sm font-medium">
+              {chartTitles[activeChart]}
+            </span>
+            
+            <button 
+              onClick={handleNextChart}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Next chart"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
-        
-        {/* Comparison chart - only shown when comparison data is available */}
-        {comparisonResults && comparisonResults.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Scenario Comparison</h3>
-            <div className="h-64 relative">
-              <canvas key={`comparison-chart-${comparisonResults.length}`} ref={comparisonChartRef}></canvas>
-            </div>
+
+        <div className="relative overflow-hidden">
+          <div className={`aspect-[16/9] w-full min-h-[400px] bg-white p-4 rounded-lg shadow-sm transition-opacity duration-300 ${activeChart === 'pie' ? 'opacity-100' : 'opacity-0 hidden'}`}>
+            <canvas ref={pieChartRef}></canvas>
           </div>
-        )}
+          
+          <div className={`aspect-[16/9] w-full min-h-[400px] bg-white p-4 rounded-lg shadow-sm transition-opacity duration-300 ${activeChart === 'bar' ? 'opacity-100' : 'opacity-0 hidden'}`}>
+            <canvas ref={barChartRef}></canvas>
+          </div>
+          
+          {comparisonResults && comparisonResults.length > 0 && (
+            <div className={`aspect-[16/9] w-full min-h-[400px] bg-white p-4 rounded-lg shadow-sm transition-opacity duration-300 ${activeChart === 'comparison' ? 'opacity-100' : 'opacity-0 hidden'}`}>
+              <canvas ref={comparisonChartRef}></canvas>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
