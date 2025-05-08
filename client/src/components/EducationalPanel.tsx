@@ -36,60 +36,37 @@ export default function EducationalPanel({
     }
   };
   
+  // Get translated content
+  const resources = i18n.getResourceBundle(i18n.language, 'translation');
+  const financialGlossary = resources?.financialGlossary || {};
+  const mortgageConcepts = resources?.mortgageConcepts || {};
+  const interactiveExamples = resources?.interactiveExamples || [];
+  
   // Filter glossary terms based on search
-  const filteredGlossary: any[] = [];
-  // Object.values(financialGlossary).filter(term =>
-  //   searchTerm === '' ||
-  //   term.term?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   term.definition?.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const filteredGlossary = Object.values(financialGlossary).filter((term: any) =>
+    searchTerm === '' ||
+    term.term?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    term.definition?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
   // Filter concepts based on search
-  const filteredConcepts: any[] = [];
-  // Object.values(mortgageConcepts).filter(concept =>
-  //   searchTerm === '' ||
-  //   concept.concept?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   concept.explanation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   concept.impact?.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const filteredConcepts = Object.values(mortgageConcepts).filter((concept: any) =>
+    searchTerm === '' ||
+    concept.concept?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    concept.explanation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    concept.impact?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Filter interactive examples based on search
-  const filteredExamples: any[] = [];
-  // interactiveExamples.filter(example =>
-  //   searchTerm === '' ||
-  //   example.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   example.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const filteredExamples = interactiveExamples.filter((example: any) =>
+    searchTerm === '' ||
+    example.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    example.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-xl font-semibold text-gray-900">{t('education.title') || 'Mortgage Education Center'}</h2>
-          <div className="flex space-x-2">
-            <Button
-              variant={activeLanguage === 'en' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleLanguageChange('en')}
-            >
-              EN
-            </Button>
-            <Button
-              variant={activeLanguage === 'es' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleLanguageChange('es')}
-            >
-              ES
-            </Button>
-            <Button
-              variant={activeLanguage === 'pl' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleLanguageChange('pl')}
-            >
-              PL
-            </Button>
-          </div>
-        </div>
         <p className="text-gray-600 mb-4">{t('education.description') || 'Learn about mortgage concepts and how different factors affect your loan.'}</p>
         
         <div className="relative mb-6">
@@ -98,7 +75,7 @@ export default function EducationalPanel({
           </div>
           <Input
             type="text"
-            placeholder={t('education.search') || "Search terms, concepts, or examples..."}
+            placeholder={(t('education.search') as string) || "Search terms, concepts, or examples..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -126,25 +103,25 @@ export default function EducationalPanel({
               <p className="text-gray-500 text-center py-4">{t('education.noResults') || 'No matching terms found'}</p>
             ) : (
               <Accordion type="single" collapsible className="w-full">
-                {/* {filteredGlossary.map((term, index) => (
+                {filteredGlossary.map((term: any, index: number) => (
                   <AccordionItem key={index} value={`term-${index}`}>
                     <AccordionTrigger className="text-left font-medium">
-                      {term.term}
+                      {term?.term}
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2 pt-1">
-                        <p className="text-gray-700">{term.definition}</p>
-                        {term.example && (
+                        <p className="text-gray-700">{term?.definition}</p>
+                        {term?.example && (
                           <div className="mt-2 bg-gray-50 p-3 rounded-md">
                             <p className="text-sm text-gray-600">
-                              <span className="font-medium">{t('education.example') || 'Example'}:</span> {term.example}
+                              <span className="font-medium">{t('education.example') || 'Example'}:</span> {term?.example}
                             </p>
                           </div>
                         )}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-                ))} */}
+                ))}
               </Accordion>
             )}
           </TabsContent>
@@ -154,7 +131,7 @@ export default function EducationalPanel({
               <p className="text-gray-500 text-center py-4">{t('education.noResults') || 'No matching concepts found'}</p>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {/* {filteredConcepts.map((concept, index) => (
+                {filteredConcepts.map((concept: any, index: number) => (
                   <Card key={index}>
                     <CardHeader>
                       <CardTitle>{concept.concept}</CardTitle>
@@ -178,7 +155,7 @@ export default function EducationalPanel({
                           <div>
                             <h4 className="font-medium text-sm mb-2">{t('education.relatedTerms') || 'Related Terms'}</h4>
                             <div className="flex flex-wrap gap-2">
-                              {concept.relatedTerms.map((term, i) => (
+                              {concept.relatedTerms.map((term: string, i: number) => (
                                 <Badge
                                   key={i}
                                   variant="outline"
@@ -197,7 +174,7 @@ export default function EducationalPanel({
                       </div>
                     </CardContent>
                   </Card>
-                ))} */}
+                ))}
               </div>
             )}
           </TabsContent>
@@ -219,80 +196,79 @@ export default function EducationalPanel({
                     
                     {/* Display the selected interactive example */}
                     {(() => {
-                      const example = null;
-                      // const example = interactiveExamples.find(ex => ex.id === selectedExample);
+                      const example = interactiveExamples?.find((ex: any) => ex.id === selectedExample);
                       if (!example) return null;
                       
                       return (
-                        <></>
-                        // <Card>
-                        //   <CardHeader>
-                        //     <CardTitle>{example.title}</CardTitle>
-                        //     <CardDescription>{example.description}</CardDescription>
-                        //   </CardHeader>
-                        //   <CardContent>
-                        //     <div className="space-y-6">
-                        //       <div className="bg-gray-50 p-4 rounded-md">
-                        //         <h4 className="font-medium mb-2">Default Scenario</h4>
-                        //         <div className="grid grid-cols-2 gap-4 text-sm">
-                        //           <div>
-                        //             <span className="font-medium">Principal:</span> ${example.defaultValues.principal.toLocaleString()}
-                        //           </div>
-                        //           <div>
-                        //             <span className="font-medium">Interest Rate:</span> {example.defaultValues.interestRate}%
-                        //           </div>
-                        //           <div>
-                        //             <span className="font-medium">Term:</span> {example.defaultValues.term} years
-                        //           </div>
-                        //           {Object.entries(example.defaultValues)
-                        //             .filter(([key]) => !['principal', 'interestRate', 'term'].includes(key))
-                        //             .map(([key, value]) => (
-                        //               <div key={key}>
-                        //                 {/* <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {value} */}
-                        //               </div>
-                        //             ))
-                        //           }
-                        //         </div>
-                        //       </div>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>{example.title}</CardTitle>
+                            <CardDescription>{example.description}</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-6">
+                              <div className="bg-gray-50 p-4 rounded-md">
+                                <h4 className="font-medium mb-2">Default Scenario</h4>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <span className="font-medium">Principal:</span> ${example.defaultValues.principal.toLocaleString()}
+                                  </div>
+                                  <div>
+                                    <span className="font-medium">Interest Rate:</span> {example.defaultValues.interestRate}%
+                                  </div>
+                                  <div>
+                                    <span className="font-medium">Term:</span> {example.defaultValues.term} years
+                                  </div>
+                                  {Object.entries(example.defaultValues)
+                                    .filter(([key]) => !['principal', 'interestRate', 'term'].includes(key))
+                                    .map(([key, value]) => (
+                                      <div key={key}>
+                                        <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {String(value)}
+                                        {key === 'overpayment' ? '/month' : ''}
+                                      </div>
+                                    ))
+                                  }
+                                </div>
+                              </div>
                               
-                        //       <div className="space-y-4">
-                        //         <h4 className="font-medium">Scenarios</h4>
-                        //         {/* {example.scenarios.map((scenario, i) => (
-                        //           <Card key={i} className="border border-gray-200">
-                        //             <CardHeader className="py-3 px-4">
-                        //               <CardTitle className="text-base">{scenario.name}</CardTitle>
-                        //             </CardHeader>
-                        //             <CardContent className="py-3 px-4">
-                        //               <div className="space-y-3">
-                        //                 <div className="grid grid-cols-2 gap-2 text-sm">
-                        //                   {Object.entries(scenario.values).map(([key, value]) => (
-                        //                     <div key={key} className="text-blue-600">
-                        //                       <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {value}
-                        //                       {key === 'interestRate' ? '%' : ''}
-                        //                       {key === 'term' ? ' years' : ''}
-                        //                       {key === 'overpayment' ? '/month' : ''}
-                        //                     </div>
-                        //                   ))}
-                        //                 </div>
-                        //                 <div className="pt-2 border-t border-gray-100">
-                        //                   <p className="text-sm">{scenario.outcome}</p>
-                        //                 </div>
-                        //               </div>
-                        //             </CardContent>
-                        //           </Card>
-                        //         ))} */}
-                        //       </div>
-                        //     </div>
-                        //   </CardContent>
-                        // </Card>
+                              <div className="space-y-4">
+                                <h4 className="font-medium">Scenarios</h4>
+                                {example.scenarios.map((scenario: any, i: number) => (
+                                  <Card key={i} className="border border-gray-200">
+                                    <CardHeader className="py-3 px-4">
+                                      <CardTitle className="text-base">{scenario.name}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="py-3 px-4">
+                                      <div className="space-y-3">
+                                        <div className="grid grid-cols-2 gap-2 text-sm">
+                                          {Object.entries(scenario.values).map(([key, value]) => (
+                                            <div key={key} className="text-blue-600">
+                                              <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {String(value)}
+                                              {key === 'interestRate' ? '%' : ''}
+                                              {key === 'term' ? ' years' : ''}
+                                              {key === 'overpayment' ? '/month' : ''}
+                                            </div>
+                                          ))}
+                                        </div>
+                                        <div className="pt-2 border-t border-gray-100">
+                                          <p className="text-sm">{scenario.outcome}</p>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
                       );
                     })()}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredExamples.map((example, index) => (
-                      <Card 
-                        key={index} 
+                    {filteredExamples.map((example: any, index: number) => (
+                      <Card
+                        key={index}
                         className="cursor-pointer hover:shadow-md transition-shadow"
                         onClick={() => setSelectedExample(example.id)}
                       >
