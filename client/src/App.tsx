@@ -15,12 +15,31 @@ import { useTranslation } from "react-i18next";
 import HomePage from "./components/HomePage";
 
 function Router() {
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [showLoadModal, setShowLoadModal] = useState(false);
+
+  const handleExportClick = () => {
+    setShowExportModal(true);
+  };
+
+  const handleLoadClick = () => {
+    setShowLoadModal(true);
+  };
+
   return (
     <>
-      <Navigation />
+      <Navigation
+        onExportClick={handleExportClick}
+        onLoadClick={handleLoadClick}
+      />
       <Switch>
         <Route path="/">
-          <HomePage />
+          <HomePage
+            showExportModal={showExportModal}
+            setShowExportModal={setShowExportModal}
+            showLoadModal={showLoadModal}
+            setShowLoadModal={setShowLoadModal}
+          />
         </Route>
         <Route path="/about">
           <About />

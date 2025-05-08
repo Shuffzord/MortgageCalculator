@@ -18,13 +18,31 @@ import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-const HomePage: React.FC = () => {
+interface HomePageProps {
+  showExportModal?: boolean;
+  setShowExportModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  showLoadModal?: boolean;
+  setShowLoadModal?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const HomePage: React.FC<HomePageProps> = ({
+  showExportModal: externalShowExportModal,
+  setShowExportModal: externalSetShowExportModal,
+  showLoadModal: externalShowLoadModal,
+  setShowLoadModal: externalSetShowLoadModal
+}) => {
   const { t } = useTranslation();
   
   // State management
   const [selectedCurrency, setSelectedCurrency] = useState(localStorage.getItem("selectedCurrency") || "USD");
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [showLoadModal, setShowLoadModal] = useState(false);
+  const [internalShowExportModal, setInternalShowExportModal] = useState(false);
+  const [internalShowLoadModal, setInternalShowLoadModal] = useState(false);
+  
+  // Use external state if provided, otherwise use internal state
+  const showExportModal = externalShowExportModal !== undefined ? externalShowExportModal : internalShowExportModal;
+  const setShowExportModal = externalSetShowExportModal || setInternalShowExportModal;
+  const showLoadModal = externalShowLoadModal !== undefined ? externalShowLoadModal : internalShowLoadModal;
+  const setShowLoadModal = externalSetShowLoadModal || setInternalShowLoadModal;
   
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({
     name: "My Calculation",

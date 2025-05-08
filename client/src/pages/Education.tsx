@@ -15,8 +15,8 @@ export default function Education() {
     setActiveLanguage(i18n.language);
   }, [i18n.language]);
 
-  // Get FAQs for the current language
-  const faqs = mortgageFAQs[activeLanguage as keyof typeof mortgageFAQs] || mortgageFAQs.en;
+  // Get FAQs for the current language - use i18n.language directly to ensure it's always up to date
+  const faqs = mortgageFAQs[i18n.language as keyof typeof mortgageFAQs] || mortgageFAQs.en;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-800">
