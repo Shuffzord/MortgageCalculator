@@ -35,6 +35,7 @@ export default function ChartSection({
     comparison: "Scenario Comparison"
   };
 
+  // Cleanup charts on unmount
   useEffect(() => {
     return () => {
       if (pieChart) pieChart.destroy();
@@ -43,6 +44,7 @@ export default function ChartSection({
     };
   }, [pieChart, barChart, comparisonChart]);
 
+  // Create/update main charts when data changes
   useEffect(() => {
     if (!calculationResults) return;
 
@@ -56,7 +58,7 @@ export default function ChartSection({
       setBarChart(null);
     }
 
-    // Create pie chart
+    // Create pie chart with consistent currency formatting
     const pieChartTimer = setTimeout(() => {
       if (!pieChartRef.current) return;
 
@@ -66,7 +68,7 @@ export default function ChartSection({
           labels: ['Principal', 'Interest'],
           datasets: [{
             data: [loanDetails.principal, calculationResults.totalInterest],
-            backgroundColor: ['#3b82f6', '#ef4444'],
+            backgroundColor: ['#1A6B72', '#E8A87C'],
             borderWidth: 1
           }]
         },
@@ -78,18 +80,15 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return context.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
+                  const label = context.label || '';
+                  const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                  const percentage = Math.round(value / total * 100);
+                  return `${label}: ${formatCurrency(value, 'en-US', loanDetails.currency)} (${percentage}%)`;
                 }
               }
             },
             legend: {
-              position: 'bottom',
-              labels: {
-                font: {
-                  size: 14
-                },
-                padding: 20
-              }
+              position: 'bottom'
             }
           }
         }
@@ -98,7 +97,7 @@ export default function ChartSection({
       setPieChart(newPieChart);
     }, 0);
 
-    // Create bar chart
+    // Create bar chart with consistent currency formatting
     const barChartTimer = setTimeout(() => {
       if (!barChartRef.current) return;
 
@@ -115,13 +114,13 @@ export default function ChartSection({
             {
               label: 'Principal',
               data: principalData,
-              backgroundColor: '#3b82f6',
+              backgroundColor: '#1A6B72',
               stack: 'Stack 0'
             },
             {
               label: 'Interest',
               data: interestData,
-              backgroundColor: '#ef4444',
+              backgroundColor: '#E8A87C',
               stack: 'Stack 0'
             }
           ]
@@ -140,7 +139,7 @@ export default function ChartSection({
               stacked: true,
               ticks: {
                 callback: function(value) {
-                  return formatCurrency(value as number, 'en-US', loanDetails.currency || 'USD');
+                  return formatCurrency(value as number, 'en-US', loanDetails.currency);
                 }
               }
             }
@@ -150,7 +149,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
+                  return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
                 }
               }
             },
@@ -176,6 +175,7 @@ export default function ChartSection({
     };
   }, [calculationResults, loanDetails]);
 
+  // Create/update comparison chart when comparison data changes
   useEffect(() => {
     if (!comparisonResults?.length || !comparisonChartRef.current) return;
 
@@ -185,12 +185,16 @@ export default function ChartSection({
     }
 
     const comparisonChartTimer = setTimeout(() => {
-      const labels = Array.from({ length: Math.max(...comparisonResults.map(r => r.calculationResults.yearlyData.length)) }, (_, i) => `Year ${i + 1}`);
+      const labels = Array.from(
+        { length: Math.max(...comparisonResults.map(r => r.calculationResults.yearlyData.length)) }, 
+        (_, i) => `Year ${i + 1}`
+      );
+      
       const datasets = comparisonResults.map((result, index) => ({
         label: result.name,
         data: result.calculationResults.yearlyData.map(year => year.totalInterest),
-        borderColor: index === 0 ? '#3b82f6' : index === 1 ? '#ef4444' : '#22c55e',
-        backgroundColor: index === 0 ? 'rgba(59, 130, 246, 0.1)' : index === 1 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+        borderColor: index === 0 ? '#1A6B72' : index === 1 ? '#E8A87C' : '#3498DB',
+        backgroundColor: index === 0 ? 'rgba(26, 107, 114, 0.1)' : index === 1 ? 'rgba(232, 168, 124, 0.1)' : 'rgba(52, 152, 219, 0.1)',
         fill: true
       }));
 
@@ -211,7 +215,7 @@ export default function ChartSection({
               },
               ticks: {
                 callback: function(value) {
-                  return formatCurrency(value as number, 'en-US', loanDetails.currency || 'USD');
+                  return formatCurrency(value as number, 'en-US', loanDetails.currency);
                 }
               }
             }
@@ -221,7 +225,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency || 'USD');
+                  return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
                 }
               }
             },
@@ -283,7 +287,7 @@ export default function ChartSection({
             <button 
               onClick={handlePrevChart}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Previous chart"
+              aria-label="Previous visualization"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -295,7 +299,7 @@ export default function ChartSection({
             <button 
               onClick={handleNextChart}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Next chart"
+              aria-label="Next visualization"
             >
               <ChevronRight className="h-5 w-5" />
             </button>

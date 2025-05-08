@@ -58,7 +58,7 @@ export default function SavedCalculationsModal({
                 <div>
                   <p className="text-sm font-medium text-gray-900">{calc.name}</p>
                   <p className="text-xs text-gray-500">
-                    ${calc.principal.toLocaleString()} at {calc.interestRate}% for {calc.loanTerm} years
+                    {formatCurrency(calc.principal, 'en-US', calc.currency || 'USD')} at {calc.interestRate}% for {calc.loanTerm} years
                   </p>
                 </div>
                 <Button

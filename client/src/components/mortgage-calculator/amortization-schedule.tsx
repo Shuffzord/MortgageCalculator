@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { PaymentData, LoanDetails } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { getCurrencySymbol } from "@/components/ui/currency-selector";
 
 interface AmortizationScheduleProps {
   schedule: PaymentData[];
@@ -31,7 +30,7 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, schedule.length);
   const currentItems = schedule.slice(startIndex, endIndex);
-  const currencySymbol = getCurrencySymbol(loanDetails.currency || 'USD');
+  const currency = loanDetails.currency || 'USD';
 
   // Calculate date from payment number
   const getPaymentDate = (paymentNum: number) => {
@@ -103,20 +102,20 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
                       {item.paymentDate ? formatDate(item.paymentDate) : getPaymentDate(item.payment)}
                     </TableCell>
                     <TableCell className="text-sm font-medium text-gray-900 financial-figure">
-                      {formatCurrency(item.monthlyPayment, 'en-US', loanDetails.currency || 'USD')}
+                      {formatCurrency(item.monthlyPayment, 'en-US', currency)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500 financial-figure">
-                      {formatCurrency(item.principalPayment, 'en-US', loanDetails.currency || 'USD')}
+                      {formatCurrency(item.principalPayment, 'en-US', currency)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500 financial-figure">
-                      {formatCurrency(item.interestPayment, 'en-US', loanDetails.currency || 'USD')}
+                      {formatCurrency(item.interestPayment, 'en-US', currency)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-900 financial-figure">
-                      {formatCurrency(item.balance, 'en-US', loanDetails.currency || 'USD')}
+                      {formatCurrency(item.balance, 'en-US', currency)}
                     </TableCell>
                     {schedule.some(item => item.overpaymentAmount > 0) && (
                       <TableCell className="text-sm text-green-600 financial-figure">
-                        {item.overpaymentAmount > 0 ? formatCurrency(item.overpaymentAmount, 'en-US', loanDetails.currency || 'USD') : '-'}
+                        {item.overpaymentAmount > 0 ? formatCurrency(item.overpaymentAmount, 'en-US', currency) : '-'}
                       </TableCell>
                     )}
                   </TableRow>

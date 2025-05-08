@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
-import CurrencySelector, { getCurrencySymbol } from "@/components/ui/currency-selector";
+import CurrencySelector from "@/components/ui/currency-selector";
 import {
   Popover,
   PopoverContent,
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/radio-group";
 import { LoanDetails } from "@/lib/types";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
+import { cn, getCurrencySymbol } from "@/lib/utils";
 
 // Form validation schema
 const loanFormSchema = z.object({
@@ -189,16 +189,22 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                       <div className="flex space-x-2">
                         <div>
                           <FormLabel>Amount</FormLabel>
-                          <Input
-                            type="number"
-                            placeholder="Amount"
-                            value={plan.amount}
-                            onChange={(e) => {
-                              const newPlans = [...field.value];
-                              newPlans[index].amount = Number(e.target.value);
-                              field.onChange(newPlans);
-                            }}
-                          />
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(loanDetails.currency || 'USD')}</span>
+                            </div>
+                            <Input
+                              type="number"
+                              placeholder="Amount"
+                              value={plan.amount}
+                              className="pl-7"
+                              onChange={(e) => {
+                                const newPlans = [...field.value];
+                                newPlans[index].amount = Number(e.target.value);
+                                field.onChange(newPlans);
+                              }}
+                            />
+                          </div>
                         </div>
                         <div>
                           <FormLabel>Start Month</FormLabel>
@@ -265,7 +271,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                     </div>
                   ))}
                   <Button type="button" onClick={() => {
-                    form.setValue("overpaymentPlans", [...field.value, { amount: 0, startMonth: 0, endMonth: 0, frequency: "monthly", effect: "reduceTerm" }]);
+                    form.setValue("overpaymentPlans", [...field.value, { amount: 0, startMonth: 0, endMonth: 0, frequency: "monthly", effect: "reduceTerm", startDate: new Date(), isRecurring: true }]);
                   }}>Add Overpayment Plan</Button>
                 </FormItem>
               )}

@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, getCurrencySymbol } from "@/lib/utils";
 import { PaymentData } from "@/lib/types";
 import { Chart, registerables } from 'chart.js';
 import { cn } from "@/lib/utils";
-import { getCurrencySymbol } from "@/components/ui/currency-selector";
 
 // Register Chart.js components
 Chart.register(...registerables);

@@ -1,9 +1,9 @@
 import { formatTimePeriod } from "@/lib/utils";
 import { formatCurrency } from "@/lib/utils";
+import { getCurrencySymbol } from "@/lib/utils";
 import { CalculationResults, LoanDetails, InterestRatePeriod } from "@/lib/types";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { getCurrencySymbol } from "@/components/ui/currency-selector";
 
 interface LoanSummaryProps {
   calculationResults: CalculationResults | null;
@@ -69,21 +69,21 @@ export default function LoanSummary({
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.monthlyPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
-              {formatCurrency(calculationResults.monthlyPayment)}
+              {formatCurrency(calculationResults.monthlyPayment, 'en-US', loanDetails.currency)}
             </p>
           </div>
           
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.totalInterest')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
-              {formatCurrency(calculationResults.totalInterest)}
+              {formatCurrency(calculationResults.totalInterest, 'en-US', loanDetails.currency)}
             </p>
           </div>
           
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.totalPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
-              {formatCurrency(loanDetails.principal + calculationResults.totalInterest)}
+              {formatCurrency(loanDetails.principal + calculationResults.totalInterest, 'en-US', loanDetails.currency)}
             </p>
           </div>
           
@@ -121,8 +121,7 @@ export default function LoanSummary({
                         {period.interestRate}%
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 font-mono">
-                        {/* For simplicity, we're showing the main monthly payment for now */}
-                        {formatCurrency(calculationResults.monthlyPayment)}
+                        {formatCurrency(calculationResults.monthlyPayment, 'en-US', loanDetails.currency)}
                       </td>
                     </tr>
                   ))}
@@ -154,7 +153,7 @@ export default function LoanSummary({
                           {index + 1}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 font-mono">
-                          {formatCurrency(plan.amount)}
+                          {formatCurrency(plan.amount, 'en-US', loanDetails.currency)}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                           {loanDetails.startDate && formatDate(new Date(loanDetails.startDate), plan.startMonth)}
@@ -185,13 +184,13 @@ export default function LoanSummary({
                 <div>
                   <p className="text-xs text-green-600">{t('overpayment.newMonthlyPayment')}</p>
                   <p className="font-semibold text-gray-900 font-mono">
-                    {formatCurrency(overpaymentResults.monthlyPayment)}
+                    {formatCurrency(overpaymentResults.monthlyPayment, 'en-US', loanDetails.currency)}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-green-600">{t('overpayment.interestSaved')}</p>
                   <p className="font-semibold text-gray-900 font-mono">
-                    {formatCurrency(interestSaved)}
+                    {formatCurrency(interestSaved, 'en-US', loanDetails.currency)}
                   </p>
                 </div>
                 <div>
@@ -205,7 +204,7 @@ export default function LoanSummary({
                     {typeof overpaymentResults.timeOrPaymentSaved === 'number' && 
                      overpaymentResults.timeOrPaymentSaved > 100 
                       ? formatTimePeriod(overpaymentResults.timeOrPaymentSaved)
-                      : formatCurrency(overpaymentResults.timeOrPaymentSaved ?? 0)}
+                      : formatCurrency(overpaymentResults.timeOrPaymentSaved ?? 0, 'en-US', loanDetails.currency)}
                   </p>
                 </div>
               </div>

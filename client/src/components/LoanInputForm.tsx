@@ -17,16 +17,16 @@ import { z } from "zod";
 // Temporarily commented out to avoid build errors
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import CurrencySelector, { getCurrencySymbol } from "@/components/ui/currency-selector";
+import CurrencySelector from "@/components/ui/currency-selector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, getCurrencySymbol } from "@/lib/utils";
 
 const loanFormSchema = z.object({
   principal: z.coerce.number()
-    .min(1000, "Principal amount must be at least $1,000")
-    .max(10000000, "Principal amount must be less than $10,000,000"),
+    .min(1000, "Principal amount must be at least 1,000")
+    .max(10000000, "Principal amount must be less than 10,000,000"),
   loanTerm: z.coerce.number()
     .min(1, "Loan term must be at least 1 year")
     .max(40, "Loan term must be less than 40 years"),
@@ -42,14 +42,15 @@ const loanFormSchema = z.object({
   repaymentModel: z.enum(['equalInstallments', 'decreasingInstallments', 'custom']).default('equalInstallments'),
   overpaymentPlans: z.array(
     z.object({
-      amount: z.coerce.number().min(0, "Overpayment amount must be at least 0"),
+      amount: z.coerce.number()
+        .min(0, "Amount must be non-negative"),
       startDate: z.date(),
       endDate: z.date().optional(),
-      isRecurring: z.boolean().default(false),
-      frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']).default('one-time'),
-      effect: z.enum(['reduceTerm', 'reducePayment']).default('reduceTerm'),
+      isRecurring: z.boolean(),
+      frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']),
+      effect: z.enum(['reduceTerm', 'reducePayment'])
     })
-  ).optional().default([]),
+  ).optional(),
   additionalCosts: z.object({
     originationFee: z.coerce.number().min(0, "Fee must be at least 0"),
     originationFeeType: z.enum(['fixed', 'percentage']).default('fixed'),
