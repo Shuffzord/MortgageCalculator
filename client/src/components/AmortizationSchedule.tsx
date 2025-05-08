@@ -6,9 +6,10 @@ import { YearlyData } from "@/lib/types";
 
 interface AmortizationScheduleProps {
   yearlyData: YearlyData[];
+  currency?: string;
 }
 
-export default function AmortizationSchedule({ yearlyData }: AmortizationScheduleProps) {
+export default function AmortizationSchedule({ yearlyData, currency = 'USD' }: AmortizationScheduleProps) {
   const [showAll, setShowAll] = useState(false);
   const visibleData = showAll ? yearlyData : yearlyData.slice(0, 5);
 
@@ -43,10 +44,18 @@ export default function AmortizationSchedule({ yearlyData }: AmortizationSchedul
               {visibleData.map((year) => (
                 <tr key={year.year} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{year.year}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{formatCurrency(year.payment)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{formatCurrency(year.principal)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{formatCurrency(year.interest)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{formatCurrency(year.balance)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                    {formatCurrency(year.payment, 'en-US', currency)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                    {formatCurrency(year.principal, 'en-US', currency)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                    {formatCurrency(year.interest, 'en-US', currency)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                    {formatCurrency(year.balance, 'en-US', currency)}
+                  </td>
                 </tr>
               ))}
             </tbody>

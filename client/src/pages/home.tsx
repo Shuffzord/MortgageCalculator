@@ -275,6 +275,7 @@ export default function Home() {
                   <AmortizationSchedule 
                     schedule={schedule} 
                     loanDetails={loanDetails} 
+                    
                   />
                 </div>
               </div>

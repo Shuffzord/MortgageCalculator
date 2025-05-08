@@ -162,7 +162,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
             <AmortizationSchedule
               yearlyData={
                 calculationResults?.yearlyData || []
-              }
+              }currency={selectedCurrency}
             />
             
             <OverpaymentOptimizationPanel

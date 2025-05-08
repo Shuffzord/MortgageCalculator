@@ -65,9 +65,6 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
           onClick={toggleExpand}
           className="text-sm text-primary flex items-center"
         >
-          <span className="material-icons text-sm mr-1">
-            {isExpanded ? "expand_less" : "expand_more"}
-          </span>
           {isExpanded ? "Hide Details" : "Show Details"}
         </Button>
       </div>
@@ -92,7 +89,7 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
               <TableBody>
                 {currentItems.map((item) => (
                   <TableRow 
-                    key={item.payment} 
+                    key={item.payment}
                     className={cn(item.isOverpayment && "bg-green-50")}
                   >
                     <TableCell className="text-sm text-gray-500">

@@ -198,7 +198,7 @@ export default function ChartSection({
         fill: true
       }));
 
-      const newComparisonChart = new Chart(comparisonChartRef.current, {
+      const newComparisonChart = new Chart(comparisonChartRef.current!, {
         type: 'line',
         data: {
           labels,
