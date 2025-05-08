@@ -583,11 +583,39 @@ export default function LoanInputForm({
                                           }
                                           
                                           const newInterestRatePeriods = [...field.value];
-                                          newInterestRatePeriods[index].endMonth = monthDiff;
                                           
-                                          // Update next period's start date
-                                          if (index < newInterestRatePeriods.length - 1) {
-                                            newInterestRatePeriods[index + 1].startMonth = monthDiff;
+                                          // For the last period, we need special handling
+                                          if (index === newInterestRatePeriods.length - 1) {
+                                            // If trying to set last period end before loan term, we need to prompt
+                                            if (monthDiff < loanTermInMonths) {
+                                              const createNewPeriod = confirm("Would you like to add a new period? Cancel to keep the end date at the loan term.");
+                                              
+                                              if (createNewPeriod) {
+                                                // Update current period end
+                                                newInterestRatePeriods[index].endMonth = monthDiff;
+                                                
+                                                // Add a new period from this end to loan term
+                                                newInterestRatePeriods.push({
+                                                  startMonth: monthDiff,
+                                                  endMonth: loanTermInMonths,
+                                                  interestRate: 5 // Default rate
+                                                });
+                                              } else {
+                                                // Keep end date at loan term
+                                                return;
+                                              }
+                                            } else {
+                                              // If still beyond loan term, just set to loan term
+                                              newInterestRatePeriods[index].endMonth = loanTermInMonths;
+                                            }
+                                          } else {
+                                            // For non-last periods, update normally
+                                            newInterestRatePeriods[index].endMonth = monthDiff;
+                                            
+                                            // Update next period's start date
+                                            if (index < newInterestRatePeriods.length - 1) {
+                                              newInterestRatePeriods[index + 1].startMonth = monthDiff;
+                                            }
                                           }
                                           
                                           field.onChange(newInterestRatePeriods);
@@ -606,17 +634,26 @@ export default function LoanInputForm({
                                           
                                           const monthDiff = differenceInMonths(newDate, date);
                                           
-                                          // Don't go beyond loan term for last period
-                                          if (index === field.value.length - 1 && monthDiff > loanTermInMonths) {
-                                            return;
-                                          }
-                                          
                                           const newInterestRatePeriods = [...field.value];
-                                          newInterestRatePeriods[index].endMonth = monthDiff;
                                           
-                                          // Update next period's start date
-                                          if (index < newInterestRatePeriods.length - 1) {
-                                            newInterestRatePeriods[index + 1].startMonth = monthDiff;
+                                          // For the last period, make sure we don't exceed the loan term
+                                          if (index === newInterestRatePeriods.length - 1) {
+                                            // Last period must end at loan term
+                                            if (monthDiff > loanTermInMonths) {
+                                              // Just set to loan term
+                                              newInterestRatePeriods[index].endMonth = loanTermInMonths;
+                                            } else {
+                                              // Set to calculated month diff, but not beyond loan term
+                                              newInterestRatePeriods[index].endMonth = Math.min(monthDiff, loanTermInMonths);
+                                            }
+                                          } else {
+                                            // For non-last periods, update normally
+                                            newInterestRatePeriods[index].endMonth = monthDiff;
+                                            
+                                            // Update next period's start date
+                                            if (index < newInterestRatePeriods.length - 1) {
+                                              newInterestRatePeriods[index + 1].startMonth = monthDiff;
+                                            }
                                           }
                                           
                                           field.onChange(newInterestRatePeriods);
@@ -635,18 +672,45 @@ export default function LoanInputForm({
                                         if (newDate) {
                                           const newInterestRatePeriods = [...field.value];
                                           const monthDiff = differenceInMonths(newDate, date);
+                                          const loanTermInMonths = form.getValues("loanTerm") * 12;
                                           
                                           // Only validate that end date is after current period's start
                                           if (monthDiff <= period.startMonth) {
                                             return;
                                           }
                                           
-                                          // Update the end month
-                                          newInterestRatePeriods[index].endMonth = monthDiff;
-                                          
-                                          // Always update the next period's start date to match this period's end date
-                                          if (index < newInterestRatePeriods.length - 1) {
-                                            newInterestRatePeriods[index + 1].startMonth = monthDiff;
+                                          // For the last period, end date must equal loan term
+                                          if (index === newInterestRatePeriods.length - 1) {
+                                            // If trying to set last period end before loan term, don't allow it
+                                            if (monthDiff < loanTermInMonths) {
+                                              // Either create a new period or force end date to loan term
+                                              const createNewPeriod = confirm("Would you like to add a new period? Cancel to keep the end date at the loan term.");
+                                              
+                                              if (createNewPeriod) {
+                                                // Update current period end
+                                                newInterestRatePeriods[index].endMonth = monthDiff;
+                                                
+                                                // Add a new period from this end to loan term
+                                                newInterestRatePeriods.push({
+                                                  startMonth: monthDiff,
+                                                  endMonth: loanTermInMonths,
+                                                  interestRate: 5 // Default rate
+                                                });
+                                              } else {
+                                                // Force end date to match loan term
+                                                return;
+                                              }
+                                            } else {
+                                              newInterestRatePeriods[index].endMonth = loanTermInMonths;
+                                            }
+                                          } else {
+                                            // For non-last periods, update normally
+                                            newInterestRatePeriods[index].endMonth = monthDiff;
+                                            
+                                            // Always update the next period's start date to match this period's end date
+                                            if (index < newInterestRatePeriods.length - 1) {
+                                              newInterestRatePeriods[index + 1].startMonth = monthDiff;
+                                            }
                                           }
                                           
                                           field.onChange(newInterestRatePeriods);
