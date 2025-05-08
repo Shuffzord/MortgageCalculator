@@ -14,7 +14,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { HelpCircle, CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+// Temporarily commented out to avoid build errors
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import CurrencySelector, { getCurrencySymbol } from "@/components/ui/currency-selector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -118,6 +119,13 @@ export default function LoanInputForm({
       },
     },
   });
+  
+  // Log any form errors to help with debugging
+  useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log('Form validation errors:', form.formState.errors);
+    }
+  }, [form.formState.errors]);
 
   const [date, setDate] = useState<Date>(loanDetails.startDate || new Date());
 
