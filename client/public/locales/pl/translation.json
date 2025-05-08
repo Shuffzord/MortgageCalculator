@@ -10,6 +10,8 @@
     "polish": "Polski"
   },
   "form": {
+    "currency": "Waluta",
+    "currencyTooltip": "Wybierz walutę dla kalkulacji kredytu",  
     "loanDetails": "Szczegóły Kredytu",
     "loanAmount": "Kwota Kredytu",
     "loanAmountTooltip": "Początkowa kwota kredytu przed odsetkami.",
@@ -22,7 +24,6 @@
     "saveCalculation": "Zapisz Obliczenia",
     "loadCalculation": "Wczytaj Obliczenia",
     "calculationName": "Nazwa Obliczeń",
-    "currency": "zł",
     "selectCurrency": "Wybierz Walutę",
     "interestRatePeriods": "Okresy Stopy Procentowej",
     "interestRatePeriodsTooltip": "Zdefiniuj różne stopy procentowe dla określonych okresów kredytu.",

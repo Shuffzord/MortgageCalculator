@@ -10,6 +10,8 @@
     "polish": "Polaco"
   },
   "form": {
+    "currency": "Moneda",
+    "currencyTooltip": "Selecciona la moneda para tus cálculos de hipoteca",
     "loanDetails": "Detalles del Préstamo",
     "loanAmount": "Monto del Préstamo",
     "loanAmountTooltip": "El monto inicial del préstamo antes de los intereses.",
@@ -22,7 +24,6 @@
     "saveCalculation": "Guardar Cálculo",
     "loadCalculation": "Cargar Cálculo",
     "calculationName": "Nombre del Cálculo",
-    "currency": "€",
     "selectCurrency": "Seleccionar Moneda",
     "interestRatePeriods": "Períodos de Tasa de Interés",
     "interestRatePeriodsTooltip": "Defina diferentes tasas de interés para períodos específicos de su préstamo.",

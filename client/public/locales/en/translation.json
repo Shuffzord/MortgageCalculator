@@ -9,6 +9,8 @@
     "polish": "Polish"
   },
   "form": {
+    "currency": "Currency",
+    "currencyTooltip": "Select the currency for your loan calculations",
     "loanDetails": "Loan Details",
     "loanAmount": "Loan Amount",
     "loanAmountTooltip": "The initial loan amount before interest.",
@@ -21,7 +23,6 @@
     "saveCalculation": "Save Calculation",
     "loadCalculation": "Load Calculation",
     "calculationName": "Calculation Name",
-    "currency": "$",
     "selectCurrency": "Select Currency",
     "interestRatePeriods": "Interest Rate Periods",
     "interestRatePeriodsTooltip": "Define different interest rates for specific periods of your loan.",

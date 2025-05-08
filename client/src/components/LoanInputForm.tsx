@@ -251,10 +251,25 @@ export default function LoanInputForm({
               </div>
               
               <div className="sm:col-span-2">
-                <CurrencySelector
-                  value={selectedCurrency}
-                  onChange={onCurrencyChange}
-                />
+                <FormItem>
+                  <FormLabel className="flex items-center">
+                    {t('form.currency')}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">{t('form.currencyTooltip')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  <FormControl>
+                    <CurrencySelector
+                      value={selectedCurrency}
+                      onChange={onCurrencyChange}
+                    />
+                  </FormControl>
+                </FormItem>
               </div>
             </div>
           </div>
