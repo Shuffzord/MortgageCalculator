@@ -153,7 +153,8 @@ export default function LoanInputForm({
       };
     });
     
-    setLoanDetails({
+    // Create the updated loan details
+    const updatedLoanDetails = {
       ...loanDetails,
       principal: values.principal,
       interestRatePeriods: values.interestRatePeriods,
@@ -163,7 +164,13 @@ export default function LoanInputForm({
       additionalCosts: values.additionalCosts,
       startDate: date,
       currency: selectedCurrency
-    });
+    };
+    
+    // Update state and calculate with the new values directly
+    setLoanDetails(updatedLoanDetails);
+    
+    // Pass the updated loan details directly to the parent's calculate function
+    // This way we don't have to wait for the state update
     onCalculate();
   };
 
