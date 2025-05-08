@@ -47,7 +47,15 @@
     "administrativeFees": "Opłaty Administracyjne",
     "endDate": "Data Zakończenia",
     "additionalCostsTooltip": "Dodatkowe opłaty związane z kredytem, takie jak prowizje, ubezpieczenie i opłaty administracyjne.",
-    "startDate": "Data Rozpoczęcia"
+    "startDate": "Data Rozpoczęcia",
+    "periodLength": "Długość Okresu",
+    "year": "rok",
+    "years": "lata",
+    "month": "miesiąc",
+    "months": "miesięcy",
+    "day": "dzień",
+    "days": "dni",
+    "loanEnd": "Koniec Kredytu"
   },
   "overpayment": {
     "title": "Nadpłata",

@@ -116,12 +116,7 @@ export default function ExportPanel({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-gray-900 flex justify-between items-center">
-            {t('export.title', 'Export & Save Data')}
-            <DialogClose asChild>
-              <Button variant="ghost" size="icon">
-                <X className="h-4 w-4" />
-              </Button>
-            </DialogClose>
+            {t('export.title', 'Export & Save Data')}           
           </DialogTitle>
         </DialogHeader>
         

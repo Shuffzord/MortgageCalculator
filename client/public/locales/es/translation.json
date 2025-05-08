@@ -44,7 +44,18 @@
     "additionalCosts": "Costos Adicionales",
     "originationFee": "Comisión de Apertura",
     "loanInsurance": "Seguro del Préstamo",
-    "administrativeFees": "Gastos Administrativos"
+    "administrativeFees": "Gastos Administrativos",
+    "startDate": "Fecha de Inicio",
+    "endDate": "Fecha de Fin",
+    "additionalCostsTooltip": "Costos adicionales asociados con el préstamo, como comisiones de apertura, seguros y gastos administrativos.",
+    "periodLength": "Duración del Período",
+    "year": "año",
+    "years": "años",
+    "month": "mes",
+    "months": "meses",
+    "day": "día",
+    "days": "días",
+    "loanEnd": "Fin del Préstamo"
   },
   "overpayment": {
     "title": "Pago Adicional",

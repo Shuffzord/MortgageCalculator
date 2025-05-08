@@ -47,7 +47,15 @@
     "administrativeFees": "Administrative Fees",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "additionalCostsTooltip": "Additional fees associated with the loan, such as origination fees, insurance, and administrative fees."
+    "additionalCostsTooltip": "Additional fees associated with the loan, such as origination fees, insurance, and administrative fees.",
+    "periodLength": "Period Length",
+    "year": "year",
+    "years": "years",
+    "month": "month",
+    "months": "months",
+    "day": "day",
+    "days": "days",
+    "loanEnd": "Loan End"
   },
   "overpayment": {
     "title": "Overpayment",
