@@ -3,6 +3,29 @@ import App from "./App";
 import "./index.css";
 // i18n is imported in App.tsx
 
+// Handle HMR reconnection issues
+if (import.meta.hot) {
+  import.meta.hot.on('vite:beforeUpdate', () => {
+    console.log('vite:beforeUpdate');
+  });
+  
+  // Add a listener for vite connection status
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      // When tab becomes visible again, check if we need to reload
+      const viteHmrTimeoutId = setTimeout(() => {
+        // If we don't get a connection event soon, reload the page
+        window.location.reload();
+      }, 1000);
+      
+      // Clear timeout if we get a connection event
+      import.meta.hot?.on('vite:connect', () => {
+        clearTimeout(viteHmrTimeoutId);
+      });
+    }
+  });
+}
+
 // Apply custom styles for financial figures in the app
 const style = document.createElement('style');
 style.textContent = `

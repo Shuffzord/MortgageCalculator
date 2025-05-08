@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LoanDetails, InterestRatePeriod, RepaymentModel, AdditionalCosts, FeeType } from "@/lib/types";
 import { 
   Form, 
@@ -14,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { HelpCircle, CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-// import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import CurrencySelector, { getCurrencySymbol } from "@/components/ui/currency-selector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
