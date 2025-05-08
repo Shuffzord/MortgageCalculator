@@ -152,5 +152,30 @@
   },
   "export": {
     "title": "Exportar Datos"
+  },
+  "about": {
+    "title": "Acerca de la Calculadora de Hipotecas",
+    "projectOverview": "Descripción del Proyecto",
+    "projectDescription": "Esta calculadora de hipotecas es una herramienta completa diseñada para ayudarte a entender y planificar tus pagos hipotecarios con precisión y claridad.",
+    "purposeDescription": "Nuestro objetivo es proporcionarte cálculos precisos e información para tomar decisiones informadas sobre tu financiamiento hipotecario.",
+    "features": "Características Principales",
+    "featureCalculation": "Cálculos precisos de pagos hipotecarios con parámetros personalizables",
+    "featureAmortization": "Programa detallado de amortización que muestra el desglose de capital e intereses",
+    "featureComparison": "Comparación de escenarios para evaluar diferentes opciones hipotecarias",
+    "featureOverpayment": "Análisis de pagos adicionales para ver posibles ahorros",
+    "featureExport": "Capacidades de exportación de datos para análisis adicional",
+    "howToUse": "Cómo Usar",
+    "step1": "Ingresa los detalles de tu préstamo, incluyendo monto, tasa de interés y plazo",
+    "step2": "Revisa el pago mensual calculado y el interés total",
+    "step3": "Explora el programa de amortización para ver el desglose de pagos a lo largo del tiempo",
+    "step4": "Prueba diferentes escenarios u opciones de pago adicional para optimizar tu hipoteca",
+    "contactInfo": "Información de Contacto",
+    "contactDescription": "Si tienes alguna pregunta o comentario sobre la calculadora de hipotecas, por favor contacta a nuestro equipo de soporte."
+  },
+  "navigation": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "education": "Centro Educativo",
+    "menu": "Menú"
   }
 }

@@ -173,5 +173,30 @@
     "title": "Mortgage Calculator",
     "description": "Calculate your mortgage payments and view your amortization schedule",
     "desktopOptimized": "This site is optimized for desktop resolutions."
+  },
+  "about": {
+    "title": "About the Mortgage Calculator",
+    "projectOverview": "Project Overview",
+    "projectDescription": "This mortgage calculator is a comprehensive tool designed to help you understand and plan your mortgage payments with precision and clarity.",
+    "purposeDescription": "Our goal is to provide you with accurate calculations and insights to make informed decisions about your mortgage financing.",
+    "features": "Key Features",
+    "featureCalculation": "Precise mortgage payment calculations with customizable parameters",
+    "featureAmortization": "Detailed amortization schedule showing principal and interest breakdown",
+    "featureComparison": "Scenario comparison to evaluate different mortgage options",
+    "featureOverpayment": "Overpayment analysis to see potential savings",
+    "featureExport": "Data export capabilities for further analysis",
+    "howToUse": "How to Use",
+    "step1": "Enter your loan details including amount, interest rate, and term",
+    "step2": "Review the calculated monthly payment and total interest",
+    "step3": "Explore the amortization schedule to see payment breakdown over time",
+    "step4": "Try different scenarios or overpayment options to optimize your mortgage",
+    "contactInfo": "Contact Information",
+    "contactDescription": "If you have any questions or feedback about the mortgage calculator, please contact our support team."
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "education": "Education Center",
+    "menu": "Menu"
   }
 }

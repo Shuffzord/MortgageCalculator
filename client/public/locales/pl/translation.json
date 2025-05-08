@@ -174,5 +174,30 @@
     "selectColumns": "Wybierz Kolumny",
     "download": "Pobierz",
     "saveToCache": "Zapisz w Pamięci Przeglądarki"
+  },
+  "about": {
+    "title": "O Kalkulatorze Kredytu Hipotecznego",
+    "projectOverview": "Przegląd Projektu",
+    "projectDescription": "Ten kalkulator kredytu hipotecznego to kompleksowe narzędzie zaprojektowane, aby pomóc Ci zrozumieć i zaplanować spłaty kredytu hipotecznego z precyzją i jasnością.",
+    "purposeDescription": "Naszym celem jest dostarczenie dokładnych obliczeń i informacji, aby pomóc w podejmowaniu świadomych decyzji dotyczących finansowania hipotecznego.",
+    "features": "Główne Funkcje",
+    "featureCalculation": "Precyzyjne obliczenia rat kredytu z konfigurowalnymi parametrami",
+    "featureAmortization": "Szczegółowy harmonogram amortyzacji pokazujący podział na kapitał i odsetki",
+    "featureComparison": "Porównanie scenariuszy do oceny różnych opcji kredytowych",
+    "featureOverpayment": "Analiza nadpłat, aby zobaczyć potencjalne oszczędności",
+    "featureExport": "Możliwości eksportu danych do dalszej analizy",
+    "howToUse": "Jak Korzystać",
+    "step1": "Wprowadź szczegóły kredytu, w tym kwotę, stopę procentową i okres",
+    "step2": "Przejrzyj obliczoną miesięczną ratę i całkowite odsetki",
+    "step3": "Przeglądaj harmonogram amortyzacji, aby zobaczyć podział płatności w czasie",
+    "step4": "Wypróbuj różne scenariusze lub opcje nadpłaty, aby zoptymalizować swój kredyt",
+    "contactInfo": "Informacje Kontaktowe",
+    "contactDescription": "Jeśli masz jakiekolwiek pytania lub uwagi dotyczące kalkulatora kredytu hipotecznego, skontaktuj się z naszym zespołem wsparcia."
+  },
+  "navigation": {
+    "home": "Strona Główna",
+    "about": "O Nas",
+    "education": "Centrum Edukacji",
+    "menu": "Menu"
   }
 }

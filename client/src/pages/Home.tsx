@@ -5,7 +5,6 @@ import ChartSection from "@/components/ChartSection";
 import AmortizationSchedule from "@/components/AmortizationSchedule";
 import OverpaymentOptimizationPanel from "@/components/OverpaymentOptimizationPanel";
 import ExportPanel from "@/components/ExportPanel";
-import EducationalPanel from "@/components/EducationalPanel";
 import LoadModal from "@/components/LoadModal";
 import { 
   CalculationResults, 
@@ -24,11 +23,21 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 interface HomeProps {
   selectedCurrency: string;
   onCurrencyChange: (currency: string) => void;
+  showExportModal: boolean;
+  setShowExportModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showLoadModal: boolean;
+  setShowLoadModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Home({ selectedCurrency, onCurrencyChange }: HomeProps) {
-  const { t, i18n } = useTranslation();
-  const [activeLanguage, setActiveLanguage] = useState<string>(i18n.language || 'en');
+export default function Home({
+  selectedCurrency,
+  onCurrencyChange,
+  showExportModal,
+  setShowExportModal,
+  showLoadModal,
+  setShowLoadModal
+}: HomeProps) {
+  const { t } = useTranslation();
 
   // State management
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({
@@ -42,8 +51,6 @@ export default function Home({ selectedCurrency, onCurrencyChange }: HomeProps) 
   });
 
 const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
-const [showLoadModal, setShowLoadModal] = useState(false);
-const [showExportModal, setShowExportModal] = useState(false);
 const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([]);
 
   // Calculate loan details on initial load
@@ -108,30 +115,6 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-800">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-base sm:text-xl md:text-2xl font-semibold text-gray-900">{t('app.title')}</h1>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <LanguageSwitcher />
-              <Button
-                variant="outline"
-                onClick={() => setShowExportModal(true)}
-                className="flex items-center px-2 py-1"
-              >
-                <Download className="mr-0 h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowLoadModal(true)}
-                className="flex items-center px-2 py-1"
-              >
-                <Upload className="mr-0 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
       <div className="bg-yellow-500 text-yellow-900 text-center py-2 sm:hidden block">
         {t('app.desktopOptimized')}
       </div>
@@ -186,10 +169,6 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
             />
             
             
-            <EducationalPanel
-              activeLanguage={activeLanguage}
-              onLanguageChange={setActiveLanguage}
-            />
           </div>
         </div>
       </main>
