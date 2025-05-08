@@ -4,53 +4,23 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
-import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Education from "@/pages/Education";
 import "./i18n"; // Import i18n configuration
 import { useState, useEffect } from "react";
 import Navigation from "./components/Navigation";
 import LanguageSwitcher from "./components/LanguageSwitcher";
+import SEOHead from "./components/SEOHead";
+import { useTranslation } from "react-i18next";
+import HomePage from "./components/HomePage";
 
 function Router() {
-  const [selectedCurrency, setSelectedCurrency] = useState(localStorage.getItem("selectedCurrency") || "USD");
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [showLoadModal, setShowLoadModal] = useState(false);
-
-  useEffect(() => {
-    localStorage.setItem("selectedCurrency", selectedCurrency);
-  }, [selectedCurrency]);
-
-  const handleCurrencyChange = (currency: string) => {
-    setSelectedCurrency(currency);
-  };
-
-  const handleExportClick = () => {
-    setShowExportModal(true);
-  };
-
-  const handleLoadClick = () => {
-    setShowLoadModal(true);
-  };
-
   return (
     <>
-      <Navigation
-        onExportClick={handleExportClick}
-        onLoadClick={handleLoadClick}
-      />
+      <Navigation />
       <Switch>
         <Route path="/">
-          {() => (
-            <Home
-              selectedCurrency={selectedCurrency}
-              onCurrencyChange={handleCurrencyChange}
-              showExportModal={showExportModal}
-              setShowExportModal={setShowExportModal}
-              showLoadModal={showLoadModal}
-              setShowLoadModal={setShowLoadModal}
-            />
-          )}
+          <HomePage />
         </Route>
         <Route path="/about">
           <About />
@@ -66,9 +36,15 @@ function Router() {
 }
 
 function App() {
+  const { t } = useTranslation();
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <SEOHead
+          pageTitle={t('app.title') + ' - ' + t('app.description')}
+          pageDescription={t('app.description')}
+        />
         <Toaster />
         <Router />
       </TooltipProvider>

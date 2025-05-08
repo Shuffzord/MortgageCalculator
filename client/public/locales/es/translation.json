@@ -138,6 +138,7 @@
     "example": "Ejemplo",
     "impact": "Impacto",
     "relatedTerms": "Términos Relacionados",
+    "faqTitle": "Preguntas Frecuentes Sobre Hipotecas",
     "tooltips": {
       "principal": "La cantidad original de dinero prestada en un préstamo, excluyendo intereses y otras tarifas.",
       "interestRate": "El costo de pedir dinero prestado, expresado como porcentaje del monto del préstamo. Determina cuánto paga adicional más allá del principal.",

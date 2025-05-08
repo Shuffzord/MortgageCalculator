@@ -208,7 +208,7 @@ export default function LoanInputForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
               <div className="sm:col-span-2">
                 <FormField
                   control={form.control}
@@ -250,7 +250,7 @@ export default function LoanInputForm({
                 />
               </div>
               
-              <div className="sm:col-span-1">
+              <div className="sm:col-span-2">
                 <CurrencySelector
                   value={selectedCurrency}
                   onChange={onCurrencyChange}

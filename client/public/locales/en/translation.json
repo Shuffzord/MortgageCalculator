@@ -133,6 +133,7 @@
     "example": "Example",
     "impact": "Impact",
     "relatedTerms": "Related Terms",
+    "faqTitle": "Frequently Asked Questions About Mortgages",
     "tooltips": {
       "principal": "The original amount of money borrowed in a loan, excluding interest and other fees.",
       "interestRate": "The cost of borrowing money, expressed as a percentage of the loan amount. It determines how much extra you pay beyond the principal.",

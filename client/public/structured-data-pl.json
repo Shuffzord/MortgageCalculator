@@ -1,0 +1,32 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Kalkulator Kredytu Hipotecznego",
+  "description": "Kompleksowy kalkulator kredytu hipotecznego, który pomaga użytkownikom obliczać raty kredytu, przeglądać harmonogramy amortyzacji i optymalizować swoje kredyty.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "PLN"
+  },
+  "inLanguage": "pl",
+  "featureList": [
+    "Obliczanie rat kredytu hipotecznego",
+    "Przeglądanie harmonogramów amortyzacji",
+    "Porównywanie różnych scenariuszy kredytowych",
+    "Analizowanie strategii nadpłat",
+    "Eksportowanie danych w różnych formatach"
+  ],
+  "screenshot": "https://mortgage-calculator.example.com/mortgage-calculator-preview.jpg",
+  "potentialAction": {
+    "@type": "UseAction",
+    "target": "https://mortgage-calculator.example.com/pl/"
+  },
+  "mainEntity": {
+    "@type": "FinancialProduct",
+    "name": "Kredyt Hipoteczny",
+    "category": "Pożyczka",
+    "description": "Pożyczka wykorzystywana do zakupu nieruchomości, gdzie nieruchomość służy jako zabezpieczenie pożyczki."
+  }
+}

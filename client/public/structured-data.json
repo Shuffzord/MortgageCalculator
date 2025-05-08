@@ -1,0 +1,32 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Mortgage Calculator",
+  "description": "A comprehensive mortgage calculator that helps users calculate mortgage payments, view amortization schedules, and optimize their loans.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "inLanguage": ["en", "es", "pl"],
+  "featureList": [
+    "Calculate mortgage payments",
+    "View amortization schedules",
+    "Compare different loan scenarios",
+    "Analyze overpayment strategies",
+    "Export data in various formats"
+  ],
+  "screenshot": "https://mortgage-calculator.example.com/mortgage-calculator-preview.jpg",
+  "potentialAction": {
+    "@type": "UseAction",
+    "target": "https://mortgage-calculator.example.com/"
+  },
+  "mainEntity": {
+    "@type": "FinancialProduct",
+    "name": "Mortgage",
+    "category": "Loan",
+    "description": "A loan used to purchase real estate, where the property serves as collateral for the loan."
+  }
+}
