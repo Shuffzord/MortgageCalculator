@@ -11,20 +11,21 @@ export function exportToCSV(
   comparisonData?: ScenarioComparison
 ): string {
   let csv = '';
+  const currency = loanDetails.currency || 'USD';
   
   // Add summary
   if (options.includeSummary) {
     csv += 'Loan Summary\n';
-    csv += `Principal,${loanDetails.principal}\n`;
+    csv += `Principal,${formatCurrency(loanDetails.principal, 'en-US', currency)}\n`;
     csv += `Interest Rate,${loanDetails.interestRatePeriods[0].interestRate}%\n`;
     csv += `Loan Term,${loanDetails.loanTerm} years\n`;
-    csv += `Monthly Payment,${results.monthlyPayment}\n`;
-    csv += `Total Interest,${results.totalInterest}\n`;
-    csv += `Total Cost,${loanDetails.principal + results.totalInterest}\n`;
+    csv += `Monthly Payment,${formatCurrency(results.monthlyPayment, 'en-US', currency)}\n`;
+    csv += `Total Interest,${formatCurrency(results.totalInterest, 'en-US', currency)}\n`;
+    csv += `Total Cost,${formatCurrency(loanDetails.principal + results.totalInterest, 'en-US', currency)}\n`;
     
     if (results.oneTimeFees || results.recurringFees) {
-      csv += `One-time Fees,${results.oneTimeFees || 0}\n`;
-      csv += `Recurring Fees,${results.recurringFees || 0}\n`;
+      csv += `One-time Fees,${formatCurrency(results.oneTimeFees || 0, 'en-US', currency)}\n`;
+      csv += `Recurring Fees,${formatCurrency(results.recurringFees || 0, 'en-US', currency)}\n`;
       csv += `APR,${results.apr || 0}%\n`;
     }
     
@@ -75,13 +76,13 @@ export function exportToCSV(
         switch(col) {
           case 'payment': return payment.payment;
           case 'date': return date;
-          case 'monthlyPayment': return payment.monthlyPayment;
-          case 'principalPayment': return payment.principalPayment;
-          case 'interestPayment': return payment.interestPayment;
-          case 'balance': return payment.balance;
-          case 'totalInterest': return payment.totalInterest;
-          case 'overpaymentAmount': return payment.overpaymentAmount;
-          case 'fees': return payment.fees || 0;
+          case 'monthlyPayment': return formatCurrency(payment.monthlyPayment, 'en-US', currency);
+          case 'principalPayment': return formatCurrency(payment.principalPayment, 'en-US', currency);
+          case 'interestPayment': return formatCurrency(payment.interestPayment, 'en-US', currency);
+          case 'balance': return formatCurrency(payment.balance, 'en-US', currency);
+          case 'totalInterest': return formatCurrency(payment.totalInterest, 'en-US', currency);
+          case 'overpaymentAmount': return formatCurrency(payment.overpaymentAmount || 0, 'en-US', currency);
+          case 'fees': return formatCurrency(payment.fees || 0, 'en-US', currency);
           default: return '';
         }
       });
@@ -96,12 +97,16 @@ export function exportToCSV(
     csv += 'Scenario,Monthly Payment,Total Interest,Term,Total Cost\n';
     
     comparisonData.scenarios.forEach(scenario => {
+      const scenarioCurrency = scenario.loanDetails.currency || currency;
       const totalCost = scenario.loanDetails.principal + 
         scenario.results.totalInterest + 
         (scenario.results.oneTimeFees || 0) + 
         (scenario.results.recurringFees || 0);
         
-      csv += `${scenario.name},${scenario.results.monthlyPayment},${scenario.results.totalInterest},${scenario.results.actualTerm},${totalCost}\n`;
+      csv += `${scenario.name},${formatCurrency(scenario.results.monthlyPayment, 'en-US', scenarioCurrency)},`;
+      csv += `${formatCurrency(scenario.results.totalInterest, 'en-US', scenarioCurrency)},`;
+      csv += `${scenario.results.actualTerm},`;
+      csv += `${formatCurrency(totalCost, 'en-US', scenarioCurrency)}\n`;
     });
     
     if (comparisonData.differences.length > 0) {
@@ -109,7 +114,10 @@ export function exportToCSV(
       csv += 'Monthly Payment Difference,Total Interest Difference,Term Difference,Total Cost Difference\n';
       
       const diff = comparisonData.differences[0];
-      csv += `${diff.monthlyPaymentDiff},${diff.totalInterestDiff},${diff.termDiff},${diff.totalCostDiff}\n`;
+      csv += `${formatCurrency(diff.monthlyPaymentDiff, 'en-US', currency)},`;
+      csv += `${formatCurrency(diff.totalInterestDiff, 'en-US', currency)},`;
+      csv += `${diff.termDiff},`;
+      csv += `${formatCurrency(diff.totalCostDiff, 'en-US', currency)}\n`;
     }
     
     if (comparisonData.breakEvenPoint) {
@@ -129,6 +137,7 @@ export function exportToJSON(
   options: ExportOptions,
   comparisonData?: ScenarioComparison
 ): string {
+  const currency = loanDetails.currency || 'USD';
   const exportData: any = {
     loanDetails: { ...loanDetails },
     summary: {
@@ -136,7 +145,12 @@ export function exportToJSON(
       totalInterest: results.totalInterest,
       totalCost: loanDetails.principal + results.totalInterest,
       originalTerm: results.originalTerm,
-      actualTerm: results.actualTerm
+      actualTerm: results.actualTerm,
+      formattedValues: {
+        monthlyPayment: formatCurrency(results.monthlyPayment, 'en-US', currency),
+        totalInterest: formatCurrency(results.totalInterest, 'en-US', currency),
+        totalCost: formatCurrency(loanDetails.principal + results.totalInterest, 'en-US', currency)
+      }
     }
   };
   
@@ -144,6 +158,8 @@ export function exportToJSON(
     exportData.summary.oneTimeFees = results.oneTimeFees || 0;
     exportData.summary.recurringFees = results.recurringFees || 0;
     exportData.summary.apr = results.apr || 0;
+    exportData.summary.formattedValues.oneTimeFees = formatCurrency(results.oneTimeFees || 0, 'en-US', currency);
+    exportData.summary.formattedValues.recurringFees = formatCurrency(results.recurringFees || 0, 'en-US', currency);
   }
   
   if (options.includeAmortizationSchedule) {
@@ -156,13 +172,34 @@ export function exportToJSON(
       );
     }
     
+    // Add formatted values to each payment
+    scheduleToExport = scheduleToExport.map(payment => ({
+      ...payment,
+      formattedValues: {
+        monthlyPayment: formatCurrency(payment.monthlyPayment, 'en-US', currency),
+        principalPayment: formatCurrency(payment.principalPayment, 'en-US', currency),
+        interestPayment: formatCurrency(payment.interestPayment, 'en-US', currency),
+        balance: formatCurrency(payment.balance, 'en-US', currency),
+        totalInterest: formatCurrency(payment.totalInterest, 'en-US', currency),
+        overpaymentAmount: payment.overpaymentAmount ? formatCurrency(payment.overpaymentAmount, 'en-US', currency) : null,
+        fees: payment.fees ? formatCurrency(payment.fees, 'en-US', currency) : null
+      }
+    }));
+    
     // Filter columns if specified
     if (options.selectedColumns && options.selectedColumns.length > 0) {
       scheduleToExport = scheduleToExport.map(payment => {
         const filteredPayment: any = {};
         options.selectedColumns!.forEach(col => {
           if (col in payment) {
-            filteredPayment[col] = (payment as any)[col];
+            filteredPayment[col] = payment[col as keyof typeof payment];
+          }
+        });
+        // Always include formatted values for selected columns
+        filteredPayment.formattedValues = {};
+        options.selectedColumns!.forEach(col => {
+          if (col in payment && payment.formattedValues[col as keyof typeof payment.formattedValues]) {
+            filteredPayment.formattedValues[col] = payment.formattedValues[col as keyof typeof payment.formattedValues];
           }
         });
         return filteredPayment;
@@ -173,7 +210,24 @@ export function exportToJSON(
   }
   
   if (options.includeComparisonData && comparisonData) {
-    exportData.comparison = comparisonData;
+    exportData.comparison = {
+      ...comparisonData,
+      scenarios: comparisonData.scenarios.map(scenario => ({
+        ...scenario,
+        formattedValues: {
+          monthlyPayment: formatCurrency(scenario.results.monthlyPayment, 'en-US', scenario.loanDetails.currency || currency),
+          totalInterest: formatCurrency(scenario.results.totalInterest, 'en-US', scenario.loanDetails.currency || currency),
+          totalCost: formatCurrency(
+            scenario.loanDetails.principal + 
+            scenario.results.totalInterest + 
+            (scenario.results.oneTimeFees || 0) + 
+            (scenario.results.recurringFees || 0),
+            'en-US',
+            scenario.loanDetails.currency || currency
+          )
+        }
+      }))
+    };
   }
   
   return JSON.stringify(exportData, null, 2);
@@ -190,20 +244,17 @@ export async function exportToPDF(
   options: ExportOptions,
   comparisonData?: ScenarioComparison
 ): Promise<Blob> {
-  // This is a placeholder implementation
-  // In a real implementation, you would use a PDF generation library
-  
-  // For now, we'll create a simple text representation and convert it to a PDF blob
+  const currency = loanDetails.currency || 'USD';
   let content = '';
   
   if (options.includeSummary) {
     content += 'LOAN SUMMARY\n\n';
-    content += `Principal: ${formatCurrency(loanDetails.principal)}\n`;
+    content += `Principal: ${formatCurrency(loanDetails.principal, 'en-US', currency)}\n`;
     content += `Interest Rate: ${loanDetails.interestRatePeriods[0].interestRate}%\n`;
     content += `Loan Term: ${loanDetails.loanTerm} years\n`;
-    content += `Monthly Payment: ${formatCurrency(results.monthlyPayment)}\n`;
-    content += `Total Interest: ${formatCurrency(results.totalInterest)}\n`;
-    content += `Total Cost: ${formatCurrency(loanDetails.principal + results.totalInterest)}\n\n`;
+    content += `Monthly Payment: ${formatCurrency(results.monthlyPayment, 'en-US', currency)}\n`;
+    content += `Total Interest: ${formatCurrency(results.totalInterest, 'en-US', currency)}\n`;
+    content += `Total Cost: ${formatCurrency(loanDetails.principal + results.totalInterest, 'en-US', currency)}\n\n`;
   }
   
   if (options.includeAmortizationSchedule) {
@@ -228,9 +279,9 @@ export async function exportToPDF(
         payment.paymentDate.toISOString().split('T')[0] : 
         'N/A';
       
-      content += `${payment.payment} | ${date} | ${formatCurrency(payment.monthlyPayment)} | `;
-      content += `${formatCurrency(payment.principalPayment)} | ${formatCurrency(payment.interestPayment)} | `;
-      content += `${formatCurrency(payment.balance)} | ${formatCurrency(payment.totalInterest)}\n`;
+      content += `${payment.payment} | ${date} | ${formatCurrency(payment.monthlyPayment, 'en-US', currency)} | `;
+      content += `${formatCurrency(payment.principalPayment, 'en-US', currency)} | ${formatCurrency(payment.interestPayment, 'en-US', currency)} | `;
+      content += `${formatCurrency(payment.balance, 'en-US', currency)} | ${formatCurrency(payment.totalInterest, 'en-US', currency)}\n`;
     });
     
     if (scheduleToExport.length > 50) {
@@ -244,18 +295,17 @@ export async function exportToPDF(
     content += '---------|----------------|---------------|------|------------\n';
     
     comparisonData.scenarios.forEach(scenario => {
+      const scenarioCurrency = scenario.loanDetails.currency || currency;
       const totalCost = scenario.loanDetails.principal + 
         scenario.results.totalInterest + 
         (scenario.results.oneTimeFees || 0) + 
         (scenario.results.recurringFees || 0);
         
-      content += `${scenario.name} | ${formatCurrency(scenario.results.monthlyPayment)} | `;
-      content += `${formatCurrency(scenario.results.totalInterest)} | ${scenario.results.actualTerm} years | `;
-      content += `${formatCurrency(totalCost)}\n`;
+      content += `${scenario.name} | ${formatCurrency(scenario.results.monthlyPayment, 'en-US', scenarioCurrency)} | `;
+      content += `${formatCurrency(scenario.results.totalInterest, 'en-US', scenarioCurrency)} | ${scenario.results.actualTerm} years | `;
+      content += `${formatCurrency(totalCost, 'en-US', scenarioCurrency)}\n`;
     });
   }
   
-  // In a real implementation, you would convert this content to a PDF
-  // For now, we'll just return it as a text blob with a PDF mime type
   return new Blob([content], { type: 'application/pdf' });
 }

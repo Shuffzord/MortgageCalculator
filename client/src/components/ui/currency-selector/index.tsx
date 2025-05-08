@@ -50,7 +50,7 @@ export function CurrencySelector({ value, onChange }: CurrencySelectorProps) {
 // Helper function to get currency symbol from code
 export function getCurrencySymbol(code: string): string {
   const currency = CURRENCIES.find(c => c.code === code);
-  return currency ? currency.symbol : "$";
+  return currency ? currency.symbol : CURRENCIES[0].symbol;
 }
 
 export default CurrencySelector;

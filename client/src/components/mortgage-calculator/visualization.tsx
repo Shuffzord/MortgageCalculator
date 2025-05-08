@@ -4,6 +4,7 @@ import { formatCurrency } from "@/lib/utils";
 import { PaymentData } from "@/lib/types";
 import { Chart, registerables } from 'chart.js';
 import { cn } from "@/lib/utils";
+import { getCurrencySymbol } from "@/components/ui/currency-selector";
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -12,14 +13,17 @@ interface VisualizationProps {
   schedule: PaymentData[];
   totalPrincipal: number;
   totalInterest: number;
+  currency?: string;
 }
 
-export default function Visualization({ schedule, totalPrincipal, totalInterest }: VisualizationProps) {
+export default function Visualization({ schedule, totalPrincipal, totalInterest, currency = "USD" }: VisualizationProps) {
   const [activeTab, setActiveTab] = useState<'pie' | 'bar'>('pie');
   const pieChartRef = useRef<HTMLCanvasElement>(null);
   const pieChartInstanceRef = useRef<Chart | null>(null);
   const barChartRef = useRef<HTMLCanvasElement>(null);
   const barChartInstanceRef = useRef<Chart | null>(null);
+  
+  const currencySymbol = getCurrencySymbol(currency);
 
   // Group by year for the bar chart
   const getYearlyData = () => {
@@ -78,7 +82,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
                 const value = context.raw as number;
                 const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
                 const percentage = Math.round(value / total * 100);
-                return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+                return `${label}: ${formatCurrency(value, 'en-US', currency)} (${percentage}%)`;
               }
             }
           }
@@ -131,7 +135,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
           tooltip: {
             callbacks: {
               label: function(context) {
-                return `${context.dataset.label}: ${formatCurrency(context.raw as number)}`;
+                return `${context.dataset.label}: ${formatCurrency(context.raw as number, 'en-US', currency)}`;
               }
             }
           }
@@ -153,9 +157,9 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
             ticks: {
               callback: function(value) {
                 if ((value as number) >= 1000) {
-                  return '$' + (value as number) / 1000 + 'k';
+                  return formatCurrency((value as number) / 1000, 'en-US', currency) + 'k';
                 }
-                return '$' + value;
+                return formatCurrency(value as number, 'en-US', currency);
               }
             }
           }
@@ -177,7 +181,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest 
         barChartInstanceRef.current.destroy();
       }
     };
-  }, [schedule, totalPrincipal, totalInterest]);
+  }, [schedule, totalPrincipal, totalInterest, currency]);
 
   return (
     <Card className="bg-white shadow rounded-lg overflow-hidden mb-6">

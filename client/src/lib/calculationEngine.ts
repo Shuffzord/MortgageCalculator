@@ -10,25 +10,9 @@ import {
   FeeType
 } from "./types";
 import { validateInputs } from "./validation";
-import { calculateMonthlyPayment, generateAmortizationSchedule, roundToCents } from "./utils";
+import { calculateMonthlyPayment, generateAmortizationSchedule, roundToCents, formatCurrency } from "./utils";
 import { convertLegacySchedule } from "./mortgage-calculator";
 
-
-
-/**
- * Format a number as currency
- */
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2
-  }).format(amount);
-}
-
-/**
- * Calculate loan details and generate the amortization schedule
- */
 /**
  * Calculate monthly payment for decreasing installments model
  * In this model, the principal portion remains constant and the interest portion decreases over time

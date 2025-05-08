@@ -22,13 +22,16 @@ interface AmortizationScheduleProps {
 export default function AmortizationSchedule({ schedule, loanDetails }: AmortizationScheduleProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  
+  // Adjust items per page based on payment frequency
+  const itemsPerPage = 12; // Show one year of monthly payments by default
 
   // Calculate pagination information
   const totalPages = Math.ceil(schedule.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, schedule.length);
   const currentItems = schedule.slice(startIndex, endIndex);
+  const currencySymbol = getCurrencySymbol(loanDetails.currency || 'USD');
 
   // Calculate date from payment number
   const getPaymentDate = (paymentNum: number) => {
@@ -82,6 +85,9 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
                   <TableHead>Principal</TableHead>
                   <TableHead>Interest</TableHead>
                   <TableHead>Balance</TableHead>
+                  {schedule.some(item => item.overpaymentAmount > 0) && (
+                    <TableHead>Overpayment</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -108,13 +114,18 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
                     <TableCell className="text-sm text-gray-900 financial-figure">
                       {formatCurrency(item.balance, 'en-US', loanDetails.currency || 'USD')}
                     </TableCell>
+                    {schedule.some(item => item.overpaymentAmount > 0) && (
+                      <TableCell className="text-sm text-green-600 financial-figure">
+                        {item.overpaymentAmount > 0 ? formatCurrency(item.overpaymentAmount, 'en-US', loanDetails.currency || 'USD') : '-'}
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
           
-          <div className="px-6 py-4 flex justify-between">
+          <div className="px-6 py-4 flex justify-between items-center">
             <Button 
               variant="outline" 
               onClick={handlePreviousPage}
@@ -123,8 +134,8 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
             >
               Previous
             </Button>
-            <span className="text-sm text-gray-500 flex items-center">
-              Page {currentPage} of {totalPages}
+            <span className="text-sm text-gray-500">
+              Page {currentPage} of {totalPages} ({startIndex + 1}-{endIndex} of {schedule.length} payments)
             </span>
             <Button 
               variant="outline" 
