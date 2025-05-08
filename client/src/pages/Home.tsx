@@ -47,7 +47,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
 
   // Calculate loan details on initial load
   useEffect(() => {
-    handleCalculateLoan();
+    handleCalculateLoan(loanDetails);
   }, []);
 
   // Load saved calculations when modal opens
@@ -58,17 +58,22 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
     }
   }, [showLoadModal]);
 
-  const handleCalculateLoan = () => {
+  // This function is called directly by the form when calculate is clicked
+  const handleCalculateLoan = (loanDetailsToCalculate?: LoanDetails) => {
+    // Use the provided loan details if available, otherwise use the current state
+    const detailsToUse = loanDetailsToCalculate || loanDetails;
+    
     const results = calculateLoanDetails(
-      loanDetails.principal,
-      loanDetails.interestRatePeriods,
-      loanDetails.loanTerm,
+      detailsToUse.principal,
+      detailsToUse.interestRatePeriods,
+      detailsToUse.loanTerm,
       undefined, // Don't pass a single overpayment plan
-      loanDetails.repaymentModel,
-      loanDetails.additionalCosts,
-      loanDetails.overpaymentPlans, // Pass all overpayment plans
-      loanDetails.startDate // Pass the loan start date for date-based overpayments
+      detailsToUse.repaymentModel,
+      detailsToUse.additionalCosts,
+      detailsToUse.overpaymentPlans, // Pass all overpayment plans
+      detailsToUse.startDate // Pass the loan start date for date-based overpayments
     );
+    
     setCalculationResults(results);
   };
 
@@ -89,13 +94,15 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
   };
 
   const handleLoadCalculation = (calculation: SavedCalculation) => {
-    setLoanDetails({ ...calculation.loanDetails, currency: selectedCurrency });
+    // Create updated loan details from the loaded calculation
+    const updatedDetails = { ...calculation.loanDetails, currency: selectedCurrency };
+    
+    // Update state and close modal
+    setLoanDetails(updatedDetails);
     setShowLoadModal(false);
 
-    // Recalculate with loaded values
-    setTimeout(() => {
-      handleCalculateLoan();
-    }, 0);
+    // Calculate using the loaded details directly
+    handleCalculateLoan(updatedDetails);
   };
 
   return (
@@ -161,16 +168,17 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
             <OverpaymentOptimizationPanel
               loanDetails={loanDetails}
               onApplyOptimization={(optimizedOverpayments) => {
-                // Apply the optimized overpayments to the loan details
-                setLoanDetails({
+                // Create updated loan details with optimized overpayments
+                const updatedDetails = {
                   ...loanDetails,
                   overpaymentPlans: optimizedOverpayments
-                });
+                };
                 
-                // Recalculate with the new overpayment plan
-                setTimeout(() => {
-                  handleCalculateLoan();
-                }, 0);
+                // Update state
+                setLoanDetails(updatedDetails);
+                
+                // Calculate using the new details directly
+                handleCalculateLoan(updatedDetails);
               }}
             />
             

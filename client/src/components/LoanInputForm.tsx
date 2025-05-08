@@ -87,7 +87,7 @@ interface OverpaymentFormValues {
 interface LoanInputFormProps {
   loanDetails: LoanDetails;
   setLoanDetails: (loanDetails: LoanDetails) => void;
-  onCalculate: () => void;
+  onCalculate: (loanDetailsToCalculate?: LoanDetails) => void;
   selectedCurrency: string;
   onCurrencyChange: (currency: string) => void;
 }
@@ -171,7 +171,7 @@ export default function LoanInputForm({
     
     // Pass the updated loan details directly to the parent's calculate function
     // This way we don't have to wait for the state update
-    onCalculate();
+    onCalculate(updatedLoanDetails);
   };
 
   return (
