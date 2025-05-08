@@ -38,7 +38,7 @@ export default function ScenarioComparisonComponent({
       if (costChart) costChart.destroy();
       if (paymentChart) paymentChart.destroy();
     };
-  }, []);
+  }, [costChart, paymentChart]);
   
   const handleCompare = () => {
     if (selectedScenarios.length < 2) return;
@@ -55,170 +55,189 @@ export default function ScenarioComparisonComponent({
   useEffect(() => {
     if (!comparison || comparison.scenarios.length < 2) return;
     
+    // Destroy existing charts before creating new ones
+    if (costChart) {
+      costChart.destroy();
+      setCostChart(null);
+    }
+    
+    if (paymentChart) {
+      paymentChart.destroy();
+      setPaymentChart(null);
+    }
+    
     const scenario1 = comparison.scenarios[0];
     const scenario2 = comparison.scenarios[1];
     
-    // Only create charts if we have the necessary refs and options
-    if (options.includeTotalCostComparison && costChartRef.current) {
-      if (costChart) costChart.destroy();
-      
-      const costDifferences = calculateCumulativeCostDifference(
-        scenario1.results.amortizationSchedule,
-        scenario2.results.amortizationSchedule
-      );
-      
-      // Create labels for months (1, 2, 3, etc.)
-      const months = Array.from(
-        { length: costDifferences.length }, 
-        (_, i) => (i + 1).toString()
-      );
-      
-      const newCostChart = new Chart(costChartRef.current, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [{
-            label: `${scenario1.name} vs ${scenario2.name} - Cumulative Cost Difference`,
-            data: costDifferences,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            fill: true,
-            tension: 0.1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: 'Cost Difference'
+    // Create cost comparison chart
+    const costChartTimer = setTimeout(() => {
+      // Only create charts if we have the necessary refs and options
+      if (options.includeTotalCostComparison && costChartRef.current) {
+        const costDifferences = calculateCumulativeCostDifference(
+          scenario1.results.amortizationSchedule,
+          scenario2.results.amortizationSchedule
+        );
+        
+        // Create labels for months (1, 2, 3, etc.)
+        const months = Array.from(
+          { length: costDifferences.length }, 
+          (_, i) => (i + 1).toString()
+        );
+        
+        const newCostChart = new Chart(costChartRef.current, {
+          type: 'line',
+          data: {
+            labels: months,
+            datasets: [{
+              label: `${scenario1.name} vs ${scenario2.name} - Cumulative Cost Difference`,
+              data: costDifferences,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              fill: true,
+              tension: 0.1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                title: {
+                  display: true,
+                  text: 'Cost Difference'
+                },
+                ticks: {
+                  callback: function(value) {
+                    return formatCurrency(value as number, 'en-US', scenario1.loanDetails.currency || 'USD');
+                  }
+                }
               },
-              ticks: {
-                callback: function(value) {
-                  return formatCurrency(value as number, 'en-US', scenario1.loanDetails.currency || 'USD');
+              x: {
+                title: {
+                  display: true,
+                  text: 'Month'
+                },
+                ticks: {
+                  maxTicksLimit: 12,
+                  callback: function(value, index) {
+                    // Show every 12th month (yearly)
+                    return index % 12 === 0 ? `Year ${Math.floor(index / 12) + 1}` : '';
+                  }
                 }
               }
             },
-            x: {
-              title: {
-                display: true,
-                text: 'Month'
-              },
-              ticks: {
-                maxTicksLimit: 12,
-                callback: function(value, index) {
-                  // Show every 12th month (yearly)
-                  return index % 12 === 0 ? `Year ${Math.floor(index / 12) + 1}` : '';
-                }
-              }
-            }
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const value = context.raw as number;
-                  return `Difference: ${formatCurrency(value, 'en-US', scenario1.loanDetails.currency || 'USD')}`;
-                },
-                title: function(context) {
-                  const index = context[0].dataIndex;
-                  const years = Math.floor(index / 12);
-                  const months = index % 12;
-                  return `Month ${index + 1} (Year ${years + 1}, Month ${months + 1})`;
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const value = context.raw as number;
+                    return `Difference: ${formatCurrency(value, 'en-US', scenario1.loanDetails.currency || 'USD')}`;
+                  },
+                  title: function(context) {
+                    const index = context[0].dataIndex;
+                    const years = Math.floor(index / 12);
+                    const months = index % 12;
+                    return `Month ${index + 1} (Year ${years + 1}, Month ${months + 1})`;
+                  }
                 }
               }
             }
           }
-        }
-      });
-      
-      setCostChart(newCostChart);
-    }
+        });
+        
+        setCostChart(newCostChart);
+      }
+    }, 0);
     
-    if (options.includeMonthlyPaymentComparison && paymentChartRef.current) {
-      if (paymentChart) paymentChart.destroy();
-      
-      const paymentDifferences = calculateMonthlyPaymentDifference(
-        scenario1.results.amortizationSchedule,
-        scenario2.results.amortizationSchedule
-      );
-      
-      // Create labels for months (1, 2, 3, etc.)
-      const months = Array.from(
-        { length: paymentDifferences.length }, 
-        (_, i) => (i + 1).toString()
-      );
-      
-      const newPaymentChart = new Chart(paymentChartRef.current, {
-        type: 'bar',
-        data: {
-          labels: months,
-          datasets: [{
-            label: `${scenario1.name} vs ${scenario2.name} - Monthly Payment Difference`,
-            data: paymentDifferences,
-            backgroundColor: function(context) {
-              const value = context.raw as number;
-              return value >= 0 ? 'rgba(239, 68, 68, 0.7)' : 'rgba(34, 197, 94, 0.7)';
-            },
-            borderColor: function(context) {
-              const value = context.raw as number;
-              return value >= 0 ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)';
-            },
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: 'Payment Difference'
+    // Create payment comparison chart
+    const paymentChartTimer = setTimeout(() => {
+      if (options.includeMonthlyPaymentComparison && paymentChartRef.current) {
+        const paymentDifferences = calculateMonthlyPaymentDifference(
+          scenario1.results.amortizationSchedule,
+          scenario2.results.amortizationSchedule
+        );
+        
+        // Create labels for months (1, 2, 3, etc.)
+        const months = Array.from(
+          { length: paymentDifferences.length }, 
+          (_, i) => (i + 1).toString()
+        );
+        
+        const newPaymentChart = new Chart(paymentChartRef.current, {
+          type: 'bar',
+          data: {
+            labels: months,
+            datasets: [{
+              label: `${scenario1.name} vs ${scenario2.name} - Monthly Payment Difference`,
+              data: paymentDifferences,
+              backgroundColor: function(context) {
+                const value = context.raw as number;
+                return value >= 0 ? 'rgba(239, 68, 68, 0.7)' : 'rgba(34, 197, 94, 0.7)';
               },
-              ticks: {
-                callback: function(value) {
-                  return formatCurrency(value as number, 'en-US', scenario1.loanDetails.currency || 'USD');
-                }
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Month'
+              borderColor: function(context) {
+                const value = context.raw as number;
+                return value >= 0 ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)';
               },
-              ticks: {
-                maxTicksLimit: 12,
-                callback: function(value, index) {
-                  // Show every 12th month (yearly)
-                  return index % 12 === 0 ? `Year ${Math.floor(index / 12) + 1}` : '';
-                }
-              }
-            }
+              borderWidth: 1
+            }]
           },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const value = context.raw as number;
-                  return `Difference: ${formatCurrency(value, 'en-US', scenario1.loanDetails.currency || 'USD')}`;
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                title: {
+                  display: true,
+                  text: 'Payment Difference'
                 },
-                title: function(context) {
-                  const index = context[0].dataIndex;
-                  const years = Math.floor(index / 12);
-                  const months = index % 12;
-                  return `Month ${index + 1} (Year ${years + 1}, Month ${months + 1})`;
+                ticks: {
+                  callback: function(value) {
+                    return formatCurrency(value as number, 'en-US', scenario1.loanDetails.currency || 'USD');
+                  }
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Month'
+                },
+                ticks: {
+                  maxTicksLimit: 12,
+                  callback: function(value, index) {
+                    // Show every 12th month (yearly)
+                    return index % 12 === 0 ? `Year ${Math.floor(index / 12) + 1}` : '';
+                  }
+                }
+              }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const value = context.raw as number;
+                    return `Difference: ${formatCurrency(value, 'en-US', scenario1.loanDetails.currency || 'USD')}`;
+                  },
+                  title: function(context) {
+                    const index = context[0].dataIndex;
+                    const years = Math.floor(index / 12);
+                    const months = index % 12;
+                    return `Month ${index + 1} (Year ${years + 1}, Month ${months + 1})`;
+                  }
                 }
               }
             }
           }
-        }
-      });
-      
-      setPaymentChart(newPaymentChart);
-    }
+        });
+        
+        setPaymentChart(newPaymentChart);
+      }
+    }, 0);
+    
+    // Cleanup function for timers
+    return () => {
+      clearTimeout(costChartTimer);
+      clearTimeout(paymentChartTimer);
+    };
   }, [comparison, options]);
   
   return (
@@ -433,7 +452,10 @@ export default function ScenarioComparisonComponent({
                 <div className="mt-6">
                   <h4 className="font-medium mb-2">{t('comparison.cumulativeCostDiff') || 'Cumulative Cost Difference'}</h4>
                   <div className="h-64 relative">
-                    <canvas ref={costChartRef}></canvas>
+                    <canvas 
+                      key={`cost-chart-${comparison?.scenarios[0]?.id}-${comparison?.scenarios[1]?.id}`} 
+                      ref={costChartRef}
+                    ></canvas>
                   </div>
                 </div>
               )}
@@ -442,7 +464,10 @@ export default function ScenarioComparisonComponent({
                 <div className="mt-6">
                   <h4 className="font-medium mb-2">{t('comparison.monthlyPaymentDiff') || 'Monthly Payment Difference'}</h4>
                   <div className="h-64 relative">
-                    <canvas ref={paymentChartRef}></canvas>
+                    <canvas 
+                      key={`payment-chart-${comparison?.scenarios[0]?.id}-${comparison?.scenarios[1]?.id}`} 
+                      ref={paymentChartRef}
+                    ></canvas>
                   </div>
                 </div>
               )}
