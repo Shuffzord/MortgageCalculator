@@ -38,7 +38,13 @@
     "repaymentModelTooltip": "Elija cómo se estructuran sus pagos del préstamo a lo largo del tiempo.",
     "equalInstallments": "Cuotas Iguales (Anualidad)",
     "decreasingInstallments": "Cuotas Decrecientes",
-    "customRepayment": "Reembolso Personalizado"
+    "customRepayment": "Reembolso Personalizado",
+    "initialRate": "Tasa Inicial",
+    "loanStart": "Inicio del Préstamo",
+    "additionalCosts": "Costos Adicionales",
+    "originationFee": "Comisión de Apertura",
+    "loanInsurance": "Seguro del Préstamo",
+    "administrativeFees": "Gastos Administrativos"
   },
   "overpayment": {
     "title": "Pago Adicional",
@@ -131,5 +137,8 @@
       "loanInsurance": "Seguro que protege al prestamista si el prestatario incumple. Para hipotecas, esto a menudo se llama Seguro Hipotecario Privado (PMI).",
       "administrativeFees": "Varias tarifas cobradas por el prestamista por administrar su préstamo, como tarifas de servicio anual o tarifas de estado de cuenta."
     }
+  },
+  "export": {
+    "title": "Exportar Datos"
   }
 }

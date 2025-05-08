@@ -38,7 +38,13 @@
     "repaymentModelTooltip": "Choose how your loan payments are structured over time.",
     "equalInstallments": "Equal Installments (Annuity)",
     "decreasingInstallments": "Decreasing Installments",
-    "customRepayment": "Custom Repayment"
+    "customRepayment": "Custom Repayment",
+    "initialRate": "Initial Rate",
+    "loanStart": "Loan Start",
+    "additionalCosts": "Additional Costs",
+    "originationFee": "Origination Fee",
+    "loanInsurance": "Loan Insurance",
+    "administrativeFees": "Administrative Fees"
   },
   "overpayment": {
     "title": "Overpayment",
@@ -126,5 +132,8 @@
       "loanInsurance": "Insurance that protects the lender if the borrower defaults. For mortgages, this is often called Private Mortgage Insurance (PMI).",
       "administrativeFees": "Various fees charged by the lender for managing your loan, such as annual service fees or statement fees."
     }
+  },
+  "export": {
+    "title": "Export Data"
   }
 }

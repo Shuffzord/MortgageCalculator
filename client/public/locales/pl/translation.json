@@ -38,7 +38,13 @@
     "repaymentModelTooltip": "Wybierz sposób strukturyzowania spłat kredytu w czasie.",
     "equalInstallments": "Równe Raty (Annuitetowe)",
     "decreasingInstallments": "Raty Malejące",
-    "customRepayment": "Spłata Niestandardowa"
+    "customRepayment": "Spłata Niestandardowa",
+    "initialRate": "Stopa Początkowa",
+    "loanStart": "Rozpoczęcie Kredytu",
+    "additionalCosts": "Dodatkowe Koszty",
+    "originationFee": "Prowizja za Udzielenie",
+    "loanInsurance": "Ubezpieczenie Kredytu",
+    "administrativeFees": "Opłaty Administracyjne"
   },
   "overpayment": {
     "title": "Nadpłata",
@@ -131,5 +137,8 @@
       "loanInsurance": "Ubezpieczenie chroniące kredytodawcę w przypadku niewypłacalności kredytobiorcy. W przypadku kredytów hipotecznych często nazywane jest Prywatnym Ubezpieczeniem Hipotecznym (PUH).",
       "administrativeFees": "Różne opłaty pobierane przez kredytodawcę za obsługę kredytu, takie jak roczne opłaty serwisowe lub opłaty za wyciągi."
     }
+  },
+  "export": {
+    "title": "Eksportuj Dane"
   }
 }
