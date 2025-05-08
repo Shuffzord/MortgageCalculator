@@ -495,7 +495,10 @@ export default function LoanInputForm({
                                     </div>
                                     <Calendar
                                       mode="single"
+                                      month={index === 0 ? date : addMonths(date, period.startMonth)}
                                       selected={index === 0 ? date : addMonths(date, period.startMonth)}
+                                      defaultMonth={index === 0 ? date : addMonths(date, period.startMonth)}
+                                      today={new Date()}
                                       onSelect={(newDate) => {
                                         if (newDate) {
                                           const newInterestRatePeriods = [...field.value];
@@ -536,7 +539,7 @@ export default function LoanInputForm({
                                         // Only prevent selecting dates before loan start
                                         return calendarDate < date;
                                       }}
-                                      initialFocus
+                                      initialFocus={false}
                                     />
                                   </div>
                                 </PopoverContent>
@@ -624,7 +627,10 @@ export default function LoanInputForm({
                                     </div>
                                     <Calendar
                                       mode="single"
+                                      month={period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, form.getValues("loanTerm") * 12)}
                                       selected={period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, form.getValues("loanTerm") * 12)}
+                                      defaultMonth={period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, form.getValues("loanTerm") * 12)}
+                                      today={new Date()}
                                       onSelect={(newDate) => {
                                         if (newDate) {
                                           const newInterestRatePeriods = [...field.value];
@@ -654,7 +660,7 @@ export default function LoanInputForm({
                                         // This gives maximum flexibility while maintaining sequential order
                                         return calendarDate < minDate;
                                       }}
-                                      initialFocus
+                                      initialFocus={false}
                                     />
                                   </div>
                                 </PopoverContent>
