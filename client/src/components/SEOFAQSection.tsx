@@ -12,7 +12,7 @@ interface SEOFAQSectionProps {
 }
 
 const SEOFAQSection: React.FC<SEOFAQSectionProps> = ({ faqs }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   // Create structured data for FAQs
   React.useEffect(() => {
@@ -48,7 +48,7 @@ const SEOFAQSection: React.FC<SEOFAQSectionProps> = ({ faqs }) => {
         script.parentNode.removeChild(script);
       }
     };
-  }, [faqs]);
+  }, [faqs, i18n.language, t]);
   
   return (
     <div className="mt-8">

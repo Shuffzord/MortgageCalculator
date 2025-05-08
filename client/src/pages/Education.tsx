@@ -10,6 +10,11 @@ export default function Education() {
   const { t, i18n } = useTranslation();
   const [activeLanguage, setActiveLanguage] = useState<string>(i18n.language || 'en');
 
+  // Update activeLanguage when i18n.language changes
+  React.useEffect(() => {
+    setActiveLanguage(i18n.language);
+  }, [i18n.language]);
+
   // Get FAQs for the current language
   const faqs = mortgageFAQs[activeLanguage as keyof typeof mortgageFAQs] || mortgageFAQs.en;
 
