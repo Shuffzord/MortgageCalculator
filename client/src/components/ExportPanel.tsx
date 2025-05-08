@@ -113,11 +113,17 @@ export default function ExportPanel({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent 
+        className="max-w-3xl max-h-[90vh] overflow-y-auto"
+        aria-describedby="dialog-description"
+      >
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-gray-900 flex justify-between items-center">
             {t('export.title', 'Export & Save Data')}           
           </DialogTitle>
+          <p id="dialog-description" className="text-sm text-gray-500 mt-1">
+            {t('export.description', 'Choose export format and options for your mortgage calculation data')}
+          </p>
         </DialogHeader>
         
         <div className="space-y-6">
@@ -126,17 +132,29 @@ export default function ExportPanel({
             <h3 className="text-sm font-medium mb-2">{t('export.format', 'Export Format')}</h3>
             <div className="flex space-x-4">
               <div 
-                className={`flex flex-col items-center p-3 border rounded-md cursor-pointer ${options.format === 'csv' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}
+                className={`flex flex-col items-center p-3 border-2 rounded-md cursor-pointer transition-all ${
+                  options.format === 'csv' 
+                    ? 'border-primary bg-primary/10 text-primary shadow-sm' 
+                    : 'border-gray-200 hover:border-primary/30 hover:bg-gray-50'
+                }`}
                 onClick={() => setOptions({ ...options, format: 'csv' })}
+                role="radio"
+                aria-checked={options.format === 'csv'}
               >
-                <FileText className="h-6 w-6 mb-1" />
+                <FileText className={`h-6 w-6 mb-1 ${options.format === 'csv' ? 'text-primary' : 'text-gray-500'}`} />
                 <span>CSV</span>
               </div>
               <div 
-                className={`flex flex-col items-center p-3 border rounded-md cursor-pointer ${options.format === 'json' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}
+                className={`flex flex-col items-center p-3 border-2 rounded-md cursor-pointer transition-all ${
+                  options.format === 'json' 
+                    ? 'border-primary bg-primary/10 text-primary shadow-sm' 
+                    : 'border-gray-200 hover:border-primary/30 hover:bg-gray-50'
+                }`}
                 onClick={() => setOptions({ ...options, format: 'json' })}
+                role="radio"
+                aria-checked={options.format === 'json'}
               >
-                <FileCode className="h-6 w-6 mb-1" />
+                <FileCode className={`h-6 w-6 mb-1 ${options.format === 'json' ? 'text-primary' : 'text-gray-500'}`} />
                 <span>JSON</span>
               </div>
             </div>
