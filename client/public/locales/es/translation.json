@@ -150,6 +150,236 @@
       "administrativeFees": "Varias tarifas cobradas por el prestamista por administrar su préstamo, como tarifas de servicio anual o tarifas de estado de cuenta."
     }
   },
+  "financialGlossary": {
+   "principal": {
+     "term": "Principal",
+     "definition": "La cantidad original de dinero prestada en un préstamo, excluyendo intereses y otras tarifas.",
+     "example": "Si sacas una hipoteca de $200,000, el principal es $200,000."
+   },
+   "interest": {
+     "term": "Interés",
+     "definition": "El costo de pedir dinero prestado, usualmente expresado como un porcentaje del monto del préstamo. El interés se calcula basado en el saldo principal restante.",
+     "example": "Una tasa de interés del 4% en un préstamo de $200,000 significa que pagas aproximadamente $8,000 en intereses durante el primer año, con esta cantidad disminuyendo a medida que pagas el principal."
+   },
+   "apr": {
+     "term": "Tasa Porcentual Anual (APR)",
+     "definition": "El costo anual de un préstamo incluyendo intereses y tarifas, expresado como un porcentaje. APR proporciona una visión más completa de los costos de endeudamiento que la tasa de interés sola.",
+     "example": "Mientras que tu tasa de interés podría ser del 4%, tu APR podría ser del 4.25% al incluir las tarifas de originación del préstamo, el seguro hipotecario y otros costos."
+   },
+   "amortization": {
+     "term": "Amortización",
+     "definition": "El proceso de pagar gradualmente un préstamo a través de pagos regulares que cubren tanto el principal como el interés. Al principio del préstamo, los pagos son principalmente intereses; más tarde, se convierten principalmente en principal.",
+     "example": "En una hipoteca a 30 años con cuotas iguales, durante el primer año alrededor del 70% de cada pago podría destinarse a intereses, mientras que en el último año alrededor del 95% se destina al principal."
+   },
+   "equalInstallments": {
+     "term": "Cuotas Iguales (Anualidad)",
+     "definition": "Un modelo de pago donde el pago mensual total permanece constante durante todo el plazo del préstamo, pero la proporción de principal e interés cambia con el tiempo.",
+     "example": "Con una hipoteca a 30 años de $200,000 al 4%, tu pago permanece en $955 mensuales, pero inicialmente $667 se destinan a intereses y $288 al principal. Para el año 15, es aproximadamente igual."
+   },
+   "decreasingInstallments": {
+     "term": "Cuotas Decrecientes",
+     "definition": "Un modelo de pago donde la porción del principal permanece constante, pero la porción de interés disminuye con el tiempo, resultando en pagos totales gradualmente decrecientes.",
+     "example": "Con cuotas decrecientes, podrías pagar $1,222 en el primer mes, pero solo $677 en el mes final de una hipoteca a 30 años."
+   },
+   "overpayment": {
+     "term": "Pago Adicional",
+     "definition": "Pagos adicionales realizados más allá del pago mensual requerido, aplicados directamente al saldo principal, reduciendo el interés total pagado y potencialmente acortando el plazo del préstamo.",
+     "example": "Hacer un pago mensual adicional de $100 en una hipoteca de $200,000 podría ahorrar más de $25,000 en intereses y pagar el préstamo 4 años antes."
+   },
+   "loanTerm": {
+     "term": "Plazo del Préstamo",
+     "definition": "La duración del tiempo durante la cual aceptas pagar tu hipoteca, típicamente expresada en años. Los plazos hipotecarios comunes son 15, 20 o 30 años.",
+     "example": "Un plazo más corto de 15 años significa pagos mensuales más altos pero significativamente menos intereses pagados en total en comparación con un plazo de 30 años."
+   },
+   "interestRatePeriods": {
+     "term": "Períodos de Tasa de Interés",
+     "definition": "Marcos de tiempo específicos durante los cuales se aplican diferentes tasas de interés a tu hipoteca. Estos pueden ser fijos durante todo el plazo del préstamo o cambiar a intervalos predeterminados.",
+     "example": "Una hipoteca de tasa ajustable podría comenzar con una tasa del 3.5% durante 5 años, luego ajustarse anualmente según las condiciones del mercado."
+   },
+   "originationFee": {
+     "term": "Tarifa de Originación",
+     "definition": "Una tarifa cobrada por los prestamistas para procesar una nueva solicitud de préstamo, típicamente del 0.5% al 1% del monto del préstamo. Esta tarifa cubre el costo de la suscripción y la preparación de los documentos del préstamo.",
+     "example": "En una hipoteca de $300,000, una tarifa de originación del 1% costaría $3,000, pagados al cierre."
+   },
+   "loanInsurance": {
+     "term": "Seguro de Préstamo",
+     "definition": "Seguro que protege al prestamista si el prestatario incumple. Para las hipotecas, esto a menudo se llama Seguro Hipotecario Privado (PMI) y generalmente se requiere cuando el pago inicial es inferior al 20%.",
+     "example": "PMI podría costar del 0.5% al 1% del monto del préstamo anualmente, agregando $125-$250 mensuales a una hipoteca de $300,000."
+   },
+   "earlyRepaymentFee": {
+     "term": "Tarifa de Pago Anticipado",
+     "definition": "Una penalización cobrada por algunos prestamistas cuando un prestatario paga la totalidad o parte de su hipoteca antes de lo programado. También conocido como una penalización por pago anticipado.",
+     "example": "Una tarifa de pago anticipado del 2% sobre un saldo restante de $200,000 costaría $4,000 si pagas el préstamo anticipadamente."
+   },
+   "breakEvenPoint": {
+     "term": "Punto de Equilibrio",
+     "definition": "El punto en el que los costos de refinanciar una hipoteca igualan los ahorros generados por la tasa de interés más baja u otros términos beneficiosos.",
+     "example": "Si la refinanciación cuesta $6,000 y ahorra $200 mensuales, el punto de equilibrio es de 30 meses (6,000 ÷ 200)."
+   }
+ },
+ "mortgageConcepts": {
+   "repaymentModels": {
+     "concept": "Modelos de Pago",
+     "explanation": "Diferentes métodos de estructurar los pagos del préstamo a lo largo del tiempo, afectando cómo se calculan las porciones de principal e interés y cómo cambian los pagos totales durante el plazo del préstamo.",
+     "impact": "El modelo de pago afecta significativamente tu flujo de caja mensual, el interés total pagado y la rapidez con la que construyes capital en tu hogar.",
+     "example": "Las cuotas iguales mantienen tu pago igual durante todo el préstamo, mientras que las cuotas decrecientes comienzan más altas pero disminuyen con el tiempo, lo que podría coincidir mejor con los ingresos que aumentan con la inflación.",
+     "relatedTerms": [
+       "equalInstallments",
+       "decreasingInstallments",
+       "amortization"
+     ]
+   },
+   "overpayments": {
+     "concept": "Pagos Adicionales",
+     "explanation": "Pagos adicionales realizados más allá del pago mensual requerido, aplicados directamente para reducir el saldo principal de tu préstamo.",
+     "impact": "Los pagos adicionales reducen el principal más rápido, ahorrando intereses y potencialmente acortando el plazo del préstamo significativamente. Incluso los pequeños pagos adicionales regulares pueden tener un efecto dramático con el tiempo.",
+     "example": "Pagar $200 adicionales por mes en una hipoteca a 30 años de $300,000 al 4% podría acortar el plazo en 8 años y ahorrar más de $60,000 en intereses.",
+     "relatedTerms": [
+       "principal",
+       "interest",
+       "loanTerm"
+     ]
+   },
+   "interestRateChanges": {
+     "concept": "Cambios en la Tasa de Interés",
+     "explanation": "Variaciones en la tasa de interés aplicada a tu hipoteca, ya sea a través de la refinanciación, las hipotecas de tasa ajustable o los períodos de tasa predefinidos.",
+     "impact": "Incluso los pequeños cambios en las tasas de interés pueden afectar significativamente el interés total pagado durante la vida de un préstamo y el monto de tu pago mensual.",
+     "example": "Una reducción del 1% en la tasa de interés en una hipoteca a 30 años de $300,000 podría ahorrar más de $60,000 en intereses totales y reducir los pagos mensuales en aproximadamente $170.",
+     "relatedTerms": [
+       "interestRatePeriods",
+       "apr"
+     ]
+   },
+   "additionalCosts": {
+     "concept": "Costos Hipotecarios Adicionales",
+     "explanation": "Varias tarifas y gastos más allá del principal y los intereses que contribuyen al costo total de una hipoteca.",
+     "impact": "Los costos adicionales pueden aumentar significativamente el costo efectivo del endeudamiento y deben considerarse al comparar opciones de préstamos o calcular el costo real de la propiedad de vivienda.",
+     "example": "En una hipoteca de $300,000, los costos adicionales podrían incluir una tarifa de originación de $3,000, un seguro de propiedad anual de $1,500, impuestos de propiedad anuales de $3,600 y potencialmente un PMI anual de $1,800.",
+     "relatedTerms": [
+       "originationFee",
+       "loanInsurance",
+       "earlyRepaymentFee",
+       "apr"
+     ]
+   },
+   "amortizationSchedule": {
+     "concept": "Tabla de Amortización",
+     "explanation": "Una tabla completa que muestra los pagos programados para una hipoteca, incluyendo cómo se divide cada pago entre el principal y los intereses, y el saldo restante después de cada pago.",
+     "impact": "Comprender tu tabla de amortización te ayuda a ver cuánto de tu pago se destina a intereses versus principal en diferentes puntos del préstamo, y cómo los pagos adicionales afectarían el préstamo.",
+     "example": "Una tabla de amortización mostraría que en el primer pago de una hipoteca a 30 años de $300,000 al 4%, alrededor de $1,000 se destinan a intereses y solo $432 al principal, mientras que en el año 25, alrededor de $300 se destinan a intereses y $1,132 al principal.",
+     "relatedTerms": [
+       "amortization",
+       "principal",
+       "interest"
+     ]
+   },
+   "comparativeAnalysis": {
+     "concept": "Análisis Hipotecario Comparativo",
+     "explanation": "El proceso de evaluar diferentes escenarios hipotecarios para determinar qué opción proporciona el mejor resultado financiero según tus circunstancias y objetivos específicos.",
+     "impact": "Comparar diferentes plazos de préstamo, tasas de interés y estrategias de pago puede ayudarte a ahorrar decenas de miles de dólares durante la vida de tu hipoteca.",
+     "example": "Comparar una hipoteca a 30 años al 4% con una a 15 años al 3.5% muestra que la opción a 15 años ahorra más de $150,000 en intereses, pero requiere alrededor de $700 más en pagos mensuales.",
+     "relatedTerms": [
+       "breakEvenPoint",
+       "loanTerm",
+       "interestRatePeriods"
+     ]
+   }
+ },
+ "interactiveExamples": [
+   {
+     "id": "term-comparison",
+     "title": "Comparación del Plazo del Préstamo",
+     "description": "Mira cómo los diferentes plazos del préstamo afectan tu pago mensual y el interés total pagado.",
+     "defaultValues": {
+       "principal": 300000,
+       "interestRate": 4,
+       "term": 30
+     },
+     "scenarios": [
+       {
+         "name": "Hipoteca a 15 Años",
+         "values": {
+           "term": 15
+         },
+         "outcome": "Pagos mensuales más altos pero significativamente menos intereses totales pagados."
+       },
+       {
+         "name": "Hipoteca a 30 Años",
+         "values": {
+           "term": 30
+         },
+         "outcome": "Pagos mensuales más bajos pero muchos más intereses totales pagados durante la vida del préstamo."
+       }
+     ]
+   },
+   {
+     "id": "overpayment-impact",
+     "title": "Impacto del Pago Adicional",
+     "description": "Comprende cómo hacer pagos adicionales regulares afecta tu hipoteca.",
+     "defaultValues": {
+       "principal": 300000,
+       "interestRate": 4,
+       "term": 30,
+       "overpayment": 0
+     },
+     "scenarios": [
+       {
+         "name": "Sin Pago Adicional",
+         "values": {
+           "overpayment": 0
+         },
+         "outcome": "Pago estándar a 30 años con interés completo."
+       },
+       {
+         "name": "Pequeño Pago Adicional",
+         "values": {
+           "overpayment": 100
+         },
+         "outcome": "Reducción modesta en el plazo del préstamo e intereses pagados."
+       },
+       {
+         "name": "Gran Pago Adicional",
+         "values": {
+           "overpayment": 500
+         },
+         "outcome": "Reducción significativa en el plazo del préstamo y ahorros sustanciales en intereses."
+       }
+     ]
+   },
+   {
+     "id": "interest-rate-impact",
+     "title": "Impacto de la Tasa de Interés",
+     "description": "Explora cómo las diferentes tasas de interés afectan tus costos hipotecarios.",
+     "defaultValues": {
+       "principal": 300000,
+       "interestRate": 4,
+       "term": 30
+     },
+     "scenarios": [
+       {
+         "name": "Tasa Más Baja",
+         "values": {
+           "interestRate": 3
+         },
+         "outcome": "Pagos mensuales más bajos e intereses totales significativamente reducidos."
+       },
+       {
+         "name": "Tasa Estándar",
+         "values": {
+           "interestRate": 4
+         },
+         "outcome": "Escenario de referencia para la comparación."
+       },
+       {
+         "name": "Tasa Más Alta",
+         "values": {
+           "interestRate": 5
+         },
+         "outcome": "Pagos mensuales más altos e intereses totales sustancialmente aumentados."
+       }
+     ]
+   }
+ ],
   "export": {
     "title": "Exportar Datos"
   },

@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { financialGlossary, mortgageConcepts, interactiveExamples } from '@/lib/educationalContent';
 import { useTranslation } from 'react-i18next';
 import { Search, BookOpen, Lightbulb, Calculator } from 'lucide-react';
 
@@ -38,26 +37,29 @@ export default function EducationalPanel({
   };
   
   // Filter glossary terms based on search
-  const filteredGlossary = Object.values(financialGlossary).filter(term => 
-    searchTerm === '' || 
-    term.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    term.definition.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredGlossary: any[] = [];
+  // Object.values(financialGlossary).filter(term =>
+  //   searchTerm === '' ||
+  //   term.term?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   term.definition?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
   
   // Filter concepts based on search
-  const filteredConcepts = Object.values(mortgageConcepts).filter(concept => 
-    searchTerm === '' || 
-    concept.concept.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    concept.explanation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    concept.impact.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredConcepts: any[] = [];
+  // Object.values(mortgageConcepts).filter(concept =>
+  //   searchTerm === '' ||
+  //   concept.concept?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   concept.explanation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   concept.impact?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   // Filter interactive examples based on search
-  const filteredExamples = interactiveExamples.filter(example =>
-    searchTerm === '' ||
-    example.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    example.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredExamples: any[] = [];
+  // interactiveExamples.filter(example =>
+  //   searchTerm === '' ||
+  //   example.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   example.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -124,7 +126,7 @@ export default function EducationalPanel({
               <p className="text-gray-500 text-center py-4">{t('education.noResults') || 'No matching terms found'}</p>
             ) : (
               <Accordion type="single" collapsible className="w-full">
-                {filteredGlossary.map((term, index) => (
+                {/* {filteredGlossary.map((term, index) => (
                   <AccordionItem key={index} value={`term-${index}`}>
                     <AccordionTrigger className="text-left font-medium">
                       {term.term}
@@ -142,7 +144,7 @@ export default function EducationalPanel({
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-                ))}
+                ))} */}
               </Accordion>
             )}
           </TabsContent>
@@ -152,7 +154,7 @@ export default function EducationalPanel({
               <p className="text-gray-500 text-center py-4">{t('education.noResults') || 'No matching concepts found'}</p>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {filteredConcepts.map((concept, index) => (
+                {/* {filteredConcepts.map((concept, index) => (
                   <Card key={index}>
                     <CardHeader>
                       <CardTitle>{concept.concept}</CardTitle>
@@ -177,16 +179,16 @@ export default function EducationalPanel({
                             <h4 className="font-medium text-sm mb-2">{t('education.relatedTerms') || 'Related Terms'}</h4>
                             <div className="flex flex-wrap gap-2">
                               {concept.relatedTerms.map((term, i) => (
-                                <Badge 
-                                  key={i} 
+                                <Badge
+                                  key={i}
                                   variant="outline"
                                   className="cursor-pointer"
                                   onClick={() => {
-                                    setSearchTerm(financialGlossary[term]?.term || term);
+                                    setSearchTerm(term);
                                     setActiveTab('glossary');
                                   }}
                                 >
-                                  {financialGlossary[term]?.term || term}
+                                  {term}
                                 </Badge>
                               ))}
                             </div>
@@ -195,7 +197,7 @@ export default function EducationalPanel({
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                ))} */}
               </div>
             )}
           </TabsContent>
@@ -217,70 +219,72 @@ export default function EducationalPanel({
                     
                     {/* Display the selected interactive example */}
                     {(() => {
-                      const example = interactiveExamples.find(ex => ex.id === selectedExample);
+                      const example = null;
+                      // const example = interactiveExamples.find(ex => ex.id === selectedExample);
                       if (!example) return null;
                       
                       return (
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>{example.title}</CardTitle>
-                            <CardDescription>{example.description}</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-6">
-                              <div className="bg-gray-50 p-4 rounded-md">
-                                <h4 className="font-medium mb-2">Default Scenario</h4>
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                  <div>
-                                    <span className="font-medium">Principal:</span> ${example.defaultValues.principal.toLocaleString()}
-                                  </div>
-                                  <div>
-                                    <span className="font-medium">Interest Rate:</span> {example.defaultValues.interestRate}%
-                                  </div>
-                                  <div>
-                                    <span className="font-medium">Term:</span> {example.defaultValues.term} years
-                                  </div>
-                                  {Object.entries(example.defaultValues)
-                                    .filter(([key]) => !['principal', 'interestRate', 'term'].includes(key))
-                                    .map(([key, value]) => (
-                                      <div key={key}>
-                                        <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {value}
-                                      </div>
-                                    ))
-                                  }
-                                </div>
-                              </div>
+                        <></>
+                        // <Card>
+                        //   <CardHeader>
+                        //     <CardTitle>{example.title}</CardTitle>
+                        //     <CardDescription>{example.description}</CardDescription>
+                        //   </CardHeader>
+                        //   <CardContent>
+                        //     <div className="space-y-6">
+                        //       <div className="bg-gray-50 p-4 rounded-md">
+                        //         <h4 className="font-medium mb-2">Default Scenario</h4>
+                        //         <div className="grid grid-cols-2 gap-4 text-sm">
+                        //           <div>
+                        //             <span className="font-medium">Principal:</span> ${example.defaultValues.principal.toLocaleString()}
+                        //           </div>
+                        //           <div>
+                        //             <span className="font-medium">Interest Rate:</span> {example.defaultValues.interestRate}%
+                        //           </div>
+                        //           <div>
+                        //             <span className="font-medium">Term:</span> {example.defaultValues.term} years
+                        //           </div>
+                        //           {Object.entries(example.defaultValues)
+                        //             .filter(([key]) => !['principal', 'interestRate', 'term'].includes(key))
+                        //             .map(([key, value]) => (
+                        //               <div key={key}>
+                        //                 {/* <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {value} */}
+                        //               </div>
+                        //             ))
+                        //           }
+                        //         </div>
+                        //       </div>
                               
-                              <div className="space-y-4">
-                                <h4 className="font-medium">Scenarios</h4>
-                                {example.scenarios.map((scenario, i) => (
-                                  <Card key={i} className="border border-gray-200">
-                                    <CardHeader className="py-3 px-4">
-                                      <CardTitle className="text-base">{scenario.name}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="py-3 px-4">
-                                      <div className="space-y-3">
-                                        <div className="grid grid-cols-2 gap-2 text-sm">
-                                          {Object.entries(scenario.values).map(([key, value]) => (
-                                            <div key={key} className="text-blue-600">
-                                              <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {value}
-                                              {key === 'interestRate' ? '%' : ''}
-                                              {key === 'term' ? ' years' : ''}
-                                              {key === 'overpayment' ? '/month' : ''}
-                                            </div>
-                                          ))}
-                                        </div>
-                                        <div className="pt-2 border-t border-gray-100">
-                                          <p className="text-sm">{scenario.outcome}</p>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                ))}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                        //       <div className="space-y-4">
+                        //         <h4 className="font-medium">Scenarios</h4>
+                        //         {/* {example.scenarios.map((scenario, i) => (
+                        //           <Card key={i} className="border border-gray-200">
+                        //             <CardHeader className="py-3 px-4">
+                        //               <CardTitle className="text-base">{scenario.name}</CardTitle>
+                        //             </CardHeader>
+                        //             <CardContent className="py-3 px-4">
+                        //               <div className="space-y-3">
+                        //                 <div className="grid grid-cols-2 gap-2 text-sm">
+                        //                   {Object.entries(scenario.values).map(([key, value]) => (
+                        //                     <div key={key} className="text-blue-600">
+                        //                       <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {value}
+                        //                       {key === 'interestRate' ? '%' : ''}
+                        //                       {key === 'term' ? ' years' : ''}
+                        //                       {key === 'overpayment' ? '/month' : ''}
+                        //                     </div>
+                        //                   ))}
+                        //                 </div>
+                        //                 <div className="pt-2 border-t border-gray-100">
+                        //                   <p className="text-sm">{scenario.outcome}</p>
+                        //                 </div>
+                        //               </div>
+                        //             </CardContent>
+                        //           </Card>
+                        //         ))} */}
+                        //       </div>
+                        //     </div>
+                        //   </CardContent>
+                        // </Card>
                       );
                     })()}
                   </div>

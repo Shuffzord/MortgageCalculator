@@ -25,100 +25,78 @@ export default function Navigation({ onExportClick, onLoadClick }: NavigationPro
   const isHomePage = location === '/';
 
   return (
-    <nav className="bg-white shadow-md border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
+    <nav className="bg-[#1e293b] text-white">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center h-14">
+          {/* Logo and app name */}
+          <div className="flex items-center space-x-8">
             <Link href="/">
-              <div className="flex-shrink-0 flex items-center">
-                <span className="text-base sm:text-xl md:text-2xl font-semibold text-primary">
-                  {t('app.title')}
-                </span>
+              <div className="flex items-center cursor-pointer">
+                <svg className="h-6 w-6 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.5 8.5c0 2.5-1.5 4-3.5 5.5s-3.5 3-3.5 5.5V20h10v-1c0-2.5-1.5-4-3.5-5.5s-3.5-3-3.5-5.5V7c0-1 .5-1.5 1-2s1-1 1-2c0-1.5-2-3-4-3S5 1.5 5 3c0 1 .5 1.5 1 2s1 1 1 2v1.5"/>
+                </svg>
+                <span className="ml-2 text-xl font-bold">{t('app.title')}</span>
               </div>
             </Link>
-            
-            {/* Desktop navigation */}
-            <div className="hidden md:ml-8 md:flex md:space-x-8">
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex">
               <Link href="/">
-                <div className={`inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-150 cursor-pointer ${
-                  location === '/'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}>
+                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === '/' 
+                  ? 'bg-[#0f172a] text-white rounded-t' 
+                  : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.home')}
                 </div>
               </Link>
               <Link href="/about">
-                <div className={`inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-150 cursor-pointer ${
-                  location === '/about'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}>
+                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === '/about' 
+                  ? 'bg-[#0f172a] text-white rounded-t' 
+                  : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.about')}
                 </div>
               </Link>
               <Link href="/education">
-                <div className={`inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-150 cursor-pointer ${
-                  location === '/education'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}>
+                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === '/education' 
+                  ? 'bg-[#0f172a] text-white rounded-t' 
+                  : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.education')}
                 </div>
               </Link>
             </div>
           </div>
-          
-          <div className="flex items-center">
-            <div className="hidden md:ml-6 md:flex md:items-center space-x-3">
-              <Button
-                variant="outline"
-                onClick={onExportClick}
-                className="flex items-center px-3 py-2 rounded-md shadow-sm"
-                disabled={!isHomePage}
-              >
-                <Download className="mr-0 h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={onLoadClick}
-                className="flex items-center px-3 py-2 rounded-md shadow-sm"
-                disabled={!isHomePage}
-              >
-                <Upload className="mr-0 h-4 w-4" />
-              </Button>
-              <LanguageSwitcher />
-            </div>
+
+          {/* Right side - Action buttons */}
+          <div className="ml-auto flex items-center space-x-3">
+            <Button
+              variant="ghost"
+              onClick={onExportClick}
+              className="text-gray-300 hover:text-white"
+              disabled={!isHomePage}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onLoadClick}
+              className="text-gray-300 hover:text-white"
+              disabled={!isHomePage}
+            >
+              <Upload className="h-4 w-4" />
+            </Button>
+            <LanguageSwitcher />
             
             {/* Mobile menu button */}
-            <div className="flex items-center md:hidden space-x-2">
-              <Button
-                variant="outline"
-                onClick={onExportClick}
-                className="flex items-center px-2 py-1 rounded-md shadow-sm"
-                disabled={!isHomePage}
-              >
-                <Download className="mr-0 h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={onLoadClick}
-                className="flex items-center px-2 py-1 rounded-md shadow-sm"
-                disabled={!isHomePage}
-              >
-                <Upload className="mr-0 h-4 w-4" />
-              </Button>
-              <LanguageSwitcher />
+            <div className="md:hidden">
               <button
                 onClick={toggleMenu}
-                className="inline-flex items-center justify-center p-2 ml-2 rounded-md text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary transition-colors duration-150"
+                className="text-gray-300 hover:text-white p-1"
                 aria-expanded={isMenuOpen}
               >
                 <span className="sr-only">{t('navigation.menu')}</span>
                 {isMenuOpen ? (
-                  <X className="block h-6 w-6" aria-hidden="true" />
+                  <X className="h-5 w-5" aria-hidden="true" />
                 ) : (
-                  <Menu className="block h-6 w-6" aria-hidden="true" />
+                  <Menu className="h-5 w-5" aria-hidden="true" />
                 )}
               </button>
             </div>
@@ -126,33 +104,33 @@ export default function Navigation({ onExportClick, onLoadClick }: NavigationPro
         </div>
       </div>
 
-      {/* Mobile menu, show/hide based on menu state */}
+      {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-gray-50">
-          <div className="pt-2 pb-3 space-y-1">
+        <div className="md:hidden bg-[#0f172a]">
+          <div className="px-2 pt-2 pb-3 space-y-1">
             <Link href="/">
-              <div className={`block px-4 py-2 text-base font-medium border-l-4 cursor-pointer ${
+              <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
                 location === '/'
-                  ? 'border-primary text-primary bg-primary-50'
-                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300'
+                  ? 'bg-[#1e293b] text-white'
+                  : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
               }`}>
                 {t('navigation.home')}
               </div>
             </Link>
             <Link href="/about">
-              <div className={`block px-4 py-2 text-base font-medium border-l-4 cursor-pointer ${
+              <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
                 location === '/about'
-                  ? 'border-primary text-primary bg-primary-50'
-                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300'
+                  ? 'bg-[#1e293b] text-white'
+                  : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
               }`}>
                 {t('navigation.about')}
               </div>
             </Link>
             <Link href="/education">
-              <div className={`block px-4 py-2 text-base font-medium border-l-4 cursor-pointer ${
+              <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
                 location === '/education'
-                  ? 'border-primary text-primary bg-primary-50'
-                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300'
+                  ? 'bg-[#1e293b] text-white'
+                  : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
               }`}>
                 {t('navigation.education')}
               </div>

@@ -151,6 +151,236 @@
       "administrativeFees": "Różne opłaty pobierane przez kredytodawcę za obsługę kredytu, takie jak roczne opłaty serwisowe lub opłaty za wyciągi."
     }
   },
+  "financialGlossary": {
+   "principal": {
+     "term": "Kapitał",
+     "definition": "Początkowa kwota pożyczona w kredycie, bez odsetek i innych opłat.",
+     "example": "Jeśli bierzesz kredyt hipoteczny w wysokości 200 000 zł, kapitał wynosi 200 000 zł."
+   },
+   "interest": {
+     "term": "Odsetki",
+     "definition": "Koszt pożyczenia pieniędzy, zwykle wyrażony jako procent kwoty kredytu. Odsetki są obliczane na podstawie pozostałego salda kapitału.",
+     "example": "Oprocentowanie 4% od kredytu w wysokości 200 000 zł oznacza, że płacisz około 8 000 zł odsetek w pierwszym roku, przy czym kwota ta maleje wraz ze spłatą kapitału."
+   },
+   "apr": {
+     "term": "Roczna Stopa Procentowa (APR)",
+     "definition": "Roczny koszt kredytu, w tym odsetki i opłaty, wyrażony jako procent. APR zapewnia bardziej kompleksowy widok kosztów kredytu niż sama stopa procentowa.",
+     "example": "Podczas gdy Twoja stopa procentowa może wynosić 4%, Twoje APR może wynosić 4,25%, wliczając opłaty za udzielenie kredytu, ubezpieczenie hipoteczne i inne koszty."
+   },
+   "amortization": {
+     "term": "Amortyzacja",
+     "definition": "Proces stopniowej spłaty kredytu poprzez regularne płatności, które pokrywają zarówno kapitał, jak i odsetki. Na początku kredytu płatności składają się głównie z odsetek; później stają się głównie kapitałem.",
+     "example": "W przypadku 30-letniego kredytu hipotecznego z równymi ratami, w pierwszym roku około 70% każdej płatności może iść na odsetki, podczas gdy w ostatnim roku około 95% idzie na kapitał."
+   },
+   "equalInstallments": {
+     "term": "Równe Raty (Annuitet)",
+     "definition": "Model spłaty, w którym całkowita miesięczna płatność pozostaje stała przez cały okres kredytowania, ale proporcja kapitału i odsetek zmienia się w czasie.",
+     "example": "W przypadku 30-letniego kredytu hipotecznego w wysokości 200 000 zł przy 4%, Twoja płatność pozostaje na poziomie 955 zł miesięcznie, ale początkowo 667 zł idzie na odsetki, a 288 zł na kapitał. W 15 roku jest to mniej więcej równe."
+   },
+   "decreasingInstallments": {
+     "term": "Raty Malejące",
+     "definition": "Model spłaty, w którym część kapitałowa pozostaje stała, ale część odsetkowa maleje w czasie, co skutkuje stopniowo malejącymi płatnościami całkowitymi.",
+     "example": "W przypadku rat malejących możesz zapłacić 1 222 zł w pierwszym miesiącu, ale tylko 677 zł w ostatnim miesiącu 30-letniego kredytu hipotecznego."
+   },
+   "overpayment": {
+     "term": "Nadpłata",
+     "definition": "Dodatkowe płatności dokonywane poza wymaganą miesięczną płatnością, stosowane bezpośrednio do salda kapitału, zmniejszając całkowite zapłacone odsetki i potencjalnie skracając okres kredytowania.",
+     "example": "Dokonanie dodatkowej miesięcznej płatności w wysokości 100 zł na kredyt hipoteczny w wysokości 200 000 zł może zaoszczędzić ponad 25 000 zł odsetek i spłacić kredyt 4 lata wcześniej."
+   },
+   "loanTerm": {
+     "term": "Okres Kredytowania",
+     "definition": "Długość czasu, w którym zgadzasz się spłacić kredyt hipoteczny, zwykle wyrażona w latach. Typowe okresy kredytowania to 15, 20 lub 30 lat.",
+     "example": "Krótszy 15-letni okres oznacza wyższe miesięczne płatności, ale znacznie mniej zapłaconych odsetek w porównaniu z 30-letnim okresem."
+   },
+   "interestRatePeriods": {
+     "term": "Okresy Stopy Procentowej",
+     "definition": "Określone ramy czasowe, w których do Twojego kredytu hipotecznego stosowane są różne stopy procentowe. Mogą one być stałe przez cały okres kredytowania lub zmieniać się w ustalonych odstępach czasu.",
+     "example": "Kredyt hipoteczny o zmiennej stopie procentowej może rozpocząć się od stopy 3,5% na 5 lat, a następnie dostosowywać się rocznie w zależności od warunków rynkowych."
+   },
+   "originationFee": {
+     "term": "Opłata za Udzielenie Kredytu",
+     "definition": "Opłata pobierana przez kredytodawców za rozpatrzenie nowego wniosku kredytowego, zwykle od 0,5% do 1% kwoty kredytu. Opłata ta pokrywa koszt underwritingu i przygotowania dokumentów kredytowych.",
+     "example": "W przypadku kredytu hipotecznego w wysokości 300 000 zł, opłata za udzielenie kredytu w wysokości 1% kosztowałaby 3 000 zł, płatne przy zamknięciu."
+   },
+   "loanInsurance": {
+     "term": "Ubezpieczenie Kredytu",
+     "definition": "Ubezpieczenie, które chroni kredytodawcę, jeśli kredytobiorca nie wywiąże się ze zobowiązań. W przypadku kredytów hipotecznych często nazywa się to Prywatnym Ubezpieczeniem Hipotecznym (PMI) i jest zwykle wymagane, gdy wkład własny jest mniejszy niż 20%.",
+     "example": "PMI może kosztować od 0,5% do 1% kwoty kredytu rocznie, dodając 125-250 zł miesięcznie do kredytu hipotecznego w wysokości 300 000 zł."
+   },
+   "earlyRepaymentFee": {
+     "term": "Opłata za Wcześniejszą Spłatę",
+     "definition": "Kara naliczana przez niektórych kredytodawców, gdy kredytobiorca spłaca całość lub część swojego kredytu hipotecznego wcześniej niż planowano. Znana również jako kara za przedpłatę.",
+     "example": "Opłata za wcześniejszą spłatę w wysokości 2% od pozostałego salda w wysokości 200 000 zł kosztowałaby 4 000 zł, jeśli spłacisz kredyt wcześniej."
+   },
+   "breakEvenPoint": {
+     "term": "Próg Rentowności",
+     "definition": "Punkt, w którym koszty refinansowania kredytu hipotecznego równają się oszczędnościom wygenerowanym przez niższą stopę procentową lub inne korzystne warunki.",
+     "example": "Jeśli refinansowanie kosztuje 6 000 zł i oszczędza 200 zł miesięcznie, próg rentowności wynosi 30 miesięcy (6 000 ÷ 200)."
+   }
+ },
+ "mortgageConcepts": {
+   "repaymentModels": {
+     "concept": "Modele Spłaty",
+     "explanation": "Różne metody strukturyzowania płatności kredytu w czasie, wpływające na sposób obliczania części kapitałowej i odsetkowej oraz na zmiany płatności całkowitych w okresie kredytowania.",
+     "impact": "Model spłaty znacząco wpływa na Twój miesięczny przepływ pieniężny, całkowite zapłacone odsetki i szybkość budowania kapitału własnego w Twoim domu.",
+     "example": "Równe raty utrzymują Twoją płatność na tym samym poziomie przez cały okres kredytowania, podczas gdy raty malejące zaczynają się wyżej, ale maleją w czasie, potencjalnie lepiej dopasowując się do dochodów, które rosną wraz z inflacją.",
+     "relatedTerms": [
+       "equalInstallments",
+       "decreasingInstallments",
+       "amortization"
+     ]
+   },
+   "overpayments": {
+     "concept": "Nadpłaty",
+     "explanation": "Dodatkowe płatności dokonywane poza wymaganą miesięczną płatnością, stosowane bezpośrednio w celu zmniejszenia salda kapitałowego Twojego kredytu.",
+     "impact": "Nadpłaty szybciej zmniejszają kapitał, oszczędzając odsetki i potencjalnie skracając okres kredytowania. Nawet małe regularne nadpłaty mogą mieć dramatyczny wpływ w czasie.",
+     "example": "Płacenie dodatkowych 200 zł miesięcznie na 30-letni kredyt hipoteczny w wysokości 300 000 zł przy 4% może skrócić okres o 8 lat i zaoszczędzić ponad 60 000 zł odsetek.",
+     "relatedTerms": [
+       "principal",
+       "interest",
+       "loanTerm"
+     ]
+   },
+   "interestRateChanges": {
+     "concept": "Zmiany Stopy Procentowej",
+     "explanation": "Zmiany stopy procentowej stosowanej do Twojego kredytu hipotecznego, albo poprzez refinansowanie, kredyty hipoteczne o zmiennej stopie procentowej, albo predefiniowane okresy stopy procentowej.",
+     "impact": "Nawet niewielkie zmiany stóp procentowych mogą znacząco wpłynąć na całkowite odsetki zapłacone w okresie trwania kredytu i na kwotę Twojej miesięcznej płatności.",
+     "example": "Zmniejszenie stopy procentowej o 1% na 30-letnim kredycie hipotecznym w wysokości 300 000 zł może zaoszczędzić ponad 60 000 zł całkowitych odsetek i zmniejszyć miesięczne płatności o około 170 zł.",
+     "relatedTerms": [
+       "interestRatePeriods",
+       "apr"
+     ]
+   },
+   "additionalCosts": {
+     "concept": "Dodatkowe Koszty Kredytu Hipotecznego",
+     "explanation": "Różne opłaty i wydatki poza kapitałem i odsetkami, które przyczyniają się do całkowitego kosztu kredytu hipotecznego.",
+     "impact": "Dodatkowe koszty mogą znacząco zwiększyć efektywny koszt pożyczki i należy je wziąć pod uwagę przy porównywaniu opcji kredytowych lub obliczaniu rzeczywistego kosztu posiadania domu.",
+     "example": "W przypadku kredytu hipotecznego w wysokości 300 000 zł, dodatkowe koszty mogą obejmować opłatę za udzielenie kredytu w wysokości 3 000 zł, roczne ubezpieczenie nieruchomości w wysokości 1 500 zł, roczne podatki od nieruchomości w wysokości 3 600 zł i potencjalnie roczne PMI w wysokości 1 800 zł.",
+     "relatedTerms": [
+       "originationFee",
+       "loanInsurance",
+       "earlyRepaymentFee",
+       "apr"
+     ]
+   },
+   "amortizationSchedule": {
+     "concept": "Harmonogram Amortyzacji",
+     "explanation": "Kompletna tabela pokazująca planowane płatności dla kredytu hipotecznego, w tym sposób podziału każdej płatności między kapitał i odsetki oraz pozostałe saldo po każdej płatności.",
+     "impact": "Zrozumienie harmonogramu amortyzacji pomaga zobaczyć, jaka część Twojej płatności idzie na odsetki w porównaniu z kapitałem w różnych punktach kredytu, oraz jak dodatkowe płatności wpłynęłyby na kredyt.",
+     "example": "Harmonogram amortyzacji pokazałby, że w pierwszej płatności 30-letniego kredytu hipotecznego w wysokości 300 000 zł przy 4%, około 1 000 zł idzie na odsetki, a tylko 432 zł na kapitał, podczas gdy w 25 roku około 300 zł idzie na odsetki, a 1 132 zł na kapitał.",
+     "relatedTerms": [
+       "amortization",
+       "principal",
+       "interest"
+     ]
+   },
+   "comparativeAnalysis": {
+     "concept": "Analiza Porównawcza Kredytu Hipotecznego",
+     "explanation": "Proces oceny różnych scenariuszy kredytu hipotecznego w celu ustalenia, która opcja zapewnia najlepszy wynik finansowy w oparciu o Twoje konkretne okoliczności i cele.",
+     "impact": "Porównanie różnych okresów kredytowania, stóp procentowych i strategii spłaty może pomóc Ci zaoszczędzić dziesiątki tysięcy złotych w okresie trwania Twojego kredytu hipotecznego.",
+     "example": "Porównanie 30-letniego kredytu hipotecznego przy 4% z 15-letnim przy 3,5% pokazuje, że opcja 15-letnia oszczędza ponad 150 000 zł odsetek, ale wymaga około 700 zł więcej w miesięcznych płatnościach.",
+     "relatedTerms": [
+       "breakEvenPoint",
+       "loanTerm",
+       "interestRatePeriods"
+     ]
+   }
+ },
+ "interactiveExamples": [
+   {
+     "id": "term-comparison",
+     "title": "Porównanie Okresu Kredytowania",
+     "description": "Zobacz, jak różne okresy kredytowania wpływają na Twoją miesięczną płatność i całkowite zapłacone odsetki.",
+     "defaultValues": {
+       "principal": 300000,
+       "interestRate": 4,
+       "term": 30
+     },
+     "scenarios": [
+       {
+         "name": "15-letni Kredyt Hipoteczny",
+         "values": {
+           "term": 15
+         },
+         "outcome": "Wyższe miesięczne płatności, ale znacznie mniej zapłaconych odsetek."
+       },
+       {
+         "name": "30-letni Kredyt Hipoteczny",
+         "values": {
+           "term": 30
+         },
+         "outcome": "Niższe miesięczne płatności, ale znacznie więcej zapłaconych odsetek w okresie trwania kredytu."
+       }
+     ]
+   },
+   {
+     "id": "overpayment-impact",
+     "title": "Wpływ Nadpłaty",
+     "description": "Dowiedz się, jak regularne nadpłaty wpływają na Twój kredyt hipoteczny.",
+     "defaultValues": {
+       "principal": 300000,
+       "interestRate": 4,
+       "term": 30,
+       "overpayment": 0
+     },
+     "scenarios": [
+       {
+         "name": "Brak Nadpłaty",
+         "values": {
+           "overpayment": 0
+         },
+         "outcome": "Standardowa 30-letnia spłata z pełnymi odsetkami."
+       },
+       {
+         "name": "Mała Nadpłata",
+         "values": {
+           "overpayment": 100
+         },
+         "outcome": "Niewielkie skrócenie okresu kredytowania i zapłaconych odsetek."
+       },
+       {
+         "name": "Duża Nadpłata",
+         "values": {
+           "overpayment": 500
+         },
+         "outcome": "Znaczące skrócenie okresu kredytowania i znaczne oszczędności odsetek."
+       }
+     ]
+   },
+   {
+     "id": "interest-rate-impact",
+     "title": "Wpływ Stopy Procentowej",
+     "description": "Sprawdź, jak różne stopy procentowe wpływają na Twoje koszty kredytu hipotecznego.",
+     "defaultValues": {
+       "principal": 300000,
+       "interestRate": 4,
+       "term": 30
+     },
+     "scenarios": [
+       {
+         "name": "Niższa Stopa",
+         "values": {
+           "interestRate": 3
+         },
+         "outcome": "Niższe miesięczne płatności i znacznie zmniejszone całkowite odsetki."
+       },
+       {
+         "name": "Standardowa Stopa",
+         "values": {
+           "interestRate": 4
+         },
+         "outcome": "Podstawowy scenariusz do porównania."
+       },
+       {
+         "name": "Wyższa Stopa",
+         "values": {
+           "interestRate": 5
+         },
+         "outcome": "Wyższe miesięczne płatności i znacznie zwiększone całkowite odsetki."
+       }
+     ]
+   }
+ ],
   "export": {
     "title": "Eksportuj Dane",
     "columns": {
