@@ -17,8 +17,9 @@ import {
 } from "@/lib/calculationEngine";
 import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
 import { Button } from "@/components/ui/button";
-import { Save, FolderOpen, Download } from "lucide-react";
+import { Save, FolderOpen, Download, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface HomeProps {
   selectedCurrency: string;
@@ -110,28 +111,30 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-gray-900">{t('app.title')}</h1>
-            <div className="flex space-x-4">
+            <h1 className="text-base sm:text-xl md:text-2xl font-semibold text-gray-900">{t('app.title')}</h1>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <LanguageSwitcher />
               <Button
                 variant="outline"
                 onClick={() => setShowExportModal(true)}
-                className="flex items-center"
+                className="flex items-center px-2 py-1"
               >
-                <Download className="mr-1 h-4 w-4" />
-                {t('export.title')}
+                <Download className="mr-0 h-4 w-4" />
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setShowLoadModal(true)}
-                className="flex items-center"
+                className="flex items-center px-2 py-1"
               >
-                <FolderOpen className="mr-1 h-4 w-4" />
-                {t('form.loadCalculation')}
+                <Upload className="mr-0 h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
       </header>
+      <div className="bg-yellow-500 text-yellow-900 text-center py-2 sm:hidden block">
+        {t('app.desktopOptimized')}
+      </div>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

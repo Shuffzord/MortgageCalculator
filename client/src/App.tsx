@@ -36,9 +36,6 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <div className="fixed top-4 right-4 z-50">
-          <LanguageSwitcher />
-        </div>
         <Router />
       </TooltipProvider>
     </QueryClientProvider>

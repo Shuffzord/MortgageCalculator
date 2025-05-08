@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (max-width: 768px) {
+  .mobile\:relative {
+    position: relative;
+  }
+
+  .mobile\:w-full {
+    width: 100%;
+  }
+}
+
 @layer base {
   :root {
     /* Main color palette */

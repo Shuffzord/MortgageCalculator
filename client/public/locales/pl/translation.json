@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Kalkulator Kredytu Hipotecznego",
-    "description": "Oblicz swoje raty kredytu i zobacz harmonogram amortyzacji"
+    "description": "Oblicz swoje raty kredytu i zobacz harmonogram amortyzacji",
+    "desktopOptimized": "Ta strona jest zoptymalizowana dla rozdzielczości komputerowych"
   },
   "language": {
     "english": "Angielski",

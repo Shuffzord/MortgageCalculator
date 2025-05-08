@@ -168,5 +168,10 @@
     "dateRange": "Date Range",
     "payments": "Payments",
     "title": "Export Data"
+  },
+  "app": {
+    "title": "Mortgage Calculator",
+    "description": "Calculate your mortgage payments and view your amortization schedule",
+    "desktopOptimized": "This site is optimized for desktop resolutions."
   }
 }

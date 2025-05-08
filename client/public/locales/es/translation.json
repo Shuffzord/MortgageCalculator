@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Calculadora de Hipotecas",
-    "description": "Calcule sus pagos hipotecarios y vea su programa de amortización"
+    "description": "Calcule sus pagos hipotecarios y vea su programa de amortización",
+    "desktopOptimized": "Este sitio está optimizado para resoluciones de escritorio"
   },
   "language": {
     "english": "Inglés",
