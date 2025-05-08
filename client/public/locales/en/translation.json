@@ -44,7 +44,10 @@
     "additionalCosts": "Additional Costs",
     "originationFee": "Origination Fee",
     "loanInsurance": "Loan Insurance",
-    "administrativeFees": "Administrative Fees"
+    "administrativeFees": "Administrative Fees",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "additionalCostsTooltip": "Additional fees associated with the loan, such as origination fees, insurance, and administrative fees."
   },
   "overpayment": {
     "title": "Overpayment",
@@ -78,7 +81,8 @@
     "interestSaved": "Interest Saved",
     "interestRatePeriods": "Interest Rate Periods",
     "initialRate": "Initial Rate",
-    "period": "Period"
+    "period": "Period",
+    "apr": "APR"
   },
   "chart": {
     "title": "Payment Breakdown",
@@ -134,6 +138,27 @@
     }
   },
   "export": {
+    "selectColumns": "Select Columns",
+    "download": "Download",
+    "saveToCache": "Save to Browser Cache",
+    "columns": {
+      "payment": "Payment #",
+      "date": "Date",
+      "monthlyPayment": "Payment Amount",
+      "principalPayment": "Principal",
+      "interestPayment": "Interest",
+      "balance": "Balance",
+      "totalInterest": "Total Interest",
+      "overpaymentAmount": "Overpayment",
+      "fees": "Fees"
+    },
+    "format": "Export Format",
+    "includeContent": "Include Content",
+    "includeSummary": "Loan Summary",
+    "includeAmortizationSchedule": "Amortization Schedule",
+    "scheduleOptions": "Schedule Options",
+    "dateRange": "Date Range",
+    "payments": "Payments",
     "title": "Export Data"
   }
 }

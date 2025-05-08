@@ -44,7 +44,10 @@
     "additionalCosts": "Dodatkowe Koszty",
     "originationFee": "Prowizja za Udzielenie",
     "loanInsurance": "Ubezpieczenie Kredytu",
-    "administrativeFees": "Opłaty Administracyjne"
+    "administrativeFees": "Opłaty Administracyjne",
+    "endDate": "Data Zakończenia",
+    "additionalCostsTooltip": "Dodatkowe opłaty związane z kredytem, takie jak prowizje, ubezpieczenie i opłaty administracyjne.",
+    "startDate": "Data Rozpoczęcia"
   },
   "overpayment": {
     "title": "Nadpłata",
@@ -83,7 +86,8 @@
     "interestSaved": "Zaoszczędzone Odsetki",
     "interestRatePeriods": "Okresy Stopy Procentowej",
     "initialRate": "Początkowa Stopa",
-    "period": "Okres"
+    "period": "Okres",
+    "apr": "RRSO"
   },
   "chart": {
     "title": "Podział Płatności",
@@ -139,6 +143,27 @@
     }
   },
   "export": {
-    "title": "Eksportuj Dane"
+    "title": "Eksportuj Dane",
+    "columns": {
+      "payment": "Płatność #",
+      "date": "Data",
+      "monthlyPayment": "Kwota Płatności",
+      "principalPayment": "Kapitał",
+      "interestPayment": "Odsetki",
+      "balance": "Saldo",
+      "totalInterest": "Suma Odsetek",
+      "overpaymentAmount": "Nadpłata",
+      "fees": "Opłaty"
+    },
+    "format": "Format Eksportu",
+    "includeContent": "Zawartość",
+    "includeSummary": "Podsumowanie Kredytu",
+    "includeAmortizationSchedule": "Harmonogram Amortyzacji",
+    "scheduleOptions": "Opcje Harmonogramu",
+    "dateRange": "Zakres Dat",
+    "payments": "Płatności",
+    "selectColumns": "Wybierz Kolumny",
+    "download": "Pobierz",
+    "saveToCache": "Zapisz w Pamięci Przeglądarki"
   }
 }
