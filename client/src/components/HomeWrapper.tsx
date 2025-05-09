@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Home from '@/pages/Home';
+// Fixed import to match actual file case-sensitivity
+import Home from '../pages/Home';
 
 interface HomeComponentProps {
   selectedCurrency?: string;
