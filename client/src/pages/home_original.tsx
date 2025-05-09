@@ -47,7 +47,7 @@ export default function Home() {
       defaultLoanDetails.principal,
       defaultLoanDetails.interestRatePeriods,
       defaultLoanDetails.loanTerm,
-      defaultLoanDetails.overpaymentPlans,
+      defaultLoanDetails.overpaymentPlans[0],
       defaultLoanDetails.startDate
     )
   );
@@ -85,7 +85,7 @@ export default function Home() {
       newLoanDetails.principal,
       newLoanDetails.interestRatePeriods,
       newLoanDetails.loanTerm,
-      newLoanDetails.overpaymentPlans,
+      newLoanDetails.overpaymentPlans[0],
       newLoanDetails.startDate
     );
     setSchedule(newSchedule);
@@ -148,7 +148,7 @@ export default function Home() {
       updatedCalculation.principal,
       updatedCalculation.interestRatePeriods,
       updatedCalculation.loanTerm,
-      updatedCalculation.overpaymentPlans,
+      updatedCalculation.overpaymentPlans[0],
       updatedCalculation.startDate
     );
     
