@@ -509,7 +509,7 @@ export default function OverpaymentOptimizationPanel({
           <div className={activeTab === "compare" ? "block" : "hidden"}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="space-y-2">
-                <Label>Lump Sum Amount</Label>
+                <Label>{t('overpayment.lumpSumAmount', 'Lump Sum Amount')}</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(loanDetails.currency || 'USD')}</span>
@@ -526,7 +526,7 @@ export default function OverpaymentOptimizationPanel({
               </div>
               
               <div className="space-y-2">
-                <Label>Monthly Overpayment</Label>
+                <Label>{t('overpayment.monthlyAmount', 'Monthly Overpayment')}</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(loanDetails.currency || 'USD')}</span>
@@ -544,34 +544,34 @@ export default function OverpaymentOptimizationPanel({
             </div>
             
             <Button onClick={handleCompare} className="w-full mb-4">
-              Compare Strategies
+              {t('overpayment.compareStrategies', 'Compare Strategies')}
             </Button>
             
             {comparisonData && (
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-md">
-                  <h3 className="font-medium mb-2">Comparison Results</h3>
+                  <h3 className="font-medium mb-2">{t('overpayment.comparisonResults', 'Comparison Results')}</h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium">Lump Sum Strategy:</p>
-                      <p className="text-sm">Interest Saved: {formatCurrency(comparisonData.lumpSum.interestSaved, 'en-US', loanDetails.currency)}</p>
-                      <p className="text-sm">Term Reduction: {comparisonData.lumpSum.termReduction.toFixed(2)} years</p>
+                      <p className="text-sm font-medium">{t('overpayment.lumpSumStrategy', 'Lump Sum Strategy')}:</p>
+                      <p className="text-sm">{t('overpayment.interestSaved', 'Interest Saved')}: {formatCurrency(comparisonData.lumpSum.interestSaved, 'en-US', loanDetails.currency)}</p>
+                      <p className="text-sm">{t('overpayment.termReduction', 'Term Reduction')}: {comparisonData.lumpSum.termReduction.toFixed(2)} {t('form.years', 'years')}</p>
                     </div>
                     
                     <div>
-                      <p className="text-sm font-medium">Monthly Overpayment Strategy:</p>
-                      <p className="text-sm">Interest Saved: {formatCurrency(comparisonData.monthly.interestSaved, 'en-US', loanDetails.currency)}</p>
-                      <p className="text-sm">Term Reduction: {comparisonData.monthly.termReduction.toFixed(2)} years</p>
+                      <p className="text-sm font-medium">{t('overpayment.monthlyStrategy', 'Monthly Overpayment Strategy')}:</p>
+                      <p className="text-sm">{t('overpayment.interestSaved', 'Interest Saved')}: {formatCurrency(comparisonData.monthly.interestSaved, 'en-US', loanDetails.currency)}</p>
+                      <p className="text-sm">{t('overpayment.termReduction', 'Term Reduction')}: {comparisonData.monthly.termReduction.toFixed(2)} {t('form.years', 'years')}</p>
                     </div>
                   </div>
                   
                   <div className="mt-4">
                     <p className="text-sm">
-                      <span className="font-medium">Break-even Point:</span> {comparisonData.breakEvenMonth} months
+                      <span className="font-medium">{t('overpayment.breakEvenPoint', 'Break-even Point')}:</span> {comparisonData.breakEvenMonth} {t('overpayment.months', 'months')}
                     </p>
                     <p className="text-xs text-gray-600 mt-1">
-                      This is when the total amount paid in monthly overpayments equals the lump sum amount.
+                      {t('overpayment.breakEvenDescription', 'This is when the total amount paid in monthly overpayments equals the lump sum amount.')}
                     </p>
                   </div>
                 </div>
@@ -587,7 +587,7 @@ export default function OverpaymentOptimizationPanel({
           <div className={activeTab === "analyze" ? "block" : "hidden"}>
             <div className="space-y-4 mb-4">
               <div className="space-y-2">
-                <Label>Maximum Monthly Overpayment to Analyze</Label>
+                <Label>{t('overpayment.maxMonthlyAnalyze', 'Maximum Monthly Overpayment to Analyze')}</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(loanDetails.currency || 'USD')}</span>
@@ -605,25 +605,25 @@ export default function OverpaymentOptimizationPanel({
             </div>
             
             <Button onClick={handleAnalyzeImpact} className="w-full mb-4">
-              Analyze Impact
+              {t('overpayment.analyzeImpact', 'Analyze Impact')}
             </Button>
             
             {impactData && (
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-md">
-                  <h3 className="font-medium mb-2">Impact Analysis</h3>
+                  <h3 className="font-medium mb-2">{t('overpayment.impactAnalysis', 'Impact Analysis')}</h3>
                   
                   <p className="text-sm text-gray-600 mb-2">
-                    This chart shows how different monthly overpayment amounts affect your interest savings and loan term.
+                    {t('overpayment.impactDescription', 'This chart shows how different monthly overpayment amounts affect your interest savings and loan term.')}
                   </p>
                   
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="bg-blue-100">
-                          <th className="p-2 text-left">Monthly Overpayment</th>
-                          <th className="p-2 text-right">Interest Saved</th>
-                          <th className="p-2 text-right">Term Reduction</th>
+                          <th className="p-2 text-left">{t('overpayment.monthlyOverpayment', 'Monthly Overpayment')}</th>
+                          <th className="p-2 text-right">{t('overpayment.interestSaved', 'Interest Saved')}</th>
+                          <th className="p-2 text-right">{t('overpayment.termReduction', 'Term Reduction')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -631,7 +631,7 @@ export default function OverpaymentOptimizationPanel({
                           <tr key={index} className="border-b border-blue-100">
                             <td className="p-2">{formatCurrency(data.amount, 'en-US', loanDetails.currency)}</td>
                             <td className="p-2 text-right">{formatCurrency(data.interestSaved, 'en-US', loanDetails.currency)}</td>
-                            <td className="p-2 text-right">{data.termReduction.toFixed(2)} years</td>
+                            <td className="p-2 text-right">{data.termReduction.toFixed(2)} {t('form.years', 'years')}</td>
                           </tr>
                         ))}
                       </tbody>
