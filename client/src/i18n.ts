@@ -14,7 +14,7 @@ i18n
   .init({
     fallbackLng: 'en',
     supportedLngs: ['en', 'es', 'pl'],
-    debug: import.meta.env.DEV, // Use Vite's environment variables
+    debug: import.meta.env.DEV,
     
     interpolation: {
       // React already does escaping
