@@ -28,8 +28,8 @@ const defaultLoanDetails: LoanDetails = {
   loanTerm: 30,
   overpaymentPlans: [{ 
     amount: 10000, 
-    startMonth: 24, 
-    endMonth: 24, 
+    startDate: new Date(new Date().setMonth(new Date().getMonth() + 24)), 
+    endDate: new Date(new Date().setMonth(new Date().getMonth() + 24)),
     isRecurring: false, 
     frequency: 'one-time',
     effect: 'reduceTerm'
@@ -45,11 +45,9 @@ export default function Home() {
   const [schedule, setSchedule] = useState<PaymentData[]>(() => 
     generateAmortizationSchedule(
       defaultLoanDetails.principal,
-      defaultLoanDetails.interestRatePeriods[0].interestRate,
+      defaultLoanDetails.interestRatePeriods,
       defaultLoanDetails.loanTerm,
-      defaultLoanDetails.overpaymentPlans[0].amount,
-      defaultLoanDetails.overpaymentPlans[0].startMonth,
-      defaultLoanDetails.overpaymentPlans[0].effect === 'reduceTerm',
+      defaultLoanDetails.overpaymentPlans,
       defaultLoanDetails.startDate
     )
   );
@@ -82,21 +80,12 @@ export default function Home() {
   // Handle form submission
   const handleFormSubmit = (newLoanDetails: LoanDetails) => {
     setLoanDetails(newLoanDetails);
-    // Get primary rate and overpayment from the updated structure
-    const interestRate = newLoanDetails.interestRatePeriods[0].interestRate;
-    const overpayment = newLoanDetails.overpaymentPlans.length > 0 ? {
-      amount: newLoanDetails.overpaymentPlans[0].amount,
-      startMonth: newLoanDetails.overpaymentPlans[0].startMonth,
-      effect: newLoanDetails.overpaymentPlans[0].effect || 'reduceTerm'
-    } : undefined;
     
     const newSchedule = generateAmortizationSchedule(
       newLoanDetails.principal,
-      interestRate,
+      newLoanDetails.interestRatePeriods,
       newLoanDetails.loanTerm,
-      overpayment?.amount,
-      overpayment?.startMonth,
-      overpayment?.effect === 'reduceTerm',
+      newLoanDetails.overpaymentPlans,
       newLoanDetails.startDate
     );
     setSchedule(newSchedule);
@@ -113,44 +102,56 @@ export default function Home() {
 
   // Handle loading a saved calculation
   const handleLoad = (calculation: LoanDetails) => {
-    setLoanDetails(calculation);
+    // Handle legacy format calculations
+    let updatedCalculation = { ...calculation };
     
-    // Handle both old and new format calculations
-    let interestRate = 0;
-    let overpaymentAmount = 0;
-    let overpaymentMonth = 1;
-    let reduceTerm = true;
-    
-    // Use new structure if available, otherwise fallback to legacy properties
-    if (calculation.interestRatePeriods && calculation.interestRatePeriods.length > 0) {
-      interestRate = calculation.interestRatePeriods[0].interestRate;
-    } else {
+    // If it's an old format calculation, convert to new format
+    if (!updatedCalculation.interestRatePeriods || updatedCalculation.interestRatePeriods.length === 0) {
       // @ts-ignore - handling legacy format
-      interestRate = calculation.interestRate || 4.5;
+      const interestRate = updatedCalculation.interestRate || 4.5;
+      updatedCalculation.interestRatePeriods = [{ startMonth: 1, interestRate }];
     }
     
-    if (calculation.overpaymentPlans && calculation.overpaymentPlans.length > 0) {
-      overpaymentAmount = calculation.overpaymentPlans[0].amount;
-      overpaymentMonth = calculation.overpaymentPlans[0].startMonth;
-      reduceTerm = calculation.overpaymentPlans[0].effect === 'reduceTerm';
-    } else {
+    if (!updatedCalculation.overpaymentPlans || updatedCalculation.overpaymentPlans.length === 0) {
       // @ts-ignore - handling legacy format
-      overpaymentAmount = calculation.overpaymentAmount || 0;
+      const overpaymentAmount = updatedCalculation.overpaymentAmount || 0;
       // @ts-ignore - handling legacy format
-      overpaymentMonth = calculation.overpaymentMonth || 12;
+      const overpaymentMonth = updatedCalculation.overpaymentMonth || 12;
       // @ts-ignore - handling legacy format
-      reduceTerm = calculation.reduceTermNotPayment !== undefined ? calculation.reduceTermNotPayment : true;
+      const reduceTerm = updatedCalculation.reduceTermNotPayment !== undefined ? updatedCalculation.reduceTermNotPayment : true;
+      
+      const overpaymentStartDate = new Date(updatedCalculation.startDate);
+      overpaymentStartDate.setMonth(overpaymentStartDate.getMonth() + (overpaymentMonth - 1));
+      
+      updatedCalculation.overpaymentPlans = [{
+        amount: overpaymentAmount,
+        startDate: overpaymentStartDate,
+        isRecurring: false,
+        frequency: 'one-time',
+        effect: reduceTerm ? 'reduceTerm' : 'reducePayment'
+      }];
     }
+    
+    // Make sure all overpayment plans have a startDate
+    updatedCalculation.overpaymentPlans = updatedCalculation.overpaymentPlans.map(plan => {
+      if (!plan.startDate && plan.startMonth) {
+        const startDate = new Date(updatedCalculation.startDate);
+        startDate.setMonth(startDate.getMonth() + (plan.startMonth - 1));
+        return { ...plan, startDate };
+      }
+      return plan;
+    });
+    
+    setLoanDetails(updatedCalculation);
     
     const newSchedule = generateAmortizationSchedule(
-      calculation.principal,
-      interestRate,
-      calculation.loanTerm,
-      overpaymentAmount,
-      overpaymentMonth,
-      reduceTerm,
-      calculation.startDate
+      updatedCalculation.principal,
+      updatedCalculation.interestRatePeriods,
+      updatedCalculation.loanTerm,
+      updatedCalculation.overpaymentPlans,
+      updatedCalculation.startDate
     );
+    
     setSchedule(newSchedule);
     setSavedCalculationsOpen(false);
   };
