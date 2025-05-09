@@ -426,14 +426,14 @@ export default function OverpaymentOptimizationPanel({
             
             <div className="space-y-2">
               <Label className="flex items-center">
-                Optimization Strategy
+                {t('overpayment.optimizationStrategy', 'Optimization Strategy')}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
-                      <p className="text-xs">Choose what to prioritize in your overpayment strategy.</p>
+                      <p className="text-xs">{t('overpayment.strategyTooltip', 'Choose what to prioritize in your overpayment strategy.')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -443,35 +443,35 @@ export default function OverpaymentOptimizationPanel({
                 value={params.optimizationStrategy}
                 onChange={(e) => setParams({...params, optimizationStrategy: e.target.value as any})}
               >
-                <option value="maximizeInterestSavings">Maximize Interest Savings</option>
-                <option value="minimizeTime">Minimize Loan Term</option>
-                <option value="balanced">Balanced Approach</option>
+                <option value="maximizeInterestSavings">{t('overpayment.maximizeInterest', 'Maximize Interest Savings')}</option>
+                <option value="minimizeTime">{t('overpayment.minimizeTerm', 'Minimize Loan Term')}</option>
+                <option value="balanced">{t('overpayment.balancedApproach', 'Balanced Approach')}</option>
               </select>
             </div>
             
             <Button onClick={handleOptimize} className="w-full mb-4">
-              Calculate Optimal Strategy
+              {t('overpayment.calculateStrategy', 'Calculate Optimal Strategy')}
             </Button>
             
             {result && (
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-md">
-                  <h3 className="font-medium mb-2">Optimization Results</h3>
+                  <h3 className="font-medium mb-2">{t('overpayment.optimizationResults', 'Optimization Results')}</h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Interest Saved:</p>
+                      <p className="text-sm text-gray-600">{t('overpayment.interestSaved', 'Interest Saved')}:</p>
                       <p className="font-medium">{formatCurrency(result.interestSaved, 'en-US', loanDetails.currency)}</p>
                     </div>
                     
                     <div>
-                      <p className="text-sm text-gray-600">Term Reduction:</p>
-                      <p className="font-medium">{result.timeOrPaymentSaved.toFixed(2)} years</p>
+                      <p className="text-sm text-gray-600">{t('overpayment.termReduction', 'Term Reduction')}:</p>
+                      <p className="font-medium">{result.timeOrPaymentSaved.toFixed(2)} {t('form.years', 'years')}</p>
                     </div>
                   </div>
                   
                   <div className="mt-4">
-                    <p className="text-sm text-gray-600">Recommended Strategy:</p>
+                    <p className="text-sm text-gray-600">{t('overpayment.recommendedStrategy', 'Recommended Strategy')}:</p>
                     <ul className="mt-2 space-y-2">
                       {result.optimizedOverpayments.map((op, index) => (
                         <li key={index} className="text-sm">
@@ -492,7 +492,7 @@ export default function OverpaymentOptimizationPanel({
                   </div>
                   
                   <Button onClick={handleApply} className="mt-4 w-full">
-                    Apply This Strategy
+                    {t('overpayment.applyStrategy', 'Apply This Strategy')}
                   </Button>
                 </div>
                 

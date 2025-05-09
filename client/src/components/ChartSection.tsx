@@ -143,13 +143,13 @@ export default function ChartSection({
           labels: years,
           datasets: [
             {
-              label: 'Principal',
+              label: t('chart.principal', 'Principal'),
               data: principalData,
               backgroundColor: '#1A6B72',
               stack: 'Stack 0'
             },
             {
-              label: 'Interest',
+              label: t('chart.interest', 'Interest'),
               data: interestData,
               backgroundColor: '#E8A87C',
               stack: 'Stack 0'
@@ -216,13 +216,13 @@ export default function ChartSection({
           labels: months,
           datasets: [
             {
-              label: 'Principal',
+              label: t('chart.principal', 'Principal'),
               data: principalData,
               backgroundColor: '#1A6B72',
               stack: 'Stack 0'
             },
             {
-              label: 'Interest',
+              label: t('chart.interest', 'Interest'),
               data: interestData,
               backgroundColor: '#E8A87C',
               stack: 'Stack 0'
