@@ -109,10 +109,9 @@ export default function About() {
             <p className="text-foreground mb-6 leading-relaxed">{t('about.contactDescription')}</p>            
             <div className="mt-8">
               <div className="flex flex-col sm:flex-row items-center gap-8 p-2 bg-muted rounded-xl">
-                <div className="relative flex-shrink-0">
-                  <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>                  
+                <div className="relative flex-shrink-0">                  <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>                  
                   <img
-                    src={import.meta.env.BASE_URL + 'images/photo.jpg'}
+                    src={new URL('/images/photo.jpg', import.meta.url).href}
                     alt="Mateusz Woźniak"
                     className="relative w-160 h-160 rounded-full shadow-lg object-cover ring-2 ring-card"
                   />

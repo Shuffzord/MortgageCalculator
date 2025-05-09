@@ -1,7 +1,12 @@
-{
-  "routes": [
+{  "routes": [
     {
       "route": "/assets/*",
+      "headers": {
+        "cache-control": "max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/images/*",
       "headers": {
         "cache-control": "max-age=31536000, immutable"
       }
