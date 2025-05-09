@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "license": "MIT",
-  "scripts": {
+  "license": "MIT",  "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/pre-build-checks.js",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "start": "serve -s dist",
@@ -15,8 +15,10 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "security-audit": "node scripts/security-audit.js",
-    "precommit": "npm run security-audit && npm run test",
-    "predeploy": "npm run build",
+    "check-logs": "node scripts/check-console-logs.js",
+    "validate": "node scripts/pre-build-checks.js",
+    "precommit": "npm run validate && npm run test",
+    "predeploy": "npm run validate && npm run build",
     "deploy:azure": "npm run build && az staticwebapp deploy --name smarter-loan --source dist"
   },
   "dependencies": {

@@ -4,9 +4,8 @@ import "./index.css";
 // i18n is imported in App.tsx
 
 // Handle HMR reconnection issues
-if (import.meta.hot) {
-  import.meta.hot.on('vite:beforeUpdate', () => {
-    console.log('vite:beforeUpdate');
+if (import.meta.hot) {  import.meta.hot.on('vite:beforeUpdate', () => {
+    // Development-only HMR update handler
   });
   
   // Add a listener for vite connection status

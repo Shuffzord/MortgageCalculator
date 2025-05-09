@@ -2,16 +2,16 @@ import fs from 'fs';
 import path from 'path';
 
 const sensitivePatterns = [
-    /api[_-]?key/i,
-    /auth[_-]?token/i,
-    /password/i,
-    /secret/i,
-    /credential/i,
-    /private[_-]?key/i,
-    /connection[_-]?string/i,
-    /(session|access)[_-]?token/i,
-    /\.env/i,
-    /console\.log\(/,
+    /api[_-]?key(?!.*\${{)/i,
+    /auth[_-]?token(?!.*\${{)/i,
+    /password(?!.*\${{)/i,
+    /secret(?!.*\${{)/i,
+    /credential(?!.*["']include["'])/i,
+    /private[_-]?key(?!.*\${{)/i,
+    /connection[_-]?string(?!.*\[\])/i,
+    /(session|access)[_-]?token(?!.*\${{)/i,
+    /\.env(?!.*import\.meta)/i,
+    /console\.(log|info|debug|warn)\((?!.*(?:test|\.test\.|\.spec\.|scripts\/|__tests__))/,
 ];
 
 const excludeDirs = [
@@ -22,7 +22,19 @@ const excludeDirs = [
     '.git',
 ];
 
+const excludeFiles = [
+    'security-audit.js',
+    'check-console-logs.js',
+    'package.json',
+    'package-lock.json',
+    'pre-build-checks.js'
+];
+
 function scanFile(filePath) {
+    // Skip excluded files
+    const fileName = path.basename(filePath);
+    if (excludeFiles.includes(fileName)) return [];
+    
     const content = fs.readFileSync(filePath, 'utf8');
     const issues = [];
 

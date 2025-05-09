@@ -145,11 +145,10 @@ export default function LoanInputForm({
     });
     return () => subscription.unsubscribe();
   }, [form]);
-
-  // Log any form errors to help with debugging
+  // Monitor form errors for validation feedback
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
-      console.log('Form validation errors:', form.formState.errors);
+      // Form errors are automatically displayed in the UI through FormMessage components
     }
   }, [form.formState.errors]);
 

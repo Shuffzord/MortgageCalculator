@@ -13,12 +13,8 @@ interface SEOFAQSectionProps {
 
 const SEOFAQSection: React.FC<SEOFAQSectionProps> = ({ faqs }) => {
   const { t, i18n } = useTranslation();
-  
-  // Create structured data for FAQs
+    // Create structured data for FAQs
   React.useEffect(() => {
-    // Log the current language and FAQs for debugging
-    console.log('Current language:', i18n.language);
-    console.log('Current FAQs:', faqs);
     // Remove any existing FAQ structured data
     const existingScript = document.getElementById('faq-structured-data');
     if (existingScript) {
