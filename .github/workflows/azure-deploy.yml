@@ -1,0 +1,153 @@
+name: Deploy to Azure Static Web Apps
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  BUILD_OUTPUT: 'dist'
+
+jobs:
+  build_and_test:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Security checks
+        run: npm run validate
+        continue-on-error: false
+
+      - name: Run tests
+        run: npm test
+        continue-on-error: false
+      
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          VITE_APP_BASE_URL: ${{ secrets.VITE_APP_BASE_URL }}
+          # Add other environment variables as needed
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_ANALYTICS_ID: ${{ secrets.VITE_ANALYTICS_ID }}
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-output
+          path: ${{ env.BUILD_OUTPUT }}
+          retention-days: 1
+
+  deploy:
+    needs: build_and_test
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: ${{ env.BUILD_OUTPUT }}
+      
+      - name: Deploy to Azure Static Web Apps
+        id: deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: ""
+          output_location: ${{ env.BUILD_OUTPUT }}
+          skip_app_build: true # Skip building again since we already built
+
+      - name: Verify deployment
+        run: |
+          echo "Waiting for deployment to propagate..."
+          sleep 60
+          DEPLOY_URL=$(echo "${{ steps.deploy.outputs.static_web_app_url }}")
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL)
+          if [ $HTTP_STATUS -ne 200 ]; then
+            echo "Deployment verification failed! Site returned HTTP $HTTP_STATUS"
+            exit 1
+          else
+            echo "Deployment verified successfully! Site is accessible."
+          fi
+
+  preview_deploy:
+    needs: build_and_test
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    name: PR Preview Deploy
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: ${{ env.BUILD_OUTPUT }}
+      
+      - name: Deploy PR Preview
+        id: deploy_preview
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: ""
+          output_location: ${{ env.BUILD_OUTPUT }}
+          skip_app_build: true
+          
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const output = `🚀 Preview deployment is live at: ${process.env.DEPLOY_URL}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+        env:
+          DEPLOY_URL: ${{ steps.deploy_preview.outputs.static_web_app_url }}
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "close"
