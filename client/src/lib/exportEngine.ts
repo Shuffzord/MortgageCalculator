@@ -181,8 +181,8 @@ export function exportToJSON(
         interestPayment: formatCurrency(payment.interestPayment, 'en-US', currency),
         balance: formatCurrency(payment.balance, 'en-US', currency),
         totalInterest: formatCurrency(payment.totalInterest, 'en-US', currency),
-        overpaymentAmount: payment.overpaymentAmount ? formatCurrency(payment.overpaymentAmount, 'en-US', currency) : null,
-        fees: payment.fees ? formatCurrency(payment.fees, 'en-US', currency) : null
+        overpaymentAmount: payment.overpaymentAmount ? formatCurrency(payment.overpaymentAmount, 'en-US', currency) : '',
+        fees: payment.fees ? formatCurrency(payment.fees, 'en-US', currency) : ''
       }
     }));
     
@@ -198,7 +198,7 @@ export function exportToJSON(
         // Always include formatted values for selected columns
         filteredPayment.formattedValues = {};
         options.selectedColumns!.forEach(col => {
-          if (col in payment && payment.formattedValues[col as keyof typeof payment.formattedValues]) {
+          if (col in payment && payment.formattedValues && payment.formattedValues[col as keyof typeof payment.formattedValues]) {
             filteredPayment.formattedValues[col] = payment.formattedValues[col as keyof typeof payment.formattedValues];
           }
         });
