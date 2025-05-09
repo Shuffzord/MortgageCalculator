@@ -46,7 +46,27 @@ export default function About() {
             <h2 className="text-xl font-medium mb-4">{t('about.contactInfo')}</h2>
             <p>{t('about.contactDescription')}</p>
             <p className="mt-2">
-              <strong>Email:</strong> support@mortgagecalculator.com
+                <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300">
+                  <img 
+                  src="https://media.licdn.com/dms/image/v2/C5603AQF3FeRYHuyydg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1658399611298?e=1752105600&v=beta&t=8mHhwAV1qd0XEhnvjOEkPFPdMv-GicyIdqvoW_lxYZ8" 
+                  alt="Mateusz Woźniak" 
+                  className="w-24 h-24 rounded-full shadow-lg hover:scale-105 transition-transform duration-300 object-cover"
+                  />
+                  <div className="transform hover:translate-x-2 transition-transform duration-300">
+                  <strong className="text-gray-700 block mb-1">Linkedin:</strong>
+                  <a 
+                    href="https://www.linkedin.com/in/marvelousmateuszwozniak" 
+                    className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-2 group"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>Mateusz Woźniak</span>
+                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </a>
+                  </div>
+                </div>
             </p>
           </section>
         </div>

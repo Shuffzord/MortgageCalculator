@@ -1,0 +1,151 @@
+name: Deploy to Azure Static Web Apps
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  OUTPUT_LOCATION: 'dist/public'
+
+jobs:
+  build_and_deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-22.04-minimal
+    name: Build and Deploy
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        id: install
+        
+      - name: Run unit tests
+        if: success()
+        run: npm test
+        id: test
+        
+      - name: Security audit
+        if: success()
+        run: npm run validate
+        id: security
+        
+      - name: Build application
+        if: success()
+        run: npm run build
+        id: build
+        env:
+          NODE_ENV: production
+          VITE_APP_BASE_URL: ${{ secrets.VITE_APP_BASE_URL || '' }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || '' }}
+          VITE_ANALYTICS_ID: ${{ secrets.VITE_ANALYTICS_ID || '' }}
+      
+      - name: Check build output
+        if: success()
+        run: |
+          if [ -f "${{ env.OUTPUT_LOCATION }}/index.html" ]; then
+            echo "✅ Build output verified - index.html found!"
+          else
+            echo "❌ ERROR: index.html not found in ${{ env.OUTPUT_LOCATION }}"
+            exit 1
+          fi
+        id: verify_build
+      
+      - name: Deploy to Azure
+        if: success()
+        id: deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: ""
+          output_location: "dist/public"
+          skip_app_build: true # We already built the app
+            
+      - name: Verify deployment
+        if: success()
+        id: verify_deployment
+        run: |
+          echo "⏳ Waiting for deployment to propagate..."
+          sleep 30
+          
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          DEPLOY_URL="${{ steps.deploy.outputs.static_web_app_url }}"
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            echo "🔍 Checking deployment at $DEPLOY_URL (attempt $(($RETRY_COUNT + 1))/$MAX_RETRIES)"
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL)
+            
+            if [ $HTTP_STATUS -eq 200 ]; then
+              echo "✅ Deployment verified successfully! Site is accessible."
+              break
+            else
+              echo "⚠️ Site returned HTTP $HTTP_STATUS. Waiting before retry..."
+              RETRY_COUNT=$(($RETRY_COUNT + 1))
+              
+              if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                echo "❌ Deployment verification failed after $MAX_RETRIES attempts!"
+                exit 1
+              fi
+              
+              sleep 30
+            fi
+          done
+      
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## Deployment Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "| ---- | ------ |" >> $GITHUB_STEP_SUMMARY
+          
+          # Use step IDs to check status
+          if [ "${{ steps.install.outcome }}" == "success" ]; then INSTALL="✅"; else INSTALL="❌"; fi
+          if [ "${{ steps.test.outcome }}" == "success" ]; then TEST="✅"; else TEST="❌"; fi
+          if [ "${{ steps.security.outcome }}" == "success" ]; then SECURITY="✅"; else SECURITY="❌"; fi
+          if [ "${{ steps.build.outcome }}" == "success" ]; then BUILD="✅"; else BUILD="❌"; fi
+          if [ "${{ steps.deploy.outcome }}" == "success" ]; then DEPLOY="✅"; else DEPLOY="❌"; fi
+          if [ "${{ steps.verify_deployment.outcome }}" == "success" ]; then VERIFY="✅"; else VERIFY="⚠️"; fi
+          
+          echo "| Installation | $INSTALL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests | $TEST |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | $SECURITY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | $BUILD |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deployment | $DEPLOY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Verification | $VERIFY |" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.deploy.outcome }}" == "success" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🚀 **Deployed to:** [${{ steps.deploy.outputs.static_web_app_url }}](${{ steps.deploy.outputs.static_web_app_url }})" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-22.04-minimal
+    name: Close Pull Request
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "close"
