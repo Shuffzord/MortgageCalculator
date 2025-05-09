@@ -170,10 +170,10 @@ export default function OverpaymentOptimizationPanel({
     const newChart = new Chart(comparisonChartRef.current, {
       type: 'bar',
       data: {
-        labels: ['Interest Saved', 'Term Reduction (Years)'],
+        labels: [t('overpayment.interestSaved', 'Interest Saved'), t('overpayment.termReductionYears', 'Term Reduction (Years)')],
         datasets: [
           {
-            label: 'Lump Sum',
+            label: t('overpayment.lumpSum', 'Lump Sum'),
             data: [
               comparisonData.lumpSum.interestSaved,
               comparisonData.lumpSum.termReduction
@@ -181,7 +181,7 @@ export default function OverpaymentOptimizationPanel({
             backgroundColor: '#3b82f6'
           },
           {
-            label: 'Monthly Overpayments',
+            label: t('overpayment.monthlyOverpayments', 'Monthly Overpayments'),
             data: [
               comparisonData.monthly.interestSaved,
               comparisonData.monthly.termReduction
@@ -225,7 +225,7 @@ export default function OverpaymentOptimizationPanel({
           },
           title: {
             display: true,
-            text: 'Lump Sum vs Regular Overpayments'
+            text: t('overpayment.comparisonTitle', 'Lump Sum vs Regular Overpayments')
           }
         }
       }
@@ -246,7 +246,7 @@ export default function OverpaymentOptimizationPanel({
         labels: impactData.map(d => formatCurrency(d.amount, 'en-US', loanDetails.currency)),
         datasets: [
           {
-            label: 'Interest Saved',
+            label: t('overpayment.interestSaved', 'Interest Saved'),
             data: impactData.map(d => d.interestSaved),
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -254,7 +254,7 @@ export default function OverpaymentOptimizationPanel({
             yAxisID: 'y'
           },
           {
-            label: 'Term Reduction (Years)',
+            label: t('overpayment.termReductionYears', 'Term Reduction (Years)'),
             data: impactData.map(d => d.termReduction),
             borderColor: '#ef4444',
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -273,7 +273,7 @@ export default function OverpaymentOptimizationPanel({
             position: 'left',
             title: {
               display: true,
-              text: 'Interest Saved'
+              text: t('overpayment.interestSaved', 'Interest Saved')
             },
             ticks: {
               callback: function(value) {
@@ -287,7 +287,7 @@ export default function OverpaymentOptimizationPanel({
             position: 'right',
             title: {
               display: true,
-              text: 'Term Reduction (Years)'
+              text: t('overpayment.termReductionYears', 'Term Reduction (Years)')
             },
             grid: {
               drawOnChartArea: false
@@ -302,16 +302,16 @@ export default function OverpaymentOptimizationPanel({
                 const datasetIndex = context.datasetIndex;
                 
                 if (datasetIndex === 0) {
-                  return 'Interest Saved: ' + formatCurrency(value, 'en-US', loanDetails.currency);
+                  return t('overpayment.interestSaved', 'Interest Saved') + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
                 } else {
-                  return 'Term Reduction: ' + value.toFixed(2) + ' years';
+                  return t('overpayment.termReduction', 'Term Reduction') + ': ' + value.toFixed(2) + ' ' + t('form.years', 'years');
                 }
               }
             }
           },
           title: {
             display: true,
-            text: 'Impact of Different Overpayment Amounts'
+            text: t('overpayment.impactTitle', 'Impact of Different Overpayment Amounts')
           }
         }
       }
