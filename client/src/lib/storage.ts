@@ -3,7 +3,7 @@
  * using localStorage for persistence between sessions.
  */
 
-import { LoanDetails } from "./mortgage-calculator";
+import { LoanDetails } from "./types";
 
 const STORAGE_KEY = "mortgage-calculator-saved";
 

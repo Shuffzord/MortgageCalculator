@@ -73,6 +73,9 @@ export interface PaymentData {
   // Additional data
   paymentDate?: Date;          // Date when payment is made
   currency?: string;           // Currency symbol for display purposes
+  
+  // Formatted values for export/display
+  formattedValues?: Record<string, string>; // Formatted values for display
 }
 
 

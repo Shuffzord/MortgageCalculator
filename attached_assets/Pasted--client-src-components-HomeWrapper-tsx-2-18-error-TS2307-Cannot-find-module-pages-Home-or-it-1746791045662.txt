@@ -1,0 +1,82 @@
+
+client/src/components/HomeWrapper.tsx:2:18 - error TS2307: Cannot find module '@/pages/Home' or its corresponding type declarations.
+
+2 import Home from '@/pages/Home';
+                   ~~~~~~~~~~~~~~
+
+client/src/lib/exportEngine.ts:201:41 - error TS2339: Property 'formattedValues' does not exist on type 'PaymentData'.
+
+201           if (col in payment && payment.formattedValues[col as keyof typeof payment.formattedValues]) {
+                                            ~~~~~~~~~~~~~~~
+
+client/src/lib/exportEngine.ts:201:85 - error TS2339: Property 'formattedValues' does not exist on type 'PaymentData'.
+
+201           if (col in payment && payment.formattedValues[col as keyof typeof payment.formattedValues]) {
+                                                                                        ~~~~~~~~~~~~~~~
+
+client/src/lib/exportEngine.ts:202:60 - error TS2339: Property 'formattedValues' does not exist on type 'PaymentData'.
+
+202             filteredPayment.formattedValues[col] = payment.formattedValues[col as keyof typeof payment.formattedValues];
+                                                               ~~~~~~~~~~~~~~~
+
+client/src/lib/exportEngine.ts:202:104 - error TS2339: Property 'formattedValues' does not exist on type 'PaymentData'.
+
+202             filteredPayment.formattedValues[col] = payment.formattedValues[col as keyof typeof payment.formattedValues];
+                                                                                                           ~~~~~~~~~~~~~~~
+
+client/src/lib/storage.ts:6:10 - error TS2459: Module '"./mortgage-calculator"' declares 'LoanDetails' locally, but it is not exported.
+
+6 import { LoanDetails } from "./mortgage-calculator";
+           ~~~~~~~~~~~
+
+  client/src/lib/mortgage-calculator.ts:7:10
+    7 import { LoanDetails, OverpaymentDetails, PaymentData } from './types';
+               ~~~~~~~~~~~
+    'LoanDetails' is declared here.
+
+client/src/pages/home_original.tsx:29:22 - error TS2741: Property 'startDate' is missing in type '{ amount: number; startMonth: number; endMonth: number; isRecurring: false; frequency: "one-time"; effect: "reduceTerm"; }' but required in type 'OverpaymentDetails'.
+
+ 29   overpaymentPlans: [{
+                         ~
+ 30     amount: 10000,
+    ~~~~~~~~~~~~~~~~~~
+...
+ 35     effect: 'reduceTerm'
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+ 36   }],
+    ~~~
+
+  client/src/lib/types.ts:36:3
+    36   startDate: Date;
+         ~~~~~~~~~
+    'startDate' is declared here.
+
+client/src/pages/home_original.tsx:48:7 - error TS2345: Argument of type 'number' is not assignable to parameter of type '{ startMonth: number; interestRate: number; }[]'.
+
+48       defaultLoanDetails.interestRatePeriods[0].interestRate,
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+client/src/pages/home_original.tsx:95:7 - error TS2345: Argument of type 'number' is not assignable to parameter of type '{ startMonth: number; interestRate: number; }[]'.
+
+95       interestRate,
+         ~~~~~~~~~~~~
+
+client/src/pages/home_original.tsx:134:7 - error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+
+134       overpaymentMonth = calculation.overpaymentPlans[0].startMonth;
+          ~~~~~~~~~~~~~~~~
+
+client/src/pages/home_original.tsx:147:7 - error TS2345: Argument of type 'number' is not assignable to parameter of type '{ startMonth: number; interestRate: number; }[]'.
+
+147       interestRate,
+          ~~~~~~~~~~~~
+
+
+Found 11 errors in 4 files.
+
+Errors  Files
+     1  client/src/components/HomeWrapper.tsx:2
+     4  client/src/lib/exportEngine.ts:201
+     1  client/src/lib/storage.ts:6
+     5  client/src/pages/home_original.tsx:29
