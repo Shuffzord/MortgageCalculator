@@ -39,7 +39,7 @@ export default function LoadModal({
               >
                 <p className="font-medium text-gray-900">{calc.name}</p>
                 <p className="text-sm text-gray-500">
-                  ${calc.loanDetails.principal.toLocaleString()} at {calc.loanDetails.interestRate}% for {calc.loanDetails.loanTerm} years
+                  ${calc.loanDetails.principal.toLocaleString()} at {calc.loanDetails.interestRatePeriods[0].interestRate}% for {calc.loanDetails.loanTerm} years
                 </p>
               </div>
             ))

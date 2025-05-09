@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LoanDetails } from "@/lib/mortgage-calculator";
+import { LoanDetails } from "@/lib/types";
+import { formatCurrency } from "@/lib/utils";
 
 interface SavedCalculationsModalProps {
   isOpen: boolean;
@@ -58,7 +59,7 @@ export default function SavedCalculationsModal({
                 <div>
                   <p className="text-sm font-medium text-gray-900">{calc.name}</p>
                   <p className="text-xs text-gray-500">
-                    {formatCurrency(calc.principal, 'en-US', calc.currency || 'USD')} at {calc.interestRate}% for {calc.loanTerm} years
+                    {formatCurrency(calc.principal, 'en-US', calc.currency || 'USD')} at {calc.interestRatePeriods?.[0]?.interestRate || 0}% for {calc.loanTerm} years
                   </p>
                 </div>
                 <Button

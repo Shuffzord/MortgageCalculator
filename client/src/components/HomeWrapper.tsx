@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import HomeComponent from '@/pages/home';
+import Home from '@/pages/Home';
+
+interface HomeComponentProps {
+  selectedCurrency?: string;
+  onCurrencyChange?: (currency: string) => void;
+  showExportModal?: boolean;
+  setShowExportModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  showLoadModal?: boolean;
+  setShowLoadModal?: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const HomeWrapper: React.FC = () => {
   const [selectedCurrency, setSelectedCurrency] = useState(localStorage.getItem("selectedCurrency") || "USD");
@@ -12,14 +21,7 @@ const HomeWrapper: React.FC = () => {
   };
 
   return (
-    <HomeComponent
-      selectedCurrency={selectedCurrency}
-      onCurrencyChange={handleCurrencyChange}
-      showExportModal={showExportModal}
-      setShowExportModal={setShowExportModal}
-      showLoadModal={showLoadModal}
-      setShowLoadModal={setShowLoadModal}
-    />
+    <Home />
   );
 };
 
