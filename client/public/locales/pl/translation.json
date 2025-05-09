@@ -398,6 +398,7 @@
  ],
   "export": {
     "title": "Eksportuj Dane",
+    "description": "Wybierz format eksportu i opcje dla danych obliczeniowych kredytu",
     "columns": {
       "payment": "Płatność #",
       "date": "Data",
