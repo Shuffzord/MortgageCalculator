@@ -13,24 +13,24 @@ export default function About() {
       />
       <main className="flex-grow max-w-7xl w-full mx-auto px-8 sm:px-12 lg:px-16 py-16 animate-fadeIn">
         <div className="bg-card/80 backdrop-blur-sm rounded-xl shadow-xl p-10 lg:p-16">
-          <h1 className="text-4xl font-bold mb-12 text-primary  p-2">{t('about.title')}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-primary ">{t('about.title')}</h1>
 
-          <section className="mb-16 transform  transition-all duration-300 p-2">
-            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+          <section className="mb-12 transform transition-all duration-300 ">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
               {t('about.projectOverview')}
             </h2>
-            <div className="prose prose-lg max-w-none text-foreground">
-              <p className="mb-4 ">{t('about.projectDescription')}</p>
-              <p className="">{t('about.purposeDescription')}</p>
+            <div className="prose max-w-none text-foreground">
+              <p className="mb-4">{t('about.projectDescription')}</p>
+              <p>{t('about.purposeDescription')}</p>
             </div>
           </section>            
-          <section className="mb-16 transform  transition-all duration-300 animate-fadeInDown  p-2">
-            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+          <section className="mb-12 transform transition-all duration-300 animate-fadeInDown ">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
               {t('about.features')}
             </h2>            
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
@@ -38,7 +38,7 @@ export default function About() {
                 </div>
               </li>
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -46,7 +46,7 @@ export default function About() {
                 </div>
               </li>
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                   </svg>
@@ -54,7 +54,7 @@ export default function About() {
                 </div>
               </li>
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -62,7 +62,7 @@ export default function About() {
                 </div>
               </li>
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -71,44 +71,44 @@ export default function About() {
               </li>
             </ul>
           </section>
-          <section className="mb-16 transform transition-all duration-300 p-2">
-            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+          <section className="mb-12 transform transition-all duration-300 ">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
               {t('about.howToUse')}
             </h2>
-            <ol className="grid gap-8">
+            <ol className="grid gap-6">
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">1</span>
                   <span className="text-lg">{t('about.step1')}</span>
                 </div>
               </li>
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">2</span>
                   <span className="text-lg">{t('about.step2')}</span>
                 </div>
               </li>
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">3</span>
                   <span className="text-lg">{t('about.step3')}</span>
                 </div>
               </li>
               <li className="bg-muted rounded-lg">
-                <div className="flex items-center gap-5 p-8">
+                <div className="flex items-center gap-5 p-2">
                   <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">4</span>
                   <span className="text-lg">{t('about.step4')}</span>
                 </div>
               </li>
             </ol>
           </section>
-          <section className="transform  transition-all duration-300  p-2">
-            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+          <section className="transform transition-all duration-300">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
               {t('about.contactInfo')}
             </h2>
-            <p className="text-foreground mb-8 leading-relaxed text-lg">{t('about.contactDescription')}</p>            
+            <p className="text-foreground mb-6 leading-relaxed">{t('about.contactDescription')}</p>            
             <div className="mt-8">
-              <div className="flex flex-col sm:flex-row items-center gap-8 p-8 bg-muted rounded-xl">
+              <div className="flex flex-col sm:flex-row items-center gap-8 p-2 bg-muted rounded-xl">
                 <div className="relative flex-shrink-0">
                   <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>
                   <img
