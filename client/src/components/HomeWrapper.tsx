@@ -21,7 +21,14 @@ const HomeWrapper: React.FC = () => {
   };
 
   return (
-    <Home />
+    <Home 
+      selectedCurrency={selectedCurrency}
+      onCurrencyChange={handleCurrencyChange}
+      showExportModal={showExportModal}
+      setShowExportModal={setShowExportModal}
+      showLoadModal={showLoadModal}
+      setShowLoadModal={setShowLoadModal}
+    />
   );
 };
 
