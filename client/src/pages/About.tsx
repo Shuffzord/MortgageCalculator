@@ -6,68 +6,133 @@ export default function About() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-800">
+    <div className="min-h-screen flex flex-col bg-background font-sans text-foreground">
       <SEOHead
         pageTitle={t('about.title')}
         pageDescription={t('about.projectDescription')}
       />
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h1 className="text-2xl font-semibold mb-6">{t('about.title')}</h1>
-          
-          <section className="mb-8">
-            <h2 className="text-xl font-medium mb-4">{t('about.projectOverview')}</h2>
-            <p className="mb-4">{t('about.projectDescription')}</p>
-            <p>{t('about.purposeDescription')}</p>
-          </section>
-          
-          <section className="mb-8">
-            <h2 className="text-xl font-medium mb-4">{t('about.features')}</h2>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>{t('about.featureCalculation')}</li>
-              <li>{t('about.featureAmortization')}</li>
-              <li>{t('about.featureComparison')}</li>
-              <li>{t('about.featureOverpayment')}</li>
-              <li>{t('about.featureExport')}</li>
+      <main className="flex-grow max-w-7xl w-full mx-auto px-8 sm:px-12 lg:px-16 py-16 animate-fadeIn">
+        <div className="bg-card/80 backdrop-blur-sm rounded-xl shadow-xl p-10 lg:p-16">
+          <h1 className="text-4xl font-bold mb-12 text-primary  p-2">{t('about.title')}</h1>
+
+          <section className="mb-16 transform  transition-all duration-300 p-2">
+            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+              {t('about.projectOverview')}
+            </h2>
+            <div className="prose prose-lg max-w-none text-foreground">
+              <p className="mb-4 ">{t('about.projectDescription')}</p>
+              <p className="">{t('about.purposeDescription')}</p>
+            </div>
+          </section>            
+          <section className="mb-16 transform  transition-all duration-300 animate-fadeInDown  p-2">
+            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+              {t('about.features')}
+            </h2>            
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-lg">{t('about.featureCalculation')}</span>
+                </div>
+              </li>
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="text-lg">{t('about.featureAmortization')}</span>
+                </div>
+              </li>
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  <span className="text-lg">{t('about.featureComparison')}</span>
+                </div>
+              </li>
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-lg">{t('about.featureOverpayment')}</span>
+                </div>
+              </li>
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="text-lg">{t('about.featureExport')}</span>
+                </div>
+              </li>
             </ul>
           </section>
-          
-          <section className="mb-8">
-            <h2 className="text-xl font-medium mb-4">{t('about.howToUse')}</h2>
-            <ol className="list-decimal pl-5 space-y-2">
-              <li>{t('about.step1')}</li>
-              <li>{t('about.step2')}</li>
-              <li>{t('about.step3')}</li>
-              <li>{t('about.step4')}</li>
+          <section className="mb-16 transform transition-all duration-300 p-2">
+            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+              {t('about.howToUse')}
+            </h2>
+            <ol className="grid gap-8">
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">1</span>
+                  <span className="text-lg">{t('about.step1')}</span>
+                </div>
+              </li>
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">2</span>
+                  <span className="text-lg">{t('about.step2')}</span>
+                </div>
+              </li>
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">3</span>
+                  <span className="text-lg">{t('about.step3')}</span>
+                </div>
+              </li>
+              <li className="bg-muted rounded-lg">
+                <div className="flex items-center gap-5 p-8">
+                  <span className="flex-shrink-0 w-10 h-10 bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold rounded-lg">4</span>
+                  <span className="text-lg">{t('about.step4')}</span>
+                </div>
+              </li>
             </ol>
           </section>
-          
-          <section>
-            <h2 className="text-xl font-medium mb-4">{t('about.contactInfo')}</h2>
-            <p>{t('about.contactDescription')}</p>
-            <p className="mt-2">
-                <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300">
-                  <img 
-                  src="https://media.licdn.com/dms/image/v2/C5603AQF3FeRYHuyydg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1658399611298?e=1752105600&v=beta&t=8mHhwAV1qd0XEhnvjOEkPFPdMv-GicyIdqvoW_lxYZ8" 
-                  alt="Mateusz Woźniak" 
-                  className="w-24 h-24 rounded-full shadow-lg hover:scale-105 transition-transform duration-300 object-cover"
+          <section className="transform  transition-all duration-300  p-2">
+            <h2 className="text-2xl font-semibold mb-8 text-primary flex items-center gap-3">
+              {t('about.contactInfo')}
+            </h2>
+            <p className="text-foreground mb-8 leading-relaxed text-lg">{t('about.contactDescription')}</p>            
+            <div className="mt-8">
+              <div className="flex flex-col sm:flex-row items-center gap-8 p-8 bg-muted rounded-xl">
+                <div className="relative flex-shrink-0">
+                  <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>
+                  <img
+                    src="https://media.licdn.com/dms/image/v2/C5603AQF3FeRYHuyydg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1658399611298?e=1752105600&v=beta&t=8mHhwAV1qd0XEhnvjOEkPFPdMv-GicyIdqvoW_lxYZ8"
+                    alt="Mateusz Woźniak"
+                    className="relative w-160 h-160 rounded-full shadow-lg object-cover ring-2 ring-card"
                   />
-                  <div className="transform hover:translate-x-2 transition-transform duration-300">
-                  <strong className="text-gray-700 block mb-1">Linkedin:</strong>
-                  <a 
-                    href="https://www.linkedin.com/in/marvelousmateuszwozniak" 
-                    className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-2 group"
+                </div>                  
+                <div className="flex flex-col items-center sm:items-start">
+                  <strong className="text-foreground block mb-4 font-semibold text-xl">Linkedin:</strong>
+                  <a
+                    href="https://www.linkedin.com/in/marvelousmateuszwozniak"
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <span>Mateusz Woźniak</span>
-                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+                    <span className="font-medium">Mateusz Woźniak</span>
+                    <svg className="w-5 h-5 animate-bounce-x" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </a>
-                  </div>
                 </div>
-            </p>
+              </div>
+            </div>
           </section>
         </div>
       </main>

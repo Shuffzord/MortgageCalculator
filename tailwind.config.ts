@@ -84,8 +84,7 @@ export default {
           payment: "#2E8B57", // Success - muted green
           overpayment: "#F5B041", // Warning - soft amber
         },
-      },
-      keyframes: {
+      },      keyframes: {
         "accordion-down": {
           from: {
             height: "0",
@@ -110,12 +109,27 @@ export default {
           from: { opacity: "1" },
           to: { opacity: "0" },
         },
+        "fadeIn": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "fadeInDown": {
+          "0%": { opacity: "0", transform: "translateY(-10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "bounce-x": {
+          "0%, 100%": { transform: "translateX(0)" },
+          "50%": { transform: "translateX(25%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-in-out",
         "fade-out": "fade-out 0.3s ease-in-out",
+        "fadeIn": "fadeIn 0.5s ease-in",
+        "fadeInDown": "fadeInDown 0.5s ease-out",
+        "bounce-x": "bounce-x 1s infinite",
       },
       spacing: {
         '8': '8px',
