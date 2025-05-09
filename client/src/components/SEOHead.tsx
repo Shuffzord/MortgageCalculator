@@ -68,11 +68,10 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     
     // Update language attributes
     document.documentElement.setAttribute('lang', i18n.language);
-    
-    // Update canonical and alternate links
+      // Update canonical and alternate links
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      const baseUrl = 'https://mortgage-calculator.example.com';
+      const baseUrl = 'https://smarter-loan.com';
       const langPath = i18n.language === 'en' ? '' : `/${i18n.language}`;
       canonical.setAttribute('href', `${baseUrl}${langPath}/`);
     }

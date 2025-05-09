@@ -1,0 +1,22 @@
+{
+  "name": "smarter-loan",
+  "configurations": {
+    "production": {
+      "appSettings": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "PORT",
+          "value": "8080"
+        },
+        {
+          "name": "WEBSITE_NODE_DEFAULT_VERSION",
+          "value": "~18"
+        }
+      ],
+      "connectionStrings": []
+    }
+  }
+}
