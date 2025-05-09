@@ -57,9 +57,9 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
     pieChartInstanceRef.current = new Chart(ctx, {
       type: 'pie',
       data: {
-        labels: ['Principal', 'Interest'],
+        labels: [t('chart.principal', 'Principal'), t('chart.interest', 'Interest')],
         datasets: [{
-          label: 'Total Amount',
+          label: t('chart.totalAmount', 'Total Amount'),
           data: [totalPrincipal, totalInterest],
           backgroundColor: [
             '#1A6B72', // Primary blue-green
@@ -115,12 +115,12 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
         labels: years,
         datasets: [
           {
-            label: 'Principal',
+            label: t('chart.principal', 'Principal'),
             data: principalData,
             backgroundColor: '#1A6B72' // Primary blue-green
           },
           {
-            label: 'Interest',
+            label: t('chart.interest', 'Interest'),
             data: interestData,
             backgroundColor: '#E8A87C' // Secondary warm accent
           }
@@ -145,14 +145,14 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
           x: {
             title: {
               display: true,
-              text: 'Year'
+              text: t('chart.year', 'Year')
             },
             stacked: true
           },
           y: {
             title: {
               display: true,
-              text: 'Amount'
+              text: t('chart.amount', 'Amount')
             },
             stacked: true,
             ticks: {
@@ -198,7 +198,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
                 backgroundColor: activeTab === 'pie' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
               }}
             >
-              Total Breakdown
+              {t('visualization.totalBreakdown', 'Total Breakdown')}
             </button>
             <button 
               onClick={() => setActiveTab('bar')}
@@ -208,7 +208,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
                 backgroundColor: activeTab === 'bar' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
               }}
             >
-              Yearly Breakdown
+              {t('visualization.yearlyBreakdown', 'Yearly Breakdown')}
             </button>
           </div>
         </div>

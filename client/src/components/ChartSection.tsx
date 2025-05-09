@@ -4,6 +4,7 @@ import { CalculationResults, LoanDetails } from "@/lib/types";
 import Chart from "chart.js/auto";
 import { formatCurrency } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ChartSectionProps {
   loanDetails: LoanDetails;
@@ -20,6 +21,7 @@ export default function ChartSection({
   calculationResults,
   comparisonResults
 }: ChartSectionProps) {
+  const { t } = useTranslation();
   const [activeChart, setActiveChart] = useState<'pie' | 'bar' | 'barMonthly' | 'line' | 'area' | 'comparison'>('pie');
   const [timeFrame, setTimeFrame] = useState<'monthly' | 'yearly'>('yearly');
   
@@ -38,12 +40,12 @@ export default function ChartSection({
   const [comparisonChart, setComparisonChart] = useState<Chart | null>(null);
 
   const chartTitles = {
-    pie: "Principal vs. Interest Distribution",
-    bar: "Yearly Payment Breakdown",
-    barMonthly: "Monthly Payment Breakdown",
-    line: "Balance Over Time",
-    area: "Cumulative Payments Over Time",
-    comparison: "Scenario Comparison"
+    pie: t('chart.pieTitle', "Principal vs. Interest Distribution"),
+    bar: t('chart.barTitle', "Yearly Payment Breakdown"),
+    barMonthly: t('chart.barMonthlyTitle', "Monthly Payment Breakdown"),
+    line: t('chart.lineTitle', "Balance Over Time"),
+    area: t('chart.areaTitle', "Cumulative Payments Over Time"),
+    comparison: t('chart.comparisonTitle', "Scenario Comparison")
   };
 
   // Cleanup charts on unmount
