@@ -188,7 +188,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
     <Card className="bg-white shadow rounded-lg overflow-hidden mb-6">
       <div className="px-6 py-4 border-b" style={{ borderColor: "#E5E7EB" }}>
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-medium" style={{ color: "#111111" }}>{t("visualization.title")}</h2>
+          <h2 className="text-xl font-medium" style={{ color: "#111111" }}>{t("chart.title", "Visualization")}</h2>
           <div className="flex gap-4">
             <button 
               onClick={() => setActiveTab('pie')}
@@ -198,7 +198,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
                 backgroundColor: activeTab === 'pie' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
               }}
             >
-              {t('visualization.totalBreakdown', 'Total Breakdown')}
+              {t('chart.totalBreakdown', 'Total Breakdown')}
             </button>
             <button 
               onClick={() => setActiveTab('bar')}
@@ -208,7 +208,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
                 backgroundColor: activeTab === 'bar' ? 'rgba(26, 107, 114, 0.1)' : 'transparent'
               }}
             >
-              {t('visualization.yearlyBreakdown', 'Yearly Breakdown')}
+              {t('chart.yearlyBreakdown', 'Yearly Breakdown')}
             </button>
           </div>
         </div>
