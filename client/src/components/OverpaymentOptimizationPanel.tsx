@@ -218,7 +218,7 @@ export default function OverpaymentOptimizationPanel({
                 if (dataIndex === 0) {
                   return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
                 } else {
-                  return context.dataset.label + ': ' + value.toFixed(2) + ' years';
+                  return context.dataset.label + ': ' + value.toFixed(2) + ' ' + t('form.years', 'years');
                 }
               }
             }
