@@ -115,7 +115,8 @@
     "interestPaid": "Interés Pagado",
     "cumulativeInterest": "Interés Acumulado",
     "switchToMonthly": "Cambiar a Vista Mensual",
-    "switchToYearly": "Cambiar a Vista Anual"
+    "switchToYearly": "Cambiar a Vista Anual",
+    "noData": "Calcule un préstamo para ver las visualizaciones"
   },
   "schedule": {
     "title": "Programa de Amortización",

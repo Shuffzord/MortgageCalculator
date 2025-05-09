@@ -110,7 +110,8 @@
     "interestPaid": "Interest Paid",
     "cumulativeInterest": "Cumulative Interest",
     "switchToMonthly": "Switch to Monthly View",
-    "switchToYearly": "Switch to Yearly View"
+    "switchToYearly": "Switch to Yearly View",
+    "noData": "Please calculate loan details first to see visualizations."
   },
   "schedule": {
     "title": "Amortization Schedule",

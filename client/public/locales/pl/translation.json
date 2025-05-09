@@ -116,7 +116,8 @@
     "interestPaid": "Zapłacone Odsetki",
     "cumulativeInterest": "Skumulowane Odsetki",
     "switchToMonthly": "Przełącz na Widok Miesięczny",
-    "switchToYearly": "Przełącz na Widok Roczny"
+    "switchToYearly": "Przełącz na Widok Roczny",
+    "noData": "Oblicz kredyt, aby zobaczyć wizualizacje"
   },
   "schedule": {
     "title": "Harmonogram Amortyzacji",
