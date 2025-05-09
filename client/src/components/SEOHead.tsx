@@ -71,7 +71,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       // Update canonical and alternate links
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      const baseUrl = 'https://smarter-loan.com';
+      const baseUrl = 'https://www.smarter-loan.com';
       const langPath = i18n.language === 'en' ? '' : `/${i18n.language}`;
       canonical.setAttribute('href', `${baseUrl}${langPath}/`);
     }
