@@ -104,7 +104,19 @@
     "principal": "Kapitał",
     "interest": "Odsetki",
     "balance": "Pozostało",
-    "payment": "Płatność"
+    "payment": "Płatność",
+    "pieTitle": "Rozkład Kapitału i Odsetek",
+    "barTitle": "Roczny Podział Płatności",
+    "barMonthlyTitle": "Miesięczny Podział Płatności",
+    "lineTitle": "Saldo w Czasie",
+    "areaTitle": "Skumulowane Płatności w Czasie",
+    "comparisonTitle": "Porównanie Scenariuszy",
+    "remainingBalance": "Pozostałe Saldo",
+    "principalPaid": "Zapłacony Kapitał",
+    "interestPaid": "Zapłacone Odsetki",
+    "cumulativeInterest": "Skumulowane Odsetki",
+    "switchToMonthly": "Przełącz na Widok Miesięczny",
+    "switchToYearly": "Przełącz na Widok Roczny"
   },
   "schedule": {
     "title": "Harmonogram Amortyzacji",

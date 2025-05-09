@@ -98,7 +98,19 @@
     "principal": "Principal",
     "interest": "Interest",
     "balance": "Balance",
-    "payment": "Payment"
+    "payment": "Payment",
+    "pieTitle": "Principal vs. Interest Distribution",
+    "barTitle": "Yearly Payment Breakdown",
+    "barMonthlyTitle": "Monthly Payment Breakdown",
+    "lineTitle": "Balance Over Time",
+    "areaTitle": "Cumulative Payments Over Time",
+    "comparisonTitle": "Scenario Comparison",
+    "remainingBalance": "Remaining Balance",
+    "principalPaid": "Principal Paid",
+    "interestPaid": "Interest Paid",
+    "cumulativeInterest": "Cumulative Interest",
+    "switchToMonthly": "Switch to Monthly View",
+    "switchToYearly": "Switch to Yearly View"
   },
   "schedule": {
     "title": "Amortization Schedule",

@@ -103,7 +103,19 @@
     "principal": "Principal",
     "interest": "Interés",
     "balance": "Saldo",
-    "payment": "Pago"
+    "payment": "Pago",
+    "pieTitle": "Distribución de Principal vs Interés",
+    "barTitle": "Desglose de Pagos Anuales",
+    "barMonthlyTitle": "Desglose de Pagos Mensuales",
+    "lineTitle": "Saldo a lo Largo del Tiempo",
+    "areaTitle": "Pagos Acumulados a lo Largo del Tiempo",
+    "comparisonTitle": "Comparación de Escenarios",
+    "remainingBalance": "Saldo Restante",
+    "principalPaid": "Principal Pagado",
+    "interestPaid": "Interés Pagado",
+    "cumulativeInterest": "Interés Acumulado",
+    "switchToMonthly": "Cambiar a Vista Mensual",
+    "switchToYearly": "Cambiar a Vista Anual"
   },
   "schedule": {
     "title": "Programa de Amortización",

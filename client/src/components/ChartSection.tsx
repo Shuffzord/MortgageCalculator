@@ -542,8 +542,8 @@ export default function ChartSection({
     return (
       <Card>
         <CardContent className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Visualization</h2>
-          <p>Please calculate loan details first to see visualizations.</p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('chart.title', 'Visualization')}</h2>
+          <p>{t('chart.noData', 'Please calculate loan details first to see visualizations.')}</p>
         </CardContent>
       </Card>
     );
@@ -588,7 +588,7 @@ export default function ChartSection({
       <CardContent className="p-6">
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Visualization</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t('chart.title', 'Visualization')}</h2>
             
             <div className="flex items-center gap-4">
               <button
@@ -620,7 +620,9 @@ export default function ChartSection({
                 onClick={toggleTimeFrame}
                 className="text-sm px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
               >
-                {timeFrame === 'yearly' ? 'Switch to Monthly View' : 'Switch to Yearly View'}
+                {timeFrame === 'yearly' 
+                  ? t('chart.switchToMonthly', 'Switch to Monthly View') 
+                  : t('chart.switchToYearly', 'Switch to Yearly View')}
               </button>
             </div>
           )}
