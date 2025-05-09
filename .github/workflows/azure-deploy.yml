@@ -12,6 +12,7 @@ on:
 
 env:
   NODE_VERSION: '20'
+  OUTPUT_LOCATION: 'dist/public'
 
 jobs:
   build_and_deploy:
@@ -19,12 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -32,44 +34,116 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        id: install
         
-      - name: Run tests
+      - name: Lint code
+        if: success()
+        run: npm run lint
+        continue-on-error: true
+        id: lint
+        
+      - name: Run unit tests
+        if: success()
         run: npm test
+        id: test
         
-      - name: Security checks
+      - name: Security audit
+        if: success()
         run: npm run validate
+        id: security
         
-      - name: Build and Deploy
-        id: builddeploy
+      - name: Build application
+        if: success()
+        run: npm run build
+        id: build
+        env:
+          NODE_ENV: production
+          VITE_APP_BASE_URL: ${{ secrets.VITE_APP_BASE_URL || '' }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || '' }}
+          VITE_ANALYTICS_ID: ${{ secrets.VITE_ANALYTICS_ID || '' }}
+      
+      - name: Check build output
+        if: success()
+        run: |
+          if [ -f "${{ env.OUTPUT_LOCATION }}/index.html" ]; then
+            echo "✅ Build output verified - index.html found!"
+          else
+            echo "❌ ERROR: index.html not found in ${{ env.OUTPUT_LOCATION }}"
+            exit 1
+          fi
+        id: verify_build
+        
+      - name: Deploy to Azure
+        if: success()
+        id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          # The source code root directory
           app_location: "/"
-          # The API directory if you have one
           api_location: ""
-          # The directory where your app builds to - matches your /dist/public structure
-          output_location: "dist/public"
-          # Environment variables for the build
-          env_vars: |
-            NODE_ENV=production
-            VITE_APP_BASE_URL=${{ secrets.VITE_APP_BASE_URL }}
-            VITE_API_URL=${{ secrets.VITE_API_URL }}
-            VITE_ANALYTICS_ID=${{ secrets.VITE_ANALYTICS_ID }}
+          output_location: ${{ env.OUTPUT_LOCATION }}
+          skip_app_build: true # We already built the app
             
       - name: Verify deployment
+        if: success()
+        id: verify_deployment
         run: |
-          echo "Waiting for deployment to propagate..."
-          sleep 60
-          DEPLOY_URL=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}")
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL)
-          if [ $HTTP_STATUS -ne 200 ]; then
-            echo "Deployment verification failed! Site returned HTTP $HTTP_STATUS"
-            exit 1
-          else
-            echo "Deployment verified successfully! Site is accessible."
+          echo "⏳ Waiting for deployment to propagate..."
+          sleep 30
+          
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          DEPLOY_URL="${{ steps.deploy.outputs.static_web_app_url }}"
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            echo "🔍 Checking deployment at $DEPLOY_URL (attempt $(($RETRY_COUNT + 1))/$MAX_RETRIES)"
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL)
+            
+            if [ $HTTP_STATUS -eq 200 ]; then
+              echo "✅ Deployment verified successfully! Site is accessible."
+              break
+            else
+              echo "⚠️ Site returned HTTP $HTTP_STATUS. Waiting before retry..."
+              RETRY_COUNT=$(($RETRY_COUNT + 1))
+              
+              if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                echo "❌ Deployment verification failed after $MAX_RETRIES attempts!"
+                exit 1
+              fi
+              
+              sleep 30
+            fi
+          done
+      
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## Deployment Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "| ---- | ------ |" >> $GITHUB_STEP_SUMMARY
+          
+          # Use step IDs to check status
+          if [ "${{ steps.install.outcome }}" == "success" ]; then INSTALL="✅"; else INSTALL="❌"; fi
+          if [ "${{ steps.lint.outcome }}" == "success" ]; then LINT="✅"; else LINT="⚠️"; fi
+          if [ "${{ steps.test.outcome }}" == "success" ]; then TEST="✅"; else TEST="❌"; fi
+          if [ "${{ steps.security.outcome }}" == "success" ]; then SECURITY="✅"; else SECURITY="❌"; fi
+          if [ "${{ steps.build.outcome }}" == "success" ]; then BUILD="✅"; else BUILD="❌"; fi
+          if [ "${{ steps.deploy.outcome }}" == "success" ]; then DEPLOY="✅"; else DEPLOY="❌"; fi
+          if [ "${{ steps.verify_deployment.outcome }}" == "success" ]; then VERIFY="✅"; else VERIFY="⚠️"; fi
+          
+          echo "| Installation | $INSTALL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linting | $LINT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests | $TEST |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | $SECURITY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | $BUILD |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deployment | $DEPLOY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Verification | $VERIFY |" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.deploy.outcome }}" == "success" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🚀 **Deployed to:** [${{ steps.deploy.outputs.static_web_app_url }}](${{ steps.deploy.outputs.static_web_app_url }})" >> $GITHUB_STEP_SUMMARY
           fi
 
   close_pull_request:
