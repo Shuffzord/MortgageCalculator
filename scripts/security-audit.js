@@ -62,7 +62,8 @@ const excludeFiles = [
     'check-console-logs.js',
     'package.json',
     'package-lock.json',
-    'pre-build-checks.js'
+    'pre-build-checks.js',
+    'azure-deploy.yml',
 ];
 
 function isTestFile(filePath) {
