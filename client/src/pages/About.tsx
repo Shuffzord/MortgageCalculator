@@ -129,6 +129,8 @@ export default function About() {
                       <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </a>
+
+                  
                 </div>
               </div>
             </div>
@@ -137,4 +139,4 @@ export default function About() {
       </main>
     </div>
   );
-}
+}{/* <a href="https://www.buymeacoffee.com/smarterloan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>                </div> */}
