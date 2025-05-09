@@ -96,7 +96,7 @@ export default function ChartSection({
       const newPieChart = new Chart(pieChartRef.current, {
         type: 'pie',
         data: {
-          labels: ['Principal', 'Interest'],
+          labels: [t('chart.principal', 'Principal'), t('chart.interest', 'Interest')],
           datasets: [{
             data: [loanDetails.principal, calculationResults.totalInterest],
             backgroundColor: ['#1A6B72', '#E8A87C'],
@@ -301,7 +301,7 @@ export default function ChartSection({
           labels: labels,
           datasets: [
             {
-              label: 'Remaining Balance',
+              label: t('chart.remainingBalance', 'Remaining Balance'),
               data: data.map(item => item.y),
               borderColor: '#1A6B72',
               backgroundColor: 'rgba(26, 107, 114, 0.1)',
@@ -341,7 +341,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return 'Balance: ' + formatCurrency(value, 'en-US', loanDetails.currency);
+                  return t('chart.balance', 'Balance') + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
                 }
               }
             },
@@ -391,7 +391,7 @@ export default function ChartSection({
           labels: labels,
           datasets: [
             {
-              label: 'Principal Paid',
+              label: t('chart.principalPaid', 'Principal Paid'),
               data: principalData,
               borderColor: '#1A6B72',
               backgroundColor: 'rgba(26, 107, 114, 0.7)',
@@ -399,7 +399,7 @@ export default function ChartSection({
               tension: 0.1
             },
             {
-              label: 'Interest Paid',
+              label: t('chart.interestPaid', 'Interest Paid'),
               data: interestData,
               borderColor: '#E8A87C',
               backgroundColor: 'rgba(232, 168, 124, 0.7)',
@@ -499,7 +499,7 @@ export default function ChartSection({
             y: {
               title: {
                 display: true,
-                text: 'Cumulative Interest'
+                text: t('chart.cumulativeInterest', 'Cumulative Interest')
               },
               ticks: {
                 callback: function(value) {
