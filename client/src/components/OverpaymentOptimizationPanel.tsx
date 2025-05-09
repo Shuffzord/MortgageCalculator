@@ -477,7 +477,7 @@ export default function OverpaymentOptimizationPanel({
                         <li key={index} className="text-sm">
                           {op.isRecurring ? (
                             <span>
-                              {formatCurrency(op.amount, 'en-US', loanDetails.currency)} {op.frequency} overpayment
+                              {formatCurrency(op.amount, 'en-US', loanDetails.currency)} {t(`overpayment.${op.frequency}`, op.frequency)} {t('overpayment.payment', 'overpayment')}
                               {(op.startMonth ?? 0) > 1 ? ` starting at month ${op.startMonth}` : ''}
                               {op.endMonth ? ` until month ${op.endMonth}` : ''}
                             </span>
