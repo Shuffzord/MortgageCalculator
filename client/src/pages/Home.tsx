@@ -114,68 +114,85 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-800">
-      <div className="bg-yellow-500 text-yellow-900 text-center py-2 sm:hidden block">
+    <div className="page-container">
+      <div className="bg-warning text-warning-foreground text-center py-2 sm:hidden">
         {t('app.desktopOptimized')}
       </div>
 
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <LoanInputForm
-                loanDetails={loanDetails}
-                setLoanDetails={setLoanDetails}
-                onCalculate={handleCalculateLoan}
-                selectedCurrency={selectedCurrency}
-                onCurrencyChange={onCurrencyChange}
-              />
+      <main className="page-content">
+        <div className="content-card">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1">
+              <section className="section-container">
+                <h2 className="section-title">{t('calculator.inputTitle')}</h2>
+                <div className="panel-item">
+                  <LoanInputForm
+                    loanDetails={loanDetails}
+                    setLoanDetails={setLoanDetails}
+                    onCalculate={handleCalculateLoan}
+                    selectedCurrency={selectedCurrency}
+                    onCurrencyChange={onCurrencyChange}
+                  />
+                </div>
+              </section>
             </div>
-          </div>
-          
-          <div className="lg:col-span-2 space-y-8">
-            <LoanSummary
-              calculationResults={calculationResults}
-              overpaymentResults={null}
-              loanDetails={loanDetails}
-            />
             
-            <ChartSection
-              loanDetails={loanDetails}
-              calculationResults={calculationResults}
-            />
-            
-            <AmortizationSchedule
-              yearlyData={
-                calculationResults?.yearlyData || []
-              }currency={selectedCurrency}
-            />
-            
-            <OverpaymentOptimizationPanel
-              loanDetails={loanDetails}
-              onApplyOptimization={(optimizedOverpayments) => {
-                // Create updated loan details with optimized overpayments
-                const updatedDetails = {
-                  ...loanDetails,
-                  overpaymentPlans: optimizedOverpayments
-                };
-                
-                // Update state
-                setLoanDetails(updatedDetails);
-                
-                // Calculate using the new details directly
-                handleCalculateLoan(updatedDetails);
-              }}
-            />
-            
-            
+            <div className="lg:col-span-2 space-y-8">
+              <section className="section-container">
+                <h2 className="section-title">{t('calculator.summary')}</h2>
+                <div className="data-display">
+                  <LoanSummary
+                    calculationResults={calculationResults}
+                    overpaymentResults={null}
+                    loanDetails={loanDetails}
+                  />
+                </div>
+              </section>
+              
+              <section className="section-container">
+                <h2 className="section-title">{t('calculator.charts')}</h2>
+                <div className="chart-container">
+                  <ChartSection
+                    loanDetails={loanDetails}
+                    calculationResults={calculationResults}
+                  />
+                </div>
+              </section>
+              
+              <section className="section-container">
+                <h2 className="section-title">{t('calculator.schedule')}</h2>
+                <div className="data-display">
+                  <AmortizationSchedule
+                    yearlyData={calculationResults?.yearlyData || []}
+                    currency={selectedCurrency}
+                  />
+                </div>
+              </section>
+              
+              <section className="section-container">
+                <h2 className="section-title">{t('calculator.optimization')}</h2>
+                <div className="panel-item">
+                  <OverpaymentOptimizationPanel
+                    loanDetails={loanDetails}
+                    onApplyOptimization={(optimizedOverpayments) => {
+                      const updatedDetails = {
+                        ...loanDetails,
+                        overpaymentPlans: optimizedOverpayments
+                      };
+                      setLoanDetails(updatedDetails);
+                      handleCalculateLoan(updatedDetails);
+                    }}
+                  />
+                </div>
+              </section>
+            </div>
           </div>
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <p className="text-sm text-gray-500 text-center">
+      <footer className="bg-card border-t border-border mt-8">
+        <div className="max-w-7xl mx-auto px-8 sm:px-12 lg:px-16 py-6">
+          <p className="text-sm text-muted-foreground text-center">
             {t('app.description')}
           </p>
         </div>

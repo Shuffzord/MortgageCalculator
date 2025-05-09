@@ -110,9 +110,9 @@ export default function About() {
             <div className="mt-8">
               <div className="flex flex-col sm:flex-row items-center gap-8 p-2 bg-muted rounded-xl">
                 <div className="relative flex-shrink-0">
-                  <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>
+                  <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>                  
                   <img
-                    src="https://media.licdn.com/dms/image/v2/C5603AQF3FeRYHuyydg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1658399611298?e=1752105600&v=beta&t=8mHhwAV1qd0XEhnvjOEkPFPdMv-GicyIdqvoW_lxYZ8"
+                    src={import.meta.env.BASE_URL + 'images/photo.jpg'}
                     alt="Mateusz Woźniak"
                     className="relative w-160 h-160 rounded-full shadow-lg object-cover ring-2 ring-card"
                   />

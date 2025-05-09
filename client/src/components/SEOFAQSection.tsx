@@ -50,17 +50,19 @@ const SEOFAQSection: React.FC<SEOFAQSectionProps> = ({ faqs }) => {
   }, [faqs, i18n.language, t]);
   
   return (
-    <div className="mt-8">
-      <h2 className="text-2xl font-semibold mb-4">{t('education.faqTitle') || 'Frequently Asked Questions'}</h2>
-      <Accordion type="single" collapsible className="w-full">
+    <div className="mt-12 transform transition-all duration-300">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary">
+        {t('education.faqTitle') || 'Frequently Asked Questions'}
+      </h2>
+      <Accordion type="single" collapsible className="space-y-4">
         {faqs.map((faq, index) => (
-          <AccordionItem key={index} value={`faq-${index}`}>
-            <AccordionTrigger className="text-left font-medium">
+          <AccordionItem key={index} value={`faq-${index}`} className="bg-muted rounded-lg px-6">
+            <AccordionTrigger className="text-left font-medium py-4 hover:no-underline">
               {faq.question}
             </AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2 pt-1">
-                <p className="text-gray-700">{faq.answer}</p>
+              <div className="space-y-2 pb-4">
+                <p className="text-muted-foreground">{faq.answer}</p>
               </div>
             </AccordionContent>
           </AccordionItem>

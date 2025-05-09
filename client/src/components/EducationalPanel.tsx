@@ -65,42 +65,44 @@ export default function EducationalPanel({
   );
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="p-6 border-b border-gray-200">
-        <p className="text-gray-600 mb-4">{t('education.description') || 'Learn about mortgage concepts and how different factors affect your loan.'}</p>
-        
-        <div className="relative mb-6">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+    <div className="overflow-hidden">
+      <div className="space-y-6">
+        <div className="space-y-4">
+          <p className="text-base text-muted-foreground">{t('education.description') || 'Learn about mortgage concepts and how different factors affect your loan.'}</p>
+          
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <Input
+              type="text"
+              placeholder={(t('education.search') as string) || "Search terms, concepts, or examples..."}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-          <Input
-            type="text"
-            placeholder={(t('education.search') as string) || "Search terms, concepts, or examples..."}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
         </div>
         
         <Tabs defaultValue="glossary" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-3 mb-6">
-            <TabsTrigger value="glossary" className="flex items-center justify-center">
-              <BookOpen className="h-4 w-4 mr-2" />
+          <TabsList className="grid grid-cols-3 p-1 bg-muted rounded-lg">
+            <TabsTrigger value="glossary" className="flex items-center gap-2 py-2">
+              <BookOpen className="h-4 w-4" />
               {t('education.glossary') || 'Glossary'}
             </TabsTrigger>
-            <TabsTrigger value="concepts" className="flex items-center justify-center">
-              <Lightbulb className="h-4 w-4 mr-2" />
+            <TabsTrigger value="concepts" className="flex items-center gap-2 py-2">
+              <Lightbulb className="h-4 w-4" />
               {t('education.concepts') || 'Key Concepts'}
             </TabsTrigger>
-            <TabsTrigger value="interactive" className="flex items-center justify-center">
-              <Calculator className="h-4 w-4 mr-2" />
+            <TabsTrigger value="interactive" className="flex items-center gap-2 py-2">
+              <Calculator className="h-4 w-4" />
               {t('education.interactive') || 'Interactive Examples'}
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="glossary" className="space-y-4">
             {filteredGlossary.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">{t('education.noResults') || 'No matching terms found'}</p>
+              <p className="text-muted-foreground text-center py-4">{t('education.noResults') || 'No matching terms found'}</p>
             ) : (
               <Accordion type="single" collapsible className="w-full">
                 {filteredGlossary.map((term: any, index: number) => (
@@ -128,7 +130,7 @@ export default function EducationalPanel({
           
           <TabsContent value="concepts" className="space-y-4">
             {filteredConcepts.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">{t('education.noResults') || 'No matching concepts found'}</p>
+              <p className="text-muted-foreground text-center py-4">{t('education.noResults') || 'No matching concepts found'}</p>
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {filteredConcepts.map((concept: any, index: number) => (
@@ -181,7 +183,7 @@ export default function EducationalPanel({
           
           <TabsContent value="interactive" className="space-y-4">
             {filteredExamples.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">{t('education.noResults') || 'No matching examples found'}</p>
+              <p className="text-muted-foreground text-center py-4">{t('education.noResults') || 'No matching examples found'}</p>
             ) : (
               <div className="space-y-6">
                 {selectedExample ? (

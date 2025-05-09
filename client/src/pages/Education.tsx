@@ -19,14 +19,14 @@ export default function Education() {
   const faqs = mortgageFAQs[i18n.language as keyof typeof mortgageFAQs] || mortgageFAQs.en;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-800">
+    <div className="min-h-screen flex flex-col bg-background font-sans text-foreground">
       <SEOHead
         pageTitle={t('education.title')}
         pageDescription={t('education.description')}
       />
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h1 className="text-2xl font-semibold mb-6">{t('education.title')}</h1>
+      <main className="flex-grow max-w-7xl w-full mx-auto px-8 sm:px-12 lg:px-16 py-16 animate-fadeIn">
+        <div className="bg-card/80 backdrop-blur-sm rounded-xl shadow-xl p-10 lg:p-16">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-primary">{t('education.title')}</h1>
           
           <EducationalPanel
             activeLanguage={activeLanguage}
