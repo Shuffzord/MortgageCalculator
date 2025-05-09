@@ -331,7 +331,7 @@ export default function OverpaymentOptimizationPanel({
                 <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1 inline" /></span>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
-                <p className="text-xs">Optimize your overpayment strategy to save interest and reduce your loan term.</p>
+                <p className="text-xs">{t('overpayment.optimizationTip', 'Optimize your overpayment strategy to save interest and reduce your loan term.')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -347,8 +347,9 @@ export default function OverpaymentOptimizationPanel({
           </button>
           
           <div className="text-sm font-medium">
-            {activeTab === "optimize" ? "Optimization Strategy" : 
-             activeTab === "compare" ? "Strategy Comparison" : "Impact Analysis"}
+            {activeTab === "optimize" ? t('overpayment.optimizationStrategy', 'Optimization Strategy') : 
+             activeTab === "compare" ? t('overpayment.strategyComparison', 'Strategy Comparison') : 
+             t('overpayment.impactAnalysis', 'Impact Analysis')}
           </div>
           
           <button 
@@ -366,14 +367,14 @@ export default function OverpaymentOptimizationPanel({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="space-y-2">
                 <Label className="flex items-center">
-                  Max Monthly Overpayment
+                  {t('overpayment.maxMonthly', 'Max Monthly Overpayment')}
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        <p className="text-xs">The maximum amount you can afford to overpay each month.</p>
+                        <p className="text-xs">{t('overpayment.maxMonthlyTooltip', 'The maximum amount you can afford to overpay each month.')}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -395,14 +396,14 @@ export default function OverpaymentOptimizationPanel({
               
               <div className="space-y-2">
                 <Label className="flex items-center">
-                  Max One-Time Overpayment
+                  {t('overpayment.maxOneTime', 'Max One-Time Overpayment')}
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span><HelpCircle className="h-4 w-4 text-gray-400 ml-1" /></span>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        <p className="text-xs">The maximum lump sum amount you can afford to pay at once.</p>
+                        <p className="text-xs">{t('overpayment.maxOneTimeTooltip', 'The maximum lump sum amount you can afford to pay at once.')}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
