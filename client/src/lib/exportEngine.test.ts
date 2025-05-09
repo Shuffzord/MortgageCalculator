@@ -99,15 +99,14 @@ describe('Export Engine', () => {
   test('CSV Export - Basic Functionality', () => {
     const csv = exportToCSV(mockLoanDetails, mockResults, baseOptions);
     
-    // Check that CSV contains expected headers and data
-    expect(csv).toContain('Loan Summary');
-    expect(csv).toContain('Principal,200000');
+    // Check that CSV contains expected headers and data    expect(csv).toContain('Loan Summary');
+    expect(csv).toContain('Principal,$200,000.00');
     expect(csv).toContain('Interest Rate,4.5%');
     expect(csv).toContain('Amortization Schedule');
     expect(csv).toContain('Payment,Date,Payment Amount,Principal,Interest,Balance,Total Interest');
     
     // Check that it contains data from the first payment
-    expect(csv).toContain('1,2025-02-01,1013.37,263.37,750,199736.63,750');
+    expect(csv).toContain('1,2025-02-01,$1,013.37,$263.37,$750.00,$199,736.63,$750.00');
   });
   
   test('CSV Export - With Comparison Data', () => {
