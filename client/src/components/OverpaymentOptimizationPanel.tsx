@@ -108,7 +108,7 @@ export default function OverpaymentOptimizationPanel({
         labels: result.comparisonChart.labels,
         datasets: [
           {
-            label: 'Original Loan',
+            label: t('overpayment.originalLoan', 'Original Loan'),
             data: result.comparisonChart.originalData,
             borderColor: '#ef4444',
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -116,7 +116,7 @@ export default function OverpaymentOptimizationPanel({
             tension: 0.1
           },
           {
-            label: 'With Optimized Overpayments',
+            label: t('overpayment.withOptimizedOverpayments', 'With Optimized Overpayments'),
             data: result.comparisonChart.optimizedData,
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -132,7 +132,7 @@ export default function OverpaymentOptimizationPanel({
           y: {
             title: {
               display: true,
-              text: 'Total Interest'
+              text: t('overpayment.totalInterest', 'Total Interest')
             },
             ticks: {
               callback: function(value) {
@@ -152,7 +152,7 @@ export default function OverpaymentOptimizationPanel({
           },
           title: {
             display: true,
-            text: 'Interest Comparison'
+            text: t('overpayment.interestComparison', 'Interest Comparison')
           }
         }
       }
@@ -201,7 +201,7 @@ export default function OverpaymentOptimizationPanel({
                 if (index === 0) {
                   return formatCurrency(value as number, 'en-US', loanDetails.currency);
                 } else {
-                  return value + ' years';
+                  return value + ' ' + t('form.years', 'years');
                 }
               }
             }
