@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { PaymentData, LoanDetails } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface AmortizationScheduleProps {
   schedule: PaymentData[];
@@ -19,6 +20,7 @@ interface AmortizationScheduleProps {
 }
 
 export default function AmortizationSchedule({ schedule, loanDetails }: AmortizationScheduleProps) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -59,13 +61,13 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
   return (
     <Card className="bg-white shadow rounded-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-lg font-medium text-gray-900">Amortization Schedule</h2>
+        <h2 className="text-lg font-medium text-gray-900">{t('schedule.title', 'Amortization Schedule')}</h2>
         <Button 
           variant="ghost" 
           onClick={toggleExpand}
           className="text-sm text-primary flex items-center"
         >
-          {isExpanded ? "Hide Details" : "Show Details"}
+          {isExpanded ? t('schedule.hideDetails', 'Hide Details') : t('schedule.showDetails', 'Show Details')}
         </Button>
       </div>
       
@@ -75,14 +77,14 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="w-[80px]">Payment #</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Payment</TableHead>
-                  <TableHead>Principal</TableHead>
-                  <TableHead>Interest</TableHead>
-                  <TableHead>Balance</TableHead>
+                  <TableHead className="w-[80px]">{t('schedule.payment', 'Payment #')}</TableHead>
+                  <TableHead>{t('schedule.date', 'Date')}</TableHead>
+                  <TableHead>{t('schedule.payment', 'Payment')}</TableHead>
+                  <TableHead>{t('schedule.principal', 'Principal')}</TableHead>
+                  <TableHead>{t('schedule.interest', 'Interest')}</TableHead>
+                  <TableHead>{t('schedule.balance', 'Balance')}</TableHead>
                   {schedule.some(item => item.overpaymentAmount > 0) && (
-                    <TableHead>Overpayment</TableHead>
+                    <TableHead>{t('overpayment.title', 'Overpayment')}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -128,10 +130,10 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
               disabled={currentPage === 1}
               className={cn(currentPage === 1 && "opacity-50 cursor-not-allowed")}
             >
-              Previous
+              {t('pagination.previous', 'Previous')}
             </Button>
             <span className="text-sm text-gray-500">
-              Page {currentPage} of {totalPages} ({startIndex + 1}-{endIndex} of {schedule.length} payments)
+              {t('pagination.page', 'Page')} {currentPage} {t('pagination.of', 'of')} {totalPages} ({startIndex + 1}-{endIndex} {t('pagination.of', 'of')} {schedule.length} {t('pagination.payments', 'payments')})
             </span>
             <Button 
               variant="outline" 
@@ -139,7 +141,7 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
               disabled={currentPage === totalPages}
               className={cn(currentPage === totalPages && "opacity-50 cursor-not-allowed")}
             >
-              Next
+              {t('pagination.next', 'Next')}
             </Button>
           </div>
         </div>

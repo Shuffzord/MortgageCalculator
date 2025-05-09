@@ -324,7 +324,7 @@ export default function OverpaymentOptimizationPanel({
     <Card>
       <CardContent className="p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Overpayment Optimization
+          {t("overpayment.title")}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

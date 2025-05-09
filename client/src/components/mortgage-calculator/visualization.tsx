@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency, getCurrencySymbol } from "@/lib/utils";
 import { PaymentData } from "@/lib/types";
@@ -16,6 +17,7 @@ interface VisualizationProps {
 }
 
 export default function Visualization({ schedule, totalPrincipal, totalInterest, currency = "USD" }: VisualizationProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'pie' | 'bar'>('pie');
   const pieChartRef = useRef<HTMLCanvasElement>(null);
   const pieChartInstanceRef = useRef<Chart | null>(null);
@@ -186,7 +188,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
     <Card className="bg-white shadow rounded-lg overflow-hidden mb-6">
       <div className="px-6 py-4 border-b" style={{ borderColor: "#E5E7EB" }}>
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-medium" style={{ color: "#111111" }}>Visualizations</h2>
+          <h2 className="text-xl font-medium" style={{ color: "#111111" }}>{t("visualization.title")}</h2>
           <div className="flex gap-4">
             <button 
               onClick={() => setActiveTab('pie')}
