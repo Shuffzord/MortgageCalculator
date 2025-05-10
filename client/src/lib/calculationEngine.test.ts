@@ -150,7 +150,20 @@ describe('Mortgage Calculation Engine', () => {
       console.log('Running applyOverpayment test: reduce loan term');
       const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
       const paymentData = convertScheduleToPaymentData(schedule);
-      const overpaymentResult = await applyOverpayment(paymentData, 10000, 12, 'reduceTerm');
+      const overpaymentResult = await applyOverpayment(
+        paymentData,
+        10000,
+        12,
+        {
+          principal: 100000,
+          interestRatePeriods: [{ startMonth: 1, interestRate: 5 }],
+          loanTerm: 10,
+          overpaymentPlans: [],
+          startDate: new Date(),
+          name: 'Test Loan',
+        },
+        'reduceTerm'
+      );
       expect(overpaymentResult.actualTerm).toBeLessThan(10);
     });
 
@@ -158,7 +171,20 @@ describe('Mortgage Calculation Engine', () => {
       console.log('Running applyOverpayment test: reduce monthly payment');
       const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
       const paymentData = convertScheduleToPaymentData(schedule);
-      const overpaymentResult = await applyOverpayment(paymentData, 10000, 12, 'reducePayment');
+      const overpaymentResult = await applyOverpayment(
+        paymentData,
+        10000,
+        12,
+        {
+          principal: 100000,
+          interestRatePeriods: [{ startMonth: 1, interestRate: 5 }],
+          loanTerm: 10,
+          overpaymentPlans: [],
+          startDate: new Date(),
+          name: 'Test Loan',
+        },
+        'reducePayment'
+      );
       expect(overpaymentResult.monthlyPayment).toBeLessThan(1060.66);
     });
   });

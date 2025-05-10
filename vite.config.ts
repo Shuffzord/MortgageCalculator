@@ -19,6 +19,7 @@ export default defineConfig({
       "@shared": path.resolve(import.meta.dirname, "shared"),
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
+    tsconfig: path.resolve(import.meta.dirname, "tsconfig.json"),
   },
   root: path.resolve(import.meta.dirname, "client"),  build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),

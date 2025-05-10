@@ -11,7 +11,7 @@ import {
 } from "./types";
 import { validateInputs } from "./validation";
 import { calculateMonthlyPayment, generateAmortizationSchedule, roundToCents, formatCurrency } from "./utils";
-import { convertLegacySchedule } from "./mortgage-calculator";
+import { convertLegacySchedule } from "./mortgage-calculator.ts";
 
 /**
  * Calculate monthly payment for decreasing installments model

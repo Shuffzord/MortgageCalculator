@@ -6,7 +6,7 @@ import {
   CalculationResults,
   OverpaymentStrategy
 } from './types';
-import { calculateLoanDetails } from './calculationEngine';
+import { calculateLoanDetails } from './calculationEngine.ts';
 import { roundToCents } from './utils';
 
 /**

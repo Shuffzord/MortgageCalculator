@@ -191,12 +191,20 @@ describe('Overpayment handling', () => {
     const afterPayment = 24;
     
     const result = await engine.applyOverpayment(
-      schedule, 
-      overpaymentAmount, 
-      afterPayment, 
+      schedule,
+      overpaymentAmount,
+      afterPayment,
+      {
+        principal: 100000, // Assuming this is the principal used in createSampleSchedule
+        interestRatePeriods: [{ startMonth: 1, interestRate: 5 }], // Assuming 5% interest rate
+        loanTerm: 10, // Assuming 10 years term
+        overpaymentPlans: [],
+        startDate: new Date(),
+        name: 'Test Loan',
+      },
       'reduceTerm'
     );
-    
+
     // Original total payments would be 120
     expect(result.amortizationSchedule.length).toBeLessThan(120);
     
@@ -221,12 +229,20 @@ describe('Overpayment handling', () => {
     const afterPayment = 24;
     
     const result = engine.applyOverpayment(
-      schedule, 
-      overpaymentAmount, 
-      afterPayment, 
+      schedule,
+      overpaymentAmount,
+      afterPayment,
+      {
+        principal: 100000, // Assuming this is the principal used in createSampleSchedule
+        interestRatePeriods: [{ startMonth: 1, interestRate: 5 }], // Assuming 5% interest rate
+        loanTerm: 10, // Assuming 10 years term
+        overpaymentPlans: [],
+        startDate: new Date(),
+        name: 'Test Loan',
+      },
       'reducePayment'
     );
-    
+
     // Schedule length should remain the same
     expect(result.amortizationSchedule.length).toBe(120);
     
