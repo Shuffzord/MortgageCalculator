@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "Waiting for deployment to propagate..."
           sleep 60
-          DEPLOY_URL=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}")
+          DEPLOY_URL=$(echo "http://www.smarter-loan.com/)
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL)
           if [ $HTTP_STATUS -ne 200 ]; then
             echo "Deployment verification failed! Site returned HTTP $HTTP_STATUS"
