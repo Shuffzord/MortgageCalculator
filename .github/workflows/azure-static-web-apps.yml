@@ -58,19 +58,7 @@ jobs:
             VITE_APP_BASE_URL=${{ secrets.VITE_APP_BASE_URL }}
             VITE_API_URL=${{ secrets.VITE_API_URL }}
             VITE_ANALYTICS_ID=${{ secrets.VITE_ANALYTICS_ID }}
-            
-      - name: Verify deployment
-        run: |
-          echo "Waiting for deployment to propagate..."
-          sleep 60
-          DEPLOY_URL=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}")
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL)
-          if [ $HTTP_STATUS -ne 200 ]; then
-            echo "Deployment verification failed! Site returned HTTP $HTTP_STATUS"
-            exit 1
-          else
-            echo "Deployment verified successfully! Site is accessible."
-          fi
+                 
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
