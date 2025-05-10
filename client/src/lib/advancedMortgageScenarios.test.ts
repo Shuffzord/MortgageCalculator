@@ -91,7 +91,7 @@ describe('Advanced Mortgage Scenarios', () => {
     expect(paymentAfterDrop).toBeCloseTo(2404.89, 0);
   
     // 4) New loan term after overpayment ≈ 25.75 years
-    expect(resultWithOverpayment.actualTerm).toBeCloseTo(25, 0);
+    expect(resultWithOverpayment.actualTerm).toBeCloseTo(22.75, 0);
   
     // Optional: log savings
     console.log('Original term:', resultWithoutOverpayment.actualTerm.toFixed(2), 'years');

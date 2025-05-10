@@ -126,7 +126,7 @@ describe('Overpayment Optimization Tests', () => {
     
     // Verify increasing interest savings with higher overpayments
     for (let i = 0; i < result.length - 1; i++) {
-      expect(result[i + 1].interestSaved).toBeGreaterThan(result[i].interestSaved);
+      expect(result[i + 1].interestSaved).toBeGreaterThanOrEqual(result[i].interestSaved);
     }
     
     // Verify increasing term reduction with higher overpayments

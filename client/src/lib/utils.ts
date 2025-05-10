@@ -319,3 +319,100 @@ export function getCurrencySymbol(code: string): string {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+/**
+ * Calculate a schedule with reduced term (same payment amount)
+ */
+export function calculateReducedTermSchedule(
+  balance: number,
+  interestRatePeriods: { startMonth: number; interestRate: number; }[],
+  monthlyPayment: number,
+  startPaymentNumber: number): PaymentData[] {
+  const result: PaymentData[] = [];
+  let remainingBalance = balance;
+  let payment = startPaymentNumber;
+  while (remainingBalance > 0.01) {
+    payment++;
+    // Determine the interest rate for the current payment
+    let currentInterestRate = 0;
+    for (const period of interestRatePeriods) {
+      if (payment >= period.startMonth) {
+        currentInterestRate = period.interestRate;
+      }
+    }
+    const monthlyRate = currentInterestRate / 100 / 12;
+    const interestPayment = roundToCents(remainingBalance * monthlyRate);
+    let principalPayment = roundToCents(monthlyPayment - interestPayment);
+    let currentPayment = monthlyPayment;
+    if (remainingBalance < principalPayment) {
+      principalPayment = remainingBalance;
+      currentPayment = roundToCents(principalPayment + interestPayment);
+      remainingBalance = 0;
+    } else {
+      remainingBalance = roundToCents(remainingBalance - principalPayment);
+    }
+    result.push({
+      payment,
+      monthlyPayment: currentPayment,
+      principalPayment,
+      interestPayment,
+      balance: remainingBalance,
+      isOverpayment: false,
+      overpaymentAmount: 0,
+      totalInterest: 0,
+      totalPayment: currentPayment
+    });
+  }
+  return result;
+}
+
+/**
+ * Calculate a schedule with reduced payment (same term)
+ */
+export function calculateReducedPaymentSchedule(
+  balance: number,
+  interestRatePeriods: { startMonth: number; interestRate: number; }[],
+  remainingMonths: number,
+  originalPayment: number,
+  startPaymentNumber: number): PaymentData[] {
+  const schedule: PaymentData[] = [];
+  let remainingBalance = balance;
+  for (let i = 0; i < remainingMonths && remainingBalance > 0.01; i++) {
+    const payment = startPaymentNumber + i;
+    // Determine the interest rate for the current payment
+    let currentInterestRate = 0;
+    for (const period of interestRatePeriods) {
+      if (payment >= period.startMonth) {
+        currentInterestRate = period.interestRate;
+      }
+    }
+    const monthlyRate = currentInterestRate / 100 / 12;
+    const newMonthlyPayment = calculateMonthlyPayment(
+      remainingBalance,
+      monthlyRate,
+      remainingMonths
+    );
+    const interestPayment = roundToCents(remainingBalance * monthlyRate);
+    let principalPayment = roundToCents(newMonthlyPayment - interestPayment);
+    let currentPayment = newMonthlyPayment;
+    if (remainingBalance < principalPayment) {
+      principalPayment = remainingBalance;
+      currentPayment = roundToCents(principalPayment + interestPayment);
+      remainingBalance = 0;
+    } else {
+      remainingBalance = roundToCents(remainingBalance - principalPayment);
+    }
+    schedule.push({
+      payment,
+      monthlyPayment: currentPayment,
+      principalPayment,
+      interestPayment,
+      balance: remainingBalance,
+      isOverpayment: false,
+      overpaymentAmount: 0,
+      totalInterest: 0,
+      totalPayment: currentPayment
+    });
+  }
+  return schedule;
+}
