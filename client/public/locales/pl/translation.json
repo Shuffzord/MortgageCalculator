@@ -124,7 +124,9 @@
     "monthlyOverpayment": "Miesięczna Nadpłata",
     "oneTimePaymentAt": "jednorazowa płatność w miesiącu",
     "startingAtMonth": "począwszy od miesiąca",
-    "untilMonth": "do miesiąca"
+    "untilMonth": "do miesiąca",
+    "impactTitle": "Wpływ różnych kwot nadpłaty",
+    "applyStrategy": "Zastosuj Strategię"
   },
   "summary": {
     "title": "Podsumowanie Kredytu",

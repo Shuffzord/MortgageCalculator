@@ -136,7 +136,7 @@ export default function OverpaymentOptimizationPanel({
             },
             ticks: {
               callback: function(value) {
-                return formatCurrency(value as number, 'en-US', loanDetails.currency);
+                return formatCurrency(value as number, undefined, loanDetails.currency);
               }
             }
           }
@@ -146,7 +146,7 @@ export default function OverpaymentOptimizationPanel({
             callbacks: {
               label: function(context) {
                 const value = context.raw as number;
-                return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
+                return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
               }
             }
           },
@@ -199,7 +199,7 @@ export default function OverpaymentOptimizationPanel({
               callback: function(value, index) {
                 // Format as currency for interest saved, as years for term reduction
                 if (index === 0) {
-                  return formatCurrency(value as number, 'en-US', loanDetails.currency);
+                  return formatCurrency(value as number, undefined, loanDetails.currency);
                 } else {
                   return value + ' ' + t('form.years', 'years');
                 }
@@ -216,7 +216,7 @@ export default function OverpaymentOptimizationPanel({
                 const dataIndex = context.dataIndex;
                 
                 if (dataIndex === 0) {
-                  return context.dataset.label + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
+                  return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
                 } else {
                   return context.dataset.label + ': ' + value.toFixed(2) + ' ' + t('form.years', 'years');
                 }
@@ -243,7 +243,7 @@ export default function OverpaymentOptimizationPanel({
     const newChart = new Chart(impactChartRef.current, {
       type: 'line',
       data: {
-        labels: impactData.map(d => formatCurrency(d.amount, 'en-US', loanDetails.currency)),
+        labels: impactData.map(d => formatCurrency(d.amount, undefined, loanDetails.currency)),
         datasets: [
           {
             label: t('overpayment.interestSaved', 'Interest Saved'),
@@ -277,7 +277,7 @@ export default function OverpaymentOptimizationPanel({
             },
             ticks: {
               callback: function(value) {
-                return formatCurrency(value as number, 'en-US', loanDetails.currency);
+                return formatCurrency(value as number, undefined, loanDetails.currency);
               }
             }
           },
@@ -302,7 +302,7 @@ export default function OverpaymentOptimizationPanel({
                 const datasetIndex = context.datasetIndex;
                 
                 if (datasetIndex === 0) {
-                  return t('overpayment.interestSaved', 'Interest Saved') + ': ' + formatCurrency(value, 'en-US', loanDetails.currency);
+                  return t('overpayment.interestSaved', 'Interest Saved') + ': ' + formatCurrency(value, undefined, loanDetails.currency);
                 } else {
                   return t('overpayment.termReduction', 'Term Reduction') + ': ' + value.toFixed(2) + ' ' + t('form.years', 'years');
                 }
@@ -461,7 +461,7 @@ export default function OverpaymentOptimizationPanel({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-600">{t('overpayment.interestSaved', 'Interest Saved')}:</p>
-                      <p className="font-medium">{formatCurrency(result.interestSaved, 'en-US', loanDetails.currency)}</p>
+                      <p className="font-medium">{formatCurrency(result.interestSaved, undefined, loanDetails.currency)}</p>
                     </div>
                     
                     <div>
@@ -477,13 +477,13 @@ export default function OverpaymentOptimizationPanel({
                         <li key={index} className="text-sm">
                           {op.isRecurring ? (
                             <span>
-                              {formatCurrency(op.amount, 'en-US', loanDetails.currency)} {t(`overpayment.${op.frequency}`, op.frequency)} {t('overpayment.payment', 'overpayment')}
+                              {formatCurrency(op.amount, undefined, loanDetails.currency)} {t(`overpayment.${op.frequency}`, op.frequency)} {t('overpayment.payment', 'overpayment')}
                               {(op.startMonth ?? 0) > 1 ? ` ${t('overpayment.startingAtMonth', 'starting at month')} ${op.startMonth}` : ''}
                               {op.endMonth ? ` ${t('overpayment.untilMonth', 'until month')} ${op.endMonth}` : ''}
                             </span>
                           ) : (
                             <span>
-                              {formatCurrency(op.amount, 'en-US', loanDetails.currency)} {t('overpayment.oneTimePaymentAt', 'one-time payment at month')} {op.startMonth ?? 1}
+                              {formatCurrency(op.amount, undefined, loanDetails.currency)} {t('overpayment.oneTimePaymentAt', 'one-time payment at month')} {op.startMonth ?? 1}
                             </span>
                           )}
                         </li>
@@ -555,13 +555,13 @@ export default function OverpaymentOptimizationPanel({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm font-medium">{t('overpayment.lumpSumStrategy', 'Lump Sum Strategy')}:</p>
-                      <p className="text-sm">{t('overpayment.interestSaved', 'Interest Saved')}: {formatCurrency(comparisonData.lumpSum.interestSaved, 'en-US', loanDetails.currency)}</p>
+                      <p className="text-sm">{t('overpayment.interestSaved', 'Interest Saved')}: {formatCurrency(comparisonData.lumpSum.interestSaved, undefined, loanDetails.currency)}</p>
                       <p className="text-sm">{t('overpayment.termReduction', 'Term Reduction')}: {comparisonData.lumpSum.termReduction.toFixed(2)} {t('form.years', 'years')}</p>
                     </div>
                     
                     <div>
                       <p className="text-sm font-medium">{t('overpayment.monthlyStrategy', 'Monthly Overpayment Strategy')}:</p>
-                      <p className="text-sm">{t('overpayment.interestSaved', 'Interest Saved')}: {formatCurrency(comparisonData.monthly.interestSaved, 'en-US', loanDetails.currency)}</p>
+                      <p className="text-sm">{t('overpayment.interestSaved', 'Interest Saved')}: {formatCurrency(comparisonData.monthly.interestSaved, undefined, loanDetails.currency)}</p>
                       <p className="text-sm">{t('overpayment.termReduction', 'Term Reduction')}: {comparisonData.monthly.termReduction.toFixed(2)} {t('form.years', 'years')}</p>
                     </div>
                   </div>
@@ -629,8 +629,8 @@ export default function OverpaymentOptimizationPanel({
                       <tbody>
                         {impactData.map((data, index) => (
                           <tr key={index} className="border-b border-blue-100">
-                            <td className="p-2">{formatCurrency(data.amount, 'en-US', loanDetails.currency)}</td>
-                            <td className="p-2 text-right">{formatCurrency(data.interestSaved, 'en-US', loanDetails.currency)}</td>
+                            <td className="p-2">{formatCurrency(data.amount, undefined, loanDetails.currency)}</td>
+                            <td className="p-2 text-right">{formatCurrency(data.interestSaved, undefined, loanDetails.currency)}</td>
                             <td className="p-2 text-right">{data.termReduction.toFixed(2)} {t('form.years', 'years')}</td>
                           </tr>
                         ))}

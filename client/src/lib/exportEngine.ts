@@ -16,16 +16,16 @@ export function exportToCSV(
   // Add summary
   if (options.includeSummary) {
     csv += 'Loan Summary\n';
-    csv += `Principal,${formatCurrency(loanDetails.principal, 'en-US', currency)}\n`;
+    csv += `Principal,${formatCurrency(loanDetails.principal, undefined, currency)}\n`;
     csv += `Interest Rate,${loanDetails.interestRatePeriods[0].interestRate}%\n`;
     csv += `Loan Term,${loanDetails.loanTerm} years\n`;
-    csv += `Monthly Payment,${formatCurrency(results.monthlyPayment, 'en-US', currency)}\n`;
-    csv += `Total Interest,${formatCurrency(results.totalInterest, 'en-US', currency)}\n`;
-    csv += `Total Cost,${formatCurrency(loanDetails.principal + results.totalInterest, 'en-US', currency)}\n`;
+    csv += `Monthly Payment,${formatCurrency(results.monthlyPayment, undefined, currency)}\n`;
+    csv += `Total Interest,${formatCurrency(results.totalInterest, undefined, currency)}\n`;
+    csv += `Total Cost,${formatCurrency(loanDetails.principal + results.totalInterest, undefined, currency)}\n`;
     
     if (results.oneTimeFees || results.recurringFees) {
-      csv += `One-time Fees,${formatCurrency(results.oneTimeFees || 0, 'en-US', currency)}\n`;
-      csv += `Recurring Fees,${formatCurrency(results.recurringFees || 0, 'en-US', currency)}\n`;
+      csv += `One-time Fees,${formatCurrency(results.oneTimeFees || 0, undefined, currency)}\n`;
+      csv += `Recurring Fees,${formatCurrency(results.recurringFees || 0, undefined, currency)}\n`;
       csv += `APR,${results.apr || 0}%\n`;
     }
     
@@ -76,13 +76,13 @@ export function exportToCSV(
         switch(col) {
           case 'payment': return payment.payment;
           case 'date': return date;
-          case 'monthlyPayment': return formatCurrency(payment.monthlyPayment, 'en-US', currency);
-          case 'principalPayment': return formatCurrency(payment.principalPayment, 'en-US', currency);
-          case 'interestPayment': return formatCurrency(payment.interestPayment, 'en-US', currency);
-          case 'balance': return formatCurrency(payment.balance, 'en-US', currency);
-          case 'totalInterest': return formatCurrency(payment.totalInterest, 'en-US', currency);
-          case 'overpaymentAmount': return formatCurrency(payment.overpaymentAmount || 0, 'en-US', currency);
-          case 'fees': return formatCurrency(payment.fees || 0, 'en-US', currency);
+          case 'monthlyPayment': return formatCurrency(payment.monthlyPayment, undefined, currency);
+          case 'principalPayment': return formatCurrency(payment.principalPayment, undefined, currency);
+          case 'interestPayment': return formatCurrency(payment.interestPayment, undefined, currency);
+          case 'balance': return formatCurrency(payment.balance, undefined, currency);
+          case 'totalInterest': return formatCurrency(payment.totalInterest, undefined, currency);
+          case 'overpaymentAmount': return formatCurrency(payment.overpaymentAmount || 0, undefined, currency);
+          case 'fees': return formatCurrency(payment.fees || 0, undefined, currency);
           default: return '';
         }
       });
@@ -103,10 +103,10 @@ export function exportToCSV(
         (scenario.results.oneTimeFees || 0) + 
         (scenario.results.recurringFees || 0);
         
-      csv += `${scenario.name},${formatCurrency(scenario.results.monthlyPayment, 'en-US', scenarioCurrency)},`;
-      csv += `${formatCurrency(scenario.results.totalInterest, 'en-US', scenarioCurrency)},`;
+      csv += `${scenario.name},${formatCurrency(scenario.results.monthlyPayment, undefined, scenarioCurrency)},`;
+      csv += `${formatCurrency(scenario.results.totalInterest, undefined, scenarioCurrency)},`;
       csv += `${scenario.results.actualTerm},`;
-      csv += `${formatCurrency(totalCost, 'en-US', scenarioCurrency)}\n`;
+      csv += `${formatCurrency(totalCost, undefined, scenarioCurrency)}\n`;
     });
     
     if (comparisonData.differences.length > 0) {
@@ -114,10 +114,10 @@ export function exportToCSV(
       csv += 'Monthly Payment Difference,Total Interest Difference,Term Difference,Total Cost Difference\n';
       
       const diff = comparisonData.differences[0];
-      csv += `${formatCurrency(diff.monthlyPaymentDiff, 'en-US', currency)},`;
-      csv += `${formatCurrency(diff.totalInterestDiff, 'en-US', currency)},`;
+      csv += `${formatCurrency(diff.monthlyPaymentDiff, undefined, currency)},`;
+      csv += `${formatCurrency(diff.totalInterestDiff, undefined, currency)},`;
       csv += `${diff.termDiff},`;
-      csv += `${formatCurrency(diff.totalCostDiff, 'en-US', currency)}\n`;
+      csv += `${formatCurrency(diff.totalCostDiff, undefined, currency)}\n`;
     }
     
     if (comparisonData.breakEvenPoint) {
@@ -147,9 +147,9 @@ export function exportToJSON(
       originalTerm: results.originalTerm,
       actualTerm: results.actualTerm,
       formattedValues: {
-        monthlyPayment: formatCurrency(results.monthlyPayment, 'en-US', currency),
-        totalInterest: formatCurrency(results.totalInterest, 'en-US', currency),
-        totalCost: formatCurrency(loanDetails.principal + results.totalInterest, 'en-US', currency)
+        monthlyPayment: formatCurrency(results.monthlyPayment, undefined, currency),
+        totalInterest: formatCurrency(results.totalInterest, undefined, currency),
+        totalCost: formatCurrency(loanDetails.principal + results.totalInterest, undefined, currency)
       }
     }
   };
@@ -158,8 +158,8 @@ export function exportToJSON(
     exportData.summary.oneTimeFees = results.oneTimeFees || 0;
     exportData.summary.recurringFees = results.recurringFees || 0;
     exportData.summary.apr = results.apr || 0;
-    exportData.summary.formattedValues.oneTimeFees = formatCurrency(results.oneTimeFees || 0, 'en-US', currency);
-    exportData.summary.formattedValues.recurringFees = formatCurrency(results.recurringFees || 0, 'en-US', currency);
+    exportData.summary.formattedValues.oneTimeFees = formatCurrency(results.oneTimeFees || 0, undefined, currency);
+    exportData.summary.formattedValues.recurringFees = formatCurrency(results.recurringFees || 0, undefined, currency);
   }
   
   if (options.includeAmortizationSchedule) {
@@ -176,13 +176,13 @@ export function exportToJSON(
     scheduleToExport = scheduleToExport.map(payment => ({
       ...payment,
       formattedValues: {
-        monthlyPayment: formatCurrency(payment.monthlyPayment, 'en-US', currency),
-        principalPayment: formatCurrency(payment.principalPayment, 'en-US', currency),
-        interestPayment: formatCurrency(payment.interestPayment, 'en-US', currency),
-        balance: formatCurrency(payment.balance, 'en-US', currency),
-        totalInterest: formatCurrency(payment.totalInterest, 'en-US', currency),
-        overpaymentAmount: payment.overpaymentAmount ? formatCurrency(payment.overpaymentAmount, 'en-US', currency) : '',
-        fees: payment.fees ? formatCurrency(payment.fees, 'en-US', currency) : ''
+        monthlyPayment: formatCurrency(payment.monthlyPayment, undefined, currency),
+        principalPayment: formatCurrency(payment.principalPayment, undefined, currency),
+        interestPayment: formatCurrency(payment.interestPayment, undefined, currency),
+        balance: formatCurrency(payment.balance, undefined, currency),
+        totalInterest: formatCurrency(payment.totalInterest, undefined, currency),
+        overpaymentAmount: payment.overpaymentAmount ? formatCurrency(payment.overpaymentAmount, undefined, currency) : '',
+        fees: payment.fees ? formatCurrency(payment.fees, undefined, currency) : ''
       }
     }));
     
@@ -215,14 +215,14 @@ export function exportToJSON(
       scenarios: comparisonData.scenarios.map(scenario => ({
         ...scenario,
         formattedValues: {
-          monthlyPayment: formatCurrency(scenario.results.monthlyPayment, 'en-US', scenario.loanDetails.currency || currency),
-          totalInterest: formatCurrency(scenario.results.totalInterest, 'en-US', scenario.loanDetails.currency || currency),
+          monthlyPayment: formatCurrency(scenario.results.monthlyPayment, undefined, scenario.loanDetails.currency || currency),
+          totalInterest: formatCurrency(scenario.results.totalInterest, undefined, scenario.loanDetails.currency || currency),
           totalCost: formatCurrency(
             scenario.loanDetails.principal + 
             scenario.results.totalInterest + 
             (scenario.results.oneTimeFees || 0) + 
             (scenario.results.recurringFees || 0),
-            'en-US',
+            undefined,
             scenario.loanDetails.currency || currency
           )
         }
@@ -249,12 +249,12 @@ export async function exportToPDF(
   
   if (options.includeSummary) {
     content += 'LOAN SUMMARY\n\n';
-    content += `Principal: ${formatCurrency(loanDetails.principal, 'en-US', currency)}\n`;
+    content += `Principal: ${formatCurrency(loanDetails.principal, undefined, currency)}\n`;
     content += `Interest Rate: ${loanDetails.interestRatePeriods[0].interestRate}%\n`;
     content += `Loan Term: ${loanDetails.loanTerm} years\n`;
-    content += `Monthly Payment: ${formatCurrency(results.monthlyPayment, 'en-US', currency)}\n`;
-    content += `Total Interest: ${formatCurrency(results.totalInterest, 'en-US', currency)}\n`;
-    content += `Total Cost: ${formatCurrency(loanDetails.principal + results.totalInterest, 'en-US', currency)}\n\n`;
+    content += `Monthly Payment: ${formatCurrency(results.monthlyPayment, undefined, currency)}\n`;
+    content += `Total Interest: ${formatCurrency(results.totalInterest, undefined, currency)}\n`;
+    content += `Total Cost: ${formatCurrency(loanDetails.principal + results.totalInterest, undefined, currency)}\n\n`;
   }
   
   if (options.includeAmortizationSchedule) {
@@ -279,9 +279,9 @@ export async function exportToPDF(
         payment.paymentDate.toISOString().split('T')[0] : 
         'N/A';
       
-      content += `${payment.payment} | ${date} | ${formatCurrency(payment.monthlyPayment, 'en-US', currency)} | `;
-      content += `${formatCurrency(payment.principalPayment, 'en-US', currency)} | ${formatCurrency(payment.interestPayment, 'en-US', currency)} | `;
-      content += `${formatCurrency(payment.balance, 'en-US', currency)} | ${formatCurrency(payment.totalInterest, 'en-US', currency)}\n`;
+      content += `${payment.payment} | ${date} | ${formatCurrency(payment.monthlyPayment, undefined, currency)} | `;
+      content += `${formatCurrency(payment.principalPayment, undefined, currency)} | ${formatCurrency(payment.interestPayment, undefined, currency)} | `;
+      content += `${formatCurrency(payment.balance, undefined, currency)} | ${formatCurrency(payment.totalInterest, undefined, currency)}\n`;
     });
     
     if (scheduleToExport.length > 50) {
@@ -301,9 +301,9 @@ export async function exportToPDF(
         (scenario.results.oneTimeFees || 0) + 
         (scenario.results.recurringFees || 0);
         
-      content += `${scenario.name} | ${formatCurrency(scenario.results.monthlyPayment, 'en-US', scenarioCurrency)} | `;
-      content += `${formatCurrency(scenario.results.totalInterest, 'en-US', scenarioCurrency)} | ${scenario.results.actualTerm} years | `;
-      content += `${formatCurrency(totalCost, 'en-US', scenarioCurrency)}\n`;
+      content += `${scenario.name} | ${formatCurrency(scenario.results.monthlyPayment, undefined, scenarioCurrency)} | `;
+      content += `${formatCurrency(scenario.results.totalInterest, undefined, scenarioCurrency)} | ${scenario.results.actualTerm} years | `;
+      content += `${formatCurrency(totalCost, undefined, scenarioCurrency)}\n`;
     });
   }
   

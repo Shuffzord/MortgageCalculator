@@ -108,7 +108,7 @@ export default function ScenarioComparisonComponent({
                 },
                 ticks: {
                   callback: function(value) {
-                    return formatCurrency(value as number, 'en-US', scenario1.loanDetails.currency || 'USD');
+                    return formatCurrency(value as number, undefined, scenario1.loanDetails.currency || 'USD');
                   }
                 }
               },
@@ -131,7 +131,7 @@ export default function ScenarioComparisonComponent({
                 callbacks: {
                   label: function(context) {
                     const value = context.raw as number;
-                    return `Difference: ${formatCurrency(value, 'en-US', scenario1.loanDetails.currency || 'USD')}`;
+                    return `Difference: ${formatCurrency(value, undefined, scenario1.loanDetails.currency || 'USD')}`;
                   },
                   title: function(context) {
                     const index = context[0].dataIndex;
@@ -192,7 +192,7 @@ export default function ScenarioComparisonComponent({
                 },
                 ticks: {
                   callback: function(value) {
-                    return formatCurrency(value as number, 'en-US', scenario1.loanDetails.currency || 'USD');
+                    return formatCurrency(value as number, undefined, scenario1.loanDetails.currency || 'USD');
                   }
                 }
               },
@@ -215,7 +215,7 @@ export default function ScenarioComparisonComponent({
                 callbacks: {
                   label: function(context) {
                     const value = context.raw as number;
-                    return `Difference: ${formatCurrency(value, 'en-US', scenario1.loanDetails.currency || 'USD')}`;
+                    return `Difference: ${formatCurrency(value, undefined, scenario1.loanDetails.currency || 'USD')}`;
                   },
                   title: function(context) {
                     const index = context[0].dataIndex;
@@ -356,14 +356,14 @@ export default function ScenarioComparisonComponent({
                           <td className="p-2 text-right">
                             {formatCurrency(
                               scenario.results.monthlyPayment, 
-                              'en-US', 
+                              undefined,
                               scenario.loanDetails.currency || 'USD'
                             )}
                           </td>
                           <td className="p-2 text-right">
                             {formatCurrency(
                               scenario.results.totalInterest, 
-                              'en-US', 
+                              undefined,
                               scenario.loanDetails.currency || 'USD'
                             )}
                           </td>
@@ -373,7 +373,7 @@ export default function ScenarioComparisonComponent({
                           <td className="p-2 text-right">
                             {formatCurrency(
                               totalCost, 
-                              'en-US', 
+                              undefined,
                               scenario.loanDetails.currency || 'USD'
                             )}
                           </td>
@@ -395,7 +395,7 @@ export default function ScenarioComparisonComponent({
                       <p className="font-medium">
                         {formatCurrency(
                           comparison.differences[0].monthlyPaymentDiff, 
-                          'en-US', 
+                          undefined,
                           comparison.scenarios[0].loanDetails.currency || 'USD'
                         )}
                       </p>
@@ -406,7 +406,7 @@ export default function ScenarioComparisonComponent({
                       <p className="font-medium">
                         {formatCurrency(
                           comparison.differences[0].totalInterestDiff, 
-                          'en-US', 
+                          undefined,
                           comparison.scenarios[0].loanDetails.currency || 'USD'
                         )}
                       </p>
@@ -424,7 +424,7 @@ export default function ScenarioComparisonComponent({
                       <p className="font-medium">
                         {formatCurrency(
                           comparison.differences[0].totalCostDiff, 
-                          'en-US', 
+                          undefined,
                           comparison.scenarios[0].loanDetails.currency || 'USD'
                         )}
                       </p>

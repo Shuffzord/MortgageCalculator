@@ -101,20 +101,20 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
                       {item.paymentDate ? formatDate(item.paymentDate) : getPaymentDate(item.payment)}
                     </TableCell>
                     <TableCell className="text-sm font-medium text-gray-900 financial-figure">
-                      {formatCurrency(item.monthlyPayment, 'en-US', currency)}
+                      {formatCurrency(item.monthlyPayment, undefined, currency)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500 financial-figure">
-                      {formatCurrency(item.principalPayment, 'en-US', currency)}
+                      {formatCurrency(item.principalPayment, undefined, currency)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500 financial-figure">
-                      {formatCurrency(item.interestPayment, 'en-US', currency)}
+                      {formatCurrency(item.interestPayment, undefined, currency)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-900 financial-figure">
-                      {formatCurrency(item.balance, 'en-US', currency)}
+                      {formatCurrency(item.balance, undefined, currency)}
                     </TableCell>
                     {schedule.some(item => item.overpaymentAmount > 0) && (
                       <TableCell className="text-sm text-green-600 financial-figure">
-                        {item.overpaymentAmount > 0 ? formatCurrency(item.overpaymentAmount, 'en-US', currency) : '-'}
+                        {item.overpaymentAmount > 0 ? formatCurrency(item.overpaymentAmount, undefined, currency) : '-'}
                       </TableCell>
                     )}
                   </TableRow>

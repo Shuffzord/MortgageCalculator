@@ -268,10 +268,14 @@ export function generateAmortizationSchedule(
  */
 export function formatCurrency(
   value: number,
-  locale: string = "en-US",
+  locale?: string,
   currency: string = "USD",
 ): string {
-  return new Intl.NumberFormat(locale, {
+  // Use the current language from i18n if locale is not provided
+  const currentLocale = locale || (i18n.language === 'pl' ? 'pl-PL' :
+                                   i18n.language === 'es' ? 'es-ES' : 'en-US');
+  
+  return new Intl.NumberFormat(currentLocale, {
     style: "currency",
     currency: currency,
     minimumFractionDigits: 2,

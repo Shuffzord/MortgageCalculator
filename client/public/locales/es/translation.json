@@ -123,7 +123,9 @@
     "monthlyOverpayment": "Pago Adicional Mensual",
     "oneTimePaymentAt": "pago único en el mes",
     "startingAtMonth": "comenzando en el mes",
-    "untilMonth": "hasta el mes"
+    "untilMonth": "hasta el mes",
+    "impactTitle": "Impacto de los diferentes montos de sobrepago",
+    "applyStrategy": "Aplicar Estrategia"
   },
   "summary": {
     "title": "Resumen del Préstamo",

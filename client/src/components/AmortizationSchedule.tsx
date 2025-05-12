@@ -47,16 +47,16 @@ export default function AmortizationSchedule({ yearlyData, currency = 'USD' }: A
                 <tr key={year.year} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{year.year}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.payment, 'en-US', currency)}
+                    {formatCurrency(year.payment, undefined, currency)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.principal, 'en-US', currency)}
+                    {formatCurrency(year.principal, undefined, currency)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.interest, 'en-US', currency)}
+                    {formatCurrency(year.interest, undefined, currency)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.balance, 'en-US', currency)}
+                    {formatCurrency(year.balance, undefined, currency)}
                   </td>
                 </tr>
               ))}

@@ -83,7 +83,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
                 const value = context.raw as number;
                 const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
                 const percentage = Math.round(value / total * 100);
-                return `${label}: ${formatCurrency(value, 'en-US', currency)} (${percentage}%)`;
+                return `${label}: ${formatCurrency(value, undefined, currency)} (${percentage}%)`;
               }
             }
           }
@@ -136,7 +136,7 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
           tooltip: {
             callbacks: {
               label: function(context) {
-                return `${context.dataset.label}: ${formatCurrency(context.raw as number, 'en-US', currency)}`;
+                return `${context.dataset.label}: ${formatCurrency(context.raw as number, undefined, currency)}`;
               }
             }
           }
@@ -158,9 +158,9 @@ export default function Visualization({ schedule, totalPrincipal, totalInterest,
             ticks: {
               callback: function(value) {
                 if ((value as number) >= 1000) {
-                  return formatCurrency((value as number) / 1000, 'en-US', currency) + 'k';
+                  return formatCurrency((value as number) / 1000, undefined, currency) + 'k';
                 }
-                return formatCurrency(value as number, 'en-US', currency);
+                return formatCurrency(value as number, undefined, currency);
               }
             }
           }

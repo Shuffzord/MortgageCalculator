@@ -59,7 +59,7 @@ export default function SavedCalculationsModal({
                 <div>
                   <p className="text-sm font-medium text-gray-900">{calc.name}</p>
                   <p className="text-xs text-gray-500">
-                    {formatCurrency(calc.principal, 'en-US', calc.currency || 'USD')} at {calc.interestRatePeriods?.[0]?.interestRate || 0}% for {calc.loanTerm} years
+                    {formatCurrency(calc.principal, undefined, calc.currency || 'USD')} at {calc.interestRatePeriods?.[0]?.interestRate || 0}% for {calc.loanTerm} years
                   </p>
                 </div>
                 <Button

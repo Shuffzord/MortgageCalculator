@@ -119,7 +119,9 @@
     "monthlyOverpayment": "Monthly Overpayment",
     "oneTimePaymentAt": "one-time payment at month",
     "startingAtMonth": "starting at month",
-    "untilMonth": "until month"
+    "untilMonth": "until month",
+    "impactTitle": "Impact of Different Overpayment Amounts",
+    "applyStrategy": "Apply Strategy"
   },
   "summary": {
     "title": "Loan Summary",
