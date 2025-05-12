@@ -336,6 +336,32 @@ export default function OverpaymentOptimizationPanel({
             </Tooltip>
           </TooltipProvider>
         </h2>
+
+        {/* Current Loan Settings Summary */}
+        <div className="bg-gray-50 p-3 rounded-md mb-4 text-sm">
+          <h3 className="font-medium mb-2">{t('overpayment.currentLoanSettings', 'Current Loan Settings')}</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <span className="text-gray-600">{t('form.loanAmount')}:</span>{' '}
+              <span className="font-medium">{formatCurrency(loanDetails.principal, undefined, loanDetails.currency)}</span>
+            </div>
+            <div>
+              <span className="text-gray-600">{t('form.loanTerm')}:</span>{' '}
+              <span className="font-medium">{loanDetails.loanTerm} {t('form.years')}</span>
+            </div>
+            <div>
+              <span className="text-gray-600">{t('form.interestRate')}:</span>{' '}
+              <span className="font-medium">
+                {loanDetails.interestRatePeriods[0]?.interestRate}%
+                {loanDetails.interestRatePeriods.length > 1 ? ' (variable)' : ''}
+              </span>
+            </div>
+            <div>
+              <span className="text-gray-600">{t('form.startDate')}:</span>{' '}
+              <span className="font-medium">{loanDetails.startDate.toLocaleDateString()}</span>
+            </div>
+          </div>
+        </div>
         
         <div className="flex items-center justify-between mb-4">
           <button 
@@ -469,6 +495,39 @@ export default function OverpaymentOptimizationPanel({
                       <p className="font-medium">{result.timeOrPaymentSaved.toFixed(2)} {t('form.years', 'years')}</p>
                     </div>
                   </div>
+
+                  {/* Debug Information */}
+                  <details className="mt-3 text-xs border-t border-blue-100 pt-2">
+                    <summary className="cursor-pointer text-blue-600 hover:text-blue-800">
+                      {t('overpayment.showDetails', 'Show Calculation Details')}
+                    </summary>
+                    <div className="mt-2 p-2 bg-white rounded border border-blue-100">
+                      <p className="font-medium mb-1">{t('overpayment.strategyComparison', 'Strategy Comparison')}:</p>
+                      <table className="w-full text-left">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="py-1 pr-2">{t('overpayment.strategy', 'Strategy')}</th>
+                            <th className="py-1 pr-2">{t('overpayment.interestSaved', 'Interest Saved')}</th>
+                            <th className="py-1 pr-2">{t('overpayment.termReduction', 'Term Reduction')}</th>
+                            <th className="py-1">{t('overpayment.effectiveness', 'Effectiveness')}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {result.allStrategies && result.allStrategies.map((strategy, index) => (
+                            <tr key={index} className={strategy.isBest ? "bg-blue-50" : ""}>
+                              <td className="py-1 pr-2">{strategy.name}</td>
+                              <td className="py-1 pr-2">{formatCurrency(strategy.interestSaved, undefined, loanDetails.currency)}</td>
+                              <td className="py-1 pr-2">{strategy.termReduction.toFixed(2)} {t('form.years', 'years')}</td>
+                              <td className="py-1">{strategy.effectivenessRatio.toFixed(4)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <p className="mt-2 text-gray-600">
+                        {t('overpayment.optimizationNote', 'Note: The strategy with the highest value for your selected optimization goal is chosen.')}
+                      </p>
+                    </div>
+                  </details>
                   
                   <div className="mt-4">
                     <p className="text-sm text-gray-600">{t('overpayment.recommendedStrategy', 'Recommended Strategy')}:</p>

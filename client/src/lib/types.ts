@@ -155,6 +155,14 @@ export interface ScenarioComparisonOptions {
 /**
  * Types for Overpayment Optimization feature
  */
+export interface StrategyResult {
+  name: string;
+  interestSaved: number;
+  termReduction: number;
+  effectivenessRatio: number;
+  isBest: boolean;
+}
+
 export interface OptimizationResult {
   optimizedOverpayments: OverpaymentDetails[];
   interestSaved: number;
@@ -166,6 +174,7 @@ export interface OptimizationResult {
     originalData: number[];
     optimizedData: number[];
   };
+  allStrategies?: StrategyResult[];
 }
 
 export interface OptimizationParameters {

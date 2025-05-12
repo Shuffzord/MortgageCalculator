@@ -118,7 +118,6 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
       <div className="bg-warning text-warning-foreground text-center py-2 sm:hidden">
         {t('app.desktopOptimized')}
       </div>
-
       <main className="page-content">
         <div className="content-card">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -169,7 +168,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
                 </div>
               </section>
               
-              <section className="section-container">
+              {/* <section className="section-container">
                 <h2 className="section-title">{t('calculator.optimization')}</h2>
                 <div className="panel-item">
                   <OverpaymentOptimizationPanel
@@ -184,7 +183,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
                     }}
                   />
                 </div>
-              </section>
+              </section> */}
             </div>
           </div>
         </div>
