@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { PaymentData, OverpaymentDetails, RepaymentModel } from "./types";
+import { format } from "date-fns";
+import { enUS, es, pl } from "date-fns/locale";
+import i18n from "@/i18n";
 
 export const CURRENCIES = [
   { code: "USD", symbol: "$", name: "US Dollar" },
@@ -299,11 +302,23 @@ export function formatTimePeriod(months: number): string {
 }
 
 /**
- * Format date to a human-readable string
+ * Format date to a human-readable string with language-specific formatting
  * @param date Date to format
- * @returns Formatted date string (e.g., "Jan 15, 2025")
+ * @param formatStr Format string (default: "PPP" for long date format)
+ * @returns Formatted date string based on the current language
  */
-export function formatDate(date: Date): string {
+export function formatDate(date: Date, formatStr: string = "PPP"): string {
+  const language = i18n.language || 'en';
+  const locale = language === 'pl' ? pl : language === 'es' ? es : enUS;
+  
+  return format(date, formatStr, { locale });
+}
+
+/**
+ * Legacy format date function for backward compatibility
+ * @deprecated Use formatDate instead
+ */
+export function formatDateLegacy(date: Date): string {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',

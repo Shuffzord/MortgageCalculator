@@ -86,6 +86,8 @@
     "optimizationTip": "Zoptymalizuj swoją strategię nadpłat, aby zaoszczędzić odsetki i skrócić okres kredytowania.",
     "optimizationStrategy": "Strategia Optymalizacji",
     "strategyComparison": "Porównanie Strategii",
+    "impactAnalysis": "Analiza Wpływu",
+    "impactDescription": "Na tym wykresie pokazano, jak różne miesięczne kwoty nadpłat wpływają na oszczędności odsetkowe i okres kredytowania.",
     "maxMonthly": "Maksymalna Miesięczna Nadpłata",
     "maxMonthlyTooltip": "Maksymalna kwota, jaką możesz nadpłacać każdego miesiąca.",
     "maxOneTime": "Maksymalna Jednorazowa Nadpłata",

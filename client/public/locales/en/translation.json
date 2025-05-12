@@ -80,6 +80,8 @@
     "optimizationTip": "Optimize your overpayment strategy to save interest and reduce your loan term.",
     "optimizationStrategy": "Optimization Strategy",
     "strategyComparison": "Strategy Comparison",
+    "impactAnalysis": "Impact Analysis",
+    "impactDescription": "This chart shows how different monthly overpayment amounts affect your interest savings and loan term.",
     "maxMonthly": "Max Monthly Overpayment",
     "maxMonthlyTooltip": "The maximum amount you can afford to overpay each month.",
     "maxOneTime": "Max One-Time Overpayment",

@@ -3,7 +3,7 @@ export default {
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/client/src/$1',
   },
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {

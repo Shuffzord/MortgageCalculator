@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { exportToCSV, exportToJSON } from '@/lib/exportEngine';
 import { LoanDetails, CalculationResults, ExportOptions, ExportFormat, ScenarioComparison, SavedCalculation } from '@/lib/types';
 import { useTranslation } from 'react-i18next';
+import { formatDate } from '@/lib/utils';
 import { Download, FileText, FileCode, Save, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { saveCalculation, getSavedCalculations } from '@/lib/storageService';
@@ -283,7 +284,7 @@ export default function ExportPanel({
                     <div key={calc.id} className="text-sm py-2 border-b border-gray-100">
                       <div className="font-medium">{calc.name}</div>
                       <div className="text-gray-500 text-xs">
-                        {new Date(calc.date).toLocaleDateString()}
+                        {formatDate(new Date(calc.date))}
                       </div>
                     </div>
                   ))}

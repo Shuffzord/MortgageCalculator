@@ -85,6 +85,8 @@
     "optimizationTip": "Optimice su estrategia de pago adicional para ahorrar intereses y reducir el plazo de su préstamo.",
     "optimizationStrategy": "Estrategia de Optimización",
     "strategyComparison": "Comparación de Estrategias",
+    "impactAnalysis": "Análisis de Impacto",
+    "impactDescription": "Este gráfico muestra cómo los diferentes montos de sobrepago mensual afectan sus ahorros de intereses y el plazo del préstamo.",
     "maxMonthly": "Pago Adicional Mensual Máximo",
     "maxMonthlyTooltip": "La cantidad máxima que puede permitirse pagar de más cada mes.",
     "maxOneTime": "Pago Adicional Único Máximo",

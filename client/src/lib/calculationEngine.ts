@@ -538,7 +538,7 @@ export function calculateReducedPaymentSchedule(
     const newMonthlyPayment = calculateMonthlyPayment(
       remainingBalance,
       monthlyRate,
-      remainingMonths
+      remainingMonths - i
     );
     const interestPayment = roundToCents(remainingBalance * monthlyRate);
     let principalPayment = roundToCents(newMonthlyPayment - interestPayment);

@@ -1,9 +1,6 @@
-import { formatTimePeriod } from "@/lib/utils";
-import { formatCurrency } from "@/lib/utils";
-import { getCurrencySymbol } from "@/lib/utils";
+import { formatTimePeriod, formatCurrency, getCurrencySymbol, formatDate } from "@/lib/utils";
 import { CalculationResults, LoanDetails, InterestRatePeriod } from "@/lib/types";
 import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
 
 interface LoanSummaryProps {
   calculationResults: CalculationResults | null;
@@ -34,10 +31,10 @@ export default function LoanSummary({
     : 0;
     
   // Format a date to show month and year
-  const formatDate = (date: Date, monthsToAdd: number = 0): string => {
+  const formatMonthYear = (date: Date, monthsToAdd: number = 0): string => {
     const newDate = new Date(date);
     newDate.setMonth(newDate.getMonth() + monthsToAdd);
-    return format(newDate, 'MMM yyyy');
+    return formatDate(newDate, 'MMM yyyy');
   }
   
   // Get month range text for interest rate periods
@@ -51,13 +48,13 @@ export default function LoanSummary({
     // If this is the last period or the only period
     const nextPeriod = loanDetails.interestRatePeriods[index + 1];
     if (!nextPeriod) {
-      return `${formatDate(startDate)} - ${formatDate(loanDetails.startDate, loanDetails.loanTerm * 12)}`;
+      return `${formatMonthYear(startDate)} - ${formatMonthYear(loanDetails.startDate, loanDetails.loanTerm * 12)}`;
     }
     
     // If there's a next period
     const endDate = new Date(loanDetails.startDate);
     endDate.setMonth(endDate.getMonth() + nextPeriod.startMonth - 1);
-    return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+    return `${formatMonthYear(startDate)} - ${formatMonthYear(endDate)}`;
   };
 
   return (
@@ -156,7 +153,7 @@ export default function LoanSummary({
                           {formatCurrency(plan.amount, 'en-US', loanDetails.currency)}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                          {loanDetails.startDate && formatDate(new Date(loanDetails.startDate), plan.startMonth)}
+                          {loanDetails.startDate && formatMonthYear(new Date(loanDetails.startDate), plan.startMonth)}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                           {plan.frequency === 'monthly' && t('overpayment.monthly')}
@@ -164,7 +161,7 @@ export default function LoanSummary({
                           {plan.frequency === 'annual' && t('overpayment.annual')}
                           {plan.frequency === 'one-time' && t('overpayment.oneTime')}
                           {plan.isRecurring && plan.endMonth && 
-                           ` (${t('until')} ${loanDetails.startDate && formatDate(new Date(loanDetails.startDate), plan.endMonth)})`}
+                           ` (${t('until')} ${loanDetails.startDate && formatMonthYear(new Date(loanDetails.startDate), plan.endMonth)})`}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                           {plan.effect === 'reduceTerm' ? t('overpayment.reduceTerm') : t('overpayment.reducePayment')}

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { LoanDetails, InterestRatePeriod, RepaymentModel, AdditionalCosts, FeeType } from "@/lib/types";
-import { 
-  Form, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
   FormControl,
   FormDescription
 } from "@/components/ui/form";
@@ -20,8 +20,8 @@ import { useTranslation } from "react-i18next";
 import CurrencySelector from "@/components/ui/currency-selector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format, addMonths, differenceInMonths } from "date-fns";
-import { cn, getCurrencySymbol } from "@/lib/utils";
+import { addMonths, differenceInMonths } from "date-fns";
+import { cn, getCurrencySymbol, formatDate } from "@/lib/utils";
 
 const loanFormSchema = z.object({
   principal: z.coerce.number()
@@ -413,18 +413,48 @@ export default function LoanInputForm({
                       !date && "text-muted-foreground"
                     )}
                   >
-                    {date ? format(date, "PPP") : t('form.pickDate')}
+                    {date ? formatDate(date) : t('form.pickDate')}
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(newDate) => setDate(newDate || new Date())}
-                  initialFocus
-                />
+                <div className="flex flex-col">
+                  <div className="flex justify-between p-2 border-b">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newDate = new Date(date);
+                        newDate.setFullYear(newDate.getFullYear() - 1);
+                        setDate(newDate);
+                      }}
+                      type="button"
+                    >
+                      -1 {t('form.year')}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newDate = new Date(date);
+                        newDate.setFullYear(newDate.getFullYear() + 1);
+                        setDate(newDate);
+                      }}
+                      type="button"
+                    >
+                      +1 {t('form.year')}
+                    </Button>
+                  </div>
+                  <Calendar
+                    mode="single"
+                    month={date}
+                    selected={date}
+                    defaultMonth={date}
+                    onSelect={(newDate) => setDate(newDate || new Date())}
+                    initialFocus
+                  />
+                </div>
               </PopoverContent>
             </Popover>
           </FormItem>
@@ -494,8 +524,8 @@ export default function LoanInputForm({
                                       )}
                                     >
                                       {index === 0 ? 
-                                        format(date, "PPP") : 
-                                        format(addMonths(date, period.startMonth), "PPP")}
+                                        formatDate(date) :
+                                        formatDate(addMonths(date, period.startMonth))}
                                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                   </FormControl>
@@ -621,7 +651,7 @@ export default function LoanInputForm({
                                       )}
                                     >
                                       {!period.endMonth ? t('form.loanEnd') :
-                                        format(addMonths(date, period.endMonth), "PPP")}
+                                        formatDate(addMonths(date, period.endMonth))}
                                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                   </FormControl>
@@ -994,32 +1024,84 @@ export default function LoanInputForm({
                                         !overpayment.startDate && "text-muted-foreground"
                                       )}
                                     >
-                                      {overpayment.startDate ? format(overpayment.startDate, "PPP") : t('form.pickDate')}
+                                      {overpayment.startDate ? formatDate(overpayment.startDate) : t('form.pickDate')}
                                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={overpayment.startDate}
-                                    onSelect={(newDate) => {
-                                      if (newDate) {
-                                        const newOverpaymentPlans = [...(field.value || [])];
-                                        newOverpaymentPlans[index].startDate = newDate;
-                                        
-                                        // If there's an end date and it's before the new start date, update it
-                                        if (overpayment.endDate && newDate > overpayment.endDate) {
-                                          newOverpaymentPlans[index].endDate = new Date(newDate);
-                                          // Add one month to end date
-                                          newOverpaymentPlans[index].endDate.setMonth(newDate.getMonth() + 1);
+                                  <div className="flex flex-col">
+                                    <div className="flex justify-between p-2 border-b">
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          const newDate = new Date(overpayment.startDate || new Date());
+                                          newDate.setFullYear(newDate.getFullYear() - 1);
+                                          
+                                          const newOverpaymentPlans = [...(field.value || [])];
+                                          newOverpaymentPlans[index].startDate = newDate;
+                                          
+                                          // If there's an end date and it's before the new start date, update it
+                                          if (overpayment.endDate && newDate > overpayment.endDate) {
+                                            newOverpaymentPlans[index].endDate = new Date(newDate);
+                                            // Add one month to end date
+                                            newOverpaymentPlans[index].endDate.setMonth(newDate.getMonth() + 1);
+                                          }
+                                          
+                                          field.onChange(newOverpaymentPlans);
+                                        }}
+                                        type="button"
+                                      >
+                                        -1 {t('form.year')}
+                                      </Button>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          const newDate = new Date(overpayment.startDate || new Date());
+                                          newDate.setFullYear(newDate.getFullYear() + 1);
+                                          
+                                          const newOverpaymentPlans = [...(field.value || [])];
+                                          newOverpaymentPlans[index].startDate = newDate;
+                                          
+                                          // If there's an end date and it's before the new start date, update it
+                                          if (overpayment.endDate && newDate > overpayment.endDate) {
+                                            newOverpaymentPlans[index].endDate = new Date(newDate);
+                                            // Add one month to end date
+                                            newOverpaymentPlans[index].endDate.setMonth(newDate.getMonth() + 1);
+                                          }
+                                          
+                                          field.onChange(newOverpaymentPlans);
+                                        }}
+                                        type="button"
+                                      >
+                                        +1 {t('form.year')}
+                                      </Button>
+                                    </div>
+                                    <Calendar
+                                      mode="single"
+                                      month={overpayment.startDate}
+                                      selected={overpayment.startDate}
+                                      defaultMonth={overpayment.startDate}
+                                      onSelect={(newDate) => {
+                                        if (newDate) {
+                                          const newOverpaymentPlans = [...(field.value || [])];
+                                          newOverpaymentPlans[index].startDate = newDate;
+                                          
+                                          // If there's an end date and it's before the new start date, update it
+                                          if (overpayment.endDate && newDate > overpayment.endDate) {
+                                            newOverpaymentPlans[index].endDate = new Date(newDate);
+                                            // Add one month to end date
+                                            newOverpaymentPlans[index].endDate.setMonth(newDate.getMonth() + 1);
+                                          }
+                                          
+                                          field.onChange(newOverpaymentPlans);
                                         }
-                                        
-                                        field.onChange(newOverpaymentPlans);
-                                      }
-                                    }}
-                                    initialFocus
-                                  />
+                                      }}
+                                      initialFocus
+                                    />
+                                  </div>
                                 </PopoverContent>
                               </Popover>
                             </div>
@@ -1075,34 +1157,89 @@ export default function LoanInputForm({
                                         !overpayment.endDate && "text-muted-foreground"
                                       )}
                                     >
-                                      {overpayment.endDate ? format(overpayment.endDate, "PPP") : t('form.pickDate')}
+                                      {overpayment.endDate ? formatDate(overpayment.endDate) : t('form.pickDate')}
                                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={overpayment.endDate}
-                                    onSelect={(newDate) => {
-                                      if (newDate) {
-                                        const newOverpaymentPlans = [...(field.value || [])];
-                                        
-                                        // Ensure end date is after start date
-                                        if (newDate < overpayment.startDate) {
-                                          newOverpaymentPlans[index].endDate = new Date(overpayment.startDate);
-                                          // Add one month to start date
-                                          newOverpaymentPlans[index].endDate.setMonth(overpayment.startDate.getMonth() + 1);
-                                        } else {
+                                  <div className="flex flex-col">
+                                    <div className="flex justify-between p-2 border-b">
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          if (!overpayment.endDate) return;
+                                          
+                                          const newDate = new Date(overpayment.endDate);
+                                          newDate.setFullYear(newDate.getFullYear() - 1);
+                                          
+                                          const newOverpaymentPlans = [...(field.value || [])];
+                                          
+                                          // Ensure end date is after start date
+                                          if (newDate < overpayment.startDate) {
+                                            return;
+                                          }
+                                          
                                           newOverpaymentPlans[index].endDate = newDate;
-                                        }
-                                        
-                                        field.onChange(newOverpaymentPlans);
+                                          field.onChange(newOverpaymentPlans);
+                                        }}
+                                        type="button"
+                                      >
+                                        -1 {t('form.year')}
+                                      </Button>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          if (!overpayment.endDate) {
+                                            // If no end date is set, use start date + 1 year
+                                            const newDate = new Date(overpayment.startDate);
+                                            newDate.setFullYear(newDate.getFullYear() + 1);
+                                            
+                                            const newOverpaymentPlans = [...(field.value || [])];
+                                            newOverpaymentPlans[index].endDate = newDate;
+                                            field.onChange(newOverpaymentPlans);
+                                            return;
+                                          }
+                                          
+                                          const newDate = new Date(overpayment.endDate);
+                                          newDate.setFullYear(newDate.getFullYear() + 1);
+                                          
+                                          const newOverpaymentPlans = [...(field.value || [])];
+                                          newOverpaymentPlans[index].endDate = newDate;
+                                          field.onChange(newOverpaymentPlans);
+                                        }}
+                                        type="button"
+                                      >
+                                        +1 {t('form.year')}
+                                      </Button>
+                                    </div>
+                                    <Calendar
+                                      mode="single"
+                                      month={overpayment.endDate || overpayment.startDate}
+                                      selected={overpayment.endDate}
+                                      defaultMonth={overpayment.endDate || overpayment.startDate}
+                                      onSelect={(newDate) => {
+                                        if (newDate) {
+                                          const newOverpaymentPlans = [...(field.value || [])];
+                                          
+                                          // Ensure end date is after start date
+                                          if (newDate < overpayment.startDate) {
+                                            newOverpaymentPlans[index].endDate = new Date(overpayment.startDate);
+                                            // Add one month to start date
+                                            newOverpaymentPlans[index].endDate.setMonth(overpayment.startDate.getMonth() + 1);
+                                          } else {
+                                            newOverpaymentPlans[index].endDate = newDate;
+                                          }
+                                          
+                                          field.onChange(newOverpaymentPlans);
                                       }
                                     }}
                                     initialFocus
                                     disabled={(date) => date < overpayment.startDate}
                                   />
+                                  </div>
                                 </PopoverContent>
                               </Popover>
                             </div>
