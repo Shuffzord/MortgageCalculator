@@ -2,7 +2,8 @@
   "app": {
     "title": "Mortgage Calculator",
     "description": "Calculate your mortgage payments and view your amortization schedule",
-    "desktopOptimized": "This site is optimized for desktop resolutions."
+    "desktopOptimized": "This site is optimized for desktop resolutions.",
+    "beta": "Site is in beta version. Please report any bugs or suggestions to the author."
   },
   "language": {
     "english": "English",
@@ -78,6 +79,7 @@
     "until": "until",
     "optimizationTip": "Optimize your overpayment strategy to save interest and reduce your loan term.",
     "optimizationStrategy": "Optimization Strategy",
+    "strategyComparison": "Strategy Comparison",
     "maxMonthly": "Max Monthly Overpayment",
     "maxMonthlyTooltip": "The maximum amount you can afford to overpay each month.",
     "maxOneTime": "Max One-Time Overpayment",
@@ -450,7 +452,11 @@
     "step3": "Explore the amortization schedule to see payment breakdown over time",
     "step4": "Try different scenarios or overpayment options to optimize your mortgage",
     "contactInfo": "Contact Information",
-    "contactDescription": "If you have any questions or feedback about the mortgage calculator, please contact our support team. Which is... me :-)"
+    "contactDescription": "If you have any questions or feedback about the mortgage calculator, please contact our support team. Which is... me :-)",
+    "passionProject": "About the Author",
+    "passionProjectDescription": "The www.smarter-loan.com calculator is my personal project created out of passion for helping others make better financial decisions. It is the result of many hours of work and continuous improvement.",
+    "supportInvitation": "Support the Project",
+    "supportDescription": "If you find this calculator useful, I would appreciate you sharing it with friends! You can also connect with me on LinkedIn or support the project by buying me a virtual coffee at https://buymeacoffee.com/smarterloan."
   },
   "navigation": {
     "home": "Home",

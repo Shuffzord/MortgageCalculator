@@ -2,7 +2,8 @@
   "app": {
     "title": "Calculadora de Hipotecas",
     "description": "Calcule sus pagos hipotecarios y vea su programa de amortización",
-    "desktopOptimized": "Este sitio está optimizado para resoluciones de escritorio"
+    "desktopOptimized": "Este sitio está optimizado para resoluciones de escritorio",
+    "beta": "Esta es una versión beta de la calculadora de hipotecas. Si encuentra errores o tiene comentarios, no dude en informarnos."
   },
   "language": {
     "english": "Inglés",
@@ -83,6 +84,7 @@
     "paymentReduced": "Pago Reducido",
     "optimizationTip": "Optimice su estrategia de pago adicional para ahorrar intereses y reducir el plazo de su préstamo.",
     "optimizationStrategy": "Estrategia de Optimización",
+    "strategyComparison": "Comparación de Estrategias",
     "maxMonthly": "Pago Adicional Mensual Máximo",
     "maxMonthlyTooltip": "La cantidad máxima que puede permitirse pagar de más cada mes.",
     "maxOneTime": "Pago Adicional Único Máximo",
@@ -455,7 +457,11 @@
     "step3": "Explora el programa de amortización para ver el desglose de pagos a lo largo del tiempo",
     "step4": "Prueba diferentes escenarios u opciones de pago adicional para optimizar tu hipoteca",
     "contactInfo": "Información de Contacto",
-    "contactDescription": "Si tienes alguna pregunta o comentario sobre la calculadora de hipotecas, por favor contacta a nuestro equipo de soporte."
+    "contactDescription": "Si tienes alguna pregunta o comentario sobre la calculadora de hipotecas, por favor contacta a nuestro equipo de soporte. Que soy... yo :-)",
+    "passionProject": "Sobre el Autor",
+    "passionProjectDescription": "La calculadora www.smarter-loan.com es mi proyecto personal creado por pasión para ayudar a otros a tomar mejores decisiones financieras. Es el resultado de muchas horas de trabajo y mejora continua.",
+    "supportInvitation": "Apoya el Proyecto",
+    "supportDescription": "Si encuentras útil esta calculadora, ¡agradecería que la compartieras con amigos! También puedes conectarte conmigo en LinkedIn o apoyar el proyecto comprándome un café virtual en https://buymeacoffee.com/smarterloan."
   },
   "navigation": {
     "home": "Inicio",

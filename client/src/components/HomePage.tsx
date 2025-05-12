@@ -135,7 +135,9 @@ const HomePage: React.FC<HomePageProps> = ({
       <div className="bg-yellow-500 text-yellow-900 text-center py-2 sm:hidden block">
         {t('app.desktopOptimized')}
       </div>
-
+      <div className="bg-yellow-500 text-yellow-900 text-center py-2 block">
+        {t('app.beta')}
+      </div>
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">

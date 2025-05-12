@@ -125,26 +125,73 @@ export default function LoanInputForm({
   const loanTerm = form.watch("loanTerm");
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
-      if (name === 'loanTerm') {
-        // Ensure periods cover the entire loan term without forcing the last period to end at loan end
+      if (name === 'loanTerm' && value.loanTerm) {
         const currentPeriods = form.getValues("interestRatePeriods");
         if (currentPeriods && currentPeriods.length > 0) {
           const newTermMonths = Number(value.loanTerm) * 12;
+          // Ensure loanTerm is defined and not zero to avoid division by zero
+          const oldTermMonths = (loanTerm || 1) * 12;
           
-          // Check if periods cover the entire loan term
-          const lastPeriod = currentPeriods[currentPeriods.length - 1];
-          const lastEndMonth = lastPeriod.endMonth || lastPeriod.startMonth;
+          // Avoid division by zero
+          if (oldTermMonths === 0) return;
           
-          // Only update if the last period doesn't reach the end of the loan
-          if (lastEndMonth < newTermMonths) {
-            lastPeriod.endMonth = newTermMonths;
-            form.setValue("interestRatePeriods", currentPeriods);
+          // Calculate the ratio of new term to old term for proportional adjustments
+          const termRatio = newTermMonths / oldTermMonths;
+          
+          // Create a copy of the periods to modify
+          const updatedPeriods = [...currentPeriods];
+          
+          // For multiple periods, adjust all periods proportionally
+          if (updatedPeriods.length > 1) {
+            // Update all periods except the last one proportionally
+            for (let i = 0; i < updatedPeriods.length - 1; i++) {
+              const period = updatedPeriods[i];
+              if (!period) continue; // Skip if period is undefined
+              
+              // If this is not the first period, ensure its start month is the same as the previous period's end month
+              if (i > 0 && updatedPeriods[i-1]) {
+                period.startMonth = updatedPeriods[i-1].endMonth || updatedPeriods[i-1].startMonth || 0;
+              }
+              
+              // Calculate the new end month proportionally
+              if (period.endMonth !== undefined && period.endMonth !== null) {
+                // Calculate what percentage of the old term this period's end represented
+                const endPercentage = period.endMonth / oldTermMonths;
+                // Apply that same percentage to the new term
+                period.endMonth = Math.round(endPercentage * newTermMonths);
+                
+                // Ensure the end month is after the start month
+                if (period.endMonth <= (period.startMonth || 0)) {
+                  period.endMonth = (period.startMonth || 0) + 1;
+                }
+              }
+            }
+            
+            // Update the last period
+            const lastPeriod = updatedPeriods[updatedPeriods.length - 1];
+            if (lastPeriod) {
+              // Set the start month to the end month of the previous period
+              if (updatedPeriods.length > 1) {
+                const prevPeriod = updatedPeriods[updatedPeriods.length - 2];
+                if (prevPeriod) {
+                  lastPeriod.startMonth = prevPeriod.endMonth || prevPeriod.startMonth || 0;
+                }
+              }
+              // Always set the last period's end month to the new loan term
+              lastPeriod.endMonth = newTermMonths;
+            }
+          } else if (updatedPeriods[0]) {
+            // If there's only one period, simply update its end month to the new loan term
+            updatedPeriods[0].endMonth = newTermMonths;
           }
+          
+          // Update the form with the modified periods
+          form.setValue("interestRatePeriods", updatedPeriods);
         }
       }
     });
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [form, loanTerm]);
   // Monitor form errors for validation feedback
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {

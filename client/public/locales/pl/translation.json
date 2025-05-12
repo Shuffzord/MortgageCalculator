@@ -3,7 +3,8 @@
   "app": {
     "title": "Kalkulator Kredytu Hipotecznego",
     "description": "Oblicz swoje raty kredytu i zobacz harmonogram amortyzacji",
-    "desktopOptimized": "Ta strona jest zoptymalizowana dla rozdzielczości komputerowych"
+    "desktopOptimized": "Ta strona jest zoptymalizowana dla rozdzielczości komputerowych",
+    "beta": "Strona jest obecnie w wersji BETA. Proszę zgłaszać wszelkie błędy lub sugestie."
   },
   "language": {
     "english": "Angielski",
@@ -84,6 +85,7 @@
     "paymentReduced": "Zmniejszona Rata",
     "optimizationTip": "Zoptymalizuj swoją strategię nadpłat, aby zaoszczędzić odsetki i skrócić okres kredytowania.",
     "optimizationStrategy": "Strategia Optymalizacji",
+    "strategyComparison": "Porównanie Strategii",
     "maxMonthly": "Maksymalna Miesięczna Nadpłata",
     "maxMonthlyTooltip": "Maksymalna kwota, jaką możesz nadpłacać każdego miesiąca.",
     "maxOneTime": "Maksymalna Jednorazowa Nadpłata",
@@ -460,7 +462,7 @@
     "passionProject": "O Autorze",
     "passionProjectDescription": "Kalkulator www.smarter-loan.com to mój osobisty projekt stworzony z pasji do pomocy innym w podejmowaniu lepszych decyzji finansowych. Jest to efekt wielu godzin pracy i ciągłego doskonalenia.",
     "supportInvitation": "Wsparcie Projektu",
-    "supportDescription": "Jeśli uważasz, że ten kalkulator jest przydatny, będę wdzięczny za podzielenie się nim ze znajomymi! Możesz również zaprosić mnie do kontaktów na LinkedIn lub wesprzeć projekt kupując mi wirtualną kawę na [buymeacoffee.com/smarterloan](https://buymeacoffee.com/smarterloan)."
+    "supportDescription": "Jeśli uważasz, że ten kalkulator jest przydatny, będę wdzięczny za podzielenie się nim ze znajomymi! Możesz również zaprosić mnie do kontaktów na LinkedIn lub wesprzeć projekt kupując mi wirtualną kawę na https://buymeacoffee.com/smarterloan."
   },
   "navigation": {
     "home": "Strona Główna",

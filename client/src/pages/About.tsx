@@ -23,11 +23,11 @@ export default function About() {
               <p className="mb-4">{t('about.projectDescription')}</p>
               <p>{t('about.purposeDescription')}</p>
             </div>
-          </section>            
+          </section>
           <section className="mb-12 transform transition-all duration-300 animate-fadeInDown ">
             <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
               {t('about.features')}
-            </h2>            
+            </h2>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <li className="bg-muted rounded-lg">
                 <div className="flex items-center gap-5 p-2">
@@ -106,17 +106,32 @@ export default function About() {
             <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
               {t('about.contactInfo')}
             </h2>
-            <p className="text-foreground mb-6 leading-relaxed">{t('about.contactDescription')}</p>            
+            <p className="text-foreground mb-6 leading-relaxed">{t('about.passionProjectDescription')}</p>
+            <p className="text-foreground mb-6 leading-relaxed">{t('about.contactDescription')}</p>
             <div className="mt-8">
               <div className="flex flex-col sm:flex-row items-center gap-8 p-2 bg-muted rounded-xl">
-                <div className="relative flex-shrink-0">                  <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>                  
+                <div className="relative flex-shrink-0">
+                  <div className="absolute -inset-0.5 bg-primary/10 rounded-full blur"></div>
                   <img
                     src={new URL('/images/photo.jpg', import.meta.url).href}
                     alt="Mateusz Woźniak"
                     className="relative w-160 h-160 rounded-full shadow-lg object-cover ring-2 ring-card"
                   />
-                </div>                  
+                </div>
                 <div className="flex flex-col items-center sm:items-start">
+                  <p className="text-foreground leading-relaxed flex-1">{t('about.supportDescription')}</p>
+                  <a
+                    href="https://www.buymeacoffee.com/smarterloan"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-shrink-0 hover:opacity-90 transition-opacity"
+                  >
+                    <img
+                      src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png"
+                      alt="Buy Me A Coffee"
+                      className="h-[60px] w-[217px]"
+                    />
+                  </a>
                   <strong className="text-foreground block mb-4 font-semibold text-xl">Linkedin:</strong>
                   <a
                     href="https://www.linkedin.com/in/marvelousmateuszwozniak"
@@ -130,7 +145,7 @@ export default function About() {
                     </svg>
                   </a>
 
-                  
+
                 </div>
               </div>
             </div>
@@ -139,4 +154,4 @@ export default function About() {
       </main>
     </div>
   );
-}{/* <a href="https://www.buymeacoffee.com/smarterloan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>                </div> */}
+} {/* <a href="https://www.buymeacoffee.com/smarterloan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>                </div> */ }
