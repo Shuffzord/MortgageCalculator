@@ -478,12 +478,12 @@ export default function OverpaymentOptimizationPanel({
                           {op.isRecurring ? (
                             <span>
                               {formatCurrency(op.amount, 'en-US', loanDetails.currency)} {t(`overpayment.${op.frequency}`, op.frequency)} {t('overpayment.payment', 'overpayment')}
-                              {(op.startMonth ?? 0) > 1 ? ` starting at month ${op.startMonth}` : ''}
-                              {op.endMonth ? ` until month ${op.endMonth}` : ''}
+                              {(op.startMonth ?? 0) > 1 ? ` ${t('overpayment.startingAtMonth', 'starting at month')} ${op.startMonth}` : ''}
+                              {op.endMonth ? ` ${t('overpayment.untilMonth', 'until month')} ${op.endMonth}` : ''}
                             </span>
                           ) : (
                             <span>
-                              {formatCurrency(op.amount, 'en-US', loanDetails.currency)} one-time payment at month {op.startMonth ?? 1}
+                              {formatCurrency(op.amount, 'en-US', loanDetails.currency)} {t('overpayment.oneTimePaymentAt', 'one-time payment at month')} {op.startMonth ?? 1}
                             </span>
                           )}
                         </li>
