@@ -297,12 +297,7 @@ function evaluateStrategies(
     
     const termReduction = baselineResults.actualTerm - strategyResults.actualTerm;
     
-    // Debug log
-    console.log(`Strategy: ${strategy.name}`);
-    console.log(`Base interest: ${baselineResults.totalInterest}, Strategy interest: ${strategyResults.totalInterest}`);
-    console.log(`Present value of interest saved: ${interestSaved}, Term reduction: ${termReduction}`);
-    
-    // Calculate total overpayment amount
+   // Calculate total overpayment amount
     let totalOverpayment = 0;
     
     for (const overpayment of strategy.overpayments) {
@@ -358,7 +353,6 @@ function evaluateStrategies(
         effectivenessRatio *= 0.1; // Stronger penalty for very small payments
       }
       
-      console.log(`Strategy: ${strategy.name}, Effectiveness ratio: ${effectivenessRatio}`);
     }
     
     return {
