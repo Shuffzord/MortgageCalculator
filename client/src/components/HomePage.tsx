@@ -171,7 +171,7 @@ const HomePage: React.FC<HomePageProps> = ({
               currency={selectedCurrency}
             />
             
-            <OverpaymentOptimizationPanel
+            {/* <OverpaymentOptimizationPanel
               loanDetails={loanDetails}
               onApplyOptimization={(optimizedOverpayments) => {
                 // Create updated loan details with optimized overpayments
@@ -186,7 +186,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 // Calculate using the new details directly
                 handleCalculateLoan(updatedDetails);
               }}
-            />
+            /> */}
           </div>
         </div>
       </main>
