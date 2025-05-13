@@ -168,7 +168,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
                 </div>
               </section>
               
-              {/* <section className="section-container">
+              <section className="section-container">
                 <h2 className="section-title">{t('calculator.optimization')}</h2>
                 <div className="panel-item">
                   <OverpaymentOptimizationPanel
@@ -183,7 +183,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
                     }}
                   />
                 </div>
-              </section> */}
+              </section>
             </div>
           </div>
         </div>
