@@ -442,6 +442,12 @@
       ]
     }
   ],
+  "dataTransfer": {
+    "title": "Importar y Exportar Datos",
+    "description": "Importe o exporte sus datos de cálculo hipotecario",
+    "export": "Exportar",
+    "import": "Importar"
+  },
   "export": {
     "title": "Exportar Datos",
     "description": "Elija el formato de exportación y las opciones para los datos de cálculo de su hipoteca",
@@ -460,12 +466,24 @@
     "includeContent": "Incluir Contenido",
     "includeSummary": "Resumen del Préstamo",
     "includeAmortizationSchedule": "Tabla de Amortización",
+    "includeComparisonData": "Datos de Comparación",
     "scheduleOptions": "Opciones de Tabla",
     "dateRange": "Rango de Fechas",
     "payments": "Pagos",
     "selectColumns": "Seleccionar Columnas",
     "download": "Descargar",
-    "saveToCache": "Guardar en la Caché del Navegador"
+    "exporting": "Exportando...",
+    "saveToCache": "Guardar en la Caché del Navegador",
+    "savedCalculations": "Cálculos Guardados"
+  },
+  "import": {
+    "format": "Formato de Importación",
+    "selectFile": "Seleccionar Archivo",
+    "importing": "Importando...",
+    "instructions": "Instrucciones de Importación",
+    "jsonInstructions": "Seleccione un archivo JSON previamente exportado desde esta aplicación. Los archivos JSON contienen datos más completos y son recomendados para importar.",
+    "csvInstructions": "Seleccione un archivo CSV previamente exportado desde esta aplicación. Las importaciones CSV pueden tener datos limitados en comparación con las importaciones JSON.",
+    "error": "Error de Importación"
   },
   "about": {
     "title": "Acerca de la Calculadora de Hipotecas",

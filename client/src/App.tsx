@@ -22,15 +22,10 @@ function Router() {
     setShowExportModal(true);
   };
 
-  const handleLoadClick = () => {
-    setShowLoadModal(true);
-  };
-
   return (
     <>
       <Navigation
         onExportClick={handleExportClick}
-        onLoadClick={handleLoadClick}
       />
       <Switch>
         <Route path="/">

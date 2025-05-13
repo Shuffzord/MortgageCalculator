@@ -4,7 +4,7 @@ import LoanSummary from "@/components/LoanSummary";
 import ChartSection from "@/components/ChartSection";
 import AmortizationSchedule from "@/components/AmortizationSchedule";
 import OverpaymentOptimizationPanel from "@/components/OverpaymentOptimizationPanel";
-import ExportPanel from "@/components/ExportPanel";
+import DataTransferPanel from "@/components/DataTransferPanel";
 import LoadModal from "@/components/LoadModal";
 import { 
   CalculationResults, 
@@ -65,6 +65,19 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
       setSavedCalculations(calculations);
     }
   }, [showLoadModal]);
+  
+  // Listen for the openLoadModal event
+  useEffect(() => {
+    const handleOpenLoadModal = () => {
+      setShowLoadModal(true);
+    };
+    
+    window.addEventListener('openLoadModal', handleOpenLoadModal);
+    
+    return () => {
+      window.removeEventListener('openLoadModal', handleOpenLoadModal);
+    };
+  }, []);
 
   // This function is called directly by the form when calculate is clicked
   const handleCalculateLoan = (loanDetailsToCalculate?: LoanDetails) => {
@@ -110,6 +123,20 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
     setShowLoadModal(false);
 
     // Calculate using the loaded details directly
+    handleCalculateLoan(updatedDetails);
+  };
+
+  const handleImportData = (importedLoanDetails: LoanDetails, importedResults?: Partial<CalculationResults>) => {
+    // Update loan details with the imported data
+    const updatedDetails = {
+      ...importedLoanDetails,
+      currency: selectedCurrency // Ensure we use the current currency
+    };
+    
+    // Update state
+    setLoanDetails(updatedDetails);
+    
+    // Calculate using the imported details
     handleCalculateLoan(updatedDetails);
   };
 
@@ -206,13 +233,14 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
       )}
       
       {calculationResults && (
-        <ExportPanel
+        <DataTransferPanel
           loanDetails={loanDetails}
           results={calculationResults}
           open={showExportModal}
           onOpenChange={setShowExportModal}
           savedCalculations={savedCalculations}
           onSaveCalculation={handleSaveCalculation}
+          onImportData={handleImportData}
         />
       )}
     </div>

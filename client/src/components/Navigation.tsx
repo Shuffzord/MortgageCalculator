@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Download, Upload } from 'lucide-react';
+import { Menu, X, DatabaseBackup } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 
 interface NavigationProps {
   onExportClick?: () => void;
-  onLoadClick?: () => void;
 }
 
-export default function Navigation({ onExportClick, onLoadClick }: NavigationProps) {
+export default function Navigation({ onExportClick }: NavigationProps) {
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -72,16 +71,9 @@ export default function Navigation({ onExportClick, onLoadClick }: NavigationPro
               onClick={onExportClick}
               className="text-gray-300 hover:text-white"
               disabled={!isHomePage}
+              title={t('navigation.dataTransfer')}
             >
-              <Download className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={onLoadClick}
-              className="text-gray-300 hover:text-white"
-              disabled={!isHomePage}
-            >
-              <Upload className="h-4 w-4" />
+              <DatabaseBackup className="h-4 w-4" />
             </Button>
             <LanguageSwitcher />
             

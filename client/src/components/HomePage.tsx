@@ -4,7 +4,7 @@ import LoanSummary from "@/components/LoanSummary";
 import ChartSection from "@/components/ChartSection";
 import AmortizationSchedule from "@/components/AmortizationSchedule";
 import OverpaymentOptimizationPanel from "@/components/OverpaymentOptimizationPanel";
-import ExportPanel from "@/components/ExportPanel";
+import DataTransferPanel from "@/components/DataTransferPanel";
 import LoadModal from "@/components/LoadModal";
 import { 
   CalculationResults, 
@@ -82,6 +82,19 @@ const HomePage: React.FC<HomePageProps> = ({
       setSavedCalculations(calculations);
     }
   }, [showLoadModal]);
+  
+  // Listen for the openLoadModal event
+  useEffect(() => {
+    const handleOpenLoadModal = () => {
+      setShowLoadModal(true);
+    };
+    
+    window.addEventListener('openLoadModal', handleOpenLoadModal);
+    
+    return () => {
+      window.removeEventListener('openLoadModal', handleOpenLoadModal);
+    };
+  }, []);
 
   // This function is called directly by the form when calculate is clicked
   const handleCalculateLoan = (loanDetailsToCalculate?: LoanDetails) => {
@@ -119,6 +132,25 @@ const HomePage: React.FC<HomePageProps> = ({
 
     // Calculate using the loaded details directly
     handleCalculateLoan(updatedDetails);
+  };
+
+  const handleImportData = (importedLoanDetails: LoanDetails, importedResults?: Partial<CalculationResults>) => {
+    // Update loan details with the imported data
+    const updatedDetails = {
+      ...importedLoanDetails,
+      currency: selectedCurrency // Ensure we use the current currency
+    };
+    
+    // Update state
+    setLoanDetails(updatedDetails);
+    
+    // If results were imported, use them; otherwise recalculate
+    if (importedResults && Object.keys(importedResults).length > 0) {
+      // We need to recalculate anyway to ensure all data is consistent
+      handleCalculateLoan(updatedDetails);
+    } else {
+      handleCalculateLoan(updatedDetails);
+    }
   };
 
   return (
@@ -199,13 +231,14 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
       
       {calculationResults && (
-        <ExportPanel
+        <DataTransferPanel
           loanDetails={loanDetails}
           results={calculationResults}
           open={showExportModal}
           onOpenChange={setShowExportModal}
           savedCalculations={savedCalculations}
           onSaveCalculation={handleSaveCalculation}
+          onImportData={handleImportData}
         />
       )}
     </div>

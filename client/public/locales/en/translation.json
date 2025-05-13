@@ -438,10 +438,19 @@
       ]
     }
   ],
+  "dataTransfer": {
+    "title": "Import & Export Data",
+    "description": "Import or export your mortgage calculation data",
+    "export": "Export",
+    "import": "Import"
+  },
   "export": {
     "selectColumns": "Select Columns",
     "download": "Download",
+    "exporting": "Exporting...",
+    "browserCache": "Browser Cache",
     "saveToCache": "Save to Browser Cache",
+    "savedCalculations": "Saved Calculations",
     "columns": {
       "payment": "Payment #",
       "date": "Date",
@@ -457,11 +466,22 @@
     "includeContent": "Include Content",
     "includeSummary": "Loan Summary",
     "includeAmortizationSchedule": "Amortization Schedule",
+    "includeComparisonData": "Comparison Data",
     "scheduleOptions": "Schedule Options",
     "dateRange": "Date Range",
     "payments": "Payments",
     "title": "Export Data",
     "description": "Choose export format and options for your mortgage calculation data"
+  },
+  "import": {
+    "format": "Import Format",
+    "selectFile": "Select File",
+    "importing": "Importing...",
+    "instructions": "Import Instructions",
+    "jsonInstructions": "Select a JSON file previously exported from this application. JSON files contain more complete data and are recommended for importing.",
+    "csvInstructions": "Select a CSV file previously exported from this application. CSV imports may have limited data compared to JSON imports.",
+    "error": "Import Error",
+    "loadFromCache": "Load from Cache"
   },
   "about": {
     "title": "About the Mortgage Calculator",
@@ -487,6 +507,7 @@
     "supportDescription": "If you find this calculator useful, I would appreciate you sharing it with friends! You can also connect with me on LinkedIn or support the project by buying me a virtual coffee at https://buymeacoffee.com/smarterloan."
   },
   "navigation": {
+    "dataTransfer": "Import & Export Data",
     "home": "Home",
     "about": "About",
     "education": "Education Center",

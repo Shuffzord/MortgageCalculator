@@ -443,6 +443,12 @@
       ]
     }
   ],
+  "dataTransfer": {
+    "title": "Importuj i Eksportuj Dane",
+    "description": "Importuj lub eksportuj dane obliczeniowe kredytu hipotecznego",
+    "export": "Eksportuj",
+    "import": "Importuj"
+  },
   "export": {
     "title": "Eksportuj Dane",
     "description": "Wybierz format eksportu i opcje dla danych obliczeniowych kredytu",
@@ -461,12 +467,24 @@
     "includeContent": "Zawartość",
     "includeSummary": "Podsumowanie Kredytu",
     "includeAmortizationSchedule": "Harmonogram Amortyzacji",
+    "includeComparisonData": "Dane Porównawcze",
     "scheduleOptions": "Opcje Harmonogramu",
     "dateRange": "Zakres Dat",
     "payments": "Płatności",
     "selectColumns": "Wybierz Kolumny",
     "download": "Pobierz",
-    "saveToCache": "Zapisz w Pamięci Przeglądarki"
+    "exporting": "Eksportowanie...",
+    "saveToCache": "Zapisz w Pamięci Przeglądarki",
+    "savedCalculations": "Zapisane Obliczenia"
+  },
+  "import": {
+    "format": "Format Importu",
+    "selectFile": "Wybierz Plik",
+    "importing": "Importowanie...",
+    "instructions": "Instrukcje Importu",
+    "jsonInstructions": "Wybierz plik JSON wyeksportowany wcześniej z tej aplikacji. Pliki JSON zawierają bardziej kompletne dane i są zalecane do importu.",
+    "csvInstructions": "Wybierz plik CSV wyeksportowany wcześniej z tej aplikacji. Importy CSV mogą mieć ograniczone dane w porównaniu do importów JSON.",
+    "error": "Błąd Importu"
   },
   "about": {
     "title": "O Kalkulatorze Kredytu Hipotecznego",
