@@ -1,4 +1,5 @@
-import { calculateLoanDetails, performOverpayments } from './calculationEngine';
+import { calculateLoanDetails } from './calculationEngine';
+import { performOverpayments } from './overpaymentCalculator';
 import { OverpaymentDetails, PaymentData } from './types';
 
 describe('Overpayment Fixes', () => {

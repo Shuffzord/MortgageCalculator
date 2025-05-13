@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalculationResults, LoanDetails } from "@/lib/types";
 import Chart from "chart.js/auto";
-import { formatCurrency } from "@/lib/utils";
+import { calculationService } from "@/lib/services/calculationService";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -114,7 +114,7 @@ export default function ChartSection({
                   const label = context.label || '';
                   const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
                   const percentage = Math.round(value / total * 100);
-                  return `${label}: ${formatCurrency(value, undefined, loanDetails.currency)} (${percentage}%)`;
+                  return `${label}: ${calculationService.formatCurrency(value, undefined, loanDetails.currency)} (${percentage}%)`;
                 }
               }
             },
@@ -170,7 +170,7 @@ export default function ChartSection({
               stacked: true,
               ticks: {
                 callback: function(value) {
-                  return formatCurrency(value as number, undefined, loanDetails.currency);
+                  return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
                 }
               }
             }
@@ -180,7 +180,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                  return context.dataset.label + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
                 }
               }
             },
@@ -249,7 +249,7 @@ export default function ChartSection({
               stacked: true,
               ticks: {
                 callback: function(value) {
-                  return formatCurrency(value as number, undefined, loanDetails.currency);
+                  return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
                 }
               }
             }
@@ -259,7 +259,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                  return context.dataset.label + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
                 }
               }
             },
@@ -331,7 +331,7 @@ export default function ChartSection({
             y: {
               ticks: {
                 callback: function(value) {
-                  return formatCurrency(value as number, undefined, loanDetails.currency);
+                  return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
                 }
               }
             }
@@ -341,7 +341,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return t('chart.balance', 'Balance') + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                  return t('chart.balance', 'Balance') + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
                 }
               }
             },
@@ -430,7 +430,7 @@ export default function ChartSection({
               stacked: true,
               ticks: {
                 callback: function(value) {
-                  return formatCurrency(value as number, undefined, loanDetails.currency);
+                  return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
                 }
               }
             }
@@ -440,7 +440,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                  return context.dataset.label + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
                 }
               }
             },
@@ -503,7 +503,7 @@ export default function ChartSection({
               },
               ticks: {
                 callback: function(value) {
-                  return formatCurrency(value as number, undefined, loanDetails.currency);
+                  return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
                 }
               }
             }
@@ -513,7 +513,7 @@ export default function ChartSection({
               callbacks: {
                 label: function(context) {
                   const value = context.raw as number;
-                  return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                  return context.dataset.label + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
                 }
               }
             },

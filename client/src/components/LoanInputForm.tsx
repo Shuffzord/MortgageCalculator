@@ -21,7 +21,8 @@ import CurrencySelector from "@/components/ui/currency-selector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, differenceInMonths } from "date-fns";
-import { cn, getCurrencySymbol, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/formatters";
+import { cn, getCurrencySymbol } from "@/lib/utils";
 
 const loanFormSchema = z.object({
   principal: z.coerce.number()

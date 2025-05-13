@@ -1,6 +1,6 @@
 import { LoanDetails, CalculationResults, ScenarioComparison, ScenarioComparisonOptions } from './types';
 import { calculateLoanDetails } from './calculationEngine';
-import { roundToCents } from './utils';
+import { roundToCents } from './calculationCore';
 
 /**
  * Compare multiple loan scenarios

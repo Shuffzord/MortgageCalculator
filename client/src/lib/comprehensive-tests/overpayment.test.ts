@@ -5,7 +5,8 @@
  * including one-time lump sums and regular recurring payments.
  */
 
-import { calculateLoanDetails, applyOverpayment } from '../calculationEngine';
+import { calculateLoanDetails } from '../calculationEngine';
+import { applyOverpayment } from '../overpaymentCalculator';
 import { OverpaymentDetails } from '../types';
 
 describe('Mortgage Overpayment Calculations', () => {

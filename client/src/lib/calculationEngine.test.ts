@@ -3,12 +3,12 @@
  */
 
 import {
-  aggregateYearlyData,
-  applyOverpayment
+  aggregateYearlyData
 } from './calculationEngine';
-import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
+import { applyOverpayment } from './overpaymentCalculator';
+import { generateAmortizationSchedule } from './utils';
 import { PaymentData } from './types';
-import { convertLegacySchedule } from './mortgage-calculator';
+import { calculateBaseMonthlyPayment, convertScheduleFormat } from './calculationCore';
 
 // Helper function to ensure all PaymentData fields are properly set
 function convertScheduleToPaymentData(schedule: PaymentData[]): PaymentData[] {
@@ -47,7 +47,7 @@ describe('Mortgage Calculation Engine', () => {
       const monthlyRate = annualRate / 100 / 12;
       const totalMonths = 30 * 12;
       
-      const result = calculateMonthlyPayment(principal, monthlyRate, totalMonths);
+      const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeCloseTo(1266.71, 1);
     });
 
@@ -57,7 +57,7 @@ describe('Mortgage Calculation Engine', () => {
       const monthlyRate = 0;
       const totalMonths = 30 * 12;
       
-      const result = calculateMonthlyPayment(principal, monthlyRate, totalMonths);
+      const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeCloseTo(694.44, 1);
     });
 
@@ -68,7 +68,7 @@ describe('Mortgage Calculation Engine', () => {
       const monthlyRate = annualRate / 100 / 12;
       const totalMonths = 30 * 12;
       
-      const result = calculateMonthlyPayment(principal, monthlyRate, totalMonths);
+      const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeGreaterThan(4000);
     });
 
@@ -81,7 +81,7 @@ describe('Mortgage Calculation Engine', () => {
       const monthlyRate = annualRate / 100 / 12;
       const totalMonths = termYears * 12;
       
-      const result = calculateMonthlyPayment(principal, monthlyRate, totalMonths);
+      const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeCloseTo(21344.63, 1);
     });
   });

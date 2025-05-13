@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatCurrency } from "@/lib/utils";
+import { calculationService } from "@/lib/services/calculationService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { YearlyData } from "@/lib/types";
@@ -47,16 +47,16 @@ export default function AmortizationSchedule({ yearlyData, currency = 'USD' }: A
                 <tr key={year.year} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{year.year}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.payment, undefined, currency)}
+                    {calculationService.formatCurrency(year.payment, undefined, currency)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.principal, undefined, currency)}
+                    {calculationService.formatCurrency(year.principal, undefined, currency)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.interest, undefined, currency)}
+                    {calculationService.formatCurrency(year.interest, undefined, currency)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {formatCurrency(year.balance, undefined, currency)}
+                    {calculationService.formatCurrency(year.balance, undefined, currency)}
                   </td>
                 </tr>
               ))}

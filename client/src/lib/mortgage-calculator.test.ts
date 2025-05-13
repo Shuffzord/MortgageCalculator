@@ -1,8 +1,9 @@
-import { calculateMonthlyPayment, generateAmortizationSchedule } from './utils';
+import { generateAmortizationSchedule } from './calculationEngine';
 import { OverpaymentDetails, PaymentData } from './types';
+import { calculateBaseMonthlyPayment } from './calculationCore';
 
 describe('Mortgage Calculator', () => {
-  describe('calculateMonthlyPayment', () => {
+  describe('calculateBaseMonthlyPayment', () => {
     it('should calculate the monthly payment correctly', () => {
       console.log('Running calculateMonthlyPayment test in mortgage-calculator.test.ts');
       
@@ -17,7 +18,7 @@ describe('Mortgage Calculator', () => {
       
       const expectedMonthlyPayment = 536.82;
       
-      const monthlyPayment = calculateMonthlyPayment(
+      const monthlyPayment = calculateBaseMonthlyPayment(
         principal,
         monthlyRate,  // Now passing monthly rate as decimal
         totalMonths   // Now passing total months

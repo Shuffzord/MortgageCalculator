@@ -1,4 +1,5 @@
-import { calculateLoanDetails, applyOverpayment } from '../calculationEngine';
+import { calculateLoanDetails } from '../calculationEngine';
+import { applyOverpayment } from '../overpaymentCalculator';
 import { LoanDetails } from '../types';
 
 describe('Specific Overpayment Scenarios', () => {

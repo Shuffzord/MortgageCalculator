@@ -218,3 +218,86 @@ export interface ExportData {
   results: CalculationResults;
   comparisonData?: ScenarioComparison;
 }
+
+/**
+ * Parameter Objects for Function Signatures
+ * These objects help improve code readability and maintainability
+ * by grouping related parameters together
+ */
+
+/**
+ * Parameters for loan calculation functions
+ */
+export interface LoanCalculationParams {
+  principal: number;
+  interestRatePeriods: InterestRatePeriod[];
+  loanTerm: number;
+  repaymentModel?: RepaymentModel;
+  additionalCosts?: AdditionalCosts;
+  overpaymentPlans?: OverpaymentDetails[];
+  startDate?: Date;
+  loanDetails?: LoanDetails;
+}
+
+/**
+ * Parameters for overpayment-related functions
+ */
+export interface OverpaymentParams {
+  schedule: PaymentData[];
+  overpaymentAmount: number;
+  afterPayment: number;
+  loanDetails: LoanDetails;
+  effect: 'reduceTerm' | 'reducePayment';
+}
+
+/**
+ * Parameters for multiple overpayments
+ */
+export interface MultipleOverpaymentParams {
+  schedule: PaymentData[];
+  overpayments: OverpaymentDetails[];
+  loanStartDate?: Date;
+  loanDetails: LoanDetails;
+}
+
+/**
+ * Parameters for reduced term schedule calculation
+ */
+export interface ReducedTermParams {
+  balance: number;
+  interestRatePeriods: InterestRatePeriod[];
+  monthlyPayment: number;
+  startPaymentNumber: number;
+}
+
+/**
+ * Parameters for reduced payment schedule calculation
+ */
+export interface ReducedPaymentParams {
+  balance: number;
+  interestRatePeriods: InterestRatePeriod[];
+  remainingMonths: number;
+  originalPayment: number;
+  startPaymentNumber: number;
+}
+
+/**
+ * Optional parameters for calculations
+ */
+export interface CalculationOptions {
+  includeAdditionalCosts?: boolean;
+  formatResults?: boolean;
+  currency?: string;
+  locale?: string;
+}
+
+/**
+ * Parameters for APR calculation
+ */
+export interface APRCalculationParams {
+  principal: number;
+  monthlyPayment: number;
+  loanTermMonths: number;
+  oneTimeFees: number;
+  recurringFees: number;
+}

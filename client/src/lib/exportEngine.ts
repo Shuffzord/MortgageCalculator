@@ -1,5 +1,5 @@
 import { LoanDetails, CalculationResults, ExportOptions, ScenarioComparison } from './types';
-import { formatCurrency } from './utils';
+import { formatCurrency } from './formatters';
 
 /**
  * Export loan data to CSV format

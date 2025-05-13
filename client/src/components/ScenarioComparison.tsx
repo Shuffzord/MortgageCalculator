@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { compareScenarios, calculateCumulativeCostDifference, calculateMonthlyPaymentDifference } from '@/lib/comparisonEngine';
 import { LoanDetails, ScenarioComparison, ScenarioComparisonOptions } from '@/lib/types';
-import { formatCurrency, formatTimePeriod } from '@/lib/utils';
+import { calculationService } from "@/lib/services/calculationService";
 import { useTranslation } from 'react-i18next';
 import Chart from 'chart.js/auto';
 import { useEffect, useRef } from 'react';
@@ -108,7 +108,7 @@ export default function ScenarioComparisonComponent({
                 },
                 ticks: {
                   callback: function(value) {
-                    return formatCurrency(value as number, undefined, scenario1.loanDetails.currency || 'USD');
+                    return calculationService.formatCurrency(value as number, undefined, scenario1.loanDetails.currency || 'USD');
                   }
                 }
               },
@@ -131,7 +131,7 @@ export default function ScenarioComparisonComponent({
                 callbacks: {
                   label: function(context) {
                     const value = context.raw as number;
-                    return `Difference: ${formatCurrency(value, undefined, scenario1.loanDetails.currency || 'USD')}`;
+                    return `Difference: ${calculationService.formatCurrency(value, undefined, scenario1.loanDetails.currency || 'USD')}`;
                   },
                   title: function(context) {
                     const index = context[0].dataIndex;
@@ -192,7 +192,7 @@ export default function ScenarioComparisonComponent({
                 },
                 ticks: {
                   callback: function(value) {
-                    return formatCurrency(value as number, undefined, scenario1.loanDetails.currency || 'USD');
+                    return calculationService.formatCurrency(value as number, undefined, scenario1.loanDetails.currency || 'USD');
                   }
                 }
               },
@@ -215,7 +215,7 @@ export default function ScenarioComparisonComponent({
                 callbacks: {
                   label: function(context) {
                     const value = context.raw as number;
-                    return `Difference: ${formatCurrency(value, undefined, scenario1.loanDetails.currency || 'USD')}`;
+                    return `Difference: ${calculationService.formatCurrency(value, undefined, scenario1.loanDetails.currency || 'USD')}`;
                   },
                   title: function(context) {
                     const index = context[0].dataIndex;
@@ -354,24 +354,24 @@ export default function ScenarioComparisonComponent({
                         <tr key={scenario.id} className="border-b">
                           <td className="p-2">{scenario.name}</td>
                           <td className="p-2 text-right">
-                            {formatCurrency(
+                            {calculationService.formatCurrency(
                               scenario.results.monthlyPayment, 
                               undefined,
                               scenario.loanDetails.currency || 'USD'
                             )}
                           </td>
                           <td className="p-2 text-right">
-                            {formatCurrency(
+                            {calculationService.formatCurrency(
                               scenario.results.totalInterest, 
                               undefined,
                               scenario.loanDetails.currency || 'USD'
                             )}
                           </td>
                           <td className="p-2 text-right">
-                            {formatTimePeriod(scenario.results.actualTerm * 12)}
+                            {calculationService.formatTimePeriod(scenario.results.actualTerm * 12)}
                           </td>
                           <td className="p-2 text-right">
-                            {formatCurrency(
+                            {calculationService.formatCurrency(
                               totalCost, 
                               undefined,
                               scenario.loanDetails.currency || 'USD'
@@ -393,7 +393,7 @@ export default function ScenarioComparisonComponent({
                     <div>
                       <p className="text-sm text-gray-600">{t('comparison.monthlyPaymentDiff') || 'Monthly Payment Difference'}:</p>
                       <p className="font-medium">
-                        {formatCurrency(
+                        {calculationService.formatCurrency(
                           comparison.differences[0].monthlyPaymentDiff, 
                           undefined,
                           comparison.scenarios[0].loanDetails.currency || 'USD'
@@ -404,7 +404,7 @@ export default function ScenarioComparisonComponent({
                     <div>
                       <p className="text-sm text-gray-600">{t('comparison.totalInterestDiff') || 'Total Interest Difference'}:</p>
                       <p className="font-medium">
-                        {formatCurrency(
+                        {calculationService.formatCurrency(
                           comparison.differences[0].totalInterestDiff, 
                           undefined,
                           comparison.scenarios[0].loanDetails.currency || 'USD'
@@ -415,14 +415,14 @@ export default function ScenarioComparisonComponent({
                     <div>
                       <p className="text-sm text-gray-600">{t('comparison.termDiff') || 'Term Difference'}:</p>
                       <p className="font-medium">
-                        {formatTimePeriod(comparison.differences[0].termDiff * 12)}
+                        {calculationService.formatTimePeriod(comparison.differences[0].termDiff * 12)}
                       </p>
                     </div>
                     
                     <div>
                       <p className="text-sm text-gray-600">{t('comparison.totalCostDiff') || 'Total Cost Difference'}:</p>
                       <p className="font-medium">
-                        {formatCurrency(
+                        {calculationService.formatCurrency(
                           comparison.differences[0].totalCostDiff, 
                           undefined,
                           comparison.scenarios[0].loanDetails.currency || 'USD'

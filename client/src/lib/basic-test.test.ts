@@ -2,7 +2,7 @@
  * Very simple test file to verify testing infrastructure
  */
 
-import { calculateMonthlyPayment } from './utils';
+import { calculateBaseMonthlyPayment } from './calculationCore';
 
 describe('Basic Payment Calculation', () => {
   test('calculates monthly payment correctly', () => {
@@ -17,7 +17,7 @@ describe('Basic Payment Calculation', () => {
     // Convert years to months
     const totalMonths = termYears * 12;
     
-    const result = calculateMonthlyPayment(
+    const result = calculateBaseMonthlyPayment(
       principal,
       monthlyRate,
       totalMonths

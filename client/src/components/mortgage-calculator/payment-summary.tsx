@@ -1,7 +1,8 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoanDetails, PaymentData, CalculationResults } from "@/lib/types";
-import { formatCurrency, formatTimePeriod, getCurrencySymbol } from "@/lib/utils";
+import { calculationService } from "@/lib/services/calculationService";
+import { getCurrencySymbol } from "@/lib/utils";
 
 interface PaymentSummaryProps {
   calculationResults: CalculationResults | null;
@@ -35,19 +36,19 @@ export default function PaymentSummary({
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-gray-500">Monthly Payment</p>
             <p className="text-2xl font-semibold text-gray-900 financial-figure">
-              {formatCurrency(calculationResults.monthlyPayment, undefined, currency)}
+              {calculationService.formatCurrency(calculationResults.monthlyPayment, undefined, currency)}
             </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-gray-500">Total Interest</p>
             <p className="text-2xl font-semibold text-gray-900 financial-figure">
-              {formatCurrency(calculationResults.totalInterest, undefined, currency)}
+              {calculationService.formatCurrency(calculationResults.totalInterest, undefined, currency)}
             </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-gray-500">Total Payment</p>
             <p className="text-2xl font-semibold text-gray-900 financial-figure">
-              {formatCurrency(loanDetails.principal + calculationResults.totalInterest, undefined, currency)}
+              {calculationService.formatCurrency(loanDetails.principal + calculationResults.totalInterest, undefined, currency)}
             </p>
           </div>
         </div>
@@ -60,7 +61,7 @@ export default function PaymentSummary({
                 <div className="bg-green-50 p-4 rounded-lg">
                   <p className="text-sm font-medium text-gray-600">New Loan Term</p>
                   <p className="text-lg font-semibold text-gray-900 financial-figure">
-                    {formatTimePeriod(calculationResults.actualTerm * 12)}
+                    {calculationService.formatTimePeriod(calculationResults.actualTerm * 12)}
                   </p>
                   <p className="text-xs text-green-600 mt-1">
                     {/* {savedYearsMonthsText} saved */}
@@ -69,7 +70,7 @@ export default function PaymentSummary({
                 <div className="bg-green-50 p-4 rounded-lg">
                   <p className="text-sm font-medium text-gray-600">Interest Savings</p>
                   <p className="text-lg font-semibold text-gray-900 financial-figure">
-                    {formatCurrency(calculationResults.totalInterest, undefined, currency)}
+                    {calculationService.formatCurrency(calculationResults.totalInterest, undefined, currency)}
                   </p>
                   <p className="text-xs text-green-600 mt-1">
                     {/* {savingsPercentage}% of original interest */}

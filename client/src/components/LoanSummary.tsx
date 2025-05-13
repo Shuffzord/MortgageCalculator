@@ -1,4 +1,5 @@
-import { formatTimePeriod, formatCurrency, getCurrencySymbol, formatDate } from "@/lib/utils";
+import { formatTimePeriod, formatCurrency, formatDate } from "@/lib/formatters";
+import { getCurrencySymbol } from "@/lib/utils";
 import { CalculationResults, LoanDetails, InterestRatePeriod } from "@/lib/types";
 import { useTranslation } from "react-i18next";
 

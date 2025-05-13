@@ -4,17 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  LoanDetails, 
-  OptimizationParameters, 
+import {
+  LoanDetails,
+  OptimizationParameters,
   OptimizationResult,
   OverpaymentDetails
 } from "@/lib/types";
-import { 
-  optimizeOverpayments, 
-  analyzeOverpaymentImpact,
-  compareLumpSumVsRegular
-} from "@/lib/optimizationEngine";
+import { calculationService } from "@/lib/services/calculationService";
 import { formatCurrency, getCurrencySymbol } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import Chart from "chart.js/auto";
@@ -65,7 +61,7 @@ export default function OverpaymentOptimizationPanel({
   
   // Handle optimization
   const handleOptimize = () => {
-    const optimizationResult = optimizeOverpayments(loanDetails, params);
+    const optimizationResult = calculationService.optimizeOverpayments(loanDetails, params);
     setResult(optimizationResult);
   };
   
@@ -78,7 +74,7 @@ export default function OverpaymentOptimizationPanel({
   
   // Handle comparison analysis
   const handleCompare = () => {
-    const comparison = compareLumpSumVsRegular(
+    const comparison = calculationService.compareLumpSumVsRegular(
       loanDetails,
       params.maxOneTimeOverpayment,
       params.maxMonthlyOverpayment
@@ -88,7 +84,7 @@ export default function OverpaymentOptimizationPanel({
   
   // Handle impact analysis
   const handleAnalyzeImpact = () => {
-    const impact = analyzeOverpaymentImpact(
+    const impact = calculationService.analyzeOverpaymentImpact(
       loanDetails,
       params.maxMonthlyOverpayment,
       5
@@ -136,7 +132,7 @@ export default function OverpaymentOptimizationPanel({
             },
             ticks: {
               callback: function(value) {
-                return formatCurrency(value as number, undefined, loanDetails.currency);
+                return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
               }
             }
           }
@@ -146,7 +142,7 @@ export default function OverpaymentOptimizationPanel({
             callbacks: {
               label: function(context) {
                 const value = context.raw as number;
-                return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                return context.dataset.label + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
               }
             }
           },
@@ -199,7 +195,7 @@ export default function OverpaymentOptimizationPanel({
               callback: function(value, index) {
                 // Format as currency for interest saved, as years for term reduction
                 if (index === 0) {
-                  return formatCurrency(value as number, undefined, loanDetails.currency);
+                  return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
                 } else {
                   return value + ' ' + t('form.years', 'years');
                 }
@@ -216,7 +212,7 @@ export default function OverpaymentOptimizationPanel({
                 const dataIndex = context.dataIndex;
                 
                 if (dataIndex === 0) {
-                  return context.dataset.label + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                  return context.dataset.label + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
                 } else {
                   return context.dataset.label + ': ' + value.toFixed(2) + ' ' + t('form.years', 'years');
                 }
@@ -243,7 +239,7 @@ export default function OverpaymentOptimizationPanel({
     const newChart = new Chart(impactChartRef.current, {
       type: 'line',
       data: {
-        labels: impactData.map(d => formatCurrency(d.amount, undefined, loanDetails.currency)),
+        labels: impactData.map(d => calculationService.formatCurrency(d.amount, undefined, loanDetails.currency)),
         datasets: [
           {
             label: t('overpayment.interestSaved', 'Interest Saved'),
@@ -277,7 +273,7 @@ export default function OverpaymentOptimizationPanel({
             },
             ticks: {
               callback: function(value) {
-                return formatCurrency(value as number, undefined, loanDetails.currency);
+                return calculationService.formatCurrency(value as number, undefined, loanDetails.currency);
               }
             }
           },
@@ -302,7 +298,7 @@ export default function OverpaymentOptimizationPanel({
                 const datasetIndex = context.datasetIndex;
                 
                 if (datasetIndex === 0) {
-                  return t('overpayment.interestSaved', 'Interest Saved') + ': ' + formatCurrency(value, undefined, loanDetails.currency);
+                  return t('overpayment.interestSaved', 'Interest Saved') + ': ' + calculationService.formatCurrency(value, undefined, loanDetails.currency);
                 } else {
                   return t('overpayment.termReduction', 'Term Reduction') + ': ' + value.toFixed(2) + ' ' + t('form.years', 'years');
                 }
@@ -343,7 +339,7 @@ export default function OverpaymentOptimizationPanel({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <span className="text-gray-600">{t('form.loanAmount')}:</span>{' '}
-              <span className="font-medium">{formatCurrency(loanDetails.principal, undefined, loanDetails.currency)}</span>
+              <span className="font-medium">{calculationService.formatCurrency(loanDetails.principal, undefined, loanDetails.currency)}</span>
             </div>
             <div>
               <span className="text-gray-600">{t('form.loanTerm')}:</span>{' '}
@@ -487,7 +483,7 @@ export default function OverpaymentOptimizationPanel({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-600">{t('overpayment.interestSaved', 'Interest Saved')}:</p>
-                      <p className="font-medium">{formatCurrency(result.interestSaved, undefined, loanDetails.currency)}</p>
+                      <p className="font-medium">{calculationService.formatCurrency(result.interestSaved, undefined, loanDetails.currency)}</p>
                     </div>
                     
                     <div>

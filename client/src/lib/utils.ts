@@ -1,9 +1,10 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { PaymentData, OverpaymentDetails, RepaymentModel } from "./types";
-import { format } from "date-fns";
-import { enUS, es, pl } from "date-fns/locale";
-import i18n from "@/i18n";
+import { calculateBaseMonthlyPayment, roundToCents as roundToCentsCore } from './calculationCore';
+// Re-export formatting functions from formatters.ts for backward compatibility
+import { formatCurrency, formatDate, formatTimePeriod, formatDateLegacy } from './formatters';
+export { formatCurrency, formatDate, formatTimePeriod, formatDateLegacy };
 
 export const CURRENCIES = [
   { code: "USD", symbol: "$", name: "US Dollar" },
@@ -17,47 +18,24 @@ export const CURRENCIES = [
 ];
 
 export function areMonetaryValuesEqual(a: number, b: number, tolerance = 0.01): boolean {
-  return Math.abs(roundToCents(a) - roundToCents(b)) <= tolerance;
+  return Math.abs(roundToCentsCore(a) - roundToCentsCore(b)) <= tolerance;
 }
 
 /**
  * Calculates the monthly payment amount for a loan
- *
- * Formula: M = P[r(1+r)^n]/[(1+r)^n-1] where:
- * M = monthly payment
- * P = loan principal
- * r = monthly interest rate (annual rate / 12 / 100)
- * n = number of monthly payments (term * 12)
- *
- * @param principal Loan principal amount
- * @param annualRate Annual interest rate (percentage)
- * @param termYears Loan term in years
- * @returns Monthly payment amount
+ * This is now a wrapper around the core function for backward compatibility
  */
 export function calculateMonthlyPayment(
   principal: number,
   monthlyRate: number,
   totalMonths: number
 ): number {
-  // For extremely low rates (near-zero), use simple division
-  if (Math.abs(monthlyRate) < 0.0001) { // 0.01% annual rate threshold
-    return roundToCents(principal / totalMonths);
-  }
-  
-  // For very low rates, use simplified calculation
-  if (monthlyRate < 0.001) { // 0.12% annual rate threshold
-    const totalPayment = principal * (1 + (monthlyRate * totalMonths));
-    return roundToCents(totalPayment / totalMonths);
-  }
-  
-  // Standard formula for normal interest rates
-  const compoundFactor = Math.pow(1 + monthlyRate, totalMonths);
-  const payment = principal * (monthlyRate * compoundFactor) / (compoundFactor - 1);
-  return roundToCents(payment);
+  return calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
 }
 
+// Re-export roundToCents for backward compatibility
 export function roundToCents(amount: number): number {
-  return Math.round(amount * 100) / 100;
+  return roundToCentsCore(amount);
 }
 /**
  * Generates the amortization schedule for the loan
@@ -160,7 +138,7 @@ export function generateAmortizationSchedule(
       payment = monthlyPayment;
     } else {
       // Default: equal installments (annuity) model
-      monthlyPayment = calculateMonthlyPayment(
+      monthlyPayment = calculateBaseMonthlyPayment(
         remainingPrincipal,
         monthlyRate,
         totalPayments,
@@ -224,7 +202,7 @@ export function generateAmortizationSchedule(
 
     // If reducing payment not term, recalculate monthly payment
     if (overpaymentPlan && overpaymentPlan.amount > 0 && reduceTermNotPayment) {
-      newMonthlyPayment = calculateMonthlyPayment(
+      newMonthlyPayment = calculateBaseMonthlyPayment(
         remainingPrincipal,
         monthlyRate,
         totalPayments,
@@ -261,74 +239,6 @@ export function generateAmortizationSchedule(
   return schedule;
 }
 
-/**
- * Formats a number as currency
- * @param value Number to format
- * @returns Formatted currency string
- */
-export function formatCurrency(
-  value: number,
-  locale?: string,
-  currency: string = "USD",
-): string {
-  // Use the current language from i18n if locale is not provided
-  const currentLocale = locale || (i18n.language === 'pl' ? 'pl-PL' :
-                                   i18n.language === 'es' ? 'es-ES' : 'en-US');
-  
-  return new Intl.NumberFormat(currentLocale, {
-    style: "currency",
-    currency: currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
-
-/**
- * Formats a time period in months as years and months
- * @param months Number of months
- * @returns Formatted time period string
- */
-export function formatTimePeriod(months: number): string {
-  const years = Math.floor(months / 12);
-  const remainingMonths = months % 12;
-
-  let formattedString = "";
-
-  if (years > 0) {
-    formattedString += `${years} year${years > 1 ? "s" : ""} `;
-  }
-
-  if (remainingMonths > 0) {
-    formattedString += `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
-  }
-
-  return formattedString.trim();
-}
-
-/**
- * Format date to a human-readable string with language-specific formatting
- * @param date Date to format
- * @param formatStr Format string (default: "PPP" for long date format)
- * @returns Formatted date string based on the current language
- */
-export function formatDate(date: Date, formatStr: string = "PPP"): string {
-  const language = i18n.language || 'en';
-  const locale = language === 'pl' ? pl : language === 'es' ? es : enUS;
-  
-  return format(date, formatStr, { locale });
-}
-
-/**
- * Legacy format date function for backward compatibility
- * @deprecated Use formatDate instead
- */
-export function formatDateLegacy(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-}
 
 export function getCurrencySymbol(code: string): string {
   const currency = CURRENCIES.find(c => c.code === code);
@@ -339,99 +249,5 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Calculate a schedule with reduced term (same payment amount)
- */
-export function calculateReducedTermSchedule(
-  balance: number,
-  interestRatePeriods: { startMonth: number; interestRate: number; }[],
-  monthlyPayment: number,
-  startPaymentNumber: number): PaymentData[] {
-  const result: PaymentData[] = [];
-  let remainingBalance = balance;
-  let payment = startPaymentNumber;
-  while (remainingBalance > 0.01) {
-    payment++;
-    // Determine the interest rate for the current payment
-    let currentInterestRate = 0;
-    for (const period of interestRatePeriods) {
-      if (payment >= period.startMonth) {
-        currentInterestRate = period.interestRate;
-      }
-    }
-    const monthlyRate = currentInterestRate / 100 / 12;
-    const interestPayment = roundToCents(remainingBalance * monthlyRate);
-    let principalPayment = roundToCents(monthlyPayment - interestPayment);
-    let currentPayment = monthlyPayment;
-    if (remainingBalance < principalPayment) {
-      principalPayment = remainingBalance;
-      currentPayment = roundToCents(principalPayment + interestPayment);
-      remainingBalance = 0;
-    } else {
-      remainingBalance = roundToCents(remainingBalance - principalPayment);
-    }
-    result.push({
-      payment,
-      monthlyPayment: currentPayment,
-      principalPayment,
-      interestPayment,
-      balance: remainingBalance,
-      isOverpayment: false,
-      overpaymentAmount: 0,
-      totalInterest: 0,
-      totalPayment: currentPayment
-    });
-  }
-  return result;
-}
-
-/**
- * Calculate a schedule with reduced payment (same term)
- */
-export function calculateReducedPaymentSchedule(
-  balance: number,
-  interestRatePeriods: { startMonth: number; interestRate: number; }[],
-  remainingMonths: number,
-  originalPayment: number,
-  startPaymentNumber: number): PaymentData[] {
-  const schedule: PaymentData[] = [];
-  let remainingBalance = balance;
-  for (let i = 0; i < remainingMonths && remainingBalance > 0.01; i++) {
-    const payment = startPaymentNumber + i;
-    // Determine the interest rate for the current payment
-    let currentInterestRate = 0;
-    for (const period of interestRatePeriods) {
-      if (payment >= period.startMonth) {
-        currentInterestRate = period.interestRate;
-      }
-    }
-    const monthlyRate = currentInterestRate / 100 / 12;
-    const newMonthlyPayment = calculateMonthlyPayment(
-      remainingBalance,
-      monthlyRate,
-      remainingMonths
-    );
-    const interestPayment = roundToCents(remainingBalance * monthlyRate);
-    let principalPayment = roundToCents(newMonthlyPayment - interestPayment);
-    let currentPayment = newMonthlyPayment;
-    if (remainingBalance < principalPayment) {
-      principalPayment = remainingBalance;
-      currentPayment = roundToCents(principalPayment + interestPayment);
-      remainingBalance = 0;
-    } else {
-      remainingBalance = roundToCents(remainingBalance - principalPayment);
-    }
-    schedule.push({
-      payment,
-      monthlyPayment: currentPayment,
-      principalPayment,
-      interestPayment,
-      balance: remainingBalance,
-      isOverpayment: false,
-      overpaymentAmount: 0,
-      totalInterest: 0,
-      totalPayment: currentPayment
-    });
-  }
-  return schedule;
-}
+// These functions have been moved to overpaymentCalculator.ts
+// Re-export them from there if needed

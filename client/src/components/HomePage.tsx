@@ -11,9 +11,9 @@ import {
   LoanDetails,
   SavedCalculation
 } from "@/lib/types";
-import { 
-  calculateLoanDetails
-} from "@/lib/calculationEngine";
+import {
+  calculationService
+} from "@/lib/services/calculationService";
 import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -88,16 +88,7 @@ const HomePage: React.FC<HomePageProps> = ({
     // Use the provided loan details if available, otherwise use the current state
     const detailsToUse = loanDetailsToCalculate || loanDetails;
     
-    const results = calculateLoanDetails(
-      detailsToUse.principal,
-      detailsToUse.interestRatePeriods,
-      detailsToUse.loanTerm,
-      undefined, // Don't pass a single overpayment plan
-      detailsToUse.repaymentModel,
-      detailsToUse.additionalCosts,
-      detailsToUse.overpaymentPlans, // Pass all overpayment plans
-      detailsToUse.startDate // Pass the loan start date for date-based overpayments
-    );
+    const results = calculationService.calculateLoanDetails(detailsToUse);
     
     setCalculationResults(results);
   };
@@ -171,7 +162,7 @@ const HomePage: React.FC<HomePageProps> = ({
               currency={selectedCurrency}
             />
             
-            {/* <OverpaymentOptimizationPanel
+            <OverpaymentOptimizationPanel
               loanDetails={loanDetails}
               onApplyOptimization={(optimizedOverpayments) => {
                 // Create updated loan details with optimized overpayments
@@ -186,7 +177,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 // Calculate using the new details directly
                 handleCalculateLoan(updatedDetails);
               }}
-            /> */}
+            />
           </div>
         </div>
       </main>

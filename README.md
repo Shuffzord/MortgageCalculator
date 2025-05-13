@@ -145,6 +145,91 @@ Looking to make your first contribution? Check out our [good first issues](https
 
 MortgageCalc follows specific design principles to ensure the application is both functional and beautiful. Please refer to our [Design Guidelines](DESIGN_GUIDELINES.md) document when contributing UI components or visualizations.
 
+## 🏛️ Architecture
+
+The MortgageCalc application follows a modular architecture that separates concerns and establishes clear dependencies between components.
+
+### Module Structure
+
+The calculation logic is organized into the following modules:
+
+- **calculationCore.ts** - Core calculation functions shared between modules
+  - Contains fundamental mortgage math functions
+  - Provides utility functions like `roundToCents` and `calculateBaseMonthlyPayment`
+  - Helps break circular dependencies between calculation modules
+
+- **formatters.ts** - Formatting functions for display
+  - Handles currency formatting with internationalization support
+  - Provides date and time period formatting
+  - Keeps presentation logic separate from calculation logic
+
+- **overpaymentCalculator.ts** - Overpayment-specific logic
+  - Manages one-time and recurring overpayments
+  - Calculates impact of overpayments on loan term or payment amount
+  - Provides specialized overpayment functions
+
+- **calculationService.ts** - Service layer for UI components
+  - Mediates between UI components and calculation logic
+  - Provides a unified API for all calculation operations
+  - Handles parameter validation and transformation
+
+### Dependency Flow
+
+```
+┌─────────────────┐
+│  UI Components  │
+└────────┬────────┘
+         │ uses
+         ▼
+┌─────────────────┐
+│calculationService│
+└────┬──────┬─────┘
+     │      │
+     ▼      ▼
+┌────────┐ ┌────────────┐     ┌───────────┐
+│formatters│ │calculationEngine│◄────│optimizationEngine│
+└────────┘ └───────┬────┘     └───────────┘
+                   │
+                   ▼
+          ┌─────────────────┐
+          │overpaymentCalculator│
+          └────────┬────────┘
+                   │
+                   ▼
+          ┌─────────────────┐
+          │ calculationCore │
+          └────────┬────────┘
+                   │
+                   ▼
+          ┌─────────────────┐
+          │     types.ts    │
+          └─────────────────┘
+```
+
+### Best Practices
+
+When working with the MortgageCalc codebase, follow these guidelines:
+
+1. **UI Component Integration**
+   - Always use `calculationService` in UI components
+   - Never import calculation modules directly into UI components
+   - Use the service's formatting methods for consistent display
+
+2. **Parameter Handling**
+   - Use parameter objects for function calls
+   - Follow the established parameter object patterns in each module
+   - Leverage TypeScript interfaces for type safety
+
+3. **Separation of Concerns**
+   - Keep formatting logic separate from calculation logic
+   - Maintain clear boundaries between modules
+   - Follow the dependency flow shown in the diagram
+
+4. **Testing**
+   - Test each module in isolation
+   - Use the service layer for integration tests
+   - Ensure comprehensive test coverage for all calculation paths
+
 ## 📚 Documentation
 
 - [API Documentation](docs/API.md)

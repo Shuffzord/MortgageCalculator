@@ -9,7 +9,7 @@ import {
   PaymentData
 } from './types';
 import { calculateLoanDetails } from './calculationEngine.ts';
-import { roundToCents } from './utils';
+import { roundToCents } from './calculationCore';
 
 /**
  * Optimize overpayment strategy to maximize interest savings

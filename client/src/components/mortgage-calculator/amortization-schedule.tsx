@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { PaymentData, LoanDetails } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";

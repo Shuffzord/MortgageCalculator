@@ -5,28 +5,17 @@
 
 // Using the types from types.ts for consistency
 import { LoanDetails, OverpaymentDetails, PaymentData } from './types';
-import { generateAmortizationSchedule, formatCurrency, formatDate } from './utils';
+import { formatCurrency, formatDate } from './formatters';
+import { convertScheduleFormat } from './calculationCore';
+import { generateAmortizationSchedule } from './calculationEngine';
 
 // Re-export these utilities for backward compatibility
-export { formatCurrency, formatDate };
-
-// Schedule type has been removed, using PaymentData directly
+// Re-export formatting functions from formatters.ts
+export { formatCurrency, formatDate, formatTimePeriod, formatPaymentAmount, formatInterestRate, formatLoanSummary } from './formatters';
 
 // Convert legacy Schedule format to PaymentData
 export function convertLegacySchedule(schedule: any): PaymentData {
-  return {
-    payment: schedule.paymentNum || schedule.payment,
-    monthlyPayment: schedule.monthlyPayment || schedule.payment, // Fix: switched the order to prioritize monthlyPayment
-    principalPayment: schedule.principalPayment,
-    interestPayment: schedule.interestPayment,
-    balance: schedule.remainingPrincipal || schedule.balance,
-    isOverpayment: schedule.isOverpayment || false,
-    overpaymentAmount: schedule.overpaymentAmount || 0,
-    totalInterest: schedule.totalInterest || 0,
-    totalPayment: schedule.totalPayment || schedule.payment,
-    paymentDate: schedule.paymentDate,
-    currency: schedule.currency
-  };
+  return convertScheduleFormat(schedule);
 }
 
 /**

@@ -8,7 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { exportToCSV, exportToJSON } from '@/lib/exportEngine';
 import { LoanDetails, CalculationResults, ExportOptions, ExportFormat, ScenarioComparison, SavedCalculation } from '@/lib/types';
 import { useTranslation } from 'react-i18next';
-import { formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/formatters';
 import { Download, FileText, FileCode, Save, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { saveCalculation, getSavedCalculations } from '@/lib/storageService';

@@ -6,8 +6,8 @@
 import {
   calculateComplexScenario
 } from './calculationEngine';
-import { calculateMonthlyPayment } from './utils';
-import { formatCurrency, formatTimePeriod } from './utils';
+import { formatCurrency, formatTimePeriod } from './formatters';
+import { calculateBaseMonthlyPayment } from './calculationCore';
 import { OverpaymentDetails } from './types';
 
 describe('Advanced Mortgage Scenarios', () => {
@@ -18,7 +18,9 @@ describe('Advanced Mortgage Scenarios', () => {
     const initialTerm = 30;
     
     // Calculate the expected monthly payment using the standard formula
-    const expectedInitialPayment = calculateMonthlyPayment(initialPrincipal, initialRate, initialTerm);
+    const monthlyRate = initialRate / 100 / 12;
+    const totalMonths = initialTerm * 12;
+    const expectedInitialPayment = calculateBaseMonthlyPayment(initialPrincipal, monthlyRate, totalMonths);
     
     // Set a fixed start date for consistency
     const loanStartDate = new Date(2023, 0, 1); // January 1, 2023
@@ -120,7 +122,9 @@ describe('Advanced Mortgage Scenarios', () => {
     const overpayments: OverpaymentDetails[] = [];
     
     // Calculate the base monthly payment
-    const baseMonthlyPayment = calculateMonthlyPayment(initialPrincipal, initialRate, initialTerm);
+    const monthlyRate = initialRate / 100 / 12;
+    const totalMonths = initialTerm * 12;
+    const baseMonthlyPayment = calculateBaseMonthlyPayment(initialPrincipal, monthlyRate, totalMonths);
     
     // Add extra payment in middle of each year starting from year 5
     const loanStartDate = new Date(2023, 0, 1); // January 1, 2023
