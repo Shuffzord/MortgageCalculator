@@ -622,12 +622,6 @@ export function calculateReducedPaymentSchedule(
     remainingMonths
   );
   
-  // Ensure the new payment is actually less than the original
-  // If not, there might be an issue with the calculation
-  if (newMonthlyPayment >= originalPayment) {
-    console.warn(`Warning: New payment (${newMonthlyPayment}) not less than original (${originalPayment})`);
-  }
-
   // Track future interest rate changes that will affect the schedule
   const futureRateChanges = sortedRatePeriods
     .filter(period => period.startMonth > startPaymentNumber)
