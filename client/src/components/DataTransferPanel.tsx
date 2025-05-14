@@ -190,7 +190,7 @@ export default function DataTransferPanel({
             <div>
               <h3 className="text-sm font-medium mb-2">{t('export.format', 'Export Format')}</h3>
               <div className="flex space-x-4">
-                <div 
+                {/* <div 
                   className={`flex flex-col items-center p-3 border-2 rounded-md cursor-pointer transition-all ${
                     exportOptions.format === 'csv' 
                       ? 'border-primary bg-primary/10 text-primary shadow-sm' 
@@ -202,7 +202,7 @@ export default function DataTransferPanel({
                 >
                   <FileText className={`h-6 w-6 mb-1 ${exportOptions.format === 'csv' ? 'text-primary' : 'text-gray-500'}`} />
                   <span>CSV</span>
-                </div>
+                </div> */}
                 <div 
                   className={`flex flex-col items-center p-3 border-2 rounded-md cursor-pointer transition-all ${
                     exportOptions.format === 'json' 
@@ -330,7 +330,7 @@ export default function DataTransferPanel({
             <div>
               <h3 className="text-sm font-medium mb-2">{t('import.format', 'Import Format')}</h3>
               <div className="flex space-x-4">
-                <div 
+                {/* <div 
                   className={`flex flex-col items-center p-3 border-2 rounded-md cursor-pointer transition-all ${
                     importFormat === 'csv' 
                       ? 'border-primary bg-primary/10 text-primary shadow-sm' 
@@ -342,7 +342,7 @@ export default function DataTransferPanel({
                 >
                   <FileText className={`h-6 w-6 mb-1 ${importFormat === 'csv' ? 'text-primary' : 'text-gray-500'}`} />
                   <span>CSV</span>
-                </div>
+                </div> */}
                 <div 
                   className={`flex flex-col items-center p-3 border-2 rounded-md cursor-pointer transition-all ${
                     importFormat === 'json' 

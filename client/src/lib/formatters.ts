@@ -48,6 +48,9 @@ export function formatCurrency(
   locale?: string,
   currency: string = "USD",
 ): string {
+  // Ensure value is treated as a number to prevent string concatenation issues
+  const numericValue = Number(value);
+  
   // Use the current language from i18n if locale is not provided
   const currentLocale = locale || (i18n.language === 'pl' ? 'pl-PL' :
                                    i18n.language === 'es' ? 'es-ES' : 'en-US');
@@ -57,7 +60,7 @@ export function formatCurrency(
     currency: currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(value);
+  }).format(numericValue);
 }
 
 /**

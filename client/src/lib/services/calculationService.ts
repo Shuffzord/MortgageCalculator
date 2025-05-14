@@ -369,7 +369,8 @@ export class CalculationService {
     locale?: string,
     currency: string = "USD"
   ): string {
-    return formatCurrency(value, locale, currency);
+    // Ensure value is treated as a number to prevent string concatenation issues
+    return formatCurrency(Number(value), locale, currency);
   }
 
   /**

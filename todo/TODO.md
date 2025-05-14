@@ -6,4 +6,5 @@
 6. Footer
 7. Overpayment analysis
 8. Linki afiliacyjne
-9. Impact
+9. Impact Analysis
+10. CSV Import Export
