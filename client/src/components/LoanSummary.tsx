@@ -254,14 +254,9 @@ export default function LoanSummary({
                   percentageSaved={(interestSaved / Number(calculationResults.totalInterest)) * 100}
                   currency={loanDetails.currency || 'USD'}
                 />
-              ) : (
+              ) :(
                 // When we only have potential impact data
-                <SavingsSpotlight
-                  moneySaved={Number(impactData[impactData.length - 1].interestSaved)}
-                  timeSaved={Number(impactData[impactData.length - 1].termReduction) * 12} // Convert years to months
-                  percentageSaved={(Number(impactData[impactData.length - 1].interestSaved) / Number(calculationResults.totalInterest)) * 100}
-                  currency={loanDetails.currency || 'USD'}
-                />
+                <div/>
               )}
             </div>
           )}
