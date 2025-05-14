@@ -79,14 +79,17 @@ export function formatTimePeriod(months: number): string {
   const years = Math.floor(months / 12);
   const remainingMonths = months % 12;
 
+  // Use the i18n instance that's already imported at the top of the file
+  const t = i18n.t.bind(i18n);
+
   let formattedString = "";
 
   if (years > 0) {
-    formattedString += `${years} year${years > 1 ? "s" : ""} `;
+    formattedString += `${years} ${years > 1 ? t('form.years', 'years') : t('form.year', 'year')} `;
   }
 
   if (remainingMonths > 0) {
-    formattedString += `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+    formattedString += `${remainingMonths} ${remainingMonths > 1 ? t('form.months', 'months') : t('form.month', 'month')}`;
   }
 
   return formattedString.trim();

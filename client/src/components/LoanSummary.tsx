@@ -260,39 +260,7 @@ export default function LoanSummary({
             </div>
           )}
 
-          {overpaymentResults && (
-            <div className="md:col-span-4 bg-green-50 p-4 rounded-lg border border-green-100">
-              <h3 className="text-sm font-medium text-green-700">{t('overpayment.results')}</h3>
-              <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <p className="text-xs text-green-600">{t('overpayment.newMonthlyPayment')}</p>
-                  <p className="font-semibold text-gray-900 font-mono">
-                    {formatCurrency(Number(overpaymentResults.monthlyPayment), undefined, loanDetails.currency)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-green-600">{t('overpayment.interestSaved')}</p>
-                  <p className="font-semibold text-gray-900 font-mono">
-                    {formatCurrency(Number(interestSaved), undefined, loanDetails.currency)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-green-600">
-                    {typeof overpaymentResults.timeOrPaymentSaved === 'number' &&
-                     Number(overpaymentResults.timeOrPaymentSaved) > 100
-                      ? t('overpayment.timeSaved')
-                      : t('overpayment.paymentReduced')}
-                  </p>
-                  <p className="font-semibold text-gray-900">
-                    {typeof overpaymentResults.timeOrPaymentSaved === 'number' &&
-                     Number(overpaymentResults.timeOrPaymentSaved) > 100
-                      ? formatTimePeriod(Number(overpaymentResults.timeOrPaymentSaved))
-                      : formatCurrency(Number(overpaymentResults.timeOrPaymentSaved ?? 0), undefined, loanDetails.currency)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Removed duplicate overpayment results section - now using SavingsSpotlight component */}
           
           {/* Combined Savings Spotlight */}
           {console.log("Rendering savings spotlight section, conditions:", {
