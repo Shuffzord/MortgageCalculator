@@ -144,7 +144,21 @@
     "initialRate": "Początkowa Stopa",
     "period": "Okres",
     "apr": "RRSO",
-    "year": "Rok"
+    "year": "Rok",
+    "overpaymentImpact": "Wpływ Nadpłat",
+    "overpaymentSavingsHighlight": "TE NADPŁATY OSZCZĘDZAJĄ CI {{amount}}",
+    "overpaymentImpactTitle": "WPŁYW TWOICH NADPŁAT",
+    "impactDescription": "Twoje nadpłaty znacząco zmniejszają koszty i czas trwania kredytu.",
+    "totalInterest": "Całkowity Odsetki",
+    "noOverpayments": "Bez Nadpłat",
+    "withOverpayments": "Z Nadpłatami",
+    "youSave": "Oszczędzasz",
+    "withoutOverpayments": "Bez Nadpłat",
+    "potentialSavings": "Potencjalne Oszczędności",
+    "upToAmount": "Do {{amount}}",
+    "moneySaved": "Zaoszczędzone Pieniądze",
+    "timeSaved": "Zaoszczędzony Czas",
+    "valuePercentage": "Wartość"
   },
   "chart": {
     "title": "Podział Płatności",

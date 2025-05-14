@@ -139,7 +139,21 @@
     "initialRate": "Initial Rate",
     "period": "Period",
     "apr": "APR",
-    "year": "Year"
+    "year": "Year",
+    "overpaymentImpact": "Overpayment Impact",
+    "overpaymentSavingsHighlight": "THESE OVERPAYMENTS SAVE YOU {{amount}}",
+    "overpaymentImpactTitle": "IMPACT OF YOUR OVERPAYMENTS",
+    "impactDescription": "Your overpayments significantly reduce your loan costs and duration.",
+    "totalInterest": "Total Interest",
+    "noOverpayments": "No Overpayments",
+    "withOverpayments": "With Overpayments",
+    "youSave": "You save",
+    "withoutOverpayments": "Without Overpayments",
+    "potentialSavings": "Potential Savings",
+    "upToAmount": "Up to {{amount}}",
+    "moneySaved": "Money Saved",
+    "timeSaved": "Time Saved",
+    "valuePercentage": "Value"
   },
   "chart": {
     "title": "Payment Breakdown",

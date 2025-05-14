@@ -2,6 +2,9 @@ import { formatTimePeriod, formatCurrency, formatDate } from "@/lib/formatters";
 import { getCurrencySymbol } from "@/lib/utils";
 import { CalculationResults, LoanDetails, InterestRatePeriod } from "@/lib/types";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { calculationService } from "@/lib/services/calculationService";
+import SavingsSpotlight from "./SavingsSpotlight";
 
 interface LoanSummaryProps {
   calculationResults: CalculationResults | null;
@@ -15,6 +18,88 @@ export default function LoanSummary({
   loanDetails
 }: LoanSummaryProps) {
   const { t } = useTranslation();
+  
+  // State for impact analysis data
+  const [impactData, setImpactData] = useState<{ amount: number; interestSaved: number; termReduction: number }[] | null>(null);
+  
+  // Calculate impact data when overpayment results are available
+  useEffect(() => {
+    console.log("useEffect for impact data triggered");
+    console.log("overpaymentResults:", overpaymentResults);
+    console.log("loanDetails.overpaymentPlans:", loanDetails.overpaymentPlans);
+    
+    // Changed condition to not require overpaymentResults
+    // We only need overpayment plans to calculate impact data
+    if (loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length > 0) {
+      console.log("Overpayment plans:", loanDetails.overpaymentPlans);
+      
+      // Calculate the maximum monthly overpayment amount to analyze
+      let maxMonthlyAmount = loanDetails.overpaymentPlans.reduce((max, plan) => {
+        if (plan.frequency === 'monthly') {
+          return Math.max(max, plan.amount);
+        }
+        return max;
+      }, 0);
+      
+      console.log("Initial maxMonthlyAmount:", maxMonthlyAmount);
+      
+      // If no monthly overpayment, use the first overpayment amount as a base
+      if (maxMonthlyAmount === 0 && loanDetails.overpaymentPlans.length > 0) {
+        // For non-monthly plans, use a reasonable monthly equivalent
+        const firstPlan = loanDetails.overpaymentPlans[0];
+        console.log("Using first plan for calculation:", firstPlan);
+        
+        if (firstPlan.frequency === 'one-time') {
+          // For one-time payments, divide by 12 to get a monthly equivalent
+          maxMonthlyAmount = firstPlan.amount / 12;
+          console.log("One-time payment converted to monthly:", maxMonthlyAmount);
+        } else if (firstPlan.frequency === 'quarterly') {
+          // For quarterly payments, divide by 3 to get a monthly equivalent
+          maxMonthlyAmount = firstPlan.amount / 3;
+          console.log("Quarterly payment converted to monthly:", maxMonthlyAmount);
+        } else if (firstPlan.frequency === 'annual') {
+          // For annual payments, divide by 12 to get a monthly equivalent
+          maxMonthlyAmount = firstPlan.amount / 12;
+          console.log("Annual payment converted to monthly:", maxMonthlyAmount);
+        } else {
+          // Default fallback
+          maxMonthlyAmount = firstPlan.amount / 10;
+          console.log("Using default conversion to monthly:", maxMonthlyAmount);
+        }
+        
+        console.log("No monthly overpayment found, using calculated amount:", maxMonthlyAmount);
+      }
+      
+      // Always analyze impact as long as there's an overpayment plan
+      // Ensure we have a reasonable amount to analyze (at least 1% of principal)
+      const minAnalysisAmount = Math.max(
+        maxMonthlyAmount,
+        loanDetails.principal * 0.01 / 12 // At least 1% of principal per year (divided by 12 for monthly)
+      );
+      
+      console.log("Final analysis amount:", minAnalysisAmount);
+      console.log("Analyzing impact with amount:", minAnalysisAmount);
+      
+      try {
+        const impact = calculationService.analyzeOverpaymentImpact(
+          loanDetails,
+          minAnalysisAmount * 2, // Analyze up to double the amount
+          5 // 5 data points
+        );
+        console.log("Impact data calculated:", impact);
+        setImpactData(impact);
+      } catch (error) {
+        console.error("Error calculating impact data:", error);
+      }
+    } else {
+      console.log("Conditions not met for impact analysis");
+      if (!overpaymentResults) console.log("No overpaymentResults");
+      if (!loanDetails.overpaymentPlans) console.log("No overpaymentPlans");
+      if (loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length === 0) console.log("Empty overpaymentPlans");
+    }
+  }, [overpaymentResults, loanDetails]);
+  
+  // No chart creation useEffect needed anymore
   
   if (!calculationResults) {
     return (
@@ -93,7 +178,7 @@ export default function LoanSummary({
           </div>
           
           {/* Interest Rate Periods Information */}
-          <div className="md:col-span-3 bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4">
+          <div className="md:col-span-4 bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4">
             <h3 className="text-sm font-medium text-blue-700 mb-2">{t('summary.interestRatePeriods')}</h3>
             
             <div className="overflow-x-auto">
@@ -128,9 +213,9 @@ export default function LoanSummary({
             </div>
           </div>
           
-          {/* Overpayment Information */}
+          
           {loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length > 0 && (
-            <div className="md:col-span-3 bg-amber-50 p-4 rounded-lg border border-amber-100 mb-4">
+            <div className="md:col-span-4 bg-amber-50 p-4 rounded-lg border border-amber-100 mb-4">
               <h3 className="text-sm font-medium text-amber-700 mb-2">{t('overpayment.title')}</h3>
               
               <div className="overflow-x-auto">
@@ -176,7 +261,7 @@ export default function LoanSummary({
           )}
 
           {overpaymentResults && (
-            <div className="md:col-span-3 bg-green-50 p-4 rounded-lg border border-green-100">
+            <div className="md:col-span-4 bg-green-50 p-4 rounded-lg border border-green-100">
               <h3 className="text-sm font-medium text-green-700">{t('overpayment.results')}</h3>
               <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -208,8 +293,38 @@ export default function LoanSummary({
               </div>
             </div>
           )}
+          
+          {/* Combined Savings Spotlight */}
+          {console.log("Rendering savings spotlight section, conditions:", {
+            hasOverpaymentResults: !!overpaymentResults,
+            hasImpactData: !!impactData,
+            impactDataLength: impactData?.length,
+            hasOverpaymentPlans: !!(loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length > 0)
+          })}
+          {impactData && calculationResults && (
+            <div className="md:col-span-4">
+              {overpaymentResults ? (
+                // When we have actual overpayment results
+                <SavingsSpotlight
+                  moneySaved={interestSaved}
+                  timeSaved={Number(overpaymentResults.timeOrPaymentSaved || 0)}
+                  percentageSaved={(interestSaved / Number(calculationResults.totalInterest)) * 100}
+                  currency={loanDetails.currency || 'USD'}
+                />
+              ) : (
+                // When we only have potential impact data
+                <SavingsSpotlight
+                  moneySaved={Number(impactData[impactData.length - 1].interestSaved)}
+                  timeSaved={Number(impactData[impactData.length - 1].termReduction) * 12} // Convert years to months
+                  percentageSaved={(Number(impactData[impactData.length - 1].interestSaved) / Number(calculationResults.totalInterest)) * 100}
+                  currency={loanDetails.currency || 'USD'}
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+

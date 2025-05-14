@@ -143,7 +143,21 @@
     "initialRate": "Tasa Inicial",
     "period": "Período",
     "apr": "APR",
-    "year": "Año"
+    "year": "Año",
+    "overpaymentImpact": "Impacto del Sobrepago",
+    "overpaymentSavingsHighlight": "ESTOS SOBREPAGOS TE AHORRAN {{amount}}",
+    "overpaymentImpactTitle": "IMPACTO DE TUS SOBREPAGOS",
+    "impactDescription": "Tus sobrepagos reducen significativamente los costos y la duración de tu préstamo.",
+    "totalInterest": "Interés Total",
+    "noOverpayments": "Sin Sobrepagos",
+    "withOverpayments": "Con Sobrepagos",
+    "youSave": "Ahorras",
+    "withoutOverpayments": "Sin Sobrepagos",
+    "potentialSavings": "Ahorros Potenciales",
+    "upToAmount": "Hasta {{amount}}",
+    "moneySaved": "Dinero Ahorrado",
+    "timeSaved": "Tiempo Ahorrado",
+    "valuePercentage": "Valor"
   },
   "chart": {
     "title": "Desglose de Pagos",
