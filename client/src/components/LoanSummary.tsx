@@ -24,14 +24,10 @@ export default function LoanSummary({
   
   // Calculate impact data when overpayment results are available
   useEffect(() => {
-    console.log("useEffect for impact data triggered");
-    console.log("overpaymentResults:", overpaymentResults);
-    console.log("loanDetails.overpaymentPlans:", loanDetails.overpaymentPlans);
-    
+       
     // Changed condition to not require overpaymentResults
     // We only need overpayment plans to calculate impact data
     if (loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length > 0) {
-      console.log("Overpayment plans:", loanDetails.overpaymentPlans);
       
       // Calculate the maximum monthly overpayment amount to analyze
       let maxMonthlyAmount = loanDetails.overpaymentPlans.reduce((max, plan) => {
@@ -41,33 +37,26 @@ export default function LoanSummary({
         return max;
       }, 0);
       
-      console.log("Initial maxMonthlyAmount:", maxMonthlyAmount);
       
       // If no monthly overpayment, use the first overpayment amount as a base
       if (maxMonthlyAmount === 0 && loanDetails.overpaymentPlans.length > 0) {
         // For non-monthly plans, use a reasonable monthly equivalent
         const firstPlan = loanDetails.overpaymentPlans[0];
-        console.log("Using first plan for calculation:", firstPlan);
         
         if (firstPlan.frequency === 'one-time') {
           // For one-time payments, divide by 12 to get a monthly equivalent
           maxMonthlyAmount = firstPlan.amount / 12;
-          console.log("One-time payment converted to monthly:", maxMonthlyAmount);
         } else if (firstPlan.frequency === 'quarterly') {
           // For quarterly payments, divide by 3 to get a monthly equivalent
           maxMonthlyAmount = firstPlan.amount / 3;
-          console.log("Quarterly payment converted to monthly:", maxMonthlyAmount);
         } else if (firstPlan.frequency === 'annual') {
           // For annual payments, divide by 12 to get a monthly equivalent
           maxMonthlyAmount = firstPlan.amount / 12;
-          console.log("Annual payment converted to monthly:", maxMonthlyAmount);
         } else {
           // Default fallback
           maxMonthlyAmount = firstPlan.amount / 10;
-          console.log("Using default conversion to monthly:", maxMonthlyAmount);
         }
         
-        console.log("No monthly overpayment found, using calculated amount:", maxMonthlyAmount);
       }
       
       // Always analyze impact as long as there's an overpayment plan
@@ -77,25 +66,16 @@ export default function LoanSummary({
         loanDetails.principal * 0.01 / 12 // At least 1% of principal per year (divided by 12 for monthly)
       );
       
-      console.log("Final analysis amount:", minAnalysisAmount);
-      console.log("Analyzing impact with amount:", minAnalysisAmount);
-      
       try {
         const impact = calculationService.analyzeOverpaymentImpact(
           loanDetails,
           minAnalysisAmount * 2, // Analyze up to double the amount
           5 // 5 data points
         );
-        console.log("Impact data calculated:", impact);
         setImpactData(impact);
       } catch (error) {
         console.error("Error calculating impact data:", error);
       }
-    } else {
-      console.log("Conditions not met for impact analysis");
-      if (!overpaymentResults) console.log("No overpaymentResults");
-      if (!loanDetails.overpaymentPlans) console.log("No overpaymentPlans");
-      if (loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length === 0) console.log("Empty overpaymentPlans");
     }
   }, [overpaymentResults, loanDetails]);
   
@@ -263,12 +243,7 @@ export default function LoanSummary({
           {/* Removed duplicate overpayment results section - now using SavingsSpotlight component */}
           
           {/* Combined Savings Spotlight */}
-          {console.log("Rendering savings spotlight section, conditions:", {
-            hasOverpaymentResults: !!overpaymentResults,
-            hasImpactData: !!impactData,
-            impactDataLength: impactData?.length,
-            hasOverpaymentPlans: !!(loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length > 0)
-          })}
+          {}
           {impactData && calculationResults && (
             <div className="md:col-span-4">
               {overpaymentResults ? (
