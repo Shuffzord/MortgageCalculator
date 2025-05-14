@@ -4,3 +4,6 @@
 4. Site stats - spent to create - earned, lines of code, tests created
 5. Prompts repository
 6. Footer
+7. Overpayment analysis
+8. Linki afiliacyjne
+9. Impact

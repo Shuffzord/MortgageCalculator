@@ -27,8 +27,8 @@ export default function LoanSummary({
     );
   }
 
-  const interestSaved = overpaymentResults 
-    ? calculationResults.totalInterest - overpaymentResults.totalInterest 
+  const interestSaved = overpaymentResults
+    ? Number(calculationResults.totalInterest) - Number(overpaymentResults.totalInterest)
     : 0;
     
   // Format a date to show month and year
@@ -81,7 +81,7 @@ export default function LoanSummary({
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.totalPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
-              {formatCurrency(loanDetails.principal + calculationResults.totalInterest, undefined, loanDetails.currency)}
+              {formatCurrency(Number(loanDetails.principal) + Number(calculationResults.totalInterest), undefined, loanDetails.currency)}
             </p>
           </div>
           
