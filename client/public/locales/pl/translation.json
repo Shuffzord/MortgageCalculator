@@ -67,7 +67,7 @@
     "amountTooltip": "Dodatkowa płatność na poczet kapitału kredytu.",
     "afterPayment": "Po Płatności Numer",
     "endPayment": "Zakończ Po Płatności",
-    "endDate": "Data Zakończenia",
+    "endDate": "Data Zakończenia (opcjonalnie)",
     "effect": "Efekt",
     "reduceTerm": "Skróć Okres",
     "reducePayment": "Zmniejsz Ratę",

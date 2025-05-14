@@ -1,20 +1,187 @@
 import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
+import type { DayPickerProps } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>
+// Extend the props with our custom props
+export interface CalendarProps {
+  className?: string;
+  classNames?: Record<string, string>;
+  showOutsideDays?: boolean;
+  showYearNavigation?: boolean;
+  yearNavigationLabel?: {
+    previous?: string;
+    next?: string;
+  };
+  selected?: Date | Date[] | undefined;
+  defaultMonth?: Date;
+  month?: Date;
+  onMonthChange?: (month: Date) => void;
+  onSelect?: (date: Date | undefined) => void;
+  mode?: "single" | "multiple" | "range" | "default";
+  disabled?: any;
+  initialFocus?: boolean;
+  numberOfMonths?: number;
+  fromDate?: Date;
+  toDate?: Date;
+  fromYear?: number;
+  toYear?: number;
+  captionLayout?: "dropdown" | "buttons" | "dropdown-buttons";
+  [key: string]: any;
+}
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  showYearNavigation = false,
+  yearNavigationLabel,
+  selected,
+  onSelect,
+  mode = "single",
   ...props
 }: CalendarProps) {
+  const { t } = useTranslation();
+  
+  // Create internal state for the current month if not provided
+  const [internalMonth, setInternalMonth] = React.useState<Date>(
+    props.defaultMonth || new Date()
+  );
+  
+  // Use the provided month prop if it exists, otherwise use internal state
+  const currentMonth = props.month || internalMonth;
+  
+  // Handle month changes internally when not controlled
+  const handleMonthChange = (month: Date) => {
+    if (!props.month) {
+      setInternalMonth(month);
+    }
+    
+    // Call the original onMonthChange if provided
+    if (props.onMonthChange) {
+      props.onMonthChange(month);
+    }
+  };
+  
+  // Handle date selection
+  const handleSelect = (date: Date | undefined) => {
+    if (onSelect) {
+      onSelect(date);
+    }
+  };
+  
+  // Create a custom caption component with both month and year navigation
+  const CustomCaption = React.useCallback(({
+    displayMonth,
+    id,
+    ...captionProps
+  }: any) => {
+    // Get navigation functions
+    const handlePreviousMonth = () => {
+      const newDate = new Date(displayMonth);
+      newDate.setMonth(displayMonth.getMonth() - 1);
+      handleMonthChange(newDate);
+    };
+    
+    const handleNextMonth = () => {
+      const newDate = new Date(displayMonth);
+      newDate.setMonth(displayMonth.getMonth() + 1);
+      handleMonthChange(newDate);
+    };
+    
+    const handlePreviousYear = () => {
+      const newDate = new Date(displayMonth);
+      newDate.setFullYear(displayMonth.getFullYear() - 1);
+      handleMonthChange(newDate);
+    };
+    
+    const handleNextYear = () => {
+      const newDate = new Date(displayMonth);
+      newDate.setFullYear(displayMonth.getFullYear() + 1);
+      handleMonthChange(newDate);
+    };
+    
+    // Default year navigation labels
+    const previousYearLabel = yearNavigationLabel?.previous || `-1 ${t('form.year') || 'Year'}`;
+    const nextYearLabel = yearNavigationLabel?.next || `+1 ${t('form.year') || 'Year'}`;
+    
+    return (
+      <div className="flex flex-col justify-center pt-1 relative items-center">
+        {/* Month navigation and display */}
+        <div className="flex items-center justify-center w-full relative">
+          <button
+            onClick={handlePreviousMonth}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1"
+            )}
+            type="button"
+            aria-label="Previous month"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          
+          <div className="text-sm font-medium">
+            {displayMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+          </div>
+          
+          <button
+            onClick={handleNextMonth}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1"
+            )}
+            type="button"
+            aria-label="Next month"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+        
+        {/* Year navigation - conditionally rendered */}
+        {showYearNavigation && (
+          <div className="flex justify-between w-full p-2 border-b mt-4">
+            <button
+              onClick={handlePreviousYear}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-7 bg-transparent text-xs"
+              )}
+              type="button"
+              aria-label="Previous year"
+            >
+              <ChevronsLeft className="h-3 w-3 mr-1" />
+              {previousYearLabel}
+            </button>
+            <button
+              onClick={handleNextYear}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-7 bg-transparent text-xs"
+              )}
+              type="button"
+              aria-label="Next year"
+            >
+              {nextYearLabel}
+              <ChevronsRight className="h-3 w-3 ml-1" />
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }, [yearNavigationLabel, showYearNavigation, t, handleMonthChange]);
+  
   return (
     <DayPicker
+      mode={mode as any}
+      selected={selected}
+      onSelect={handleSelect as any}
+      month={currentMonth}
+      onMonthChange={handleMonthChange}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
@@ -52,12 +219,11 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ className, ...props }) => (
-          <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
-        ),
-        IconRight: ({ className, ...props }) => (
-          <ChevronRight className={cn("h-4 w-4", className)} {...props} />
-        ),
+        Caption: CustomCaption,
+        // Set these to empty components to hide the default navigation buttons
+        // since we're handling navigation in our custom caption
+        IconLeft: () => null,
+        IconRight: () => null
       }}
       {...props}
     />

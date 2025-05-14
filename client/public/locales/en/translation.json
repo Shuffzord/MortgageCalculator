@@ -66,7 +66,7 @@
     "amountTooltip": "Additional payment toward your loan principal.",
     "afterPayment": "After Payment Number",
     "endPayment": "End After Payment",
-    "endDate": "End Date",
+    "endDate": "End Date (optional)",
     "effect": "Effect",
     "reduceTerm": "Reduce Term",
     "reducePayment": "Reduce Payment",

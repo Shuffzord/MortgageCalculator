@@ -420,42 +420,18 @@ export default function LoanInputForm({
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <div className="flex flex-col">
-                  <div className="flex justify-between p-2 border-b">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newDate = new Date(date);
-                        newDate.setFullYear(newDate.getFullYear() - 1);
-                        setDate(newDate);
-                      }}
-                      type="button"
-                    >
-                      -1 {t('form.year')}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newDate = new Date(date);
-                        newDate.setFullYear(newDate.getFullYear() + 1);
-                        setDate(newDate);
-                      }}
-                      type="button"
-                    >
-                      +1 {t('form.year')}
-                    </Button>
-                  </div>
-                  <Calendar
-                    mode="single"
-                    month={date}
-                    selected={date}
-                    defaultMonth={date}
-                    onSelect={(newDate) => setDate(newDate || new Date())}
-                    initialFocus
-                  />
-                </div>
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  defaultMonth={date}
+                  onSelect={(newDate) => setDate(newDate || new Date())}
+                  initialFocus
+                  showYearNavigation={true}
+                  yearNavigationLabel={{
+                    previous: `-1 ${t('form.year')}`,
+                    next: `+1 ${t('form.year')}`
+                  }}
+                />
               </PopoverContent>
             </Popover>
           </FormItem>
@@ -591,6 +567,11 @@ export default function LoanInputForm({
                                       selected={index === 0 ? date : addMonths(date, period.startMonth)}
                                       defaultMonth={index === 0 ? date : addMonths(date, period.startMonth)}
                                       today={new Date()}
+                                      showYearNavigation={true}
+                                      yearNavigationLabel={{
+                                        previous: `-1 ${t('form.year')}`,
+                                        next: `+1 ${t('form.year')}`
+                                      }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
                                           const newInterestRatePeriods = [...field.value];
@@ -625,7 +606,7 @@ export default function LoanInputForm({
                                           field.onChange(newInterestRatePeriods);
                                         }
                                       }}
-                                      disabled={(calendarDate) => {
+                                      disabled={(calendarDate: Date) => {
                                         if (index === 0) return false;
                                         
                                         // Only prevent selecting dates before loan start
@@ -760,6 +741,11 @@ export default function LoanInputForm({
                                       selected={period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, form.getValues("loanTerm") * 12)}
                                       defaultMonth={period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, form.getValues("loanTerm") * 12)}
                                       today={new Date()}
+                                      showYearNavigation={true}
+                                      yearNavigationLabel={{
+                                        previous: `-1 ${t('form.year')}`,
+                                        next: `+1 ${t('form.year')}`
+                                      }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
                                           const newInterestRatePeriods = [...field.value];
@@ -808,7 +794,7 @@ export default function LoanInputForm({
                                           field.onChange(newInterestRatePeriods);
                                         }
                                       }}
-                                      disabled={(calendarDate) => {
+                                      disabled={(calendarDate: Date) => {
                                         // Only prevent dates before period start
                                         const minDate = addMonths(date, period.startMonth);
                                         
@@ -1085,6 +1071,11 @@ export default function LoanInputForm({
                                       month={overpayment.startDate}
                                       selected={overpayment.startDate}
                                       defaultMonth={overpayment.startDate}
+                                      showYearNavigation={true}
+                                      yearNavigationLabel={{
+                                        previous: `-1 ${t('form.year')}`,
+                                        next: `+1 ${t('form.year')}`
+                                      }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
                                           const newOverpaymentPlans = [...(field.value || [])];
@@ -1221,6 +1212,11 @@ export default function LoanInputForm({
                                       month={overpayment.endDate || overpayment.startDate}
                                       selected={overpayment.endDate}
                                       defaultMonth={overpayment.endDate || overpayment.startDate}
+                                      showYearNavigation={true}
+                                      yearNavigationLabel={{
+                                        previous: `-1 ${t('form.year')}`,
+                                        next: `+1 ${t('form.year')}`
+                                      }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
                                           const newOverpaymentPlans = [...(field.value || [])];
@@ -1238,7 +1234,7 @@ export default function LoanInputForm({
                                       }
                                     }}
                                     initialFocus
-                                    disabled={(date) => date < overpayment.startDate}
+                                    disabled={(date: Date) => date < overpayment.startDate}
                                   />
                                   </div>
                                 </PopoverContent>
