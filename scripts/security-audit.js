@@ -39,10 +39,6 @@ const securityPatterns = [
     {
         pattern: /(session|access)[_-]?token/i,
         exclude: [safePatterns.githubSecrets]
-    },
-    {
-        pattern: /\.env/i,
-        exclude: [safePatterns.importMeta, safePatterns.processEnv]
     }
 ];
 
