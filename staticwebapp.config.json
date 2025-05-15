@@ -32,6 +32,12 @@
       }
     },
     {
+      "route": "/*.webmanifest",
+      "headers": {
+        "content-type": "application/manifest+json"
+      }
+    },
+    {
       "route": "/*",
       "rewrite": "/index.html"
     }
@@ -43,7 +49,8 @@
       "/css/*",
       "/assets/*",
       "/locales/*",
-      "/*.js"
+      "/*.js",
+      "/*.webmanifest"
     ]
   },
   "mimeTypes": {
