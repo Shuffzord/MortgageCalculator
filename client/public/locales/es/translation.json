@@ -520,7 +520,15 @@
     "passionProject": "Sobre el Autor",
     "passionProjectDescription": "La calculadora www.smarter-loan.com es mi proyecto personal creado por pasión para ayudar a otros a tomar mejores decisiones financieras. Es el resultado de muchas horas de trabajo y mejora continua.",
     "supportInvitation": "Apoya el Proyecto",
-    "supportDescription": "Si encuentras útil esta calculadora, ¡agradecería que la compartieras con amigos! También puedes conectarte conmigo en LinkedIn o apoyar el proyecto comprándome un café virtual en https://buymeacoffee.com/smarterloan."
+    "supportDescription": "Si encuentras útil esta calculadora, ¡agradecería que la compartieras con amigos! También puedes conectarte conmigo en LinkedIn o apoyar el proyecto comprándome un café virtual en https://buymeacoffee.com/smarterloan.",
+    "developerInfo": "Información del Desarrollador",
+    "developerInfoDescription": "Algunas estadísticas sobre este proyecto:",
+    "statistics": {
+      "cost": "Costo de Desarrollo",
+      "profit": "Beneficio",
+      "linesOfCode": "Líneas de Código",
+      "tests": "Número de Pruebas"
+    }
   },
   "navigation": {
     "home": "Inicio",

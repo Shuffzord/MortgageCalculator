@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '@/components/SEOHead';
+import statistics from '../../statistics.json';
 
 export default function About() {
   const { t } = useTranslation();
@@ -102,7 +103,7 @@ export default function About() {
               </li>
             </ol>
           </section>
-          <section className="transform transition-all duration-300">
+          <section className="mb-12 transform transition-all duration-300">
             <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
               {t('about.contactInfo')}
             </h2>
@@ -146,6 +147,63 @@ export default function About() {
                   </a>
 
 
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="transform transition-all duration-300">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary flex items-center gap-3">
+              {t('about.developerInfo')}
+            </h2>
+            <p className="text-foreground mb-6 leading-relaxed">{t('about.developerInfoDescription')}</p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="bg-muted rounded-lg p-4">
+                <div className="flex items-center gap-4">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h3 className="text-lg font-medium">{t('about.statistics.cost')}</h3>
+                    <p className="text-xl font-bold">{statistics.cost}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-muted rounded-lg p-4">
+                <div className="flex items-center gap-4">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h3 className="text-lg font-medium">{t('about.statistics.profit')}</h3>
+                    <p className="text-xl font-bold">{statistics.profit}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-muted rounded-lg p-4">
+                <div className="flex items-center gap-4">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
+                  </svg>
+                  <div>
+                    <h3 className="text-lg font-medium">{t('about.statistics.linesOfCode')}</h3>
+                    <p className="text-xl font-bold">{parseInt(statistics.linesOfCode).toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-muted rounded-lg p-4">
+                <div className="flex items-center gap-4">
+                  <svg className="w-10 h-10 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 001.357 2.059l.71.355a1.067 1.067 0 01.64.972V16a2 2 0 01-2 2h-8a2 2 0 01-2-2v-1.302c0-.399.247-.767.64-.972l.71-.355a2.25 2.25 0 001.357-2.059" />
+                  </svg>
+                  <div>
+                    <h3 className="text-lg font-medium">{t('about.statistics.tests')}</h3>
+                    <p className="text-xl font-bold">{statistics.Tests}</p>
+                  </div>
                 </div>
               </div>
             </div>
