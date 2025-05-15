@@ -42,7 +42,8 @@
       "/images/*.{png,jpg,gif}",
       "/css/*",
       "/assets/*",
-      "/locales/*"
+      "/locales/*",
+      "/*.js"
     ]
   },
   "mimeTypes": {
