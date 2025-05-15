@@ -33,7 +33,8 @@
   },
   "mimeTypes": {
     ".json": "application/json",
-    ".xml": "application/xml"
+    ".xml": "application/xml",
+    ".js": "application/javascript"
   },
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
