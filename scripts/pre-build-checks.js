@@ -31,13 +31,13 @@ window.BUILD_INFO = {
         
         // Ensure public directory exists
         try {
-            await fs.mkdir('client\\public', { recursive: true });
+            await fs.mkdir('client/public', { recursive: true });
         } catch (error) {
             // Directory might already exist, ignore error
         }
         
         // Write to output file
-        await fs.writeFile(path.join('client\\public', 'build-info.js'), buildInfoContent, 'utf8');
+        await fs.writeFile(path.join('client/public', 'build-info.js'), buildInfoContent, 'utf8');
         
         console.log(`✅ Build info generated with timestamp: ${timestamp} and version: ${version}`);
         return true;
