@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "license": "MIT",  "scripts": {
+  "license": "MIT",
+  "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/pre-build-checks.js",
     "build": "tsc && vite build",
@@ -17,7 +18,7 @@
     "test:coverage": "jest --coverage",
     "security-audit": "node scripts/security-audit.js",
     "check-logs": "node scripts/check-console-logs.js",
-    "validate": "node scripts/pre-build-checks.js",    
+    "validate": "node scripts/pre-build-checks.js",
     "precommit": "npm run validate && npm run test",
     "predeploy": "npm run validate && npm run build",
     "deploy:azure": "npm run build && pwsh -NoProfile -File ./scripts/deploy-to-azure.ps1"
@@ -98,6 +99,6 @@
     "tailwindcss": "^3.4.17",
     "ts-jest": "^29.3.2",
     "typescript": "5.6.3",
-    "vite": "^5.4.14"
+    "vite": "^6.3.5"
   }
 }
