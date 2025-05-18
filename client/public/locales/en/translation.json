@@ -518,7 +518,15 @@
     "passionProject": "About the Author",
     "passionProjectDescription": "The www.smarter-loan.com calculator is my personal project created out of passion for helping others make better financial decisions. It is the result of many hours of work and continuous improvement.",
     "supportInvitation": "Support the Project",
-    "supportDescription": "If you find this calculator useful, I would appreciate you sharing it with friends! You can also connect with me on LinkedIn or support the project by buying me a virtual coffee at https://buymeacoffee.com/smarterloan."
+    "supportDescription": "If you find this calculator useful, I would appreciate you sharing it with friends! You can also connect with me on LinkedIn or support the project by buying me a virtual coffee at https://buymeacoffee.com/smarterloan.",
+    "developerInfo": "Developer Information",
+    "developerInfoDescription": "Some statistics about this project:",
+    "statistics": {
+      "cost": "Development Cost",
+      "profit": "Profit",
+      "linesOfCode": "Lines of Code",
+      "tests": "Number of Tests"
+    }
   },
   "navigation": {
     "dataTransfer": "Import & Export Data",

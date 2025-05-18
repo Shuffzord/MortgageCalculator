@@ -58,6 +58,10 @@ jobs:
             VITE_APP_BASE_URL=${{ secrets.VITE_APP_BASE_URL }}
             VITE_API_URL=${{ secrets.VITE_API_URL }}
             VITE_ANALYTICS_ID=${{ secrets.VITE_ANALYTICS_ID }}
+      - name: Verify build-info.js exists
+        run: |
+          ls -la client/public/build-info.js
+          ls -la dist/public/build-info.js
                  
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

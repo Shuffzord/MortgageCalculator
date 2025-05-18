@@ -1,4 +1,5 @@
-{  "routes": [
+{
+  "routes": [
     {
       "route": "/assets/*",
       "headers": {
@@ -22,18 +23,40 @@
       "headers": {
         "content-type": "application/xml"
       }
-    },    {
+    },
+    {
+      "route": "/*.js",
+      "headers": {
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/*.webmanifest",
+      "headers": {
+        "content-type": "application/manifest+json"
+      }
+    },
+    {
       "route": "/*",
       "rewrite": "/index.html"
     }
   ],
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/images/*.{png,jpg,gif}", "/css/*", "/assets/*", "/locales/*"]
+    "exclude": [
+      "/images/*.{png,jpg,gif}",
+      "/css/*",
+      "/assets/*",
+      "/locales/*",
+      "/*.js",
+      "/*.webmanifest"
+    ]
   },
   "mimeTypes": {
     ".json": "application/json",
-    ".xml": "application/xml"
+    ".xml": "application/xml",
+    ".js": "application/javascript"
   },
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
