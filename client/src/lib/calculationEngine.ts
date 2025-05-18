@@ -9,7 +9,13 @@ import {
   AdditionalCosts,
   FeeType,
   APRCalculationParams,
-  LoanCalculationParams
+  LoanCalculationParams,
+  DecreasingInstallmentParams,
+  OneTimeFeesParams,
+  RecurringFeesParams,
+  MonthlyPaymentParams,
+  ConvertScheduleParams,
+  ConvertScheduleWithFeesParams
 } from "./types";
 import { validateInputs } from "./validation";
 import { generateAmortizationSchedule } from "./utils";
@@ -24,14 +30,67 @@ import {
   calculateReducedPaymentSchedule,
   isOverpaymentApplicable,
   performOverpayments,
-  finalizeResults
+  finalizeResults,
+  aggregateYearlyData,
+  recalculateScheduleWithNewRate,
+  applyRateChange,
+  performRateChanges,
+  calculateComplexScenario
 } from './overpaymentCalculator';
 
 /**
  * Calculate monthly payment for decreasing installments model
  * In this model, the principal portion remains constant and the interest portion decreases over time
  */
+/**
+ * Calculate monthly payment for decreasing installments model using parameter object
+ */
+export function calculateDecreasingInstallment(params: DecreasingInstallmentParams): number;
+
+/**
+ * Calculate monthly payment for decreasing installments model with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
 export function calculateDecreasingInstallment(
+  principal: number,
+  monthlyRate: number,
+  totalMonths: number,
+  currentMonth: number
+): number;
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function calculateDecreasingInstallment(
+  principalOrParams: number | DecreasingInstallmentParams,
+  monthlyRate?: number,
+  totalMonths?: number,
+  currentMonth?: number
+): number {
+  // Handle parameter object
+  if (typeof principalOrParams === 'object') {
+    const params = principalOrParams;
+    return calculateDecreasingInstallmentImpl(
+      params.principal,
+      params.monthlyRate,
+      params.totalMonths,
+      params.currentMonth
+    );
+  }
+  
+  // Handle individual parameters
+  return calculateDecreasingInstallmentImpl(
+    principalOrParams,
+    monthlyRate!,
+    totalMonths!,
+    currentMonth!
+  );
+}
+
+/**
+ * Implementation of decreasing installment calculation
+ */
+function calculateDecreasingInstallmentImpl(
   principal: number,
   monthlyRate: number,
   totalMonths: number,
@@ -53,7 +112,47 @@ export function calculateDecreasingInstallment(
 /**
  * Calculate one-time fees
  */
+/**
+ * Calculate one-time fees using parameter object
+ */
+export function calculateOneTimeFees(params: OneTimeFeesParams): number;
+
+/**
+ * Calculate one-time fees with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
 export function calculateOneTimeFees(
+  principal: number,
+  additionalCosts?: AdditionalCosts
+): number;
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function calculateOneTimeFees(
+  principalOrParams: number | OneTimeFeesParams,
+  additionalCosts?: AdditionalCosts
+): number {
+  // Handle parameter object
+  if (typeof principalOrParams === 'object') {
+    const params = principalOrParams;
+    return calculateOneTimeFeesImpl(
+      params.principal,
+      params.additionalCosts
+    );
+  }
+  
+  // Handle individual parameters
+  return calculateOneTimeFeesImpl(
+    principalOrParams,
+    additionalCosts
+  );
+}
+
+/**
+ * Implementation of one-time fees calculation
+ */
+function calculateOneTimeFeesImpl(
   principal: number,
   additionalCosts?: AdditionalCosts
 ): number {
@@ -74,7 +173,47 @@ export function calculateOneTimeFees(
 /**
  * Calculate recurring fees for a specific payment
  */
+/**
+ * Calculate recurring fees using parameter object
+ */
+export function calculateRecurringFees(params: RecurringFeesParams): number;
+
+/**
+ * Calculate recurring fees with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
 export function calculateRecurringFees(
+  remainingBalance: number,
+  additionalCosts?: AdditionalCosts
+): number;
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function calculateRecurringFees(
+  remainingBalanceOrParams: number | RecurringFeesParams,
+  additionalCosts?: AdditionalCosts
+): number {
+  // Handle parameter object
+  if (typeof remainingBalanceOrParams === 'object') {
+    const params = remainingBalanceOrParams;
+    return calculateRecurringFeesImpl(
+      params.remainingBalance,
+      params.additionalCosts
+    );
+  }
+  
+  // Handle individual parameters
+  return calculateRecurringFeesImpl(
+    remainingBalanceOrParams,
+    additionalCosts
+  );
+}
+
+/**
+ * Implementation of recurring fees calculation
+ */
+function calculateRecurringFeesImpl(
   remainingBalance: number,
   additionalCosts?: AdditionalCosts
 ): number {
@@ -154,6 +293,7 @@ export function calculateAPR(
 
 /**
  * Implementation of APR calculation
+ * This is a computationally expensive function that uses an iterative approach
  */
 function calculateAPRImpl(
   principal: number,
@@ -167,13 +307,20 @@ function calculateAPRImpl(
   let step = 0.01;
   let tolerance = 0.0001;
   let maxIterations = 100;
-
+  
   // Newton-Raphson method to find APR
   for (let i = 0; i < maxIterations; i++) {
     // Calculate present value with current guess
     let pv = 0;
+    
+    // Optimization: Pre-calculate the divisor for each month to avoid repeated calculations
+    const monthlyFactor = 1 + guess / 12;
+    let divisor = monthlyFactor;
+    
     for (let month = 1; month <= loanTermMonths; month++) {
-      pv += (monthlyPayment + recurringFees) / Math.pow(1 + guess / 12, month);
+      // Use pre-calculated divisor instead of Math.pow for each iteration
+      pv += (monthlyPayment + recurringFees) / divisor;
+      divisor *= monthlyFactor; // Update for next month
     }
 
     // Calculate difference from principal
@@ -183,15 +330,16 @@ function calculateAPRImpl(
       break;
     }
 
-    // Adjust guess
+    // Adjust guess with adaptive step size for faster convergence
     if (diff > 0) {
       guess += step;
     } else {
       guess -= step;
     }
 
-    // Reduce step size
-    step *= 0.9;
+    // Reduce step size with a more aggressive factor for faster convergence
+    step *= 0.8;
+    
   }
 
   // Convert to annual percentage rate
@@ -300,7 +448,10 @@ function calculateLoanDetailsImpl(
   validateInputs(principal, interestRatePeriods, loanTerm, overpaymentPlan);
 
   // Calculate one-time fees
-  const oneTimeFees = calculateOneTimeFees(principal, additionalCosts);
+  const oneTimeFees = calculateOneTimeFees({
+    principal: principal,
+    additionalCosts: additionalCosts
+  });
 
   // Generate the initial amortization schedule without overpayments
   let rawSchedule = generateAmortizationSchedule(
@@ -397,7 +548,37 @@ function calculateLoanDetailsImpl(
 /**
  * Convert raw schedule to payment data and calculate cumulative interest
  */
-export function convertAndProcessSchedule(rawSchedule: any[]): PaymentData[] {
+/**
+ * Convert raw schedule using parameter object
+ */
+export function convertAndProcessSchedule(params: ConvertScheduleParams): PaymentData[];
+
+/**
+ * Convert raw schedule with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
+export function convertAndProcessSchedule(rawSchedule: any[]): PaymentData[];
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function convertAndProcessSchedule(
+  rawScheduleOrParams: any[] | ConvertScheduleParams
+): PaymentData[] {
+  // Handle parameter object
+  if (!Array.isArray(rawScheduleOrParams)) {
+    const params = rawScheduleOrParams;
+    return convertAndProcessScheduleImpl(params.rawSchedule);
+  }
+  
+  // Handle individual parameters
+  return convertAndProcessScheduleImpl(rawScheduleOrParams);
+}
+
+/**
+ * Implementation of schedule conversion and processing
+ */
+function convertAndProcessScheduleImpl(rawSchedule: any[]): PaymentData[] {
   // This function now uses convertScheduleFormat from calculationCore.ts
   const paymentData: PaymentData[] = rawSchedule.map(item => {
     // Use the convertScheduleFormat function from calculationCore.ts
@@ -428,13 +609,53 @@ export function convertAndProcessSchedule(rawSchedule: any[]): PaymentData[] {
 /**
  * Convert raw schedule to payment data, calculate cumulative interest, and add fees
  */
-export function convertAndProcessScheduleWithFees(rawSchedule: any[], additionalCosts?: AdditionalCosts): PaymentData[] {
+/**
+ * Convert raw schedule with fees using parameter object
+ */
+export function convertAndProcessScheduleWithFees(params: ConvertScheduleWithFeesParams): PaymentData[];
+
+/**
+ * Convert raw schedule with fees with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
+export function convertAndProcessScheduleWithFees(rawSchedule: any[], additionalCosts?: AdditionalCosts): PaymentData[];
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function convertAndProcessScheduleWithFees(
+  rawScheduleOrParams: any[] | ConvertScheduleWithFeesParams,
+  additionalCosts?: AdditionalCosts
+): PaymentData[] {
+  // Handle parameter object
+  if (!Array.isArray(rawScheduleOrParams)) {
+    const params = rawScheduleOrParams;
+    return convertAndProcessScheduleWithFeesImpl(
+      params.rawSchedule,
+      params.additionalCosts
+    );
+  }
+  
+  // Handle individual parameters
+  return convertAndProcessScheduleWithFeesImpl(
+    rawScheduleOrParams,
+    additionalCosts
+  );
+}
+
+/**
+ * Implementation of schedule conversion and processing with fees
+ */
+function convertAndProcessScheduleWithFeesImpl(rawSchedule: any[], additionalCosts?: AdditionalCosts): PaymentData[] {
   const paymentData: PaymentData[] = rawSchedule.map(item => {
     // Use convertScheduleFormat from calculationCore.ts
     const converted = convertScheduleFormat(item);
 
     // Calculate recurring fees for this payment
-    const fees = additionalCosts ? calculateRecurringFees(converted.balance, additionalCosts) : 0;
+    const fees = additionalCosts ? calculateRecurringFees({
+      remainingBalance: converted.balance,
+      additionalCosts: additionalCosts
+    }) : 0;
 
     return {
       payment: converted.payment || 0,
@@ -461,87 +682,53 @@ export function convertAndProcessScheduleWithFees(rawSchedule: any[], additional
 }
 
 /**
- * Aggregate monthly payment data into yearly summaries for display
- */
-export function aggregateYearlyData(schedule: PaymentData[]): YearlyData[] {
-  if (!schedule.length) return [];
-
-  return schedule.reduce((acc: YearlyData[], month: PaymentData, idx: number) => {
-    const yearIndex = Math.floor(idx / 12);
-    if (!acc[yearIndex]) {
-      acc[yearIndex] = {
-        year: yearIndex + 1,
-        principal: 0,
-        interest: 0,
-        payment: 0,
-        balance: 0,
-        totalInterest: 0
-      };
-    }
-    acc[yearIndex].principal = roundToCents(acc[yearIndex].principal + month.principalPayment);
-    acc[yearIndex].interest = roundToCents(acc[yearIndex].interest + month.interestPayment);
-    acc[yearIndex].payment = roundToCents(acc[yearIndex].payment + month.monthlyPayment);
-    acc[yearIndex].balance = month.balance;
-    acc[yearIndex].totalInterest = roundToCents(acc[yearIndex].totalInterest + month.interestPayment);
-    return acc;
-  }, []);
-}
-
-/**
- * Recalculate an amortization schedule from a given balance using a new interest rate and term
- */
-export function recalculateScheduleWithNewRate(
-  startingBalance: number,
-  annualInterestRate: number, // as percentage (e.g., 5 for 5%)
-  remainingTermInYears: number
-): PaymentData[] {
-  const monthlyRate = annualInterestRate / 100 / 12;
-  const totalMonths = Math.round(remainingTermInYears * 12);
-
-  // Use calculateBaseMonthlyPayment directly from calculationCore.ts
-  const newMonthlyPayment = calculateBaseMonthlyPayment(
-    startingBalance,
-    monthlyRate,
-    totalMonths
-  );
-
-  const newSchedule: PaymentData[] = [];
-  let balance = startingBalance;
-
-  for (let i = 0; i < totalMonths && balance > 0.01; i++) {
-    const payment = i + 1;
-    const interestPayment = roundToCents(balance * monthlyRate);
-    let principalPayment = roundToCents(newMonthlyPayment - interestPayment);
-    let monthlyPayment = newMonthlyPayment;
-
-    if (principalPayment > balance || i === totalMonths - 1) {
-      principalPayment = roundToCents(balance);
-      monthlyPayment = roundToCents(principalPayment + interestPayment);
-      balance = 0;
-    } else {
-      balance = roundToCents(balance - principalPayment);
-    }
-
-    newSchedule.push({
-      payment,
-      monthlyPayment,
-      principalPayment,
-      interestPayment,
-      balance,
-      isOverpayment: false,
-      overpaymentAmount: 0,
-      totalInterest: 0,
-      totalPayment: monthlyPayment
-    });
-  }
-
-  return newSchedule;
-}
-
-/**
  * Calculate monthly payment directly
  */
+/**
+ * Calculate monthly payment using parameter object
+ */
+export function calculateMonthlyPaymentInternal(params: MonthlyPaymentParams): number;
+
+/**
+ * Calculate monthly payment with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
 export function calculateMonthlyPaymentInternal(
+  principal: number,
+  monthlyRate: number,
+  totalMonths: number
+): number;
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function calculateMonthlyPaymentInternal(
+  principalOrParams: number | MonthlyPaymentParams,
+  monthlyRate?: number,
+  totalMonths?: number
+): number {
+  // Handle parameter object
+  if (typeof principalOrParams === 'object') {
+    const params = principalOrParams;
+    return calculateMonthlyPaymentInternalImpl(
+      params.principal,
+      params.monthlyRate,
+      params.totalMonths
+    );
+  }
+  
+  // Handle individual parameters
+  return calculateMonthlyPaymentInternalImpl(
+    principalOrParams,
+    monthlyRate!,
+    totalMonths!
+  );
+}
+
+/**
+ * Implementation of monthly payment calculation
+ */
+function calculateMonthlyPaymentInternalImpl(
   principal: number,
   monthlyRate: number,
   totalMonths: number
@@ -549,95 +736,3 @@ export function calculateMonthlyPaymentInternal(
   // This function now directly uses calculateBaseMonthlyPayment from calculationCore.ts
   return calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
 }
-
-// These functions have been moved to overpaymentCalculator.ts
-
-/**
- * Handle rate changes during the loan term
- */
-export function applyRateChange(
-  originalSchedule: PaymentData[],
-  changeAtMonth: number,
-  newRate: number,
-  remainingTerm?: number
-): PaymentData[] {
-  if (changeAtMonth <= 0 || changeAtMonth >= originalSchedule.length) {
-    throw new Error(`Invalid month for rate change: ${changeAtMonth}`);
-  }
-
-  // Get the balance at the change point
-  const remainingBalance = roundToCents(originalSchedule[changeAtMonth].balance);
-  // Calculate term in years
-  const monthsLeft = originalSchedule.length - changeAtMonth;
-  const termYears = (remainingTerm !== undefined) ? remainingTerm : monthsLeft / 12;
-
-  // Calculate the new schedule
-  const newTail = recalculateScheduleWithNewRate(remainingBalance, newRate, termYears);
-
-  // Combine head and tail
-  const combined = [
-    ...originalSchedule.slice(0, changeAtMonth),
-    ...newTail.map(p => ({ ...p, payment: p.payment + changeAtMonth }))
-  ];
-
-  // Recalculate totalInterest 
-  let runningInterest = combined[changeAtMonth - 1].totalInterest;
-  for (let i = changeAtMonth; i < combined.length; i++) {
-    runningInterest += combined[i].interestPayment;
-    combined[i].totalInterest = roundToCents(runningInterest);
-  }
-
-  return combined;
-}
-
-// This function has been moved to overpaymentCalculator.ts
-
-/**
- * Calculate complex scenario with rate changes and overpayments
- */
-export function calculateComplexScenario(
-  loanDetails: LoanDetails,
-  rateChanges: Array<{ month: number; newRate: number }>,
-  overpayments: OverpaymentDetails[]
-): CalculationResults {
-  // Get base schedule without overpayments
-  const base = calculateLoanDetails(
-    loanDetails.principal,
-    loanDetails.interestRatePeriods,
-    loanDetails.loanTerm,
-    undefined,
-    loanDetails.repaymentModel,
-    loanDetails.additionalCosts,
-    undefined, // Don't apply overpayments yet
-    loanDetails.startDate,
-    loanDetails
-  );
-  
-  // Apply rate changes first
-  const afterRates = performRateChanges(base.amortizationSchedule, rateChanges);
-  
-  // Then apply overpayments using the function from overpaymentCalculator.ts
-  const afterAll = performOverpayments(afterRates, overpayments, loanDetails.startDate, loanDetails);
-  
-  // Build final results using the function from overpaymentCalculator.ts
-  return finalizeResults(afterAll, loanDetails.loanTerm);
-}
-
-/**
- * Apply a series of rate changes in chronological order
- */
-export function performRateChanges(
-  schedule: PaymentData[],
-  rateChanges: Array<{ month: number; newRate: number }>
-): PaymentData[] {
-  const sorted = [...rateChanges].sort((a, b) => a.month - b.month);
-  let current = schedule;
-
-  for (const { month, newRate } of sorted) {
-    current = applyRateChange(current, month, newRate);
-  }
-
-  return current;
-}
-
-// These functions have been moved to overpaymentCalculator.ts

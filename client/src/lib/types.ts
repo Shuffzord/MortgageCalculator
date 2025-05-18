@@ -103,6 +103,25 @@ export interface CalculationResults {
   apr?: number;
 }
 
+/**
+ * Extended calculation results that include formatted values for display
+ */
+export interface FormattedCalculationResults extends CalculationResults {
+  formatted: {
+    monthlyPayment: string;
+    totalInterest: string;
+    totalPayment: string;
+    actualTerm: string;
+    originalTerm: string;
+    oneTimeFees?: string;
+    recurringFees?: string;
+    totalCost?: string;
+    apr?: string;
+    interestSaved?: string;
+    timeSaved?: string;
+  }
+}
+
 // Storage Related Types
 
 export interface SavedCalculation {
@@ -153,6 +172,15 @@ export interface ScenarioComparisonOptions {
 }
 
 /**
+ * Results of comparing two loan calculations
+ */
+export interface ComparisonResults {
+  interestSaved: number;
+  timeSaved: number;
+  percentageSaved: number;
+}
+
+/**
  * Types for Overpayment Optimization feature
  */
 export interface StrategyResult {
@@ -193,6 +221,16 @@ export interface OverpaymentStrategy {
     termReduction: number;
     effectivenessRatio: number;
   };
+}
+
+/**
+ * Types for Overpayment Strategy Analysis
+ */
+export interface OverpaymentStrategyAnalysis {
+  strategies: OverpaymentStrategy[];
+  bestStrategy: string;
+  totalInterestSaved: number;
+  maxTermReduction: number;
 }
 
 /**
@@ -282,6 +320,33 @@ export interface ReducedPaymentParams {
 }
 
 /**
+ * Parameters for applying rate changes to a payment schedule
+ */
+export interface RateChangeParams {
+  schedule: PaymentData[];
+  changeAtMonth: number;
+  newRate: number;
+  remainingTerm?: number;
+}
+
+/**
+ * Parameters for performing multiple rate changes
+ */
+export interface MultipleRateChangeParams {
+  schedule: PaymentData[];
+  rateChanges: Array<{ month: number; newRate: number }>;
+}
+
+/**
+ * Parameters for calculating complex scenarios with rate changes and overpayments
+ */
+export interface ComplexScenarioParams {
+  loanDetails: LoanDetails;
+  rateChanges: Array<{ month: number; newRate: number }>;
+  overpayments: OverpaymentDetails[];
+}
+
+/**
  * Optional parameters for calculations
  */
 export interface CalculationOptions {
@@ -289,6 +354,83 @@ export interface CalculationOptions {
   formatResults?: boolean;
   currency?: string;
   locale?: string;
+  roundToNearestCent?: boolean;
+  includeFormattedValues?: boolean;
+}
+
+/**
+ * Parameters for affordability calculation
+ */
+export interface AffordabilityParams {
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  interestRate: number;
+  loanTerm: number;
+  debtToIncomeRatio?: number;
+  additionalCosts?: AdditionalCosts;
+}
+
+/**
+ * Result of affordability calculation
+ */
+export interface AffordabilityResult {
+  maxLoanAmount: number;
+  monthlyPayment: number;
+  debtToIncomeRatio: number;
+  formatted?: {
+    maxLoanAmount: string;
+    monthlyPayment: string;
+    debtToIncomeRatio: string;
+  }
+}
+
+/**
+ * Parameters for break-even calculation
+ */
+export interface BreakEvenParams {
+  currentLoan: LoanDetails;
+  newLoan: LoanDetails;
+  refinancingCosts: number;
+}
+
+/**
+ * Result of break-even calculation
+ */
+export interface BreakEvenResult {
+  breakEvenMonths: number;
+  lifetimeSavings: number;
+  monthlySavings: number;
+  formatted?: {
+    breakEvenMonths: string;
+    lifetimeSavings: string;
+    monthlySavings: string;
+  }
+}
+
+/**
+ * Result of amortization milestones calculation
+ */
+export interface AmortizationMilestones {
+  halfwayPoint: { month: number; date: Date; balance: number };
+  principalCrossover: { month: number; date: Date; balance: number };
+  quarterPoints: { month: number; date: Date; balance: number }[];
+  formatted?: {
+    halfwayPoint: string;
+    principalCrossover: string;
+    quarterPoints: string[];
+  }
+}
+
+/**
+ * Parameters for validation
+ */
+export interface ValidationOptions {
+  allowNegativePrincipal?: boolean;
+  maxInterestRate?: number;
+  minInterestRate?: number;
+  maxLoanTerm?: number;
+  minLoanTerm?: number;
+  validateDates?: boolean;
 }
 
 /**
@@ -300,4 +442,150 @@ export interface APRCalculationParams {
   loanTermMonths: number;
   oneTimeFees: number;
   recurringFees: number;
+}
+
+/**
+ * Parameters for decreasing installment calculation
+ */
+export interface DecreasingInstallmentParams {
+  principal: number;
+  monthlyRate: number;
+  totalMonths: number;
+  currentMonth: number;
+}
+
+/**
+ * Parameters for one-time fees calculation
+ */
+export interface OneTimeFeesParams {
+  principal: number;
+  additionalCosts?: AdditionalCosts;
+}
+
+/**
+ * Parameters for recurring fees calculation
+ */
+export interface RecurringFeesParams {
+  remainingBalance: number;
+  additionalCosts?: AdditionalCosts;
+}
+
+/**
+ * Parameters for monthly payment calculation
+ */
+export interface MonthlyPaymentParams {
+  principal: number;
+  monthlyRate: number;
+  totalMonths: number;
+}
+
+/**
+ * Parameters for converting and processing schedule
+ */
+export interface ConvertScheduleParams {
+  rawSchedule: any[];
+}
+
+/**
+ * Parameters for converting and processing schedule with fees
+ */
+export interface ConvertScheduleWithFeesParams {
+  rawSchedule: any[];
+  additionalCosts?: AdditionalCosts;
+}
+
+/**
+ * Parameters for creating final overpayment result
+ */
+export interface FinalOverpaymentResultParams {
+  schedule: PaymentData[];
+  monthlyPayment: number;
+  originalLength: number;
+  savingsAmount: number;
+}
+
+/**
+ * Parameters for checking if overpayment is applicable
+ */
+export interface OverpaymentApplicableParams {
+  overpayment: OverpaymentDetails;
+  month: number;
+  loanStartDate?: Date;
+}
+
+/**
+ * Parameters for recalculating schedule with new rate
+ */
+export interface RecalculateWithNewRateParams {
+  startingBalance: number;
+  annualInterestRate: number;
+  remainingTermInYears: number;
+}
+
+/**
+ * Parameters for finalizing results
+ */
+export interface FinalizeResultsParams {
+  schedule: PaymentData[];
+  originalTerm: number;
+}
+
+/**
+ * Interface for calculation service operations
+ */
+export interface ICalculationService {
+ 
+  // Core calculation methods
+  calculateLoanDetails(loanDetails: LoanDetails, options?: CalculationOptions): CalculationResults | FormattedCalculationResults;
+  calculateBasicLoanDetails(principal: number, interestRate: number, loanTerm: number, currency?: string, options?: CalculationOptions): CalculationResults | FormattedCalculationResults;
+  
+  // Overpayment methods
+  applyOverpayment(loanDetails: LoanDetails, overpaymentAmount: number, afterPayment: number, effect?: 'reduceTerm' | 'reducePayment'): CalculationResults;
+  applyMultipleOverpayments(loanDetails: LoanDetails, overpayments: OverpaymentDetails[]): CalculationResults;
+  
+  // Optimization methods
+  optimizeOverpayments(loanDetails: LoanDetails, optimizationParams: OptimizationParameters): OptimizationResult;
+  analyzeOverpaymentImpact(loanDetails: LoanDetails, maxMonthlyAmount: number, steps?: number): { amount: number; interestSaved: number; termReduction: number }[];
+  compareLumpSumVsRegular(loanDetails: LoanDetails, lumpSumAmount: number, monthlyAmount: number): { lumpSum: { interestSaved: number; termReduction: number }; monthly: { interestSaved: number; termReduction: number }; breakEvenMonth: number; };
+  
+  // Formatting methods
+  formatCurrency(value: number, locale?: string, currency?: string): string;
+  formatTimePeriod(months: number): string;
+  formatAmortizationSchedule(schedule: PaymentData[], currency?: string, locale?: string): PaymentData[];
+  formatCalculationResults(results: CalculationResults, currency?: string, locale?: string): FormattedCalculationResults;
+  
+  // Helper methods
+  roundToCents(amount: number): number;
+  calculateAffordability(params: AffordabilityParams): AffordabilityResult;
+  calculateBreakEvenPoint(params: BreakEvenParams): BreakEvenResult;
+  calculateAmortizationMilestones(loanDetails: LoanDetails): AmortizationMilestones;
+  aggregateYearlyData(schedule: PaymentData[]): any;
+  
+  // Validation methods
+  validateLoanDetails(loanDetails: LoanDetails, options?: ValidationOptions): { isValid: boolean; errors: string[] };
+}
+
+/**
+ * Interface for comparison service operations
+ */
+export interface IComparisonService {
+  // Basic comparison methods
+  compareLoanResults(baseCalculation: CalculationResults, comparisonCalculation: CalculationResults): ComparisonResults;
+  compareWithOverpayments(baseCalculation: CalculationResults, loanWithOverpayments: CalculationResults): ComparisonResults;
+  compareMultipleScenarios(scenarios: Array<{ id: string; name: string; loanDetails: LoanDetails }>, options?: ScenarioComparisonOptions): ScenarioComparison;
+  
+  // Enhanced comparison methods for different loan parameters
+  compareDifferentTerms(baseLoanDetails: LoanDetails, comparisonTerms: number[]): ScenarioComparison;
+  compareDifferentRates(baseLoanDetails: LoanDetails, comparisonRates: number[]): ScenarioComparison;
+  compareRepaymentModels(baseLoanDetails: LoanDetails, repaymentModels?: RepaymentModel[]): ScenarioComparison;
+  
+  // Overpayment analysis methods
+  analyzeOverpaymentStrategies(loanDetails: LoanDetails, overpaymentAmount: number): OverpaymentStrategy[];
+  findOptimalOverpaymentTiming(loanDetails: LoanDetails, overpaymentAmount: number, intervals?: number): { month: number; interestSaved: number; termReduction: number }[];
+  compareLumpSumVsRecurring(loanDetails: LoanDetails, lumpSumAmount: number, recurringAmount: number): {
+    lumpSum: { interestSaved: number; termReduction: number };
+    recurring: { interestSaved: number; termReduction: number };
+    breakEvenMonth: number | undefined;
+    moreEffective: 'lumpSum' | 'recurring';
+  };
 }

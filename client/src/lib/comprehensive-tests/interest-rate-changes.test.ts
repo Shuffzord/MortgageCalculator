@@ -5,7 +5,8 @@
  * the life of the loan, including both simple and complex changes.
  */
 
-import { calculateLoanDetails, calculateComplexScenario } from '../calculationEngine';
+import { calculateLoanDetails } from '../calculationEngine';
+import { calculateComplexScenario } from '../overpaymentCalculator';
 
 describe('Mortgage Calculations with Interest Rate Changes', () => {
   // Test I1: One-Time Interest Rate Change

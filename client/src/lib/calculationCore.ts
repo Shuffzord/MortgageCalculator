@@ -13,6 +13,9 @@
  *
  * This is a critical part of the refactoring effort to improve code organization
  * and reduce coupling between components.
+ *
+ * Performance optimizations have been added to improve calculation speed for complex
+ * scenarios and reduce redundant calculations through memoization.
  */
 
 import { PaymentData } from './types';
@@ -37,9 +40,13 @@ import { PaymentData } from './types';
  * roundToCents(0.001); // Returns: 0
  * roundToCents(0.005); // Returns: 0.01
  */
+/**
+ * Original implementation of roundToCents
+ */
 export function roundToCents(amount: number): number {
   return Math.round(amount * 100) / 100;
 }
+
 
 /**
  * Calculates the monthly payment amount for a loan
@@ -74,6 +81,9 @@ export function roundToCents(amount: number): number {
  * // Calculate payment for a $300,000 loan at 0% for 30 years
  * calculateBaseMonthlyPayment(300000, 0, 360);
  * // Returns 833.33 (simple division of principal by months)
+ */
+/**
+ * Original implementation of calculateBaseMonthlyPayment
  */
 export function calculateBaseMonthlyPayment(
   principal: number,

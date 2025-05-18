@@ -2,9 +2,8 @@
  * Unit tests for the mortgage calculation engine
  */
 
-import {
-  aggregateYearlyData
-} from './calculationEngine';
+import { calculateLoanDetails } from './calculationEngine';
+import { aggregateYearlyData } from './overpaymentCalculator';
 import { applyOverpayment } from './overpaymentCalculator';
 import { generateAmortizationSchedule } from './utils';
 import { PaymentData } from './types';

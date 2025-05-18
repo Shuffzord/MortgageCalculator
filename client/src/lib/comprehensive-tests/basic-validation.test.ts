@@ -12,6 +12,7 @@ import { isOverpaymentApplicable, applyOverpayment } from '../overpaymentCalcula
 // Import calculation engine and overpayment calculator
 import * as engine from '../calculationEngine';
 import * as overpaymentCalculator from '../overpaymentCalculator';
+import { recalculateScheduleWithNewRate, aggregateYearlyData } from '../overpaymentCalculator';
 import { PaymentData, OverpaymentDetails } from '../types';
 
 describe('Core calculation functions', () => {
@@ -37,7 +38,7 @@ describe('Core calculation functions', () => {
 
 describe('Schedule calculations', () => {
   test('recalculateScheduleWithNewRate creates a valid schedule', () => {
-    const schedule = engine.recalculateScheduleWithNewRate(200000, 5, 15);
+    const schedule = recalculateScheduleWithNewRate(200000, 5, 15);
     
     // First payment
     expect(schedule[0].payment).toBe(1);
@@ -76,7 +77,7 @@ describe('Schedule calculations', () => {
       });
     }
     
-    const yearlyData = engine.aggregateYearlyData(sampleData);
+    const yearlyData = aggregateYearlyData(sampleData);
     
     // Should have 2 years of data
     expect(yearlyData.length).toBe(2);

@@ -7,9 +7,16 @@ import {
   OverpaymentParams,
   ReducedTermParams,
   ReducedPaymentParams,
-  MultipleOverpaymentParams
+  MultipleOverpaymentParams,
+  RateChangeParams,
+  MultipleRateChangeParams,
+  ComplexScenarioParams,
+  YearlyData,
+  FinalOverpaymentResultParams,
+  OverpaymentApplicableParams,
+  RecalculateWithNewRateParams,
+  FinalizeResultsParams
 } from "./types";
-import { aggregateYearlyData } from './calculationEngine';
 import { convertScheduleFormat, calculateBaseMonthlyPayment, roundToCents } from './calculationCore';
 
 /**
@@ -431,7 +438,64 @@ function calculateReducedPaymentScheduleImpl(
 /**
  * Create the final result object for an overpayment calculation
  */
+/**
+ * Create the final result object using parameter object
+ */
+export function createFinalOverpaymentResult(params: FinalOverpaymentResultParams): {
+  newCalculation: CalculationResults,
+  timeOrPaymentSaved: number
+};
+
+/**
+ * Create the final result object with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
 export function createFinalOverpaymentResult(
+  schedule: PaymentData[],
+  monthlyPayment: number,
+  originalLength: number,
+  savingsAmount: number
+): {
+  newCalculation: CalculationResults,
+  timeOrPaymentSaved: number
+};
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function createFinalOverpaymentResult(
+  scheduleOrParams: PaymentData[] | FinalOverpaymentResultParams,
+  monthlyPayment?: number,
+  originalLength?: number,
+  savingsAmount?: number
+): {
+  newCalculation: CalculationResults,
+  timeOrPaymentSaved: number
+} {
+  // Handle parameter object
+  if (!Array.isArray(scheduleOrParams)) {
+    const params = scheduleOrParams;
+    return createFinalOverpaymentResultImpl(
+      params.schedule,
+      params.monthlyPayment,
+      params.originalLength,
+      params.savingsAmount
+    );
+  }
+  
+  // Handle individual parameters
+  return createFinalOverpaymentResultImpl(
+    scheduleOrParams,
+    monthlyPayment!,
+    originalLength!,
+    savingsAmount!
+  );
+}
+
+/**
+ * Implementation of final overpayment result creation
+ */
+function createFinalOverpaymentResultImpl(
   schedule: PaymentData[],
   monthlyPayment: number,
   originalLength: number,
@@ -447,7 +511,7 @@ export function createFinalOverpaymentResult(
     schedule[i].totalInterest = roundToCents(runningInterest);
   }
 
-  const totalInterest = schedule.reduce((sum, p) => sum + p.interestPayment, 0);
+  const totalInterest = schedule.reduce((sum: number, p: PaymentData) => sum + p.interestPayment, 0);
   const yearlyData = aggregateYearlyData(schedule);
 
   return {
@@ -466,7 +530,54 @@ export function createFinalOverpaymentResult(
 /**
  * Check if an overpayment applies in a given month
  */
+/**
+ * Check if an overpayment applies using parameter object
+ */
+export function isOverpaymentApplicable(params: OverpaymentApplicableParams): boolean;
+
+/**
+ * Check if an overpayment applies with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
 export function isOverpaymentApplicable(
+  overpayment: OverpaymentDetails,
+  month: number,
+  loanStartDate?: Date
+): boolean;
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function isOverpaymentApplicable(
+  overpaymentOrParams: OverpaymentDetails | OverpaymentApplicableParams,
+  month?: number,
+  loanStartDate?: Date
+): boolean {
+  // Handle parameter object
+  if ('overpayment' in overpaymentOrParams) {
+    const params = overpaymentOrParams;
+    return isOverpaymentApplicableImpl(
+      params.overpayment,
+      params.month,
+      params.loanStartDate
+    );
+  }
+  
+  // Handle individual parameters
+  return isOverpaymentApplicableImpl(
+    overpaymentOrParams,
+    month!,
+    loanStartDate
+  );
+}
+
+/**
+ * Implementation of overpayment applicability check
+ */
+/**
+ * Original implementation of isOverpaymentApplicable
+ */
+function isOverpaymentApplicableImpl(
   overpayment: OverpaymentDetails,
   month: number,
   loanStartDate?: Date
@@ -515,6 +626,7 @@ export function isOverpaymentApplicable(
 
   return false;
 }
+
 
 /**
  * Apply multiple overpayments to a schedule
@@ -621,80 +733,475 @@ function performOverpaymentsImpl(
 ): PaymentData[] {
   if (!overpayments.length) return schedule;
 
-  let current = [...schedule];
+  try {
+    let current = [...schedule];
+    let progressStep = 0;
 
-  // Find last payment with positive balance
-  const lastActivePayment = current.findIndex(p => p.balance <= 0);
-  const effectiveLength = lastActivePayment === -1 ? current.length : lastActivePayment + 1;
+    // Find last payment with positive balance
+    const lastActivePayment = current.findIndex(p => p.balance <= 0);
+    const effectiveLength = lastActivePayment === -1 ? current.length : lastActivePayment + 1;
 
-  // Group overpayments by month to handle multiple overpayments in the same month efficiently
-  const overpaymentsByMonth = new Map<number, OverpaymentDetails[]>();
-  
-  // Process and sort overpayments
-  for (let m = 1; m <= effectiveLength; m++) {
-    const applicableOps = overpayments.filter(op => isOverpaymentApplicable(op, m, loanStartDate));
-    if (applicableOps.length > 0) {
-      overpaymentsByMonth.set(m, applicableOps);
-    }
-  }
-  
-  // Sort months in ascending order to apply overpayments chronologically
-  const sortedMonths = Array.from(overpaymentsByMonth.keys()).sort((a, b) => a - b);
-  
-  // Apply overpayments month by month
-  for (const month of sortedMonths) {
-    // Stop if loan is already paid off
-    if (!current[month - 1] || current[month - 1].balance <= 0) {
-      break;
+    // Group overpayments by month to handle multiple overpayments in the same month efficiently
+    const overpaymentsByMonth = new Map<number, OverpaymentDetails[]>();
+    
+    // Process and sort overpayments
+    for (let m = 1; m <= effectiveLength; m++) {
+      const applicableOps = overpayments.filter(op => isOverpaymentApplicable({
+        overpayment: op,
+        month: m,
+        loanStartDate: loanStartDate
+      }));
+      if (applicableOps.length > 0) {
+        overpaymentsByMonth.set(m, applicableOps);
+      }
+      
     }
     
-    const applicableOps = overpaymentsByMonth.get(month) || [];
-    if (applicableOps.length) {
-      const totalAmount = applicableOps.reduce((sum, op) => sum + op.amount, 0);
+    // Sort months in ascending order to apply overpayments chronologically
+    const sortedMonths = Array.from(overpaymentsByMonth.keys()).sort((a, b) => a - b);
+    
+    // Update progress after sorting
+    
+    // Apply overpayments month by month
+    for (let i = 0; i < sortedMonths.length; i++) {
+      const month = sortedMonths[i];
       
-      // Determine the effect to use (prioritize term reduction if mixed)
-      let effect: 'reduceTerm' | 'reducePayment' = 'reduceTerm';
-      
-      // If all overpayments have the same effect, use that effect
-      if (applicableOps.every(op => op.effect === 'reducePayment')) {
-        effect = 'reducePayment';
-      }
-      
-      try {
-        // Ensure we don't overpay more than remaining balance
-        const maxOverpayment = current[month - 1].balance;
-        const safeAmount = Math.min(totalAmount, maxOverpayment);
-        
-        // Create a proper loan details object with the current interest rate periods
-        const currentLoanDetails = {
-          ...loanDetails,
-          // Ensure we're using the most up-to-date interest rate periods
-          interestRatePeriods: loanDetails.interestRatePeriods
-        };
-        
-        const result = applyOverpayment(current, safeAmount, month, currentLoanDetails, effect);
-        current = result.amortizationSchedule;
-      } catch (error) {
-        console.error(`Error applying overpayment at month ${month}:`, error);
+      // Stop if loan is already paid off
+      if (!current[month - 1] || current[month - 1].balance <= 0) {
         break;
       }
+      
+      const applicableOps = overpaymentsByMonth.get(month) || [];
+      if (applicableOps.length) {
+        const totalAmount = applicableOps.reduce((sum, op) => sum + op.amount, 0);
+        
+        // Determine the effect to use (prioritize term reduction if mixed)
+        let effect: 'reduceTerm' | 'reducePayment' = 'reduceTerm';
+        
+        // If all overpayments have the same effect, use that effect
+        if (applicableOps.every(op => op.effect === 'reducePayment')) {
+          effect = 'reducePayment';
+        }
+        
+        try {
+          // Ensure we don't overpay more than remaining balance
+          const maxOverpayment = current[month - 1].balance;
+          const safeAmount = Math.min(totalAmount, maxOverpayment);
+          
+          // Create a proper loan details object with the current interest rate periods
+          const currentLoanDetails = {
+            ...loanDetails,
+            // Ensure we're using the most up-to-date interest rate periods
+            interestRatePeriods: loanDetails.interestRatePeriods
+          };
+          
+          const result = applyOverpayment(current, safeAmount, month, currentLoanDetails, effect);
+          current = result.amortizationSchedule;
+        } catch (error) {
+          console.error(`Error applying overpayment at month ${month}:`, error);
+          break;
+        }
+      }
+      
+      // Update progress after each overpayment application
     }
+
+    // Recalculate totalInterest for the entire schedule at the end
+    let cumulativeInterest = 0;
+    for (let i = 0; i < current.length; i++) {
+      cumulativeInterest += current[i].interestPayment;
+      current[i].totalInterest = roundToCents(cumulativeInterest);      
+    }
+
+    
+    return current;
+  } finally {
+
+  };
+}
+
+/**
+ * Aggregate monthly payment data into yearly summaries for display
+ */
+/**
+ * Original implementation of aggregateYearlyData
+ */
+export function aggregateYearlyData(schedule: PaymentData[]): YearlyData[] {
+  if (!schedule.length) return [];
+
+  return schedule.reduce((acc: YearlyData[], month: PaymentData, idx: number) => {
+    const yearIndex = Math.floor(idx / 12);
+    if (!acc[yearIndex]) {
+      acc[yearIndex] = {
+        year: yearIndex + 1,
+        principal: 0,
+        interest: 0,
+        payment: 0,
+        balance: 0,
+        totalInterest: 0
+      };
+    }
+    acc[yearIndex].principal = roundToCents(acc[yearIndex].principal + month.principalPayment);
+    acc[yearIndex].interest = roundToCents(acc[yearIndex].interest + month.interestPayment);
+    acc[yearIndex].payment = roundToCents(acc[yearIndex].payment + month.monthlyPayment);
+    acc[yearIndex].balance = month.balance;
+    acc[yearIndex].totalInterest = roundToCents(acc[yearIndex].totalInterest + month.interestPayment);
+    return acc;
+  }, []);
+}
+
+
+/**
+ * Recalculate an amortization schedule from a given balance using a new interest rate and term
+ */
+/**
+ * Recalculate schedule with new rate using parameter object
+ */
+export function recalculateScheduleWithNewRate(params: RecalculateWithNewRateParams): PaymentData[];
+
+/**
+ * Recalculate schedule with new rate with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
+export function recalculateScheduleWithNewRate(
+  startingBalance: number,
+  annualInterestRate: number, // as percentage (e.g., 5 for 5%)
+  remainingTermInYears: number
+): PaymentData[];
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function recalculateScheduleWithNewRate(
+  startingBalanceOrParams: number | RecalculateWithNewRateParams,
+  annualInterestRate?: number,
+  remainingTermInYears?: number
+): PaymentData[] {
+  // Handle parameter object
+  if (typeof startingBalanceOrParams === 'object') {
+    const params = startingBalanceOrParams;
+    return recalculateScheduleWithNewRateImpl(
+      params.startingBalance,
+      params.annualInterestRate,
+      params.remainingTermInYears
+    );
+  }
+  
+  // Handle individual parameters
+  return recalculateScheduleWithNewRateImpl(
+    startingBalanceOrParams,
+    annualInterestRate!,
+    remainingTermInYears!
+  );
+}
+
+/**
+ * Implementation of schedule recalculation with new rate
+ */
+function recalculateScheduleWithNewRateImpl(
+  startingBalance: number,
+  annualInterestRate: number,
+  remainingTermInYears: number
+): PaymentData[] {
+  const monthlyRate = annualInterestRate / 100 / 12;
+  const totalMonths = Math.round(remainingTermInYears * 12);
+
+  // Use calculateBaseMonthlyPayment directly from calculationCore.ts
+  const newMonthlyPayment = calculateBaseMonthlyPayment(
+    startingBalance,
+    monthlyRate,
+    totalMonths
+  );
+
+  const newSchedule: PaymentData[] = [];
+  let balance = startingBalance;
+
+  for (let i = 0; i < totalMonths && balance > 0.01; i++) {
+    const payment = i + 1;
+    const interestPayment = roundToCents(balance * monthlyRate);
+    let principalPayment = roundToCents(newMonthlyPayment - interestPayment);
+    let monthlyPayment = newMonthlyPayment;
+
+    if (principalPayment > balance || i === totalMonths - 1) {
+      principalPayment = roundToCents(balance);
+      monthlyPayment = roundToCents(principalPayment + interestPayment);
+      balance = 0;
+    } else {
+      balance = roundToCents(balance - principalPayment);
+    }
+
+    newSchedule.push({
+      payment,
+      monthlyPayment,
+      principalPayment,
+      interestPayment,
+      balance,
+      isOverpayment: false,
+      overpaymentAmount: 0,
+      totalInterest: 0,
+      totalPayment: monthlyPayment
+    });
   }
 
-  // Recalculate totalInterest for the entire schedule at the end
-  let cumulativeInterest = 0;
-  for (let i = 0; i < current.length; i++) {
-    cumulativeInterest += current[i].interestPayment;
-    current[i].totalInterest = roundToCents(cumulativeInterest);
+  return newSchedule;
+}
+
+/**
+ * Handle rate changes during the loan term
+ */
+export function applyRateChange(params: RateChangeParams): PaymentData[];
+
+/**
+ * Handle rate changes during the loan term with individual parameters (backward compatibility)
+ */
+export function applyRateChange(
+  originalSchedule: PaymentData[],
+  changeAtMonth: number,
+  newRate: number,
+  remainingTerm?: number
+): PaymentData[];
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function applyRateChange(
+  scheduleOrParams: PaymentData[] | RateChangeParams,
+  changeAtMonth?: number,
+  newRate?: number,
+  remainingTerm?: number
+): PaymentData[] {
+  // Handle parameter object
+  if (!Array.isArray(scheduleOrParams)) {
+    const params = scheduleOrParams;
+    return applyRateChangeImpl(
+      params.schedule,
+      params.changeAtMonth,
+      params.newRate,
+      params.remainingTerm
+    );
+  }
+  
+  // Handle individual parameters
+  return applyRateChangeImpl(
+    scheduleOrParams,
+    changeAtMonth!,
+    newRate!,
+    remainingTerm
+  );
+}
+
+/**
+ * Implementation of rate change application
+ */
+function applyRateChangeImpl(
+  originalSchedule: PaymentData[],
+  changeAtMonth: number,
+  newRate: number,
+  remainingTerm?: number
+): PaymentData[] {
+  if (changeAtMonth <= 0 || changeAtMonth >= originalSchedule.length) {
+    throw new Error(`Invalid month for rate change: ${changeAtMonth}`);
+  }
+
+  // Get the balance at the change point
+  const remainingBalance = roundToCents(originalSchedule[changeAtMonth].balance);
+  // Calculate term in years
+  const monthsLeft = originalSchedule.length - changeAtMonth;
+  const termYears = (remainingTerm !== undefined) ? remainingTerm : monthsLeft / 12;
+
+  // Calculate the new schedule
+  const newTail = recalculateScheduleWithNewRate(remainingBalance, newRate, termYears);
+
+  // Combine head and tail
+  const combined = [
+    ...originalSchedule.slice(0, changeAtMonth),
+    ...newTail.map(p => ({ ...p, payment: p.payment + changeAtMonth }))
+  ];
+
+  // Recalculate totalInterest
+  let runningInterest = combined[changeAtMonth - 1].totalInterest;
+  for (let i = changeAtMonth; i < combined.length; i++) {
+    runningInterest += combined[i].interestPayment;
+    combined[i].totalInterest = roundToCents(runningInterest);
+  }
+
+  return combined;
+}
+
+/**
+ * Apply a series of rate changes in chronological order
+ */
+export function performRateChanges(params: MultipleRateChangeParams): PaymentData[];
+
+/**
+ * Apply a series of rate changes with individual parameters (backward compatibility)
+ */
+export function performRateChanges(
+  schedule: PaymentData[],
+  rateChanges: Array<{ month: number; newRate: number }>
+): PaymentData[];
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function performRateChanges(
+  scheduleOrParams: PaymentData[] | MultipleRateChangeParams,
+  rateChanges?: Array<{ month: number; newRate: number }>
+): PaymentData[] {
+  // Handle parameter object
+  if (!Array.isArray(scheduleOrParams)) {
+    const params = scheduleOrParams;
+    return performRateChangesImpl(
+      params.schedule,
+      params.rateChanges
+    );
+  }
+  
+  // Handle individual parameters
+  return performRateChangesImpl(
+    scheduleOrParams,
+    rateChanges!
+  );
+}
+
+/**
+ * Implementation of applying multiple rate changes
+ */
+function performRateChangesImpl(
+  schedule: PaymentData[],
+  rateChanges: Array<{ month: number; newRate: number }>
+): PaymentData[] {
+  const sorted = [...rateChanges].sort((a, b) => a.month - b.month);
+  let current = schedule;
+
+  for (const { month, newRate } of sorted) {
+    current = applyRateChange(current, month, newRate);
   }
 
   return current;
 }
 
 /**
+ * Calculate complex scenario with rate changes and overpayments
+ */
+export function calculateComplexScenario(params: ComplexScenarioParams): CalculationResults;
+
+/**
+ * Calculate complex scenario with individual parameters (backward compatibility)
+ */
+export function calculateComplexScenario(
+  loanDetails: LoanDetails,
+  rateChanges: Array<{ month: number; newRate: number }>,
+  overpayments: OverpaymentDetails[]
+): CalculationResults;
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function calculateComplexScenario(
+  loanDetailsOrParams: LoanDetails | ComplexScenarioParams,
+  rateChanges?: Array<{ month: number; newRate: number }>,
+  overpayments?: OverpaymentDetails[]
+): CalculationResults {
+  // Handle parameter object
+  if ('loanDetails' in loanDetailsOrParams) {
+    const params = loanDetailsOrParams;
+    return calculateComplexScenarioImpl(
+      params.loanDetails,
+      params.rateChanges,
+      params.overpayments
+    );
+  }
+  
+  // Handle individual parameters
+  return calculateComplexScenarioImpl(
+    loanDetailsOrParams,
+    rateChanges!,
+    overpayments!
+  );
+}
+
+/**
+ * Implementation of complex scenario calculation
+ */
+function calculateComplexScenarioImpl(
+  loanDetails: LoanDetails,
+  rateChanges: Array<{ month: number; newRate: number }>,
+  overpayments: OverpaymentDetails[]
+): CalculationResults {
+  // Import here to avoid circular dependency
+  const { calculateLoanDetails } = require('./calculationEngine');
+  
+  // Get base schedule without overpayments
+  const base = calculateLoanDetails(
+    loanDetails.principal,
+    loanDetails.interestRatePeriods,
+    loanDetails.loanTerm,
+    undefined,
+    loanDetails.repaymentModel,
+    loanDetails.additionalCosts,
+    undefined, // Don't apply overpayments yet
+    loanDetails.startDate,
+    loanDetails
+  );
+  
+  // Apply rate changes first
+  const afterRates = performRateChanges(base.amortizationSchedule, rateChanges);
+  
+  // Then apply overpayments
+  const afterAll = performOverpayments(afterRates, overpayments, loanDetails.startDate, loanDetails);
+  
+  // Build final results
+  return finalizeResults({
+    schedule: afterAll,
+    originalTerm: loanDetails.loanTerm
+  });
+}
+
+/**
  * Turn a raw schedule into final results
  */
+/**
+ * Turn a raw schedule into final results using parameter object
+ */
+export function finalizeResults(params: FinalizeResultsParams): CalculationResults;
+
+/**
+ * Turn a raw schedule into final results with individual parameters (backward compatibility)
+ * @deprecated Use parameter object version instead
+ */
 export function finalizeResults(
+  schedule: PaymentData[],
+  originalTerm: number
+): CalculationResults;
+
+/**
+ * Implementation that handles both parameter object and individual parameters
+ */
+export function finalizeResults(
+  scheduleOrParams: PaymentData[] | FinalizeResultsParams,
+  originalTerm?: number
+): CalculationResults {
+  // Handle parameter object
+  if (!Array.isArray(scheduleOrParams)) {
+    const params = scheduleOrParams;
+    return finalizeResultsImpl(
+      params.schedule,
+      params.originalTerm
+    );
+  }
+  
+  // Handle individual parameters
+  return finalizeResultsImpl(
+    scheduleOrParams,
+    originalTerm!
+  );
+}
+
+/**
+ * Implementation of finalizing results
+ */
+function finalizeResultsImpl(
   schedule: PaymentData[],
   originalTerm: number
 ): CalculationResults {

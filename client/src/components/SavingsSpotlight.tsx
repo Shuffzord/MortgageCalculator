@@ -1,12 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatCurrency, formatTimePeriod } from '@/lib/formatters';
+import { formatCurrency, formatTimePeriod, formatInterestRate } from '../lib/formatters';
 
 interface SavingsSpotlightProps {
   moneySaved: number;
   timeSaved: number;
   percentageSaved: number;
   currency: string;
+  isLoading?: boolean;
 }
 
 /**
@@ -18,12 +19,40 @@ const SavingsSpotlight: React.FC<SavingsSpotlightProps> = ({
   moneySaved,
   timeSaved,
   percentageSaved,
-  currency
+  currency,
+  isLoading = false
 }) => {
   const { t } = useTranslation();
 
+  // Add loading state UI
+  if (isLoading) {
+    return (
+      <div className="bg-green-50 p-4 rounded-lg border border-green-100 mt-4">
+        <div className="text-center">
+          <p className="text-sm text-green-600">{t('summary.calculatingSavings', 'Calculating savings...')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Only show if there are actual savings
+  if (moneySaved <= 0 && timeSaved <= 0) {
+    // Instead of returning null, show a message
+    return ( null
+      // <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100 mt-4">
+
+      //   <div className="text-center">
+      //     <p className="text-sm text-yellow-600">
+      //       {t('summary.noSavingsYet', 'No savings calculated yet. Try adding or adjusting overpayments.')}
+      //     </p>
+      //   </div>
+      // </div>
+    );
+  }
+
   return (
     <div className="bg-green-50 p-4 rounded-lg border border-green-100 mt-4">
+
       <div className="text-center mb-4">
         <h3 className="text-lg font-bold text-green-700">
           {t('summary.overpaymentSavingsHighlight', {
@@ -77,9 +106,12 @@ const SavingsSpotlight: React.FC<SavingsSpotlightProps> = ({
             {t('summary.valuePercentage', 'Value')}
           </h4>
           <p className="text-xl font-bold text-gray-900 mt-1">
-            {percentageSaved.toFixed(1)}%
+            {formatInterestRate(percentageSaved / 100)}
           </p>
         </div>
+      </div>
+      <div>
+        {t('app.beta')}
       </div>
     </div>
   );

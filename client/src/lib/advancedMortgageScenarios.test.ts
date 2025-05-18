@@ -3,9 +3,7 @@
  * Testing complex real-world scenarios with rate changes and multiple overpayments
  */
 
-import {
-  calculateComplexScenario
-} from './calculationEngine';
+import { calculateComplexScenario } from './overpaymentCalculator';
 import { formatCurrency, formatTimePeriod } from './formatters';
 import { calculateBaseMonthlyPayment } from './calculationCore';
 import { OverpaymentDetails } from './types';

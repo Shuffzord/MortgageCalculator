@@ -51,6 +51,7 @@ export default function Home({
   });
 
 const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
+const [noOverpaymentResults, setNoOverpaymentResults] = useState<CalculationResults | null>(null);
 const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([]);
 
   // Calculate loan details on initial load
@@ -84,7 +85,8 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
     // Use the provided loan details if available, otherwise use the current state
     const detailsToUse = loanDetailsToCalculate || loanDetails;
     
-    const results = calculateLoanDetails(
+    // Calculate with overpayments (full calculation)
+    const resultsWithOverpayments = calculateLoanDetails(
       detailsToUse.principal,
       detailsToUse.interestRatePeriods,
       detailsToUse.loanTerm,
@@ -95,7 +97,21 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
       detailsToUse.startDate // Pass the loan start date for date-based overpayments
     );
     
-    setCalculationResults(results);
+    // Calculate without overpayments (base calculation)
+    const resultsWithoutOverpayments = calculateLoanDetails(
+      detailsToUse.principal,
+      detailsToUse.interestRatePeriods,
+      detailsToUse.loanTerm,
+      undefined,
+      detailsToUse.repaymentModel,
+      detailsToUse.additionalCosts,
+      [], // Empty array for no overpayments
+      detailsToUse.startDate
+    );
+    
+    // Set both results
+    setCalculationResults(resultsWithOverpayments);
+    setNoOverpaymentResults(resultsWithoutOverpayments);
   };
 
   const handleSaveCalculation = () => {
@@ -169,7 +185,7 @@ const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([
                 <div className="data-display">
                   <LoanSummary
                     calculationResults={calculationResults}
-                    overpaymentResults={null}
+                    noOverpaymentsResult={noOverpaymentResults}
                     loanDetails={loanDetails}
                   />
                 </div>

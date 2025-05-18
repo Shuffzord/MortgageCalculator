@@ -8,7 +8,11 @@ import {
   calculateReducedPaymentSchedule,
   isOverpaymentApplicable,
   performOverpayments,
-  applyMultipleOverpayments
+  applyMultipleOverpayments,
+  applyRateChange,
+  performRateChanges,
+  calculateComplexScenario,
+  aggregateYearlyData
 } from './overpaymentCalculator';
 import { generateAmortizationSchedule } from './utils';
 import { LoanDetails, OverpaymentDetails, PaymentData } from './types';
@@ -429,6 +433,201 @@ describe('Overpayment Calculator', () => {
       // Verify the overpayment was applied
       expect(result[11].isOverpayment).toBe(true);
       expect(result[11].overpaymentAmount).toBe(5000);
+    });
+  });
+});
+
+describe('Rate Change Functions', () => {
+  describe('applyRateChange', () => {
+    test('should correctly apply a rate change', () => {
+      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const paymentData = convertScheduleToPaymentData(schedule);
+      
+      const result = applyRateChange(paymentData, 24, 4);
+      
+      expect(result.length).toBe(paymentData.length);
+      
+      // Check that payments before the change point are unchanged
+      for (let i = 0; i < 24; i++) {
+        expect(result[i].monthlyPayment).toBeCloseTo(paymentData[i].monthlyPayment, 2);
+      }
+      
+      // Check that payments after the change point have a different amount
+      // (lower due to rate decrease)
+      expect(result[24].monthlyPayment).toBeLessThan(paymentData[24].monthlyPayment);
+    });
+    
+    test('should throw error for invalid change month', () => {
+      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const paymentData = convertScheduleToPaymentData(schedule);
+      
+      expect(() => {
+        applyRateChange(paymentData, 0, 4);
+      }).toThrow('Invalid month for rate change');
+      
+      expect(() => {
+        applyRateChange(paymentData, 121, 4);
+      }).toThrow('Invalid month for rate change');
+    });
+    
+    test('should work with parameter object', () => {
+      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const paymentData = convertScheduleToPaymentData(schedule);
+      
+      const result = applyRateChange({
+        schedule: paymentData,
+        changeAtMonth: 24,
+        newRate: 4
+      });
+      
+      expect(result.length).toBe(paymentData.length);
+      expect(result[24].monthlyPayment).toBeLessThan(paymentData[24].monthlyPayment);
+    });
+  });
+  
+  describe('performRateChanges', () => {
+    test('should apply multiple rate changes in order', () => {
+      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const paymentData = convertScheduleToPaymentData(schedule);
+      
+      const rateChanges = [
+        { month: 24, newRate: 6 },
+        { month: 48, newRate: 4 }
+      ];
+      
+      const result = performRateChanges(paymentData, rateChanges);
+      
+      expect(result.length).toBe(paymentData.length);
+      
+      // Check that payments before the first change point are unchanged
+      for (let i = 0; i < 24; i++) {
+        expect(result[i].monthlyPayment).toBeCloseTo(paymentData[i].monthlyPayment, 2);
+      }
+      
+      // Check that payments after the first change point have a higher amount
+      // (higher due to rate increase)
+      expect(result[24].monthlyPayment).toBeGreaterThan(paymentData[24].monthlyPayment);
+      
+      // Check that payments after the second change point have a lower amount
+      // than the first change segment
+      const paymentAfterFirstChange = result[24].monthlyPayment;
+      expect(result[48].monthlyPayment).toBeLessThan(paymentAfterFirstChange);
+    });
+    
+    test('should work with parameter object', () => {
+      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const paymentData = convertScheduleToPaymentData(schedule);
+      
+      const rateChanges = [
+        { month: 24, newRate: 6 },
+        { month: 48, newRate: 4 }
+      ];
+      
+      const result = performRateChanges({
+        schedule: paymentData,
+        rateChanges: rateChanges
+      });
+      
+      expect(result.length).toBe(paymentData.length);
+      expect(result[24].monthlyPayment).toBeGreaterThan(paymentData[24].monthlyPayment);
+    });
+  });
+  
+  describe('calculateComplexScenario', () => {
+    test('should handle both rate changes and overpayments', () => {
+      const loanDetails: LoanDetails = {
+        principal: 100000,
+        interestRatePeriods: [{ startMonth: 1, interestRate: 5 }],
+        loanTerm: 10,
+        overpaymentPlans: [],
+        startDate: new Date(),
+        name: 'Test Loan',
+      };
+      
+      const rateChanges = [
+        { month: 24, newRate: 6 }
+      ];
+      
+      const overpayments: OverpaymentDetails[] = [
+        {
+          amount: 5000,
+          startMonth: 12,
+          startDate: new Date(),
+          isRecurring: false,
+          frequency: 'one-time',
+          effect: 'reduceTerm'
+        }
+      ];
+      
+      const result = calculateComplexScenario(loanDetails, rateChanges, overpayments);
+      
+      expect(result).toBeDefined();
+      expect(result.amortizationSchedule).toBeDefined();
+      expect(result.amortizationSchedule.length).toBeGreaterThan(0);
+      
+      // The actual term should be less than the original term due to overpayment
+      expect(result.actualTerm).toBeLessThan(loanDetails.loanTerm);
+    });
+    
+    test('should work with parameter object', () => {
+      const loanDetails: LoanDetails = {
+        principal: 100000,
+        interestRatePeriods: [{ startMonth: 1, interestRate: 5 }],
+        loanTerm: 10,
+        overpaymentPlans: [],
+        startDate: new Date(),
+        name: 'Test Loan',
+      };
+      
+      const rateChanges = [
+        { month: 24, newRate: 6 }
+      ];
+      
+      const overpayments: OverpaymentDetails[] = [
+        {
+          amount: 5000,
+          startMonth: 12,
+          startDate: new Date(),
+          isRecurring: false,
+          frequency: 'one-time',
+          effect: 'reduceTerm'
+        }
+      ];
+      
+      const result = calculateComplexScenario({
+        loanDetails,
+        rateChanges,
+        overpayments
+      });
+      
+      expect(result).toBeDefined();
+      expect(result.amortizationSchedule).toBeDefined();
+      expect(result.actualTerm).toBeLessThan(loanDetails.loanTerm);
+    });
+  });
+  
+  describe('aggregateYearlyData', () => {
+    test('should aggregate data correctly by year', () => {
+      const schedule = generateAmortizationSchedule(
+        100000,
+        [{ startMonth: 1, interestRate: 5 }],
+        10
+      );
+      const paymentData = convertScheduleToPaymentData(schedule);
+      const yearlyData = aggregateYearlyData(paymentData);
+      expect(yearlyData.length).toBe(10);
+    });
+
+    test('should calculate total interest correctly for each year', () => {
+      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const paymentData = convertScheduleToPaymentData(schedule);
+      const yearlyData = aggregateYearlyData(paymentData);
+      let totalInterest = 0;
+      schedule.forEach((month) => totalInterest += month.interestPayment);
+      let yearlyInterest = 0;
+      yearlyData.forEach(year => yearlyInterest += year.interest);
+      // Use a lower precision (0) to accommodate floating point differences
+      expect(yearlyInterest).toBeCloseTo(totalInterest, 0);
     });
   });
 });

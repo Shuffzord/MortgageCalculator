@@ -1,122 +1,68 @@
-import { formatTimePeriod, formatCurrency, formatDate } from "@/lib/formatters";
-import { getCurrencySymbol } from "@/lib/utils";
+import { formatCurrency, formatDate, formatInterestRate } from "@/lib/formatters";
 import { CalculationResults, LoanDetails, InterestRatePeriod } from "@/lib/types";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { calculationService } from "@/lib/services/calculationService";
+import { useComparison } from "../hooks/use-comparison";
 import SavingsSpotlight from "./SavingsSpotlight";
 
 interface LoanSummaryProps {
   calculationResults: CalculationResults | null;
-  overpaymentResults: CalculationResults | null;
+  noOverpaymentsResult: CalculationResults | null;
   loanDetails: LoanDetails;
 }
 
 export default function LoanSummary({
   calculationResults,
-  overpaymentResults,
+  noOverpaymentsResult,
   loanDetails
 }: LoanSummaryProps) {
   const { t } = useTranslation();
-  
-  // State for impact analysis data
-  const [impactData, setImpactData] = useState<{ amount: number; interestSaved: number; termReduction: number }[] | null>(null);
-  
-  // Calculate impact data when overpayment results are available
-  useEffect(() => {
-       
-    // Changed condition to not require overpaymentResults
-    // We only need overpayment plans to calculate impact data
-    if (loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length > 0) {
-      
-      // Calculate the maximum monthly overpayment amount to analyze
-      let maxMonthlyAmount = loanDetails.overpaymentPlans.reduce((max, plan) => {
-        if (plan.frequency === 'monthly') {
-          return Math.max(max, plan.amount);
-        }
-        return max;
-      }, 0);
-      
-      
-      // If no monthly overpayment, use the first overpayment amount as a base
-      if (maxMonthlyAmount === 0 && loanDetails.overpaymentPlans.length > 0) {
-        // For non-monthly plans, use a reasonable monthly equivalent
-        const firstPlan = loanDetails.overpaymentPlans[0];
-        
-        if (firstPlan.frequency === 'one-time') {
-          // For one-time payments, divide by 12 to get a monthly equivalent
-          maxMonthlyAmount = firstPlan.amount / 12;
-        } else if (firstPlan.frequency === 'quarterly') {
-          // For quarterly payments, divide by 3 to get a monthly equivalent
-          maxMonthlyAmount = firstPlan.amount / 3;
-        } else if (firstPlan.frequency === 'annual') {
-          // For annual payments, divide by 12 to get a monthly equivalent
-          maxMonthlyAmount = firstPlan.amount / 12;
-        } else {
-          // Default fallback
-          maxMonthlyAmount = firstPlan.amount / 10;
-        }
-        
-      }
-      
-      // Always analyze impact as long as there's an overpayment plan
-      // Ensure we have a reasonable amount to analyze (at least 1% of principal)
-      const minAnalysisAmount = Math.max(
-        maxMonthlyAmount,
-        loanDetails.principal * 0.01 / 12 // At least 1% of principal per year (divided by 12 for monthly)
-      );
-      
-      try {
-        const impact = calculationService.analyzeOverpaymentImpact(
-          loanDetails,
-          minAnalysisAmount * 2, // Analyze up to double the amount
-          5 // 5 data points
-        );
-        setImpactData(impact);
-      } catch (error) {
-        console.error("Error calculating impact data:", error);
-      }
-    }
-  }, [overpaymentResults, loanDetails]);
-  
-  // No chart creation useEffect needed anymore
-  
+
+  // Add the comparison hook with CORRECT parameter order
+  const {
+    interestSaved,
+    timeSaved,
+    percentageSaved,
+    isLoading,
+    error,
+    runComparison
+  } = useComparison(
+    noOverpaymentsResult,
+    calculationResults,
+    true // Auto-compare when results change
+  );
+
   if (!calculationResults) {
     return (
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('summary.title')}</h2>
-          <p>Please calculate loan details first.</p>
         </div>
       </div>
     );
   }
-
-  const interestSaved = overpaymentResults
-    ? Number(calculationResults.totalInterest) - Number(overpaymentResults.totalInterest)
-    : 0;
-    
   // Format a date to show month and year
   const formatMonthYear = (date: Date, monthsToAdd: number = 0): string => {
     const newDate = new Date(date);
     newDate.setMonth(newDate.getMonth() + monthsToAdd);
     return formatDate(newDate, 'MMM yyyy');
   }
-  
+
   // Get month range text for interest rate periods
   const getInterestPeriodMonthRange = (period: InterestRatePeriod, index: number): string => {
     if (!loanDetails.startDate) return '';
-    
+
     const startMonth = period.startMonth;
     const startDate = new Date(loanDetails.startDate);
     startDate.setMonth(startDate.getMonth() + startMonth);
-    
+
     // If this is the last period or the only period
     const nextPeriod = loanDetails.interestRatePeriods[index + 1];
     if (!nextPeriod) {
       return `${formatMonthYear(startDate)} - ${formatMonthYear(loanDetails.startDate, loanDetails.loanTerm * 12)}`;
     }
-    
+
     // If there's a next period
     const endDate = new Date(loanDetails.startDate);
     endDate.setMonth(endDate.getMonth() + nextPeriod.startMonth - 1);
@@ -127,7 +73,7 @@ export default function LoanSummary({
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('summary.title')}</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.monthlyPayment')}</h3>
@@ -135,32 +81,32 @@ export default function LoanSummary({
               {formatCurrency(Number(calculationResults.monthlyPayment), undefined, loanDetails.currency)}
             </p>
           </div>
-          
+
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.totalInterest')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
               {formatCurrency(Number(calculationResults.totalInterest), undefined, loanDetails.currency)}
             </p>
           </div>
-          
+
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.totalPayment')}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
               {formatCurrency(Number(loanDetails.principal) + Number(calculationResults.totalInterest), undefined, loanDetails.currency)}
             </p>
           </div>
-          
+
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500">{t('summary.apr') || "APR"}</h3>
             <p className="mt-1 text-xl font-semibold text-gray-900 font-mono">
-              {calculationResults.apr ? `${calculationResults.apr.toFixed(2)}%` : 'N/A'}
+              {calculationResults.apr ? formatInterestRate(calculationResults.apr / 100) : 'N/A'}
             </p>
           </div>
-          
+
           {/* Interest Rate Periods Information */}
           <div className="md:col-span-4 bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4">
             <h3 className="text-sm font-medium text-blue-700 mb-2">{t('summary.interestRatePeriods')}</h3>
-            
+
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-blue-50">
@@ -181,7 +127,7 @@ export default function LoanSummary({
                         {getInterestPeriodMonthRange(period, index)}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 font-medium">
-                        {period.interestRate}%
+                        {formatInterestRate(period.interestRate / 100)}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 font-mono">
                         {formatCurrency(Number(calculationResults.monthlyPayment), undefined, loanDetails.currency)}
@@ -192,12 +138,12 @@ export default function LoanSummary({
               </table>
             </div>
           </div>
-          
-          
+
+
           {loanDetails.overpaymentPlans && loanDetails.overpaymentPlans.length > 0 && (
             <div className="md:col-span-4 bg-amber-50 p-4 rounded-lg border border-amber-100 mb-4">
               <h3 className="text-sm font-medium text-amber-700 mb-2">{t('overpayment.title')}</h3>
-              
+
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-amber-50">
@@ -226,8 +172,8 @@ export default function LoanSummary({
                           {plan.frequency === 'quarterly' && t('overpayment.quarterly')}
                           {plan.frequency === 'annual' && t('overpayment.annual')}
                           {plan.frequency === 'one-time' && t('overpayment.oneTime')}
-                          {plan.isRecurring && plan.endMonth && 
-                           ` (${t('until')} ${loanDetails.startDate && formatMonthYear(new Date(loanDetails.startDate), plan.endMonth)})`}
+                          {plan.isRecurring && plan.endMonth &&
+                            ` (${t('until')} ${loanDetails.startDate && formatMonthYear(new Date(loanDetails.startDate), plan.endMonth)})`}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                           {plan.effect === 'reduceTerm' ? t('overpayment.reduceTerm') : t('overpayment.reducePayment')}
@@ -241,25 +187,17 @@ export default function LoanSummary({
           )}
 
           {/* Removed duplicate overpayment results section - now using SavingsSpotlight component */}
-          
-          {/* Combined Savings Spotlight */}
-          {}
-          {impactData && calculationResults && (
-            <div className="md:col-span-4">
-              {overpaymentResults ? (
-                // When we have actual overpayment results
-                <SavingsSpotlight
-                  moneySaved={interestSaved}
-                  timeSaved={Number(overpaymentResults.timeOrPaymentSaved || 0)}
-                  percentageSaved={(interestSaved / Number(calculationResults.totalInterest)) * 100}
-                  currency={loanDetails.currency || 'USD'}
-                />
-              ) :(
-                // When we only have potential impact data
-                <div/>
-              )}
-            </div>
-          )}
+
+          {/* Savings Spotlight */}
+          <div className="md:col-span-4">
+            <SavingsSpotlight
+              moneySaved={interestSaved}
+              timeSaved={timeSaved}
+              percentageSaved={percentageSaved}
+              currency={loanDetails.currency || 'USD'}
+              isLoading={false}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -50,12 +50,17 @@ const HomePage: React.FC<HomePageProps> = ({
     principal: 250000,
     interestRatePeriods: [{ startMonth: 0, interestRate: 4.5 }],
     loanTerm: 30,
-    overpaymentPlans: [],
+    overpaymentPlans: [{
+      amount: 1000, startMonth: 0, endMonth: 30, isRecurring: true, frequency: 'monthly',
+      afterPayment: 0, effect: 'reduceTerm',
+      startDate: new Date()
+    }],
     startDate: new Date(),
     currency: selectedCurrency
   });
 
   const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
+  const [noOverpaymentResults, setOverpaymentResults] = useState<CalculationResults | null>(null);
   const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([]);
 
   // Update localStorage when currency changes
@@ -102,9 +107,21 @@ const HomePage: React.FC<HomePageProps> = ({
     // Use the provided loan details if available, otherwise use the current state
     const detailsToUse = loanDetailsToCalculate || loanDetails;
     
-    const results = calculationService.calculateLoanDetails(detailsToUse);
+    // Calculate with overpayments (full calculation)
+    const resultsWithOverpayments = calculationService.calculateLoanDetails(detailsToUse);
     
-    setCalculationResults(results);
+    // Create a version of loan details without overpayments
+    const detailsWithoutOverpayments = {
+      ...detailsToUse,
+      overpaymentPlans: [] // Empty array for no overpayments
+    };
+    
+    // Calculate without overpayments (base calculation)
+    const resultsWithoutOverpayments = calculationService.calculateLoanDetails(detailsWithoutOverpayments);
+    
+    // Set both results
+    setCalculationResults(resultsWithOverpayments);
+    setOverpaymentResults(resultsWithoutOverpayments);
   };
 
   const handleSaveCalculation = () => {
@@ -179,7 +196,7 @@ const HomePage: React.FC<HomePageProps> = ({
           <div className="lg:col-span-2 space-y-8">
             <LoanSummary
               calculationResults={calculationResults}
-              overpaymentResults={null}
+              noOverpaymentsResult={noOverpaymentResults}
               loanDetails={loanDetails}
             />
             
