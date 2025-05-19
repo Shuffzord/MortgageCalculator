@@ -11,6 +11,7 @@
     "priceCurrency": "EUR"
   },
   "inLanguage": "es",
+  "availableLanguage": ["en", "es", "pl"],
   "featureList": [
     "Calcular pagos hipotecarios",
     "Ver programas de amortización",
@@ -18,15 +19,19 @@
     "Analizar estrategias de pago adicional",
     "Exportar datos en varios formatos"
   ],
-  "screenshot": "https://mortgage-calculator.example.com/mortgage-calculator-preview.jpg",
+  "screenshot": "https://www.smarter-loan.com/mortgage-calculator-preview.jpg",
   "potentialAction": {
     "@type": "UseAction",
-    "target": "https://mortgage-calculator.example.com/es/"
+    "target": "https://www.smarter-loan.com/es/"
   },
   "mainEntity": {
     "@type": "FinancialProduct",
     "name": "Hipoteca",
     "category": "Préstamo",
     "description": "Un préstamo utilizado para comprar bienes inmuebles, donde la propiedad sirve como garantía para el préstamo."
-  }
+  },
+  "sameAs": [
+    "https://www.smarter-loan.com/",
+    "https://www.smarter-loan.com/pl/"
+  ]
 }

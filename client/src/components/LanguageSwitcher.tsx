@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useRouter } from 'wouter';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,13 +9,27 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
+import { validateLanguage, withLanguagePrefix } from '@/lib/languageUtils';
 
 export default function LanguageSwitcher() {
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language;
+  const [location, setLocation] = useLocation();
+  const router = useRouter();
 
   const changeLanguage = (lng: string) => {
+    if (!validateLanguage(lng)) return;
+
+    // Get the current path without the language prefix
+    const pathParts = location.split('/');
+    const currentPath = pathParts.slice(2).join('/');
+    
+    // Create new path with new language prefix
+    const newPath = withLanguagePrefix(currentPath, lng);
+    
+    // Update URL and language simultaneously
     i18n.changeLanguage(lng);
+    setLocation(newPath);
   };
 
   return (

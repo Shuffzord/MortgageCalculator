@@ -11,6 +11,7 @@
     "priceCurrency": "PLN"
   },
   "inLanguage": "pl",
+  "availableLanguage": ["en", "es", "pl"],
   "featureList": [
     "Obliczanie rat kredytu hipotecznego",
     "Przeglądanie harmonogramów amortyzacji",
@@ -18,15 +19,19 @@
     "Analizowanie strategii nadpłat",
     "Eksportowanie danych w różnych formatach"
   ],
-  "screenshot": "https://mortgage-calculator.example.com/mortgage-calculator-preview.jpg",
+  "screenshot": "https://www.smarter-loan.com/mortgage-calculator-preview.jpg",
   "potentialAction": {
     "@type": "UseAction",
-    "target": "https://mortgage-calculator.example.com/pl/"
+    "target": "https://www.smarter-loan.com/pl/"
   },
   "mainEntity": {
     "@type": "FinancialProduct",
     "name": "Kredyt Hipoteczny",
     "category": "Pożyczka",
     "description": "Pożyczka wykorzystywana do zakupu nieruchomości, gdzie nieruchomość służy jako zabezpieczenie pożyczki."
-  }
+  },
+  "sameAs": [
+    "https://www.smarter-loan.com/",
+    "https://www.smarter-loan.com/es/"
+  ]
 }

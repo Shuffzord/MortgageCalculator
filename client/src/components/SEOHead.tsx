@@ -1,16 +1,21 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SUPPORTED_LANGUAGES, validateLanguage, useLanguagePrefix } from '../lib/languageUtils';
 
 interface SEOHeadProps {
   pageTitle?: string;
   pageDescription?: string;
+  path?: string;
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({ 
   pageTitle, 
-  pageDescription 
+  pageDescription,
+  path = ''
 }) => {
   const { i18n } = useTranslation();
+  const currentLanguage = useLanguagePrefix();
+  const baseUrl = 'https://www.smarter-loan.com';
   
   useEffect(() => {
     // Remove any existing structured data script
@@ -37,6 +42,17 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     fetch(structuredDataPath)
       .then(response => response.json())
       .then(data => {
+        // Add language context to structured data
+        data['@context'] = 'https://schema.org';
+        data.inLanguage = i18n.language;
+        
+        // Add language alternates to structured data
+        data.workTranslation = SUPPORTED_LANGUAGES.map(lang => ({
+          '@type': 'WebPage',
+          inLanguage: lang,
+          url: `${baseUrl}${lang === 'en' ? '' : `/${lang}`}${path}`
+        }));
+
         script.textContent = JSON.stringify(data);
         document.head.appendChild(script);
       })
@@ -44,16 +60,17 @@ const SEOHead: React.FC<SEOHeadProps> = ({
         console.error('Error loading structured data:', error);
       });
       
-    // Update page title and description if provided
+    // Update page title and description with language context
     if (pageTitle) {
-      document.title = pageTitle;
+      const localizedTitle = `${pageTitle} | Smarter Loan ${i18n.language.toUpperCase()}`;
+      document.title = localizedTitle;
       
       // Update Open Graph and Twitter title tags
       const ogTitle = document.querySelector('meta[property="og:title"]');
       const twitterTitle = document.querySelector('meta[property="twitter:title"]');
       
-      if (ogTitle) ogTitle.setAttribute('content', pageTitle);
-      if (twitterTitle) twitterTitle.setAttribute('content', pageTitle);
+      if (ogTitle) ogTitle.setAttribute('content', localizedTitle);
+      if (twitterTitle) twitterTitle.setAttribute('content', localizedTitle);
     }
     
     if (pageDescription) {
@@ -68,21 +85,49 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     
     // Update language attributes
     document.documentElement.setAttribute('lang', i18n.language);
-      // Update canonical and alternate links
+
+    // Update canonical URL
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      const baseUrl = 'https://www.smarter-loan.com';
       const langPath = i18n.language === 'en' ? '' : `/${i18n.language}`;
-      canonical.setAttribute('href', `${baseUrl}${langPath}/`);
+      canonical.setAttribute('href', `${baseUrl}${langPath}${path}`);
     }
+
+    // Update OpenGraph locale
+    const ogLocale = document.querySelector('meta[property="og:locale"]');
+    if (ogLocale) {
+      ogLocale.setAttribute('content', i18n.language === 'en' ? 'en_US' : 
+        i18n.language === 'es' ? 'es_ES' : 'pl_PL');
+    }
+
+    // Remove existing hreflang tags
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+
+    // Add hreflang tags for all language variants
+    SUPPORTED_LANGUAGES.forEach(lang => {
+      const link = document.createElement('link');
+      link.rel = 'alternate';
+      link.hreflang = lang;
+      link.href = `${baseUrl}${lang === 'en' ? '' : `/${lang}`}${path}`;
+      document.head.appendChild(link);
+    });
+
+    // Add x-default hreflang tag (pointing to English version)
+    const xDefaultLink = document.createElement('link');
+    xDefaultLink.rel = 'alternate';
+    xDefaultLink.hreflang = 'x-default';
+    xDefaultLink.href = `${baseUrl}${path}`;
+    document.head.appendChild(xDefaultLink);
     
     return () => {
       // Clean up when component unmounts
       if (script.parentNode) {
         script.parentNode.removeChild(script);
       }
+      // Clean up hreflang tags
+      document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
     };
-  }, [i18n.language, pageTitle, pageDescription]);
+  }, [i18n.language, pageTitle, pageDescription, path]);
   
   // This component doesn't render anything visible
   return null;
