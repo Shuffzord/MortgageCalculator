@@ -253,7 +253,7 @@ export default function LoanInputForm({
 
       <TooltipProvider>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="loan-input-form">
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
               <div className="sm:col-span-2">
@@ -276,7 +276,7 @@ export default function LoanInputForm({
                       <FormControl>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(selectedCurrency)}</span>
+                            <span className="text-gray-500 sm:text-sm" data-testid="currency-symbol">{getCurrencySymbol(selectedCurrency)}</span>
                           </div>
                           <Input
                             {...field}
@@ -284,11 +284,12 @@ export default function LoanInputForm({
                             min="1000"
                             step="1000"
                             className="pl-7"
+                            data-testid="loan-amount-input"
                           />
                         </div>
                       </FormControl>
                       {form.formState.errors.principal && (
-                        <p className="text-red-500 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1 validation-error">
                           {form.formState.errors.principal.message}
                         </p>
                       )}
@@ -346,6 +347,7 @@ export default function LoanInputForm({
                       max="40"
                       step="1"
                       className="pr-12"
+                      data-testid="loan-term-input"
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                       <span className="text-gray-500 sm:text-sm">{t('form.years')}</span>
@@ -353,7 +355,7 @@ export default function LoanInputForm({
                   </div>
                 </FormControl>
                 {form.formState.errors.loanTerm && (
-                  <p className="text-red-500 text-xs mt-1">
+                  <p className="text-red-500 text-xs mt-1 validation-error">
                     {form.formState.errors.loanTerm.message}
                   </p>
                 )}
@@ -382,6 +384,7 @@ export default function LoanInputForm({
                     className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     value={field.value}
                     onChange={field.onChange}
+                    data-testid="repayment-model-select"
                   >
                     <option value="equalInstallments">{t('form.equalInstallments')}</option>
                     <option value="decreasingInstallments">{t('form.decreasingInstallments')}</option>
@@ -499,6 +502,7 @@ export default function LoanInputForm({
                                         "w-full pl-3 text-left font-normal",
                                         "text-muted-foreground"
                                       )}
+                                      data-testid={`interest-rate-date-range-${index}-start`}
                                     >
                                       {index === 0 ? 
                                         formatDate(date) :
@@ -631,6 +635,7 @@ export default function LoanInputForm({
                                         "w-full pl-3 text-left font-normal",
                                         "text-muted-foreground"
                                       )}
+                                      data-testid="interest-rate-end-date"
                                     >
                                       {!period.endMonth ? t('form.loanEnd') :
                                         formatDate(addMonths(date, period.endMonth))}
@@ -852,6 +857,7 @@ export default function LoanInputForm({
                                   field.onChange(newInterestRatePeriods);
                                 }}
                                 className="flex-1"
+                                data-testid={index === 0 ? "interest-rate-input" : `interest-rate-input-${index}`}
                               />
                               <span className="ml-2">%</span>
                             </div>
@@ -886,6 +892,7 @@ export default function LoanInputForm({
                       type="button"
                       variant="secondary"
                       size="sm"
+                      data-testid="add-interest-rate-period-button"
                       onClick={() => {
                         const currentValue = Array.isArray(field.value) ? field.value : [];
                         const loanTermInMonths = form.getValues("loanTerm") * 12;
@@ -1426,6 +1433,7 @@ export default function LoanInputForm({
             <Button
               type="submit"
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
+              data-testid="calculate-button"
             >
               {t('form.calculate')}
             </Button>

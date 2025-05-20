@@ -1,5 +1,5 @@
 // This file is auto-generated during build. Do not edit directly.
 window.BUILD_INFO = {
-  timestamp: "2025-05-18T21:45:27.995Z",
+  timestamp: "2025-05-20T17:50:04.611Z",
   version: "1.0.0"
 };

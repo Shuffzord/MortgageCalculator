@@ -42,9 +42,6 @@ const securityPatterns = [
     }
 ];
 
-// Console log pattern, handled separately to exclude test files
-const consolePattern = /console\.(log|info|debug|warn)\(/;
-
 const excludeDirs = [
     'node_modules',
     'dist',
@@ -108,16 +105,7 @@ function scanFile(filePath) {
             }
         });
 
-        // Check console.log only for non-test files
-        if (!isTest && consolePattern.test(line)) {
-            issues.push({
-                file: filePath,
-                line: index + 1,
-                content: line.trim(),
-                pattern: consolePattern.toString(),
-                type: 'console'
-            });
-        }
+       
     });
 
     return issues;

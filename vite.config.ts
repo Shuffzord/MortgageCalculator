@@ -3,8 +3,10 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { removeConsolePlugin } from "./client/src/plugins/removeConsole";
+import { cleanScreenshotsPlugin } from "./cleanscreenshots";
 export default defineConfig({
-  plugins: [
+  plugins: [    
+    cleanScreenshotsPlugin(),
     react(),
     runtimeErrorOverlay(),
     removeConsolePlugin()

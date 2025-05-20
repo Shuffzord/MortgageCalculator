@@ -70,7 +70,7 @@ export default function LoanSummary({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white rounded-lg shadow overflow-hidden" data-testid="loan-summary">
       <div className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('summary.title')}</h2>
 
