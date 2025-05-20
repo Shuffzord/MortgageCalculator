@@ -10,7 +10,8 @@
     "price": "0",
     "priceCurrency": "USD"
   },
-  "inLanguage": ["en", "es", "pl"],
+  "inLanguage": "en",
+  "availableLanguage": ["en", "es", "pl"],
   "featureList": [
     "Calculate mortgage payments",
     "View amortization schedules",
@@ -18,15 +19,19 @@
     "Analyze overpayment strategies",
     "Export data in various formats"
   ],
-  "screenshot": "https://mortgage-calculator.example.com/mortgage-calculator-preview.jpg",
+  "screenshot": "https://www.smarter-loan.com/mortgage-calculator-preview.jpg",
   "potentialAction": {
     "@type": "UseAction",
-    "target": "https://mortgage-calculator.example.com/"
+    "target": "https://www.smarter-loan.com/"
   },
   "mainEntity": {
     "@type": "FinancialProduct",
     "name": "Mortgage",
     "category": "Loan",
     "description": "A loan used to purchase real estate, where the property serves as collateral for the loan."
-  }
+  },
+  "sameAs": [
+    "https://www.smarter-loan.com/es/",
+    "https://www.smarter-loan.com/pl/"
+  ]
 }

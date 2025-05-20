@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Menu, X, DatabaseBackup } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Button } from '@/components/ui/button';
+import { useLanguagePrefix, withLanguagePrefix } from '@/lib/languageUtils';
 
 interface NavigationProps {
   onExportClick?: () => void;
@@ -17,11 +18,12 @@ export default function Navigation({ onExportClick }: NavigationProps) {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Get current path to highlight active link
+  // Get current path and language prefix
   const [location] = useLocation();
+  const langPrefix = useLanguagePrefix();
   
-  // Check if we're on the home page
-  const isHomePage = location === '/';
+  // Check if we're on the home page (considering language prefix)
+  const isHomePage = location === `/${langPrefix}/`;
 
   return (
     <nav className="bg-[#1e293b] text-white">
@@ -29,7 +31,7 @@ export default function Navigation({ onExportClick }: NavigationProps) {
         <div className="flex items-center h-14">
           {/* Logo and app name */}
           <div className="flex items-center space-x-8">
-            <Link href="/">
+            <Link href={`/${langPrefix}/`}>
               <div className="flex items-center cursor-pointer">
                 <svg className="h-6 w-6 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14.5 8.5c0 2.5-1.5 4-3.5 5.5s-3.5 3-3.5 5.5V20h10v-1c0-2.5-1.5-4-3.5-5.5s-3.5-3-3.5-5.5V7c0-1 .5-1.5 1-2s1-1 1-2c0-1.5-2-3-4-3S5 1.5 5 3c0 1 .5 1.5 1 2s1 1 1 2v1.5"/>
@@ -40,22 +42,22 @@ export default function Navigation({ onExportClick }: NavigationProps) {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex">
-              <Link href="/">
-                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === '/' 
+              <Link href={`/${langPrefix}/`}>
+                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/`
                   ? 'bg-[#0f172a] text-white rounded-t' 
                   : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.home')}
                 </div>
               </Link>
-              <Link href="/about">
-                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === '/about' 
+              <Link href={`/${langPrefix}/about`}>
+                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/about`
                   ? 'bg-[#0f172a] text-white rounded-t' 
                   : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.about')}
                 </div>
               </Link>
-              <Link href="/education">
-                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === '/education' 
+              <Link href={`/${langPrefix}/education`}>
+                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/education`
                   ? 'bg-[#0f172a] text-white rounded-t' 
                   : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.education')}
@@ -100,27 +102,27 @@ export default function Navigation({ onExportClick }: NavigationProps) {
       {isMenuOpen && (
         <div className="md:hidden bg-[#0f172a]">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link href="/">
+            <Link href={`/${langPrefix}/`}>
               <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
-                location === '/'
+                location === `/${langPrefix}/`
                   ? 'bg-[#1e293b] text-white'
                   : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
               }`}>
                 {t('navigation.home')}
               </div>
             </Link>
-            <Link href="/about">
+            <Link href={`/${langPrefix}/about`}>
               <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
-                location === '/about'
+                location === `/${langPrefix}/about`
                   ? 'bg-[#1e293b] text-white'
                   : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
               }`}>
                 {t('navigation.about')}
               </div>
             </Link>
-            <Link href="/education">
+            <Link href={`/${langPrefix}/education`}>
               <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
-                location === '/education'
+                location === `/${langPrefix}/education`
                   ? 'bg-[#1e293b] text-white'
                   : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
               }`}>

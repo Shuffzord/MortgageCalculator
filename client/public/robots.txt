@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://mortgage-calculator.example.com/sitemap.xml
+Sitemap: https://smarter-loan.com/sitemap.xml
