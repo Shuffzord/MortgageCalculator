@@ -4,4 +4,5 @@
 7. Overpayment analysis
 8. Linki afiliacyjne
 10. CSV Import Export
-11. UI Tests
+11. help needed
+12. Calendar picker - common implementation
