@@ -12,7 +12,11 @@ export default {
   },
   testMatch: [
     '**/__tests__/**/*.ts?(x)',
-    '**/?(*.)+(spec|test).ts?(x)'
+    '**/?(*.)(spec|test).ts?(x)'
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/client/e2e-tests/'
   ],
   coverageDirectory: 'coverage',
   collectCoverageFrom: [

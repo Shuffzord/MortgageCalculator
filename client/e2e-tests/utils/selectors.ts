@@ -1,9 +1,24 @@
 /**
  * Selectors for UI Testing
- * 
- * This file contains all the CSS selectors used in the tests.
- * Centralizing selectors makes it easier to maintain tests when the UI changes.
+ *
+ * This file imports shared selectors from the shared test utilities
+ * and re-exports them along with additional e2e-specific selectors.
  */
+
+// Import shared selectors
+import { SELECTORS } from '../../src/test-utils/selectors';
+
+// Re-export shared selectors
+export const LOAN_AMOUNT_INPUT = SELECTORS.LOAN_AMOUNT_INPUT;
+export const INTEREST_RATE_INPUT = SELECTORS.INTEREST_RATE_INPUT;
+export const LOAN_TERM_INPUT = SELECTORS.LOAN_TERM_INPUT;
+export const REPAYMENT_MODEL_SELECT = SELECTORS.REPAYMENT_MODEL_SELECT;
+export const CALCULATE_BUTTON = SELECTORS.CALCULATE_BUTTON;
+export const LOAN_SUMMARY = SELECTORS.LOAN_SUMMARY;
+export const MONTHLY_PAYMENT = SELECTORS.MONTHLY_PAYMENT;
+export const TOTAL_INTEREST = SELECTORS.TOTAL_INTEREST;
+export const TOTAL_COST = SELECTORS.TOTAL_COST;
+export const VALIDATION_ERROR = SELECTORS.VALIDATION_ERROR;
 
 // Main application selectors
 export const APP_CONTAINER = '#root';
@@ -15,12 +30,7 @@ export const LANGUAGE_SWITCHER = '[data-testid="language-switcher"]';
 
 // Loan Input Form selectors
 export const LOAN_INPUT_FORM = '[data-testid="loan-input-form"]';
-export const LOAN_AMOUNT_INPUT = '[data-testid="loan-amount-input"]';
-export const INTEREST_RATE_INPUT = '[data-testid="interest-rate-input"]';
-export const LOAN_TERM_INPUT = '[data-testid="loan-term-input"]';
-export const REPAYMENT_MODEL_SELECT = '[data-testid="repayment-model-select"]';
 export const LOAN_START_DATE_INPUT = '[data-testid="loan-start-date-input"]';
-export const CALCULATE_BUTTON = '[data-testid="calculate-button"]';
 export const ADD_INTEREST_RATE_PERIOD_BUTTON = '[data-testid="add-interest-rate-period-button"]';
 export const ADD_OVERPAYMENT_BUTTON = '[data-testid="add-overpayment-button"]';
 
@@ -33,11 +43,7 @@ export const INTEREST_RATE_INPUT_ADDITIONAL = (index: number) => `[data-testid="
 export const CURRENCY_SYMBOL = '[data-testid="currency-symbol"]';
 export const CURRENCY_SELECTOR = '[data-testid="currency-selector"]';
 
-// Loan Summary selectors
-export const LOAN_SUMMARY = '[data-testid="loan-summary"]';
-export const MONTHLY_PAYMENT = '[data-testid="monthly-payment"]';
-export const TOTAL_INTEREST = '[data-testid="total-interest"]';
-export const TOTAL_COST = '[data-testid="total-cost"]';
+// Additional Loan Summary selectors
 export const ACTUAL_TERM = '[data-testid="actual-term"]';
 
 // Chart section selectors
@@ -62,7 +68,6 @@ export const OPTIMIZE_BUTTON = '[data-testid="optimize-button"]';
 
 // Error message selectors
 export const ERROR_MESSAGE = '.error-message';
-export const VALIDATION_ERROR = '.validation-error';
 
 // Modal selectors
 export const MODAL = '[role="dialog"]';

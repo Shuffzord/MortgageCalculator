@@ -8,7 +8,29 @@ import * as fs from 'fs';
 import * as path from 'path';
 // Helper function to navigate to a URL
 export async function navigateToUrl(url: string) {
-  await global.page.goto(url, { waitUntil: 'networkidle2' });
+  try {
+    // Validate URL before navigation
+    const validUrl = validateUrl(url);
+    console.log(`Navigating to: ${validUrl}`);
+    await global.page.goto(validUrl, { waitUntil: 'networkidle2' });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Navigation error: ${errorMessage}`);
+    throw new Error(`Failed to navigate to ${url}: ${errorMessage}`);
+  }
+}
+
+// Helper function to validate URLs
+function validateUrl(url: string): string {
+  try {
+    // Check if the URL is valid by creating a URL object
+    new URL(url);
+    return url;
+  } catch (error: unknown) {
+    // If the URL is invalid, throw a more descriptive error
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Invalid URL: ${url} - ${errorMessage}`);
+  }
 }
 
 // Helper function to take a screenshot
