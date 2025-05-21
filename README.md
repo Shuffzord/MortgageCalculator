@@ -239,15 +239,48 @@ When working with the MortgageCalc codebase, follow these guidelines:
 
 ## 🧪 Testing
 
-Run tests with:
+The MortgageCalc project uses a comprehensive testing approach with two main types of tests:
+
+### Unit Tests
+
+Unit tests focus on testing individual components and functions in isolation:
 
 ```bash
+# Run all unit tests
 npm test
-# or
-yarn test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run only failed tests
+npm run test:failed
+
+# Generate coverage report
+npm run test:coverage
 ```
 
-We aim for high test coverage. Please include tests with your contributions.
+### End-to-End (E2E) Tests
+
+E2E tests use Puppeteer to simulate real user interactions with the application:
+
+```bash
+# Run all E2E tests
+npm run test:e2e
+
+# Run E2E tests with HTML report generation
+npm run test:e2e:report
+```
+
+### Full Test Suite
+
+```bash
+# Run both unit and E2E tests
+npm run fulltest
+```
+
+For detailed information about our testing approach, see [Testing Documentation](testing-documentation-update.md) and [Future Testing Plans](future-testing-adjustments.md).
+
+We aim for high test coverage. Please include appropriate tests with your contributions.
 
 ## 📋 Roadmap
 
