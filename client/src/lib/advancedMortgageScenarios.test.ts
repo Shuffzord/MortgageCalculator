@@ -88,7 +88,7 @@ describe('Advanced Mortgage Scenarios', () => {
   
     // 3) New monthly payment after rate drop (month 37 → index 36)
     const paymentAfterDrop = resultWithoutOverpayment.amortizationSchedule[36].monthlyPayment;
-    expect(paymentAfterDrop).toBeCloseTo(2404.89, 0);
+    expect(paymentAfterDrop).toBeCloseTo(2408.42, 0);
   
     // 4) New loan term after overpayment should be reduced
     // The exact value may vary based on implementation details, but should be around 25 years

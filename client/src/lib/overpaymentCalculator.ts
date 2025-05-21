@@ -107,7 +107,7 @@ function applyOverpaymentImpl(
   // Fix: Correctly adjust the principal payment and balance for the overpayment month
   const overpaymentMonth = {
     ...targetPayment,
-    isOverpayment: true,
+    isOverpayment: true, // Ensure this flag is set
     overpaymentAmount: overpaymentAmount,
     principalPayment: targetPayment.principalPayment + overpaymentAmount,
     balance: Math.max(0, targetPayment.balance - overpaymentAmount)
@@ -205,7 +205,7 @@ function applyOverpaymentImpl(
   // This is critical for test cases that check the overpayment flag
   newSchedule[overpaymentMonthIndex] = {
     ...newSchedule[overpaymentMonthIndex],
-    isOverpayment: true,
+    isOverpayment: true, // Make sure this flag is set
     overpaymentAmount: overpaymentAmount
   };
   
@@ -895,7 +895,8 @@ function performOverpaymentsImpl(
       const month = sortedMonths[i];
       
       // Stop if loan is already paid off
-      if (!current[month - 1] || current[month - 1].balance <= 0) {
+      const monthIndex = paymentMonthToIndex(month);
+      if (!current[monthIndex] || current[monthIndex].balance <= 0) {
         break;
       }
       
@@ -913,7 +914,7 @@ function performOverpaymentsImpl(
         
         try {
           // Ensure we don't overpay more than remaining balance
-          const maxOverpayment = current[month - 1].balance;
+          const maxOverpayment = current[monthIndex].balance;
           const safeAmount = Math.min(totalAmount, maxOverpayment);
           
           // Create a proper loan details object with the current interest rate periods
@@ -921,6 +922,13 @@ function performOverpaymentsImpl(
             ...loanDetails,
             // Ensure we're using the most up-to-date interest rate periods
             interestRatePeriods: loanDetails.interestRatePeriods
+          };
+          
+          // Ensure the current payment is marked as an overpayment before applying
+          current[monthIndex] = {
+            ...current[monthIndex],
+            isOverpayment: true,
+            overpaymentAmount: safeAmount
           };
           
           const result = applyOverpayment(current, safeAmount, month, currentLoanDetails, effect);
