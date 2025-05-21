@@ -1,6 +1,6 @@
 {
-  "cost" : "$150",
+  "cost" : "$190",
   "profit" : "$0",
-  "linesOfCode": "4109078",
-  "Tests": "184"
+  "linesOfCode": "4906846",
+  "Tests": "Unit: 228 + UI: 14"
 }
