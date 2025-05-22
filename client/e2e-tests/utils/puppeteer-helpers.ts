@@ -54,7 +54,9 @@ export async function takeScreenshot(name: string, selector?: string) {
 
 // Helper function to click an element
 export async function clickElement(selector: string) {
-  await global.page.waitForSelector(selector);
+  await global.page.waitForSelector(selector, { visible: true });
+  // Wait a bit for any animations to complete
+  await new Promise(resolve => setTimeout(resolve, 100));
   await global.page.click(selector);
 }
 
@@ -120,4 +122,37 @@ export async function elementExists(selector: string) {
 // Helper function to wait for page to load completely
 export async function waitForPageLoad() {
   await global.page.waitForFunction('document.readyState === "complete"');
+}
+
+// Helper function to click a calendar day button with fallback logic
+export async function clickCalendarDay() {
+  try {
+    // Wait for calendar to be fully rendered
+    await global.page.waitForSelector('[data-testid="calendar-container"]', { visible: true });
+    
+    // Wait a bit for any calendar animations/transitions to complete
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // First try to find an enabled day button
+    await global.page.waitForSelector('button[name="day"]:not([disabled])', {
+      timeout: 10000,
+      visible: true
+    });
+    
+    // Click the first available enabled day button
+    await global.page.click('button[name="day"]:not([disabled])');
+  } catch (error) {
+    console.log('Enabled day button not found, trying any day button...');
+    try {
+      // If no enabled buttons are found, try any day button
+      await global.page.waitForSelector('button[name="day"]', {
+        timeout: 5000,
+        visible: true
+      });
+      await global.page.click('button[name="day"]');
+    } catch (fallbackError) {
+      console.error('No calendar day buttons found:', fallbackError);
+      throw new Error('Could not find any calendar day buttons to click');
+    }
+  }
 }

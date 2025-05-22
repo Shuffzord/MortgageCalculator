@@ -12,8 +12,9 @@ export const SELECTORS = {
   
   // Calendar selectors
   LOAN_START_DATE_BUTTON: '[data-testid="loan-start-date-button"]',
-  CALENDAR_COMPONENT: '[data-testid="calendar-mock"]',
+  CALENDAR_COMPONENT: '[data-testid="calendar-container"]',
   CALENDAR_PREVIOUS_YEAR_BUTTON: '[data-testid="previous-year-button"]',
   CALENDAR_NEXT_YEAR_BUTTON: '[data-testid="next-year-button"]',
-  CALENDAR_SELECT_DATE_BUTTON: '[data-testid="calendar-select-date"]'
+  CALENDAR_DAY_BUTTON: 'button[name="day"]',
+  CALENDAR_DAY_BUTTON_ENABLED: 'button[name="day"]:not([disabled])'
 };
