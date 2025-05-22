@@ -33,3 +33,7 @@ pids
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# screenshots
+client/screenshots
+screenshots

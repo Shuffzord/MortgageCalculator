@@ -416,6 +416,7 @@ export default function LoanInputForm({
                       "w-full pl-3 text-left font-normal",
                       !date && "text-muted-foreground"
                     )}
+                    data-testid="loan-start-date-button"
                   >
                     {date ? formatDate(date) : t('form.pickDate')}
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -513,58 +514,6 @@ export default function LoanInputForm({
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
                                   <div className="flex flex-col">
-                                    <div className="flex justify-between p-2 border-b">
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          const newDate = new Date(index === 0 ? date : addMonths(date, period.startMonth));
-                                          newDate.setFullYear(newDate.getFullYear() - 1);
-                                          
-                                          if (index === 0) {
-                                            setDate(newDate);
-                                          } else {
-                                            const newInterestRatePeriods = [...field.value];
-                                            const monthDiff = differenceInMonths(newDate, date);
-                                            newInterestRatePeriods[index].startMonth = monthDiff;
-                                            
-                                            // Update previous period's end date
-                                            if (index > 0) {
-                                              newInterestRatePeriods[index - 1].endMonth = monthDiff;
-                                            }
-                                            
-                                            field.onChange(newInterestRatePeriods);
-                                          }
-                                        }}
-                                      >
-                                        -1 {t('form.year')}
-                                      </Button>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          const newDate = new Date(index === 0 ? date : addMonths(date, period.startMonth));
-                                          newDate.setFullYear(newDate.getFullYear() + 1);
-                                          
-                                          if (index === 0) {
-                                            setDate(newDate);
-                                          } else {
-                                            const newInterestRatePeriods = [...field.value];
-                                            const monthDiff = differenceInMonths(newDate, date);
-                                            newInterestRatePeriods[index].startMonth = monthDiff;
-                                            
-                                            // Update previous period's end date
-                                            if (index > 0) {
-                                              newInterestRatePeriods[index - 1].endMonth = monthDiff;
-                                            }
-                                            
-                                            field.onChange(newInterestRatePeriods);
-                                          }
-                                        }}
-                                      >
-                                        +1 {t('form.year')}
-                                      </Button>
-                                    </div>
                                     <Calendar
                                       mode="single"
                                       month={index === 0 ? date : addMonths(date, period.startMonth)}
@@ -575,6 +524,18 @@ export default function LoanInputForm({
                                       yearNavigationLabel={{
                                         previous: `-1 ${t('form.year')}`,
                                         next: `+1 ${t('form.year')}`
+                                      }}
+                                      initialFocus
+                                      onChange={(newDate, changeType) => {
+                                        if (index === 0 && changeType === 'navigate') {
+                                          // For year navigation on the first period (loan start date)
+                                          setDate(new Date(
+                                            newDate.getFullYear(),
+                                            newDate.getMonth(),
+                                            date.getDate()
+                                          ));
+                                          return;
+                                        }
                                       }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
@@ -616,7 +577,6 @@ export default function LoanInputForm({
                                         // Only prevent selecting dates before loan start
                                         return calendarDate < date;
                                       }}
-                                      initialFocus={false}
                                     />
                                   </div>
                                 </PopoverContent>
@@ -645,101 +605,6 @@ export default function LoanInputForm({
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
                                   <div className="flex flex-col">
-                                    <div className="flex justify-between p-2 border-b">
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          const loanTermInMonths = form.getValues("loanTerm") * 12;
-                                          const currentDate = period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, loanTermInMonths);
-                                          const newDate = new Date(currentDate);
-                                          newDate.setFullYear(newDate.getFullYear() - 1);
-                                          
-                                          const monthDiff = differenceInMonths(newDate, date);
-                                          if (monthDiff <= period.startMonth) {
-                                            return;
-                                          }
-                                          
-                                          const newInterestRatePeriods = [...field.value];
-                                          
-                                          // For the last period, we need special handling
-                                          if (index === newInterestRatePeriods.length - 1) {
-                                            // If trying to set last period end before loan term, we need to prompt
-                                            if (monthDiff < loanTermInMonths) {
-                                              const createNewPeriod = confirm("Would you like to add a new period? Cancel to keep the end date at the loan term.");
-                                              
-                                              if (createNewPeriod) {
-                                                // Update current period end
-                                                newInterestRatePeriods[index].endMonth = monthDiff;
-                                                
-                                                // Add a new period from this end to loan term
-                                                newInterestRatePeriods.push({
-                                                  startMonth: monthDiff,
-                                                  endMonth: loanTermInMonths,
-                                                  interestRate: 5 // Default rate
-                                                });
-                                              } else {
-                                                // Keep end date at loan term
-                                                return;
-                                              }
-                                            } else {
-                                              // If still beyond loan term, just set to loan term
-                                              newInterestRatePeriods[index].endMonth = loanTermInMonths;
-                                            }
-                                          } else {
-                                            // For non-last periods, update normally
-                                            newInterestRatePeriods[index].endMonth = monthDiff;
-                                            
-                                            // Update next period's start date
-                                            if (index < newInterestRatePeriods.length - 1) {
-                                              newInterestRatePeriods[index + 1].startMonth = monthDiff;
-                                            }
-                                          }
-                                          
-                                          field.onChange(newInterestRatePeriods);
-                                        }}
-                                      >
-                                        -1 {t('form.year')}
-                                      </Button>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          const loanTermInMonths = form.getValues("loanTerm") * 12;
-                                          const currentDate = period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, loanTermInMonths);
-                                          const newDate = new Date(currentDate);
-                                          newDate.setFullYear(newDate.getFullYear() + 1);
-                                          
-                                          const monthDiff = differenceInMonths(newDate, date);
-                                          
-                                          const newInterestRatePeriods = [...field.value];
-                                          
-                                          // For the last period, make sure we don't exceed the loan term
-                                          if (index === newInterestRatePeriods.length - 1) {
-                                            // Last period must end at loan term
-                                            if (monthDiff > loanTermInMonths) {
-                                              // Just set to loan term
-                                              newInterestRatePeriods[index].endMonth = loanTermInMonths;
-                                            } else {
-                                              // Set to calculated month diff, but not beyond loan term
-                                              newInterestRatePeriods[index].endMonth = Math.min(monthDiff, loanTermInMonths);
-                                            }
-                                          } else {
-                                            // For non-last periods, update normally
-                                            newInterestRatePeriods[index].endMonth = monthDiff;
-                                            
-                                            // Update next period's start date
-                                            if (index < newInterestRatePeriods.length - 1) {
-                                              newInterestRatePeriods[index + 1].startMonth = monthDiff;
-                                            }
-                                          }
-                                          
-                                          field.onChange(newInterestRatePeriods);
-                                        }}
-                                      >
-                                        +1 {t('form.year')}
-                                      </Button>
-                                    </div>
                                     <Calendar
                                       mode="single"
                                       month={period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, form.getValues("loanTerm") * 12)}
@@ -750,6 +615,25 @@ export default function LoanInputForm({
                                       yearNavigationLabel={{
                                         previous: `-1 ${t('form.year')}`,
                                         next: `+1 ${t('form.year')}`
+                                      }}
+                                      initialFocus
+                                      onChange={(newDate, changeType) => {
+                                        if (changeType === 'navigate') {
+                                          const currentEndDate = period.endMonth ? addMonths(date, period.endMonth) : addMonths(date, form.getValues("loanTerm") * 12);
+                                          const newEndDate = new Date(
+                                            newDate.getFullYear(),
+                                            newDate.getMonth(),
+                                            currentEndDate.getDate()
+                                          );
+                                          const monthDiff = differenceInMonths(newEndDate, date);
+                                          
+                                          // Only update if the new date is after the period start date
+                                          if (monthDiff > period.startMonth) {
+                                            const newInterestRatePeriods = [...field.value];
+                                            newInterestRatePeriods[index].endMonth = monthDiff;
+                                            field.onChange(newInterestRatePeriods);
+                                          }
+                                        }
                                       }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
@@ -807,7 +691,6 @@ export default function LoanInputForm({
                                         // This gives maximum flexibility while maintaining sequential order
                                         return calendarDate < minDate;
                                       }}
-                                      initialFocus={false}
                                     />
                                   </div>
                                 </PopoverContent>
@@ -1025,54 +908,6 @@ export default function LoanInputForm({
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
                                   <div className="flex flex-col">
-                                    <div className="flex justify-between p-2 border-b">
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          const newDate = new Date(overpayment.startDate || new Date());
-                                          newDate.setFullYear(newDate.getFullYear() - 1);
-                                          
-                                          const newOverpaymentPlans = [...(field.value || [])];
-                                          newOverpaymentPlans[index].startDate = newDate;
-                                          
-                                          // If there's an end date and it's before the new start date, update it
-                                          if (overpayment.endDate && newDate > overpayment.endDate) {
-                                            newOverpaymentPlans[index].endDate = new Date(newDate);
-                                            // Add one month to end date
-                                            newOverpaymentPlans[index].endDate.setMonth(newDate.getMonth() + 1);
-                                          }
-                                          
-                                          field.onChange(newOverpaymentPlans);
-                                        }}
-                                        type="button"
-                                      >
-                                        -1 {t('form.year')}
-                                      </Button>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          const newDate = new Date(overpayment.startDate || new Date());
-                                          newDate.setFullYear(newDate.getFullYear() + 1);
-                                          
-                                          const newOverpaymentPlans = [...(field.value || [])];
-                                          newOverpaymentPlans[index].startDate = newDate;
-                                          
-                                          // If there's an end date and it's before the new start date, update it
-                                          if (overpayment.endDate && newDate > overpayment.endDate) {
-                                            newOverpaymentPlans[index].endDate = new Date(newDate);
-                                            // Add one month to end date
-                                            newOverpaymentPlans[index].endDate.setMonth(newDate.getMonth() + 1);
-                                          }
-                                          
-                                          field.onChange(newOverpaymentPlans);
-                                        }}
-                                        type="button"
-                                      >
-                                        +1 {t('form.year')}
-                                      </Button>
-                                    </div>
                                     <Calendar
                                       mode="single"
                                       month={overpayment.startDate}
@@ -1082,6 +917,20 @@ export default function LoanInputForm({
                                       yearNavigationLabel={{
                                         previous: `-1 ${t('form.year')}`,
                                         next: `+1 ${t('form.year')}`
+                                      }}
+                                      initialFocus
+                                      onChange={(newDate, changeType) => {
+                                        if (changeType === 'navigate') {
+                                          const newStartDate = new Date(
+                                            newDate.getFullYear(),
+                                            newDate.getMonth(),
+                                            overpayment.startDate.getDate()
+                                          );
+                                          
+                                          const newOverpaymentPlans = [...(field.value || [])];
+                                          newOverpaymentPlans[index].startDate = newStartDate;
+                                          field.onChange(newOverpaymentPlans);
+                                        }
                                       }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
@@ -1098,7 +947,6 @@ export default function LoanInputForm({
                                           field.onChange(newOverpaymentPlans);
                                         }
                                       }}
-                                      initialFocus
                                     />
                                   </div>
                                 </PopoverContent>
@@ -1163,57 +1011,6 @@ export default function LoanInputForm({
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
                                   <div className="flex flex-col">
-                                    <div className="flex justify-between p-2 border-b">
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          if (!overpayment.endDate) return;
-                                          
-                                          const newDate = new Date(overpayment.endDate);
-                                          newDate.setFullYear(newDate.getFullYear() - 1);
-                                          
-                                          const newOverpaymentPlans = [...(field.value || [])];
-                                          
-                                          // Ensure end date is after start date
-                                          if (newDate < overpayment.startDate) {
-                                            return;
-                                          }
-                                          
-                                          newOverpaymentPlans[index].endDate = newDate;
-                                          field.onChange(newOverpaymentPlans);
-                                        }}
-                                        type="button"
-                                      >
-                                        -1 {t('form.year')}
-                                      </Button>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          if (!overpayment.endDate) {
-                                            // If no end date is set, use start date + 1 year
-                                            const newDate = new Date(overpayment.startDate);
-                                            newDate.setFullYear(newDate.getFullYear() + 1);
-                                            
-                                            const newOverpaymentPlans = [...(field.value || [])];
-                                            newOverpaymentPlans[index].endDate = newDate;
-                                            field.onChange(newOverpaymentPlans);
-                                            return;
-                                          }
-                                          
-                                          const newDate = new Date(overpayment.endDate);
-                                          newDate.setFullYear(newDate.getFullYear() + 1);
-                                          
-                                          const newOverpaymentPlans = [...(field.value || [])];
-                                          newOverpaymentPlans[index].endDate = newDate;
-                                          field.onChange(newOverpaymentPlans);
-                                        }}
-                                        type="button"
-                                      >
-                                        +1 {t('form.year')}
-                                      </Button>
-                                    </div>
                                     <Calendar
                                       mode="single"
                                       month={overpayment.endDate || overpayment.startDate}
@@ -1223,6 +1020,23 @@ export default function LoanInputForm({
                                       yearNavigationLabel={{
                                         previous: `-1 ${t('form.year')}`,
                                         next: `+1 ${t('form.year')}`
+                                      }}
+                                      initialFocus
+                                      onChange={(newDate, changeType) => {
+                                        if (changeType === 'navigate' && overpayment.endDate) {
+                                          const newEndDate = new Date(
+                                            newDate.getFullYear(),
+                                            newDate.getMonth(),
+                                            overpayment.endDate.getDate()
+                                          );
+                                          
+                                          // Only update if the new date is after the start date
+                                          if (newEndDate > overpayment.startDate) {
+                                            const newOverpaymentPlans = [...(field.value || [])];
+                                            newOverpaymentPlans[index].endDate = newEndDate;
+                                            field.onChange(newOverpaymentPlans);
+                                          }
+                                        }
                                       }}
                                       onSelect={(newDate) => {
                                         if (newDate) {
@@ -1240,7 +1054,6 @@ export default function LoanInputForm({
                                           field.onChange(newOverpaymentPlans);
                                       }
                                     }}
-                                    initialFocus
                                     disabled={(date: Date) => date < overpayment.startDate}
                                   />
                                   </div>

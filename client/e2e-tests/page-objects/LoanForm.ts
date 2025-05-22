@@ -66,4 +66,43 @@ export class LoanForm extends BasePage {
   async fillFormField(selector: string, value: string): Promise<void> {
     await fillFormField(selector, value);
   }
+
+  // Calendar interaction methods
+  async openLoanStartDateCalendar(): Promise<void> {
+    await clickElement('[data-testid="loan-start-date-button"]');
+  }
+
+  // Open an interest rate period start date calendar
+  async openInterestRatePeriodStartDateCalendar(index: number): Promise<void> {
+    const selector = `[data-testid="interest-rate-date-range-${index}-start"]`;
+    await clickElement(selector);
+  }
+
+  // Open an interest rate period end date calendar
+  async openInterestRatePeriodEndDateCalendar(): Promise<void> {
+    await clickElement(selectors.INTEREST_RATE_END_DATE);
+  }
+
+  // Navigate to previous year in calendar
+  async navigateToPreviousYear(): Promise<void> {
+    await clickElement('[data-testid="previous-year-button"]');
+  }
+
+  // Navigate to next year in calendar
+  async navigateToNextYear(): Promise<void> {
+    await clickElement('[data-testid="next-year-button"]');
+  }
+
+  // Select a date in the calendar
+  async selectDate(): Promise<void> {
+    await clickElement('[data-testid="calendar-select-date"]');
+  }
+
+  // Get the selected date from a calendar button
+  async getSelectedDate(selector: string): Promise<string> {
+    return await evaluateInBrowser(`
+      const button = document.querySelector('${selector}');
+      return button ? button.textContent.trim() : null;
+    `);
+  }
 }

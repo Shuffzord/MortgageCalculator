@@ -22,6 +22,7 @@ export interface CalendarProps {
   month?: Date;
   onMonthChange?: (month: Date) => void;
   onSelect?: (date: Date | undefined) => void;
+  onChange?: (date: Date, changeType: 'select' | 'navigate') => void;
   mode?: "single" | "multiple" | "range" | "default";
   disabled?: any;
   initialFocus?: boolean;
@@ -42,6 +43,7 @@ function Calendar({
   yearNavigationLabel,
   selected,
   onSelect,
+  onChange,
   mode = "single",
   ...props
 }: CalendarProps) {
@@ -55,22 +57,29 @@ function Calendar({
   // Use the provided month prop if it exists, otherwise use internal state
   const currentMonth = props.month || internalMonth;
   
-  // Handle month changes internally when not controlled
-  const handleMonthChange = (month: Date) => {
-    if (!props.month) {
-      setInternalMonth(month);
+  // Combined handler for all changes (selection and navigation)
+  const handleChange = (newDate: Date | undefined, changeType: 'select' | 'navigate') => {
+    if (!newDate) return;
+    
+    if (changeType === 'select' && onSelect) {
+      onSelect(newDate);
     }
     
-    // Call the original onMonthChange if provided
-    if (props.onMonthChange) {
-      props.onMonthChange(month);
+    if (changeType === 'navigate') {
+      // Update internal month state
+      if (!props.month) {
+        setInternalMonth(newDate);
+      }
+      
+      // Call the original onMonthChange if provided
+      if (props.onMonthChange) {
+        props.onMonthChange(newDate);
+      }
     }
-  };
-  
-  // Handle date selection
-  const handleSelect = (date: Date | undefined) => {
-    if (onSelect) {
-      onSelect(date);
+    
+    // Call the combined onChange handler if provided
+    if (onChange) {
+      onChange(newDate, changeType);
     }
   };
   
@@ -84,25 +93,25 @@ function Calendar({
     const handlePreviousMonth = () => {
       const newDate = new Date(displayMonth);
       newDate.setMonth(displayMonth.getMonth() - 1);
-      handleMonthChange(newDate);
+      handleChange(newDate, 'navigate');
     };
     
     const handleNextMonth = () => {
       const newDate = new Date(displayMonth);
       newDate.setMonth(displayMonth.getMonth() + 1);
-      handleMonthChange(newDate);
+      handleChange(newDate, 'navigate');
     };
     
     const handlePreviousYear = () => {
       const newDate = new Date(displayMonth);
       newDate.setFullYear(displayMonth.getFullYear() - 1);
-      handleMonthChange(newDate);
+      handleChange(newDate, 'navigate');
     };
     
     const handleNextYear = () => {
       const newDate = new Date(displayMonth);
       newDate.setFullYear(displayMonth.getFullYear() + 1);
-      handleMonthChange(newDate);
+      handleChange(newDate, 'navigate');
     };
     
     // Default year navigation labels
@@ -173,15 +182,15 @@ function Calendar({
         )}
       </div>
     );
-  }, [yearNavigationLabel, showYearNavigation, t, handleMonthChange]);
+  }, [yearNavigationLabel, showYearNavigation, t, handleChange]);
   
   return (
     <DayPicker
       mode={mode as any}
       selected={selected}
-      onSelect={handleSelect as any}
+      onSelect={(date: Date | undefined) => handleChange(date, 'select')}
       month={currentMonth}
-      onMonthChange={handleMonthChange}
+      onMonthChange={(month) => handleChange(month, 'navigate')}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
