@@ -5,4 +5,3 @@
 8. Linki afiliacyjne
 10. CSV Import Export
 11. help needed
-12. Calendar picker - common implementation
