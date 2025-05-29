@@ -73,16 +73,16 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       concepts: ['repaymentModels'],
       requiredForProgress: true
     },
-    {
-      id: 'amortization-intro',
-      title: t('financialGlossary.amortization.term'),
-      content: `${glossary.amortization.definition}\n\n${concepts.amortizationSchedule.explanation}\n\n${t('education.example')}: ${glossary.amortization.example}`,
-      target: 'amortization-schedule',
-      placement: 'left',
-      glossaryTerms: [glossary.amortization],
-      concepts: ['amortizationSchedule'],
-      requiredForProgress: true
-    },
+    // {
+    //   id: 'amortization-intro',
+    //   title: t('financialGlossary.amortization.term'),
+    //   content: `${glossary.amortization.definition}\n\n${concepts.amortizationSchedule.explanation}\n\n${t('education.example')}: ${glossary.amortization.example}`,
+    //   target: 'amortization-schedule',
+    //   placement: 'top',
+    //   glossaryTerms: [glossary.amortization],
+    //   concepts: ['amortizationSchedule'],
+    //   requiredForProgress: true
+    // },
     {
       id: 'monthly-payment',
       title: t('summary.monthlyPayment'),
