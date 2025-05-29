@@ -977,11 +977,25 @@ export function aggregateYearlyData(schedule: PaymentData[]): YearlyData[] {
         totalInterest: 0
       };
     }
+
+    // Calculate the total payment for this month (regular payment + any overpayment)
+    const monthlyTotal = month.isOverpayment
+      ? roundToCents(month.monthlyPayment)  // monthlyPayment already includes overpayment
+      : roundToCents(month.monthlyPayment);
+
+    // Add principal payment (includes any overpayment)
     acc[yearIndex].principal = roundToCents(acc[yearIndex].principal + month.principalPayment);
+    
+    // Add interest payment (unchanged)
     acc[yearIndex].interest = roundToCents(acc[yearIndex].interest + month.interestPayment);
-    acc[yearIndex].payment = roundToCents(acc[yearIndex].payment + month.monthlyPayment);
+    
+    // Set total payment as sum of principal and interest
+    acc[yearIndex].payment = roundToCents(acc[yearIndex].principal + acc[yearIndex].interest);
+    
+    // Update balance and total interest
     acc[yearIndex].balance = month.balance;
     acc[yearIndex].totalInterest = roundToCents(acc[yearIndex].totalInterest + month.interestPayment);
+    
     return acc;
   }, []);
 }
