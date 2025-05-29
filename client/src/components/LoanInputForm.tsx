@@ -253,7 +253,7 @@ export default function LoanInputForm({
 
       <TooltipProvider>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="loan-input-form">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 form-container relative" data-testid="loan-input-form">
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
               <div className="sm:col-span-2">

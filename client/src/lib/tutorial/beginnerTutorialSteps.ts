@@ -78,7 +78,7 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       title: t('financialGlossary.amortization.term'),
       content: `${glossary.amortization.definition}\n\n${concepts.amortizationSchedule.explanation}\n\n${t('education.example')}: ${glossary.amortization.example}`,
       target: 'amortization-schedule',
-      placement: 'top',
+      placement: 'left',
       glossaryTerms: [glossary.amortization],
       concepts: ['amortizationSchedule'],
       requiredForProgress: true

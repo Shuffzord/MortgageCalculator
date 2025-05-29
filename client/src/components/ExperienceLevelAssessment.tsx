@@ -83,7 +83,9 @@ export function ExperienceLevelAssessment({
           <Button onClick={handleSubmit}>{t("common.start")}</Button>
          
         </DialogFooter>
-          <div className="mr-2">{t('app.beta')}</div>
+          <div className="bg-yellow-500 text-yellow-900 text-center py-2 block">
+        {t('app.beta')}
+      </div>
       </DialogContent>
     </Dialog>
   );
