@@ -105,6 +105,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                         <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(form.getValues("currency") || "USD")}</span>
                       </div>
                       <Input
+                        id="principal-input"
                         type="number"
                         placeholder="0.00"
                         min={1000}
@@ -156,7 +157,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                           <FormLabel htmlFor={`interestRate-${index}`}>Interest Rate</FormLabel>
                           <Input
                             type="number"
-                            id={`interestRate-${index}`}
+                            id={index === 0 ? "interest-rate-input" : `interestRate-${index}`}
                             placeholder="Interest Rate"
                             value={period.interestRate}
                             onChange={(e) => {
@@ -273,6 +274,50 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                   <Button type="button" onClick={() => {
                     form.setValue("overpaymentPlans", [...field.value, { amount: 0, startMonth: 0, endMonth: 0, frequency: "monthly", effect: "reduceTerm", startDate: new Date(), isRecurring: true }]);
                   }}>Add Overpayment Plan</Button>
+                </FormItem>
+              )}
+            />
+
+            {/* Loan Term Input */}
+            <FormField
+              control={form.control}
+              name="loanTerm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Loan Term (Years)</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="loan-term-input"
+                      type="number"
+                      placeholder="30"
+                      min={1}
+                      max={50}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Repayment Model */}
+            <FormField
+              control={form.control}
+              name="repaymentModel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Repayment Model</FormLabel>
+                  <FormControl>
+                    <select
+                      id="repayment-model-selector"
+                      className="w-full p-2 border rounded"
+                      {...field}
+                    >
+                      <option value="equalInstallments">Equal Installments</option>
+                      <option value="decreasingInstallments">Decreasing Installments</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

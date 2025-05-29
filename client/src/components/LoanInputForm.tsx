@@ -280,6 +280,7 @@ export default function LoanInputForm({
                           </div>
                           <Input
                             {...field}
+                            id="principal-input"
                             type="number"
                             min="1"
                             className="pl-7"
@@ -341,6 +342,7 @@ export default function LoanInputForm({
                   <div className="relative">
                     <Input
                       {...field}
+                      id="loan-term-input"
                       type="number"
                       min="1"
                       max="40"
@@ -380,6 +382,7 @@ export default function LoanInputForm({
                 </FormLabel>
                 <FormControl>
                   <select
+                    id="repayment-model-selector"
                     className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     value={field.value}
                     onChange={field.onChange}
@@ -739,6 +742,7 @@ export default function LoanInputForm({
                                   field.onChange(newInterestRatePeriods);
                                 }}
                                 className="flex-1"
+                                id={index === 0 ? "interest-rate-input" : undefined}
                                 data-testid={index === 0 ? "interest-rate-input" : `interest-rate-input-${index}`}
                               />
                               <span className="ml-2">%</span>

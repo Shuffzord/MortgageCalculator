@@ -27,7 +27,7 @@ export default function AmortizationSchedule({ yearlyData, currency = 'USD' }: A
   }
 
   return (
-    <Card>
+    <Card id="amortization-schedule">
       <CardContent className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('schedule.title', 'Amortization Schedule')}</h2>
         

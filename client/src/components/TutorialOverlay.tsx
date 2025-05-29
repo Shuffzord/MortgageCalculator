@@ -21,59 +21,70 @@ type PositionStyle = Partial<Record<'top' | 'bottom' | 'left' | 'right', number>
 
 function getPositionForTarget(targetId: string, placement: Placement = 'bottom'): PositionStyle {
   const targetElement = document.getElementById(targetId);
+  console.log(`[TutorialOverlay] Finding target element for ID "${targetId}":`, {
+    element: targetElement,
+    exists: !!targetElement,
+    rect: targetElement?.getBoundingClientRect()
+  });
   if (!targetElement) return {};
 
-  // Add highlight class to target element
-  targetElement.classList.add('tutorial-target');
-  
   const rect = targetElement.getBoundingClientRect();
+  const scrollY = window.scrollY || window.pageYOffset;
   const positions: PositionStyle = {};
-  const PADDING = 10; // Reduced padding from window edges
-  const TUTORIAL_WIDTH = 350; // Slightly reduced width for better positioning
-  const TUTORIAL_HEIGHT = 350; // Reduced height to match width
+  const PADDING = 16;
+  const TUTORIAL_WIDTH = 350;
+  const TUTORIAL_HEIGHT = 200;
 
-  switch (placement) {
+  // Calculate viewport-relative coordinates
+  const viewportTop = rect.top + scrollY;
+  const viewportBottom = rect.bottom + scrollY;
+  const viewportCenterY = viewportTop + (rect.height / 2);
+  const viewportHeight = window.innerHeight;
+
+  // Determine best placement based on viewport space
+  let effectivePlacement = placement;
+  if (placement === 'top' && rect.top < TUTORIAL_HEIGHT + PADDING * 2) {
+    effectivePlacement = 'bottom';
+  } else if (placement === 'bottom' && rect.bottom + TUTORIAL_HEIGHT + PADDING * 2 > viewportHeight) {
+    effectivePlacement = 'top';
+  }
+
+  // Position based on effective placement
+  switch (effectivePlacement) {
     case 'top':
-      positions.bottom = Math.min(
-        window.innerHeight - rect.top + 10,
-        window.innerHeight - TUTORIAL_HEIGHT - PADDING
-      );
-      positions.left = Math.min(
-        Math.max(rect.left + (rect.width / 2), TUTORIAL_WIDTH / 2 + PADDING),
-        window.innerWidth - TUTORIAL_WIDTH / 2 - PADDING
-      );
+      positions.top = viewportTop - TUTORIAL_HEIGHT - PADDING;
+      positions.left = rect.left + (rect.width / 2) - (TUTORIAL_WIDTH / 2);
       break;
     case 'bottom':
-      positions.top = Math.min(
-        rect.bottom + 10,
-        window.innerHeight - TUTORIAL_HEIGHT - PADDING
-      );
-      positions.left = Math.min(
-        Math.max(rect.left + (rect.width / 2), TUTORIAL_WIDTH / 2 + PADDING),
-        window.innerWidth - TUTORIAL_WIDTH / 2 - PADDING
-      );
+      positions.top = viewportBottom + PADDING;
+      positions.left = rect.left + (rect.width / 2) - (TUTORIAL_WIDTH / 2);
       break;
     case 'left':
-      positions.right = Math.min(
-        window.innerWidth - rect.left + 10,
-        window.innerWidth - TUTORIAL_WIDTH - PADDING
-      );
-      positions.top = Math.min(
-        Math.max(rect.top + (rect.height / 2), TUTORIAL_HEIGHT / 2 + PADDING),
-        window.innerHeight - TUTORIAL_HEIGHT / 2 - PADDING
-      );
+      positions.top = viewportCenterY - (TUTORIAL_HEIGHT / 2);
+      positions.left = rect.left - TUTORIAL_WIDTH - PADDING;
       break;
     case 'right':
-      positions.left = Math.min(
-        rect.right + 10,
-        window.innerWidth - TUTORIAL_WIDTH - PADDING
-      );
-      positions.top = Math.min(
-        Math.max(rect.top + (rect.height / 2), TUTORIAL_HEIGHT / 2 + PADDING),
-        window.innerHeight - TUTORIAL_HEIGHT / 2 - PADDING
-      );
+      positions.top = viewportCenterY - (TUTORIAL_HEIGHT / 2);
+      positions.left = rect.right + PADDING;
       break;
   }
+
+  // Log positioning details
+  console.log(`[TutorialOverlay] Positioning for ${placement} (effective: ${effectivePlacement}):`, {
+    rect,
+    scrollY,
+    positions,
+    viewportTop,
+    viewportBottom,
+    viewportHeight
+  });
+
+  // Ensure positions stay within viewport bounds
+  const maxLeft = window.innerWidth - TUTORIAL_WIDTH - PADDING;
+  const maxTop = document.documentElement.scrollHeight - TUTORIAL_HEIGHT - PADDING;
+  
+  positions.left = Math.max(PADDING, Math.min(positions.left, maxLeft));
+  positions.top = Math.max(PADDING, Math.min(positions.top, maxTop));
 
   return positions;
 }
@@ -111,34 +122,70 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
     ? getStepEducationalContent(currentStep.id)
     : null;
 
+  // Handle tutorial start/stop
   useEffect(() => {
     if (isActive) {
       tutorialAnalytics.tutorialStarted(experienceLevel);
       startTutorial();
     }
     
-    // Cleanup function to handle component unmount
     return () => {
       if (isActive) {
         abandonTutorial();
       }
-      // Remove highlight class from any previous target
-      const prevTarget = document.querySelector('.tutorial-target');
-      if (prevTarget) {
-        prevTarget.classList.remove('tutorial-target');
-      }
     };
   }, [isActive, experienceLevel, startTutorial, abandonTutorial]);
 
-  // Handle cleanup of previous target when step changes
+  // Handle highlight class and scroll position
   useEffect(() => {
+    if (!currentStep?.target) return;
+    
+    const targetElement = document.getElementById(currentStep.target);
+    if (!targetElement) return;
+
+    // Add highlight class
+    targetElement.classList.add('tutorial-highlight');
+    
+    // Calculate scroll position based on placement
+    const rect = targetElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const TUTORIAL_HEIGHT = 200; // Height of tutorial popup
+    const PADDING = 20; // Minimum padding from viewport edges
+    
+    let targetY = 0;
+    const placement = currentStep.placement || 'bottom';
+    
+    switch (placement) {
+      case 'top':
+        // For top placement, ensure space above element
+        targetY = window.pageYOffset + rect.top - (TUTORIAL_HEIGHT + PADDING);
+        break;
+      case 'bottom':
+        // For bottom placement, ensure space below element
+        targetY = window.pageYOffset + rect.bottom + PADDING;
+        break;
+      case 'left':
+      case 'right':
+        // For side placements, center vertically
+        targetY = window.pageYOffset + rect.top - (viewportHeight - rect.height) / 2;
+        break;
+    }
+    
+    // Ensure target position is within bounds
+    const maxScroll = document.documentElement.scrollHeight - viewportHeight;
+    targetY = Math.max(0, Math.min(targetY, maxScroll));
+    
+    // Scroll to position
+    window.scrollTo({
+      top: targetY,
+      behavior: 'smooth'
+    });
+
+    // Cleanup function to remove highlight
     return () => {
-      const prevTarget = document.querySelector('.tutorial-target');
-      if (prevTarget) {
-        prevTarget.classList.remove('tutorial-target');
-      }
+      targetElement.classList.remove('tutorial-highlight');
     };
-  }, [stepIndex]);
+  }, [currentStep?.target]);
 
   // Track when educational content is viewed
   const handleEducationalContentView = useCallback((contentId: string) => {
@@ -186,21 +233,20 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/50">
+    <div className="fixed inset-0 z-[100] bg-black/50 tutorial-overlay overflow-hidden">
       <div
         className="absolute rounded-lg bg-white shadow-xl flex flex-col transition-all duration-300 ease-in-out"
         style={{
           maxWidth: '400px',
           maxHeight: '80vh',
           ...(currentStep.target ? {
-            position: 'fixed',
+            position: 'fixed', // Changed to fixed for better stacking
             ...getPositionForTarget(currentStep.target, currentStep.placement)
           } : {
             position: 'fixed',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            // Ensure centered tutorial stays within bounds
             margin: '20px',
             maxHeight: 'calc(100vh - 40px)'
           })
