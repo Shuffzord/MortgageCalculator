@@ -6,9 +6,9 @@
     "beta": "Site is in beta version. Please report any bugs or suggestions to the author. (About section)"
   },
   "language": {
-    "english": "English",
-    "spanish": "Spanish",
-    "polish": "Polish"
+    "en": "English",
+    "es": "Spanish",
+    "pl": "Polish"
   },
   "form": {
     "currency": "Currency",
@@ -534,7 +534,8 @@
     "about": "About",
     "education": "Education Center",
     "menu": "Menu",
-    "visualization": "Visualizations"
+    "visualization": "Visualizations",
+    "languageSwitcher": "Change language"
   },
   "pagination": {
     "showMore": "Show More"

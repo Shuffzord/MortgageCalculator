@@ -7,9 +7,9 @@
     "beta": "Strona jest obecnie w wersji BETA. Proszę zgłaszać wszelkie błędy lub sugestie. (Sekcja O nas)"
   },
   "language": {
-    "english": "Angielski",
-    "spanish": "Hiszpański",
-    "polish": "Polski"
+    "en": "Angielski",
+    "es": "Hiszpański",
+    "pl": "Polski"
   },
   "form": {
     "currency": "Waluta",
@@ -536,7 +536,8 @@
     "about": "O Nas",
     "education": "Centrum Edukacji",
     "menu": "Menu",
-    "visualization": "Wizualizacje"
+    "visualization": "Wizualizacje",
+    "languageSwitcher": "Zmień Język"
   },
   "pagination": {
     "showMore": "Pokaż Więcej"
