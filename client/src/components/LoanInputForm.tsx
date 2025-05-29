@@ -26,7 +26,7 @@ import { cn, getCurrencySymbol } from "@/lib/utils";
 
 const loanFormSchema = z.object({
   principal: z.coerce.number()
-    .min(1000, "Principal amount must be at least 1,000")
+    .min(1, "Principal amount must be at least 1,000")
     .max(10000000, "Principal amount must be less than 10,000,000"),
   loanTerm: z.coerce.number()
     .min(1, "Loan term must be at least 1 year")
@@ -36,8 +36,8 @@ const loanFormSchema = z.object({
       startMonth: z.coerce.number(),
       endMonth: z.coerce.number().optional(),
       interestRate: z.coerce.number()
-        .min(0.1, "Interest rate must be at least 0.1%")
-        .max(20, "Interest rate must be less than 20%"),
+        .min(0.10, "Interest rate must be at least 0.1%")
+        .max(100, "Interest rate must be less than 100%"),
     })
   ).min(1, "At least one interest rate period is required"),
   repaymentModel: z.enum(['equalInstallments', 'decreasingInstallments', 'custom']).default('equalInstallments'),
@@ -281,8 +281,7 @@ export default function LoanInputForm({
                           <Input
                             {...field}
                             type="number"
-                            min="1000"
-                            step="1000"
+                            min="1"
                             className="pl-7"
                             data-testid="loan-amount-input"
                           />
@@ -731,7 +730,7 @@ export default function LoanInputForm({
                                 type="number"
                                 min="0.1"
                                 max="20"
-                                step="0.1"
+                                step="0.01"
                                 placeholder={t('form.interestRate')}
                                 value={period.interestRate}
                                 onChange={(e) => {
