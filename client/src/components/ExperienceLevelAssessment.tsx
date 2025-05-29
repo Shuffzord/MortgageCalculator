@@ -29,17 +29,14 @@ export function ExperienceLevelAssessment({
   const [selectedLevel, setSelectedLevel] =
     useState<ExperienceLevel>("beginner");
 
-  console.log("[ExperienceLevelAssessment] Render:", { isOpen, selectedLevel });
 
   const handleSubmit = () => {
-    console.log("[ExperienceLevelAssessment] Submitting level:", selectedLevel);
     tutorialAnalytics.experienceLevelChanged(selectedLevel);
     onExperienceLevelSet(selectedLevel);
     onClose();
   };
 
   const handleSkip = () => {
-    console.log("[ExperienceLevelAssessment] Skipping assessment");
     tutorialAnalytics.tutorialAbandoned(0, "not_selected");
     onClose();
   };
@@ -51,7 +48,6 @@ export function ExperienceLevelAssessment({
           <RadioGroup
             value={selectedLevel}
             onValueChange={(value) => {
-              console.log("Selected value:", value);
               setSelectedLevel(value as ExperienceLevel);
             }}
           >

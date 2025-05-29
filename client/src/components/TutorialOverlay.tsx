@@ -25,50 +25,96 @@ function getPositionForTarget(targetId: string, placement: Placement = 'bottom')
 
   const rect = targetElement.getBoundingClientRect();
   const positions: PositionStyle = {};
-  const PADDING = 16;
+  
+  // Constants for positioning
+  const MARGIN = 12; // Space between target and tutorial
+  const PADDING = 400; // Minimum space from viewport edges
   const TUTORIAL_WIDTH = 400;
-  const TUTORIAL_HEIGHT = 200;
-
-  // Simple viewport-relative positioning
-  switch (placement) {
-    case 'top':
-      positions.top = rect.top - TUTORIAL_HEIGHT - PADDING;
-      positions.left = rect.left + (rect.width / 2) - (TUTORIAL_WIDTH / 2);
-      break;
-    case 'bottom':
-      positions.top = rect.bottom + PADDING;
-      positions.left = rect.left + (rect.width / 2) - (TUTORIAL_WIDTH / 2);
-      break;
-    case 'left':
-      positions.top = rect.top + (rect.height / 2) - (TUTORIAL_HEIGHT / 2);
-      positions.left = rect.left - TUTORIAL_WIDTH - PADDING;
-      break;
-    case 'right':
-      positions.top = rect.top + (rect.height / 2) - (TUTORIAL_HEIGHT / 2);
-      positions.left = rect.right + PADDING;
-      break;
-  }
-
-  // Simple viewport bounds check
+  const TUTORIAL_HEIGHT = 250; // Increased for better content visibility
+  
+  // Calculate center points
+  const targetCenterX = rect.left + (rect.width / 2);
+  const targetCenterY = rect.top + (rect.height / 2);
+  
+  // Get scroll position
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+  
+  // Get viewport dimensions
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
 
-  if (positions.left < PADDING) positions.left = PADDING;
-  if (positions.left + TUTORIAL_WIDTH > viewportWidth - PADDING) {
-    positions.left = viewportWidth - TUTORIAL_WIDTH - PADDING;
-  }
-  if (positions.top < PADDING) positions.top = PADDING;
-  if (positions.top + TUTORIAL_HEIGHT > viewportHeight - PADDING) {
-    positions.top = viewportHeight - TUTORIAL_HEIGHT - PADDING;
+  // Calculate initial position based on placement
+  switch (placement) {
+    case 'top':
+      positions.top = rect.top - TUTORIAL_HEIGHT - MARGIN;
+      positions.left = targetCenterX - (TUTORIAL_WIDTH / 2);
+      break;
+    case 'bottom':
+      positions.top = rect.bottom + MARGIN;
+      positions.left = targetCenterX - (TUTORIAL_WIDTH / 2);
+      break;
+    case 'left':
+      positions.top = targetCenterY - (TUTORIAL_HEIGHT / 2);
+      positions.left = rect.left - TUTORIAL_WIDTH - MARGIN;
+      break;
+    case 'right':
+      positions.top = targetCenterY - (TUTORIAL_HEIGHT / 2);
+      positions.left = rect.right + MARGIN;
+      break;
   }
 
+  // Adjust for viewport bounds
+  const bounds = {
+    left: PADDING,
+    right: viewportWidth - TUTORIAL_WIDTH - PADDING,
+    top: 100,
+    bottom: viewportHeight - TUTORIAL_HEIGHT - PADDING
+  };
+
+  // Keep tutorial within viewport bounds
+  if (positions.left < bounds.left) {
+    positions.left = bounds.left;
+    // If we're pushing against left edge, try to flip to right side
+    if (placement === 'left' && rect.right + TUTORIAL_WIDTH + MARGIN < viewportWidth) {
+      positions.left = rect.right + MARGIN;
+    }
+  }
+  if (positions.left > bounds.right) {
+    positions.left = bounds.right;
+    // If we're pushing against right edge, try to flip to left side
+    if (placement === 'right' && rect.left - TUTORIAL_WIDTH - MARGIN > 0) {
+      positions.left = rect.left - TUTORIAL_WIDTH - MARGIN;
+    }
+  }
+  if (positions.top < bounds.top) {
+    positions.top = bounds.top;
+    // If we're pushing against top edge, try to flip to bottom
+    if (placement === 'top' && rect.bottom + TUTORIAL_HEIGHT + MARGIN < viewportHeight) {
+      positions.top = rect.bottom + MARGIN;
+    }
+  }
+  if (positions.top > bounds.bottom) {
+    positions.top = bounds.bottom;
+    // If we're pushing against bottom edge, try to flip to top
+    if (placement === 'bottom' && rect.top - TUTORIAL_HEIGHT - MARGIN > 0) {
+      positions.top = rect.top - TUTORIAL_HEIGHT - MARGIN;
+    }
+  }
+
+  // Add scroll offset to convert viewport coordinates to absolute
+  positions.top! += scrollY;
+  positions.left! += scrollX;
+
   // Log positioning details
-  console.log(`[TutorialOverlay] Positioning:`, {
+  console.log('[TutorialOverlay] Positioning:', {
+    targetId,
     placement,
     rect,
     positions,
-    viewportWidth,
-    viewportHeight
+    viewport: { width: viewportWidth, height: viewportHeight },
+    scroll: { x: scrollX, y: scrollY },
+    bounds
   });
 
   return positions;
@@ -131,10 +177,29 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
     // Add highlight class
     targetElement.classList.add('tutorial-highlight');
     
-    // Always scroll element into view
-    targetElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
+    // Get element position
+    const rect = targetElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    
+    // Calculate the visible area needed
+    const visibleAreaNeeded = 400; // Enough space for element + tutorial
+    const elementCenter = rect.top + rect.height / 2;
+    
+    // Calculate target scroll position to center the visible area
+    const scrollTarget = window.scrollY + elementCenter - viewportHeight / 2;
+    
+    // Apply scroll with a slight upward bias to ensure tutorial is visible
+    window.scrollTo({
+      top: Math.max(0, scrollTarget - 100), // Bias upward by 100px
+      behavior: 'smooth'
+    });
+
+    // Log scroll adjustment
+    console.log('[TutorialOverlay] Scroll adjustment:', {
+      elementPosition: rect,
+      viewportHeight,
+      elementCenter,
+      scrollTarget: Math.max(0, scrollTarget - 100)
     });
 
     return () => {

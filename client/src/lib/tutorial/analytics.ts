@@ -13,7 +13,7 @@ class TutorialAnalytics {
   private logEvent(event: TutorialEvent) {
     this.events.push(event)
     // In a real implementation, this would send to an analytics service
-    console.log('Tutorial Event:', event)
+    //TODO:
   }
 
   tutorialStarted(experienceLevel?: string) {

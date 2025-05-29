@@ -88,7 +88,7 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       title: t('summary.monthlyPayment'),
       content: `${t('education.tooltips.principal')}\n\n${t('education.tooltips.interestRate')}`,
       target: 'payment-breakdown',
-      placement: 'top',
+      placement: 'right',
       glossaryTerms: [glossary.principal, glossary.interest],
       requiredForProgress: true
     },

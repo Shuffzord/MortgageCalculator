@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Clippy } from './ui/Clippy';
 import LoanInputForm from "@/components/LoanInputForm";
 import LoanSummary from "@/components/LoanSummary";
@@ -37,6 +38,7 @@ const HomePage: React.FC<HomePageProps> = ({
   setShowLoadModal: externalSetShowLoadModal
 }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   
   // Tutorial state management
   const {
@@ -65,11 +67,11 @@ const HomePage: React.FC<HomePageProps> = ({
     });
   }, [experienceLevel, hasCompletedTutorial, isActive, showExperienceModal]);
 
-  // Initialize tutorial modal
+  // Initialize tutorial modal - don't show on mobile
   useEffect(() => {
-    console.log('[HomePage] Initializing tutorial modal');
-    setShowExperienceModal(!experienceLevel);
-  }, [experienceLevel]);
+    console.log('[HomePage] Initializing tutorial modal', { isMobile });
+    setShowExperienceModal(!experienceLevel && !isMobile);
+  }, [experienceLevel, isMobile]);
 
   const handleExperienceSelect = (level: 'beginner' | 'intermediate' | 'advanced') => {
     console.log('[HomePage] Experience Level Selected:', level);
@@ -239,8 +241,8 @@ const HomePage: React.FC<HomePageProps> = ({
         onExperienceLevelSet={handleExperienceSelect}
       />
 
-      {/* Tutorial overlay */}
-      {experienceLevel === 'beginner' && !hasCompletedTutorial && (
+      {/* Tutorial overlay - hide on mobile */}
+      {experienceLevel === 'beginner' && !hasCompletedTutorial && !isMobile && (
         <TutorialOverlay
           isActive={isActive}
           experienceLevel="beginner"
@@ -256,15 +258,15 @@ const HomePage: React.FC<HomePageProps> = ({
         />
       )}
 
-      {/* Tutorial reset button with Clippy */}
-      <Clippy
+      {/* Tutorial reset button with Clippy - hide on mobile */}
+      {!isMobile && <Clippy
         onClick={() => {
           // Reset tutorial state completely
           resetTutorial();
           setShowExperienceModal(true);
         }}
         isAnimated={!hasCompletedTutorial}
-      />
+      />}
 
       <div className="bg-yellow-500 text-yellow-900 text-center py-2 sm:hidden block">
         {t('app.desktopOptimized')}

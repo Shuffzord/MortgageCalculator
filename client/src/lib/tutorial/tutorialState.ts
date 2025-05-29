@@ -246,7 +246,6 @@ export const useTutorialStore = create<TutorialState>()(
       },
 
       viewEducationalContent: (contentId: string) => {
-        console.log('[Tutorial] Viewing educational content:', contentId);
         set((state) => {
           const level = state.experienceLevel;
           if (!level) return state;
