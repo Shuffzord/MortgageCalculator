@@ -110,9 +110,6 @@ const SavingsSpotlight: React.FC<SavingsSpotlightProps> = ({
           </p>
         </div>
       </div>
-      <div>
-        {t('app.beta')}
-      </div>
     </div>
   );
 };

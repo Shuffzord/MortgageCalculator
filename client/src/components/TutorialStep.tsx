@@ -6,7 +6,7 @@ export interface TutorialStepProps {
   step: TutorialStepType;
   onComplete: () => void;
   onSkip: () => void;
-  isLastStep: boolean;
+  isLastStep?: boolean;
 }
 
 export function TutorialStep({

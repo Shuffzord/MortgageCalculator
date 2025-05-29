@@ -1,8 +1,10 @@
 interface TutorialEvent {
-  eventName: string
-  stepNumber?: number
-  experienceLevel?: string
-  timestamp: number
+  eventName: string;
+  stepNumber?: number;
+  experienceLevel?: string;
+  sectionId?: string;
+  contentId?: string;
+  timestamp: number;
 }
 
 class TutorialAnalytics {
@@ -55,8 +57,24 @@ class TutorialAnalytics {
     })
   }
 
+  interactiveExampleCompleted(sectionId: string) {
+    this.logEvent({
+      eventName: 'interactive_example_completed',
+      sectionId,
+      timestamp: Date.now()
+    });
+  }
+
+  educationalContentViewed(contentId: string) {
+    this.logEvent({
+      eventName: 'educational_content_viewed',
+      contentId,
+      timestamp: Date.now()
+    });
+  }
+
   getEvents(): TutorialEvent[] {
-    return this.events
+    return this.events;
   }
 }
 

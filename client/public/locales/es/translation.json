@@ -193,6 +193,21 @@
     "noSaved": "No se encontraron cálculos guardados",
     "cancel": "Cancelar"
   },
+  "tutorial": {
+    "experience": {
+      "beginner": "Soy nuevo en hipotecas",
+      "intermediate": "Tengo algún conocimiento sobre hipotecas (pronto)",
+      "advanced": "Tengo experiencia con hipotecas (pronto)"
+    },
+    "common": {
+      "skip": "Saltar",
+      "next": "Siguiente",
+      "step": "Paso {{current}} de {{total}}"
+    },
+    "progress": {
+      "step": "Paso {{current}} de {{total}}"
+    }
+  },
   "errors": {
     "required": "Este campo es obligatorio",
     "minAmount": "El monto del préstamo debe ser al menos 1.000",

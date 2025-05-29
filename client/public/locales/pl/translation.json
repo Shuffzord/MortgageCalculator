@@ -11,6 +11,26 @@
     "es": "Hiszpański",
     "pl": "Polski"
   },
+  "tutorial": {
+    "experience": {
+      "beginner": "Jestem nowy w kredytach hipotecznych",
+      "intermediate": "Mam pewną wiedzę o kredytach hipotecznych (wkrótce)",
+      "advanced": "Mam doświadczenie z kredytami hipotecznymi (wkrótce)"
+    },
+     "common": {
+      "skip": "Pomiń",
+      "next": "Następne",
+      "step": "Krok {{current}}/{{total}}",
+      "last": "Koniec"
+    },
+    "progress": {
+      "step": "Krok {{current}} z {{total}}"
+    }
+  },
+  "common": {
+    "skip": "Pomiń",
+    "start": "Start"
+  },
   "form": {
     "currency": "Waluta",
     "currencyTooltip": "Wybierz walutę dla kalkulacji kredytu",

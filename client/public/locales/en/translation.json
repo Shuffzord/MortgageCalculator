@@ -198,6 +198,26 @@
     "maxTerm": "Loan term must be at most 50 years",
     "minOverpayment": "Overpayment amount must be at least 0"
   },
+  "tutorial": {
+    "experience": {
+      "beginner": "I'm new to mortgages",
+      "intermediate": "I have some mortgage knowledge (soon)",
+      "advanced": "I'm experienced with mortgages (soon)"
+    },
+    "common": {
+      "skip": "Skip",
+      "next": "Next",
+      "step": "Step {{current}}/{{total}}",
+      "last": "End"
+    },
+    "progress": {
+      "step": "Step {{current}} of {{total}}"
+    }
+  },
+  "common": {
+    "skip": "Skip",
+    "start": "Start"
+  },
   "education": {
     "title": "Mortgage Education Center",
     "description": "Learn about mortgage concepts and how different factors affect your loan.",

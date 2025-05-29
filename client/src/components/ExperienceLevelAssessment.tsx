@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useTutorialStore } from '../lib/tutorial/tutorialState';
-import { tutorialAnalytics } from '../lib/tutorial/analytics';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { tutorialAnalytics } from "../lib/tutorial/analytics";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog';
-import { Button } from './ui/button';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Label } from './ui/label';
+  DialogFooter,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
 
-export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
+export type ExperienceLevel = "beginner" | "intermediate" | "advanced";
 
 interface ExperienceLevelAssessmentProps {
   isOpen: boolean;
@@ -26,55 +26,64 @@ export function ExperienceLevelAssessment({
   onExperienceLevelSet,
 }: ExperienceLevelAssessmentProps) {
   const { t } = useTranslation();
-  const [selectedLevel, setSelectedLevel] = useState<ExperienceLevel>('beginner');
+  const [selectedLevel, setSelectedLevel] =
+    useState<ExperienceLevel>("beginner");
+
+  console.log("[ExperienceLevelAssessment] Render:", { isOpen, selectedLevel });
 
   const handleSubmit = () => {
-    useTutorialStore.getState().setExperienceLevel(selectedLevel);
+    console.log("[ExperienceLevelAssessment] Submitting level:", selectedLevel);
     tutorialAnalytics.experienceLevelChanged(selectedLevel);
     onExperienceLevelSet(selectedLevel);
     onClose();
   };
 
   const handleSkip = () => {
-    tutorialAnalytics.tutorialAbandoned(0, 'not_selected');
-    useTutorialStore.getState().abandonTutorial();
+    console.log("[ExperienceLevelAssessment] Skipping assessment");
+    tutorialAnalytics.tutorialAbandoned(0, "not_selected");
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('tutorial.welcome.title')}</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[425px]">
         <div className="py-4">
           <RadioGroup
             value={selectedLevel}
-            onValueChange={(value) => setSelectedLevel(value as ExperienceLevel)}
-            className="space-y-4"
+            onValueChange={(value) => {
+              console.log("Selected value:", value);
+              setSelectedLevel(value as ExperienceLevel);
+            }}
           >
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 mb-4">
               <RadioGroupItem value="beginner" id="beginner" />
-              <Label htmlFor="beginner">{t('tutorial.experience.beginner')}</Label>
+              <Label htmlFor="beginner">
+                {t("tutorial.experience.beginner")}
+              </Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="intermediate" id="intermediate" />
-              <Label htmlFor="intermediate">{t('tutorial.experience.intermediate')}</Label>
+            <div className="flex items-center space-x-2 mb-4">
+              <RadioGroupItem value="intermediate" id="intermediate" disabled />
+              <Label htmlFor="intermediate" className="text-muted-foreground">
+                {t("tutorial.experience.intermediate")}
+              </Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="advanced" id="advanced" />
-              <Label htmlFor="advanced">{t('tutorial.experience.advanced')}</Label>
+            <div className="flex items-center space-x-2 mb-4">
+              <RadioGroupItem value="advanced" id="advanced" disabled />
+              <Label htmlFor="advanced" className="text-muted-foreground">
+                {t("tutorial.experience.advanced")}
+              </Label>
             </div>
           </RadioGroup>
         </div>
-        <div className="flex justify-end space-x-2">
-          <Button variant="outline" onClick={handleSkip}>
-            {t('common.skip')}
+
+        <DialogFooter>
+          <Button variant="outline" onClick={handleSkip} className="mr-2">
+            {t("common.skip")}
           </Button>
-          <Button onClick={handleSubmit}>
-            {t('common.start')}
-          </Button>
-        </div>
+          <Button onClick={handleSubmit}>{t("common.start")}</Button>
+         
+        </DialogFooter>
+          <div className="mr-2">{t('app.beta')}</div>
       </DialogContent>
     </Dialog>
   );
