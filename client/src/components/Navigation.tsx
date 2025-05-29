@@ -32,10 +32,12 @@ export default function Navigation({ onExportClick }: NavigationProps) {
           {/* Logo and app name */}
           <div className="flex items-center space-x-8">
             <Link href={`/${langPrefix}/`}>
-              <div className="flex items-center cursor-pointer">
-                <svg className="h-6 w-6 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.5 8.5c0 2.5-1.5 4-3.5 5.5s-3.5 3-3.5 5.5V20h10v-1c0-2.5-1.5-4-3.5-5.5s-3.5-3-3.5-5.5V7c0-1 .5-1.5 1-2s1-1 1-2c0-1.5-2-3-4-3S5 1.5 5 3c0 1 .5 1.5 1 2s1 1 1 2v1.5"/>
-                </svg>
+              <div className="flex items-center cursor-pointer" title={t('app.title') + " - Home"}>
+                <img 
+                  src="/favicon-32x32.png" 
+                  alt={t('app.title') + " Logo"} 
+                  className="h-32 w-32" // Adjust size as needed, 32x32px (h-8 w-8) matches the favicon size
+                />
                 <span className="ml-2 text-xl font-bold">{t('app.title')}</span>
               </div>
             </Link>
