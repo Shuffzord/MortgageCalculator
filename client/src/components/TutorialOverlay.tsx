@@ -29,8 +29,8 @@ function getPositionForTarget(targetId: string, placement: Placement = 'bottom')
   // Constants for positioning
   const MARGIN = 12; // Space between target and tutorial
   const PADDING = 400; // Minimum space from viewport edges
-  const TUTORIAL_WIDTH = 400;
-  const TUTORIAL_HEIGHT = 250; // Increased for better content visibility
+  const TUTORIAL_WIDTH = 500;
+  const TUTORIAL_HEIGHT = 350; // Increased for better content visibility
   
   // Calculate center points
   const targetCenterX = rect.left + (rect.width / 2);

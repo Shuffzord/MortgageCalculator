@@ -83,15 +83,15 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
     //   concepts: ['amortizationSchedule'],
     //   requiredForProgress: true
     // },
-    {
-      id: 'monthly-payment',
-      title: t('summary.monthlyPayment'),
-      content: `${t('education.tooltips.principal')}\n\n${t('education.tooltips.interestRate')}`,
-      target: 'payment-breakdown',
-      placement: 'right',
-      glossaryTerms: [glossary.principal, glossary.interest],
-      requiredForProgress: true
-    },
+    // {
+    //   id: 'monthly-payment',
+    //   title: t('summary.monthlyPayment'),
+    //   content: `${t('education.tooltips.principal')}\n\n${t('education.tooltips.interestRate')}`,
+    //   target: 'payment-breakdown',
+    //   placement: 'right',
+    //   glossaryTerms: [glossary.principal, glossary.interest],
+    //   requiredForProgress: true
+    // },
     {
       id: 'additional-costs',
       title: t('form.additionalCosts'),
