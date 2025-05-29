@@ -34,9 +34,9 @@ export default function Navigation({ onExportClick }: NavigationProps) {
             <Link href={`/${langPrefix}/`}>
               <div className="flex items-center cursor-pointer" title={t('app.title') + " - Home"}>
                 <img 
-                  src="/favicon-32x32.png" 
-                  alt={t('app.title') + " Logo"} 
-                  className="h-32 w-32" // Adjust size as needed, 32x32px (h-8 w-8) matches the favicon size
+                  src={new URL('/favicon-32x32.png', import.meta.url).href}
+                  alt={t('app.title') + " Logo"}
+                  className="h-32 w-32" // Match the actual favicon size of 32x32px
                 />
                 <span className="ml-2 text-xl font-bold">{t('app.title')}</span>
               </div>
