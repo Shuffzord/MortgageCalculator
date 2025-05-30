@@ -7,9 +7,29 @@
     "beta": "Strona jest obecnie w wersji BETA. Proszę zgłaszać wszelkie błędy lub sugestie. (Sekcja O nas)"
   },
   "language": {
-    "english": "Angielski",
-    "spanish": "Hiszpański",
-    "polish": "Polski"
+    "en": "Angielski",
+    "es": "Hiszpański",
+    "pl": "Polski"
+  },
+  "tutorial": {
+    "experience": {
+      "beginner": "Jestem nowy w kredytach hipotecznych",
+      "intermediate": "Mam pewną wiedzę o kredytach hipotecznych (wkrótce)",
+      "advanced": "Mam doświadczenie z kredytami hipotecznymi (wkrótce)"
+    },
+     "common": {
+      "skip": "Pomiń",
+      "next": "Następne",
+      "step": "Krok {{current}}/{{total}}",
+      "last": "Koniec"
+    },
+    "progress": {
+      "step": "Krok {{current}} z {{total}}"
+    }
+  },
+  "common": {
+    "skip": "Pomiń",
+    "start": "Start"
   },
   "form": {
     "currency": "Waluta",
@@ -536,7 +556,8 @@
     "about": "O Nas",
     "education": "Centrum Edukacji",
     "menu": "Menu",
-    "visualization": "Wizualizacje"
+    "visualization": "Wizualizacje",
+    "languageSwitcher": "Zmień Język"
   },
   "pagination": {
     "showMore": "Pokaż Więcej"

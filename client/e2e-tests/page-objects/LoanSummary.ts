@@ -6,7 +6,6 @@ export class LoanSummary extends BasePage {
   async waitForSummaryToLoad(timeout = 10000): Promise<void> {
     try {
       await waitForElement(selectors.LOAN_SUMMARY, timeout);
-      console.log('Loan summary loaded successfully');
     } catch (error) {
       console.error('Failed to load loan summary:', error);
       throw error;

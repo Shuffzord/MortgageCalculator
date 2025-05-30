@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Clippy } from './ui/Clippy';
 import LoanInputForm from "@/components/LoanInputForm";
 import LoanSummary from "@/components/LoanSummary";
 import ChartSection from "@/components/ChartSection";
@@ -18,6 +20,9 @@ import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import Footer from './ui/footer';
+import { ExperienceLevelAssessment } from "@/components/ExperienceLevelAssessment";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
+import { useTutorialStore } from "@/lib/tutorial/tutorialState";
 
 interface HomePageProps {
   showExportModal?: boolean;
@@ -33,8 +38,60 @@ const HomePage: React.FC<HomePageProps> = ({
   setShowLoadModal: externalSetShowLoadModal
 }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   
-  // State management
+  // Tutorial state management
+  const {
+    experienceLevel,
+    hasCompletedTutorial,
+    isActive,
+    setExperienceLevel,
+    startTutorial,
+    completeTutorial,
+    abandonTutorial,
+    resetTutorial
+  } = useTutorialStore();
+
+  // Experience level modal state
+  const [showExperienceModal, setShowExperienceModal] = useState(false);
+
+  // Initialize tutorial state
+  // Track tutorial state changes
+  useEffect(() => {
+    console.log('[HomePage] Tutorial state changed:', {
+      experienceLevel,
+      hasCompletedTutorial,
+      isActive,
+      showExperienceModal,
+      stateInStorage: localStorage.getItem('tutorial-storage')
+    });
+  }, [experienceLevel, hasCompletedTutorial, isActive, showExperienceModal]);
+
+  // Initialize tutorial modal - don't show on mobile
+  useEffect(() => {
+    setShowExperienceModal(!experienceLevel && !isMobile);
+  }, [experienceLevel, isMobile]);
+
+  const handleExperienceSelect = (level: 'beginner' | 'intermediate' | 'advanced') => {
+    console.log('[HomePage] Experience Level Selected:', level);
+    
+    if (level === 'beginner') {
+      console.log('[HomePage] Starting tutorial for beginner');
+      // First clear any existing tutorial state
+      localStorage.removeItem('tutorial-storage');
+      // Then update experience level and start tutorial
+      setExperienceLevel(level);
+      setShowExperienceModal(false);
+      startTutorial();
+    } else {
+      console.log('[HomePage] Completing tutorial for non-beginner');
+      setExperienceLevel(level);
+      setShowExperienceModal(false);
+      completeTutorial();
+    }
+  };
+
+  // Main state management
   const [selectedCurrency, setSelectedCurrency] = useState(localStorage.getItem("selectedCurrency") || "USD");
   const [internalShowExportModal, setInternalShowExportModal] = useState(false);
   const [internalShowLoadModal, setInternalShowLoadModal] = useState(false);
@@ -172,17 +229,55 @@ const HomePage: React.FC<HomePageProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-800">
+    <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-800 relative">
+      {/* Tutorial components */}
+      <ExperienceLevelAssessment
+        isOpen={showExperienceModal}
+        onClose={() => {
+          console.log('[HomePage] Modal closed');
+          setShowExperienceModal(false);
+        }}
+        onExperienceLevelSet={handleExperienceSelect}
+      />
+
+      {/* Tutorial overlay - hide on mobile */}
+      {experienceLevel === 'beginner' && !hasCompletedTutorial && !isMobile && (
+        <TutorialOverlay
+          isActive={isActive}
+          experienceLevel="beginner"
+          onComplete={() => {
+            console.log('[HomePage] Tutorial completed');
+            completeTutorial();
+          }}
+          onSkip={() => {
+            console.log('[HomePage] Tutorial skipped');
+            abandonTutorial();
+            completeTutorial();
+          }}
+        />
+      )}
+
+      {/* Tutorial reset button with Clippy - hide on mobile */}
+      {!isMobile && <Clippy
+        onClick={() => {
+          // Reset tutorial state completely
+          resetTutorial();
+          setShowExperienceModal(true);
+        }}
+        isAnimated={!hasCompletedTutorial}
+      />}
+
       <div className="bg-yellow-500 text-yellow-900 text-center py-2 sm:hidden block">
         {t('app.desktopOptimized')}
       </div>
       <div className="bg-yellow-500 text-yellow-900 text-center py-2 block">
         {t('app.beta')}
       </div>
+
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div id="loan-form" className="bg-white rounded-lg shadow overflow-hidden">
               <LoanInputForm
                 loanDetails={loanDetails}
                 setLoanDetails={setLoanDetails}
@@ -194,11 +289,13 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
           
           <div className="lg:col-span-2 space-y-8">
-            <LoanSummary
-              calculationResults={calculationResults}
-              noOverpaymentsResult={noOverpaymentResults}
-              loanDetails={loanDetails}
-            />
+            <div id="results-section">
+              <LoanSummary
+                calculationResults={calculationResults}
+                noOverpaymentsResult={noOverpaymentResults}
+                loanDetails={loanDetails}
+              />
+            </div>
             
             <ChartSection
               loanDetails={loanDetails}
@@ -206,32 +303,34 @@ const HomePage: React.FC<HomePageProps> = ({
             />
             
             <AmortizationSchedule
-              yearlyData={
-                calculationResults?.yearlyData || []
-              }
+              yearlyData={calculationResults?.yearlyData || []}
               currency={selectedCurrency}
             />
             
-            {/* <OverpaymentOptimizationPanel
-              loanDetails={loanDetails}
-              onApplyOptimization={(optimizedOverpayments) => {
-                // Create updated loan details with optimized overpayments
-                const updatedDetails = {
-                  ...loanDetails,
-                  overpaymentPlans: optimizedOverpayments
-                };
-                
-                // Update state
-                setLoanDetails(updatedDetails);
-                
-                // Calculate using the new details directly
-                handleCalculateLoan(updatedDetails);
-              }}
-            /> */}
+            {/* Advanced features section */}
+            <div id="advanced-features">
+              {/* <OverpaymentOptimizationPanel
+                loanDetails={loanDetails}
+                onApplyOptimization={(optimizedOverpayments) => {
+                  // Create updated loan details with optimized overpayments
+                  const updatedDetails = {
+                    ...loanDetails,
+                    overpaymentPlans: optimizedOverpayments
+                  };
+                  
+                  // Update state
+                  setLoanDetails(updatedDetails);
+                  
+                  // Calculate using the new details directly
+                  handleCalculateLoan(updatedDetails);
+                }}
+              /> */}
+            </div>
           </div>
         </div>
       </main>
- <Footer />
+
+      <Footer />
       
       {showLoadModal && (
         <LoadModal

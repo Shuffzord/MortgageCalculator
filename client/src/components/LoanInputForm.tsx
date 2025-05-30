@@ -26,7 +26,7 @@ import { cn, getCurrencySymbol } from "@/lib/utils";
 
 const loanFormSchema = z.object({
   principal: z.coerce.number()
-    .min(1000, "Principal amount must be at least 1,000")
+    .min(1, "Principal amount must be at least 1,000")
     .max(10000000, "Principal amount must be less than 10,000,000"),
   loanTerm: z.coerce.number()
     .min(1, "Loan term must be at least 1 year")
@@ -36,8 +36,8 @@ const loanFormSchema = z.object({
       startMonth: z.coerce.number(),
       endMonth: z.coerce.number().optional(),
       interestRate: z.coerce.number()
-        .min(0.1, "Interest rate must be at least 0.1%")
-        .max(20, "Interest rate must be less than 20%"),
+        .min(0.10, "Interest rate must be at least 0.1%")
+        .max(100, "Interest rate must be less than 100%"),
     })
   ).min(1, "At least one interest rate period is required"),
   repaymentModel: z.enum(['equalInstallments', 'decreasingInstallments', 'custom']).default('equalInstallments'),
@@ -253,7 +253,7 @@ export default function LoanInputForm({
 
       <TooltipProvider>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="loan-input-form">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 form-container relative" data-testid="loan-input-form">
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
               <div className="sm:col-span-2">
@@ -280,9 +280,9 @@ export default function LoanInputForm({
                           </div>
                           <Input
                             {...field}
+                            id="principal-input"
                             type="number"
-                            min="1000"
-                            step="1000"
+                            min="1"
                             className="pl-7"
                             data-testid="loan-amount-input"
                           />
@@ -342,6 +342,7 @@ export default function LoanInputForm({
                   <div className="relative">
                     <Input
                       {...field}
+                      id="loan-term-input"
                       type="number"
                       min="1"
                       max="40"
@@ -381,6 +382,7 @@ export default function LoanInputForm({
                 </FormLabel>
                 <FormControl>
                   <select
+                    id="repayment-model-selector"
                     className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     value={field.value}
                     onChange={field.onChange}
@@ -731,7 +733,7 @@ export default function LoanInputForm({
                                 type="number"
                                 min="0.1"
                                 max="20"
-                                step="0.1"
+                                step="0.01"
                                 placeholder={t('form.interestRate')}
                                 value={period.interestRate}
                                 onChange={(e) => {
@@ -740,6 +742,7 @@ export default function LoanInputForm({
                                   field.onChange(newInterestRatePeriods);
                                 }}
                                 className="flex-1"
+                                id={index === 0 ? "interest-rate-input" : undefined}
                                 data-testid={index === 0 ? "interest-rate-input" : `interest-rate-input-${index}`}
                               />
                               <span className="ml-2">%</span>

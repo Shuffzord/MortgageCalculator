@@ -6,9 +6,9 @@
     "beta": "Esta es una versión beta de la calculadora de hipotecas. Si encuentra errores o tiene comentarios, no dude en informarnos.  (Acerca de)"
   },
   "language": {
-    "english": "Inglés",
-    "spanish": "Español",
-    "polish": "Polaco"
+    "en": "Inglés",
+    "es": "Español",
+    "pl": "Polaco"
   },
   "form": {
     "currency": "Moneda",
@@ -192,6 +192,21 @@
     "title": "Cálculos Guardados",
     "noSaved": "No se encontraron cálculos guardados",
     "cancel": "Cancelar"
+  },
+  "tutorial": {
+    "experience": {
+      "beginner": "Soy nuevo en hipotecas",
+      "intermediate": "Tengo algún conocimiento sobre hipotecas (pronto)",
+      "advanced": "Tengo experiencia con hipotecas (pronto)"
+    },
+    "common": {
+      "skip": "Saltar",
+      "next": "Siguiente",
+      "step": "Paso {{current}} de {{total}}"
+    },
+    "progress": {
+      "step": "Paso {{current}} de {{total}}"
+    }
   },
   "errors": {
     "required": "Este campo es obligatorio",
@@ -535,7 +550,8 @@
     "about": "Acerca de",
     "education": "Centro Educativo",
     "menu": "Menú",
-    "visualization": "Visualizaciones"
+    "visualization": "Visualizaciones",
+    "languageSwitcher": "Cambiar idioma"
   },
   "pagination": {
     "showMore": "Mostrar Más"
