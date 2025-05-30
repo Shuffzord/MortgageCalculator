@@ -14,6 +14,7 @@ import SEOHead from "./components/SEOHead";
 import { useTranslation } from "react-i18next";
 import HomePage from "./components/HomePage";
 import { validateLanguage, useLanguagePrefix } from "./lib/languageUtils";
+import { AuthProvider } from "./lib/auth/context";
 
 function Router() {
   const [showExportModal, setShowExportModal] = useState(false);
@@ -93,14 +94,16 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <SEOHead
-          pageTitle={t('app.title') + ' - ' + t('app.description')}
-          pageDescription={t('app.description')}
-        />
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <SEOHead
+            pageTitle={t('app.title') + ' - ' + t('app.description')}
+            pageDescription={t('app.description')}
+          />
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
