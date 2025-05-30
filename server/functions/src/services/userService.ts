@@ -93,7 +93,7 @@ export const updateUserTier = async (req: Request, res: Response, next: NextFunc
       throw new CustomError('Invalid tier', 400);
     }
 
-    await firestore.collection('users').doc(req.user.uid).update({ tier });
+    await firestore.collection('users').doc(req.user.uid).set({ tier }, { merge: true });
     res.json({ message: 'User tier updated successfully', tier });
   } catch (error) {
     next(error);

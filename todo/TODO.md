@@ -8,3 +8,5 @@
 16. Tutorial - proper implementation
 17. TODO: in code
 12. GA for calculations run
+13. BE deployment
+14. restrict premium endpoint

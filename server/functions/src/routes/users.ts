@@ -4,6 +4,7 @@ import { validate } from '../middleware/validation';
 import { getUserProfile, updateUserProfile } from '../services/authService';
 import { getUserLimits, getUserTier, updateUserTier } from '../services/userService';
 import { authMiddleware } from '../middleware/auth';
+import { developmentOnlyMiddleware } from '../middleware/developmentOnly';
 import { UserTier } from '../types/user';
 
 const router = express.Router();
@@ -28,8 +29,9 @@ router.get('/limits', getUserLimits);
 // GET /api/users/tier
 router.get('/tier', getUserTier);
 
-// PUT /api/users/tier
+// PUT /api/users/tier - DEVELOPMENT/TESTING ONLY
 router.put('/tier',
+  developmentOnlyMiddleware, // Restrict to development/testing environments
   body('tier').isIn(Object.values(UserTier)),
   validate,
   updateUserTier

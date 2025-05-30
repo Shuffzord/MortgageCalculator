@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const BASE_URL = 'http://localhost:5001/mortgage-firebase-firebase/us-central1/api';
+const BASE_URL = 'http://localhost:5001/mortgage-firebase-firebase/europe-west3/api';
 let idToken = ''; // Replace this with a valid Firebase ID token for testing
 
 async function testAuthEndpoints() {

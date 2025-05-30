@@ -84,7 +84,7 @@ firebase functions:config:set stripe.premium_yearly_price_id="price_1..."
 stripe login
 
 # Forward webhooks to local emulator
-stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/webhook
+stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/webhook
 
 # This will give you a webhook secret starting with whsec_
 # Add this to your .env file as STRIPE_WEBHOOK_SECRET
@@ -92,7 +92,7 @@ stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/us-c
 
 ### Manual Webhook Setup
 1. Go to Stripe Dashboard → Webhooks
-2. Add endpoint: `http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/webhook`
+2. Add endpoint: `http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/webhook`
 3. Select events: `customer.subscription.*`, `invoice.payment_*`
 4. Copy the webhook secret to your `.env` file
 
@@ -106,7 +106,7 @@ npm run serve:emulators
 
 ### Terminal 2: Start Stripe Webhook Forwarding (if using Stripe CLI)
 ```bash
-stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/webhook
+stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/webhook
 ```
 
 ## Step 5: Test the Payment System
@@ -116,7 +116,7 @@ Edit `server/functions/src/test-payment-endpoints.js`:
 
 ```javascript
 // Update the BASE_URL to point to your emulator
-const BASE_URL = 'http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api';
+const BASE_URL = 'http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api';
 
 // Update test data with your actual Stripe Price IDs
 const testData = {
@@ -137,21 +137,21 @@ node src/test-payment-endpoints.js
 ### 1. Test Basic Endpoints
 ```bash
 # Test payment config
-curl http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/config
+curl http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/config
 
 # Test subscription plans
-curl http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/plans
+curl http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/plans
 ```
 
 ### 2. Test with Authentication
 ```bash
 # First, register a test user
-curl -X POST http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/auth/register \
+curl -X POST http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"testpass123","displayName":"Test User"}'
 
 # Login to get token
-curl -X POST http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/auth/login \
+curl -X POST http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"testpass123"}'
 
@@ -160,16 +160,16 @@ export TOKEN="your_jwt_token_here"
 
 # Test payment system
 curl -H "Authorization: Bearer $TOKEN" \
-  http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/test
+  http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/test
 
 # Test subscription status
 curl -H "Authorization: Bearer $TOKEN" \
-  http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/subscription/status
+  http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/subscription/status
 ```
 
 ### 3. Test Checkout Session Creation
 ```bash
-curl -X POST http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/create-checkout-session \
+curl -X POST http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/create-checkout-session \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -194,11 +194,11 @@ Use the API or test script to create a checkout session
 ```bash
 # Check subscription status
 curl -H "Authorization: Bearer $TOKEN" \
-  http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/subscription/status
+  http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/subscription/status
 
 # Check payment history
 curl -H "Authorization: Bearer $TOKEN" \
-  http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/history
+  http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/history
 ```
 
 ## Troubleshooting

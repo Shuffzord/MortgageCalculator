@@ -53,10 +53,10 @@ STRIPE_PREMIUM_YEARLY_PRICE_ID=price_1ABC123...
 ### Basic Tests (No Auth)
 ```bash
 # Get Stripe config
-curl http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/config
+curl http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/config
 
 # Get subscription plans
-curl http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/plans
+curl http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/plans
 ```
 
 ### Authenticated Tests
@@ -75,7 +75,7 @@ stripe login
 
 ### Forward Webhooks
 ```bash
-stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/webhook
+stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/webhook
 ```
 
 ## 📚 Documentation

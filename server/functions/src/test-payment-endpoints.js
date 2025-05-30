@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // Configuration for Firebase Emulator
-const BASE_URL = 'http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api';
+const BASE_URL = 'http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api';
 const TEST_USER_EMAIL = 'test@example.com';
 const TEST_USER_PASSWORD = 'testpassword123';
 

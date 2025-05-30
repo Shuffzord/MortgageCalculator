@@ -83,7 +83,7 @@ console.log('   → Copy the Price IDs (price_...) to your .env file\n');
 console.log('3. Set up Webhook (Optional for basic testing):');
 console.log('   → Install Stripe CLI: https://stripe.com/docs/stripe-cli');
 console.log('   → Run: stripe login');
-console.log('   → Run: stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/webhook');
+console.log('   → Run: stripe listen --forward-to http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/webhook');
 console.log('   → Copy the webhook secret (whsec_...) to your .env file\n');
 
 console.log('4. Start Firebase Emulators:');
@@ -140,8 +140,8 @@ if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY.includes('..
 console.log('\n🎯 Quick Test Commands:');
 console.log('=======================');
 console.log('# Test basic endpoints (no auth required):');
-console.log('curl http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/config');
-console.log('curl http://127.0.0.1:5001/mortgage-firebase-firebase/us-central1/api/payments/plans\n');
+console.log('curl http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/config');
+console.log('curl http://127.0.0.1:5001/mortgage-firebase-firebase/europe-west3/api/payments/plans\n');
 
 console.log('# Run full test suite:');
 console.log('node src/test-payment-endpoints.js\n');

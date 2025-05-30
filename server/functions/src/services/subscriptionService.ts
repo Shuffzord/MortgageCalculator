@@ -1,5 +1,6 @@
 import { firestore } from '../config/firebase';
 import { stripeService } from './stripeService';
+import { TierManagementService } from './tierManagementService';
 import { logger } from '../utils/logger';
 import { UserTier } from '../types/user';
 import {
@@ -11,11 +12,6 @@ import {
   DEFAULT_GRACE_PERIOD,
   StripeWebhookEventType
 } from '../types/payment';
-
-// Helper function to update user tier
-const updateUserTierInFirestore = async (userId: string, tier: UserTier): Promise<void> => {
-  await firestore.collection('users').doc(userId).update({ tier });
-};
 
 class SubscriptionService {
   private subscriptionsCollection = firestore.collection('subscriptions');
@@ -337,7 +333,10 @@ class SubscriptionService {
       );
       
       if (!customer.deleted && customer.metadata?.userId) {
-        await updateUserTierInFirestore(customer.metadata.userId, UserTier.Free);
+        await TierManagementService.downgradeUserToFree(
+          customer.metadata.userId,
+          `Subscription deleted: ${subscription.id}`
+        );
         logger.info(`Downgraded user ${customer.metadata.userId} to free tier after subscription deletion`);
       }
     } catch (error) {
@@ -367,7 +366,10 @@ class SubscriptionService {
           );
 
           // Ensure user has premium tier
-          await updateUserTierInFirestore(customer.metadata.userId, UserTier.Premium);
+          await TierManagementService.upgradeUserToPremium(
+            customer.metadata.userId,
+            invoice.subscription
+          );
         }
       }
     } catch (error) {
@@ -416,7 +418,17 @@ class SubscriptionService {
         ? UserTier.Premium 
         : UserTier.Free;
 
-      await updateUserTierInFirestore(userId, targetTier);
+      if (targetTier === UserTier.Premium) {
+        await TierManagementService.upgradeUserToPremium(
+          userId,
+          subscription.stripeSubscriptionId
+        );
+      } else {
+        await TierManagementService.downgradeUserToFree(
+          userId,
+          `Subscription status: ${subscription.status}`
+        );
+      }
       logger.info(`Updated user ${userId} tier to ${targetTier} based on subscription status: ${subscription.status}`);
     } catch (error) {
       logger.error(`Error updating user tier for user ${userId}:`, error);
@@ -466,7 +478,10 @@ class SubscriptionService {
         const subscription = doc.data() as Subscription;
         
         // Downgrade user to free tier
-        await updateUserTierInFirestore(subscription.userId, UserTier.Free);
+        await TierManagementService.downgradeUserToFree(
+          subscription.userId,
+          'Subscription expired'
+        );
         
         logger.info(`Downgraded user ${subscription.userId} to free tier after grace period expiry`);
       }
