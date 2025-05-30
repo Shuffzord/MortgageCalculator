@@ -190,7 +190,7 @@ export default function About() {
                   </svg>
                   <div>
                     <h3 className="text-lg font-medium">{t('about.statistics.linesOfCode')}</h3>
-                    <p className="text-xl font-bold">{parseInt(statistics.linesOfCode).toLocaleString()}</p>
+                    <p className="text-xl font-bold">{statistics.linesOfCode}</p>
                   </div>
                 </div>
               </div>

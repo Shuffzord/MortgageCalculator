@@ -551,12 +551,24 @@ GET    /api/subscription/portal
 - Monitoring and logging setup
 
 **Implementation Steps**:
-1. Set up production environment on Railway/Fly.io
-2. Configure production environment variables
-3. Deploy backend with proper security settings
-4. Update frontend to use production API
-5. Set up monitoring and alerting
-6. Configure backup and recovery procedures
+1. **UPDATED**: Deploy to Firebase Functions (Europe West 3 region)
+2. Configure Firebase Functions environment variables
+3. Set up GitHub Actions for Firebase deployment
+4. Configure custom domain (optional) and SSL (automatic)
+5. Set up Firebase monitoring and Cloud Logging
+6. Perform Firebase Functions load testing and auto-scaling verification
+
+**Firebase Functions Production URLs**:
+```
+Base API: https://europe-west3-mortgage-firebase-firebase.cloudfunctions.net/api
+Frontend: https://mortgage-firebase-firebase.web.app
+```
+
+**Cost Benefits**:
+- Development: FREE (within generous limits)
+- Production: Pay-per-use (~$5-25/month vs $228/year for Railway)
+- Auto-scaling: 0 to 1000+ concurrent instances
+- EU data residency: europe-west3 (Frankfurt)
 
 **Acceptance Criteria**:
 - [ ] Backend is deployed and accessible
