@@ -1,7 +1,7 @@
 # Fast Test Counter Script with Improved Exclusions and JSON Output
 param(
     [string]$RootPath = ".",
-    [string]$StatisticsPath = "",
+    [string]$StatisticsPath = "client/statistics.json",
     [switch]$Detailed,
     [switch]$Debug,
     [int]$MaxWorkers = [Environment]::ProcessorCount
