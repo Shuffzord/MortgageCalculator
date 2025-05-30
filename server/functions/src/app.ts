@@ -6,6 +6,9 @@ import { rateLimiterMiddleware } from './middleware/rateLimiter';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import healthRoutes from './routes/health';
+import calculationRoutes from './routes/calculations';
+import paymentRoutes from './routes/payments';
+import subscriptionRoutes from './routes/subscription';
 
 const app = express();
 
@@ -19,12 +22,15 @@ app.use(express.json());
 app.use(rateLimiterMiddleware);
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/health', healthRoutes);
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+app.use('/health', healthRoutes);
+app.use('/calculations', calculationRoutes);
+app.use('/payments', paymentRoutes);
+app.use('/subscription', subscriptionRoutes);
 
 // Version endpoint
-app.get('/api/version', (req, res) => {
+app.get('/version', (req, res) => {
   res.json({ version: '1.0.0' });
 });
 

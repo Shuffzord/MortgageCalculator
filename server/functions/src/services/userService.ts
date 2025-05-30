@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { auth, firestore } from '../config/firebase';
 import { CustomError } from '../utils/errors';
-import { UserProfile, UserTier, UpdateUserData, UserLimits } from '../types/user';
+import { UserProfile, UserTier, UpdateUserData } from '../types/user';
+import { getUserUsageLimits } from '../middleware/usageTracking';
 
 export const getUserProfile = async (req: Request, res: Response, next: NextFunction, firestoreInstance = firestore) => {
   try {
@@ -55,11 +56,16 @@ export const getUserLimits = async (req: Request, res: Response, next: NextFunct
       throw new CustomError('User not found', 404);
     }
 
-    const limits: UserLimits = req.user.tier === UserTier.Premium
-      ? { maxCalculations: Infinity, maxSavedScenarios: Infinity }
-      : { maxCalculations: 100, maxSavedScenarios: 5 };
+    if (!req.user.tier) {
+      throw new CustomError('User tier not found', 400);
+    }
 
-    res.json(limits);
+    const usageLimits = await getUserUsageLimits(req.user.uid, req.user.tier);
+    
+    res.json({
+      success: true,
+      data: usageLimits
+    });
   } catch (error) {
     next(error);
   }

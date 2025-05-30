@@ -15,4 +15,14 @@ export const config = {
   FIREBASE_APP_ID: process.env.FB_APP_ID || '',
   FIREBASE_CLIENT_EMAIL: process.env.FB_CLIENT_EMAIL || '',
   FIREBASE_PRIVATE_KEY: process.env.FB_PRIVATE_KEY ? process.env.FB_PRIVATE_KEY.replace(/\\n/g, '\n') : '',
+  // Stripe Configuration
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
+  STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY || '',
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+  STRIPE_PREMIUM_MONTHLY_PRICE_ID: process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID || '',
+  STRIPE_PREMIUM_YEARLY_PRICE_ID: process.env.STRIPE_PREMIUM_YEARLY_PRICE_ID || '',
+  // Application URLs
+  CLIENT_URL: process.env.NODE_ENV === 'production'
+    ? 'https://mortgage-firebase-firebase.web.app'
+    : 'http://localhost:5173',
 };

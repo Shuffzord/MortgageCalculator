@@ -29,3 +29,14 @@ export class UnauthorizedError extends CustomError {
     Object.setPrototypeOf(this, UnauthorizedError.prototype);
   }
 }
+
+export class AppError extends CustomError {
+  constructor(message: string, statusCode: number, public code?: string) {
+    super(message, statusCode);
+    Object.setPrototypeOf(this, AppError.prototype);
+  }
+
+  serializeErrors() {
+    return [{ message: this.message, code: this.code }];
+  }
+}
