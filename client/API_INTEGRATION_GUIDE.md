@@ -25,7 +25,7 @@ VITE_FIREBASE_PROJECT_ID=your_project_id
 # ... other Firebase config
 
 # API Configuration
-VITE_API_BASE_URL=http://localhost:5001/mortgage-calculator-dev/us-central1/api
+VITE_API_BASE_URL=http://localhost:5001/mortgage-firebase-firebase/us-central1/api
 
 # Stripe Configuration
 VITE_STRIPE_PUBLIC_KEY=pk_test_your_stripe_public_key

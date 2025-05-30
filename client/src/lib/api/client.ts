@@ -2,7 +2,7 @@ import { auth } from '../firebase/config';
 import type { ApiResponse } from './types';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/mortgage-calculator-dev/us-central1/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/mortgage-firebase-firebase/us-central1/api';
 const API_TIMEOUT = 30000; // 30 seconds
 
 // Custom error class for API errors

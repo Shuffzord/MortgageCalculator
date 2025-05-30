@@ -6,6 +6,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import About from "@/pages/About";
 import Education from "@/pages/Education";
+import AuthPage from "@/pages/Auth";
+import Profile from "@/pages/Profile";
+import Terms from "@/pages/Terms";
+import FirebaseDebugPage from "@/pages/FirebaseDebug";
 import "./i18n"; // Import i18n configuration
 import { useState, useEffect } from "react";
 import Navigation from "./components/Navigation";
@@ -68,6 +72,78 @@ function Router() {
             )
           }
         </Route>
+        
+        {/* Authentication routes */}
+        <Route path="/:lang/auth">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <AuthPage />
+            ) : (
+              <Redirect to="/en/auth" />
+            )
+          }
+        </Route>
+        <Route path="/:lang/login">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <AuthPage initialMode="login" />
+            ) : (
+              <Redirect to="/en/login" />
+            )
+          }
+        </Route>
+        <Route path="/:lang/register">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <AuthPage initialMode="register" />
+            ) : (
+              <Redirect to="/en/register" />
+            )
+          }
+        </Route>
+        <Route path="/:lang/reset-password">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <AuthPage initialMode="reset" />
+            ) : (
+              <Redirect to="/en/reset-password" />
+            )
+          }
+        </Route>
+        
+        {/* Profile route */}
+        <Route path="/:lang/profile">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <Profile />
+            ) : (
+              <Redirect to="/en/profile" />
+            )
+          }
+        </Route>
+        
+        {/* Terms route */}
+        <Route path="/:lang/terms">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <Terms />
+            ) : (
+              <Redirect to="/en/terms" />
+            )
+          }
+        </Route>
+        
+        {/* Firebase Debug route (development only) */}
+        <Route path="/:lang/firebase-debug">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <FirebaseDebugPage />
+            ) : (
+              <Redirect to="/en/firebase-debug" />
+            )
+          }
+        </Route>
+        
         {/* Fallback to 404 with language context */}
         <Route>
           {() => {

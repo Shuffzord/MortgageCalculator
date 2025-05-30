@@ -5,22 +5,35 @@ import { Menu, X, DatabaseBackup } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { useLanguagePrefix, withLanguagePrefix } from '@/lib/languageUtils';
+import { useAuth } from '@/lib/auth/context';
+import { UserProfileDropdown, AuthButton } from '@/components/auth';
 
 interface NavigationProps {
   onExportClick?: () => void;
+  onAuthClick?: () => void;
 }
 
-export default function Navigation({ onExportClick }: NavigationProps) {
+export default function Navigation({ onExportClick, onAuthClick }: NavigationProps) {
   const { t } = useTranslation();
+  const { isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Get current path and language prefix
+  const [location, setLocation] = useLocation();
+  const langPrefix = useLanguagePrefix();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Get current path and language prefix
-  const [location] = useLocation();
-  const langPrefix = useLanguagePrefix();
+  const handleAuthClick = () => {
+    if (onAuthClick) {
+      onAuthClick();
+    } else {
+      // Default behavior - navigate to auth page
+      setLocation(`/${langPrefix}/auth`);
+    }
+  };
   
   // Check if we're on the home page (considering language prefix)
   const isHomePage = location === `/${langPrefix}/`;
@@ -81,6 +94,23 @@ export default function Navigation({ onExportClick }: NavigationProps) {
             </Button>
             <LanguageSwitcher />
             
+            {/* Authentication */}
+            <div className="hidden md:flex items-center space-x-2">
+              {isAuthenticated ? (
+                <UserProfileDropdown
+                  onProfileClick={() => setLocation(`/${langPrefix}/profile`)}
+                  onSettingsClick={() => setLocation(`/${langPrefix}/profile`)}
+                  onVerificationClick={() => setLocation(`/${langPrefix}/auth?mode=verify`)}
+                />
+              ) : (
+                <AuthButton
+                  onLoginClick={handleAuthClick}
+                  variant="ghost"
+                  className="text-gray-300 hover:text-white"
+                />
+              )}
+            </div>
+            
             {/* Mobile menu button */}
             <div className="md:hidden">
               <button
@@ -131,6 +161,33 @@ export default function Navigation({ onExportClick }: NavigationProps) {
                 {t('navigation.education')}
               </div>
             </Link>
+            
+            {/* Mobile Authentication */}
+            <div className="border-t border-gray-700 pt-2 mt-2">
+              {isAuthenticated ? (
+                <>
+                  <Link href={`/${langPrefix}/profile`}>
+                    <div className="block px-3 py-2 rounded-md text-base font-medium cursor-pointer text-gray-300 hover:bg-[#1e293b] hover:text-white">
+                      {t('auth.profile.profile', 'Profile')}
+                    </div>
+                  </Link>
+                  <div className="px-3 py-2">
+                    <AuthButton
+                      variant="ghost"
+                      className="w-full justify-start text-gray-300 hover:text-white"
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="px-3 py-2">
+                  <AuthButton
+                    onLoginClick={handleAuthClick}
+                    variant="ghost"
+                    className="w-full justify-start text-gray-300 hover:text-white"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

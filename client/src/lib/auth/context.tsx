@@ -161,10 +161,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       // Update Firebase profile if displayName provided
       if (userData.displayName) {
-        await updateProfile(userCredential.user, {
+        const profileUpdate: { displayName: string; photoURL?: string } = {
           displayName: userData.displayName,
-          photoURL: userData.photoURL || null,
-        });
+        };
+        
+        if (userData.photoURL) {
+          profileUpdate.photoURL = userData.photoURL;
+        }
+        
+        await updateProfile(userCredential.user, profileUpdate);
       }
       
       // Send email verification
@@ -258,10 +263,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       // Update Firebase profile
       if (data.displayName !== undefined || data.photoURL !== undefined) {
-        await updateProfile(firebaseUser, {
-          displayName: data.displayName || firebaseUser.displayName,
-          photoURL: data.photoURL || firebaseUser.photoURL,
-        });
+        const profileUpdate: { displayName?: string; photoURL?: string } = {};
+        
+        if (data.displayName !== undefined) {
+          const displayName = data.displayName || firebaseUser.displayName;
+          if (displayName) {
+            profileUpdate.displayName = displayName;
+          }
+        }
+        
+        if (data.photoURL !== undefined) {
+          const photoURL = data.photoURL || firebaseUser.photoURL;
+          if (photoURL) {
+            profileUpdate.photoURL = photoURL;
+          }
+        }
+        
+        await updateProfile(firebaseUser, profileUpdate);
       }
       
       // Update backend profile
