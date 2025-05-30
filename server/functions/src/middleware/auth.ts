@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { auth } from '../config/firebase';
+import { auth, firestore } from '../config/firebase';
 import { CustomError } from '../utils/errors';
+import { UserTier } from '../types/user';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -9,14 +10,41 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
       throw new CustomError('No token provided', 401);
     }
 
+    // Verify Firebase token
     const decodedToken = await auth.verifyIdToken(token);
-    const user = await auth.getUser(decodedToken.uid);
+    const firebaseUser = await auth.getUser(decodedToken.uid);
 
-    // Attach the user to the request object
-    req.user = user;
+    // Fetch user profile from Firestore
+    const userDoc = await firestore.collection('users').doc(decodedToken.uid).get();
+    const userProfile = userDoc.data();
+
+    // Create complete user object
+    req.user = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email || '',
+      displayName: firebaseUser.displayName,
+      photoURL: firebaseUser.photoURL,
+      customClaims: firebaseUser.customClaims,
+      tier: userProfile?.tier || UserTier.Free,
+      firstName: userProfile?.firstName,
+      lastName: userProfile?.lastName,
+      phoneNumber: userProfile?.phoneNumber,
+      address: userProfile?.address,
+      createdAt: userProfile?.createdAt || new Date().toISOString()
+    };
 
     next();
   } catch (error) {
-    next(new CustomError('Invalid or expired token', 401));
+    if (error instanceof Error) {
+      if (error.message.includes('auth/id-token-expired')) {
+        next(new CustomError('Token expired', 401));
+      } else if (error.message.includes('auth/invalid-id-token')) {
+        next(new CustomError('Invalid token', 401));
+      } else {
+        next(new CustomError('Authentication failed', 401));
+      }
+    } else {
+      next(new CustomError('Unexpected authentication error', 500));
+    }
   }
 };

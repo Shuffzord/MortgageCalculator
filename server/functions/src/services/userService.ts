@@ -1,14 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
-import { auth } from '../config/firebase';
+import { auth, firestore } from '../config/firebase';
 import { CustomError } from '../utils/errors';
+import { UserProfile, UserTier, UpdateUserData, UserLimits } from '../types/user';
 
-export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserProfile = async (req: Request, res: Response, next: NextFunction, firestoreInstance = firestore) => {
   try {
-    const user = req.user;
-    if (!user) {
+    if (!req.user) {
       throw new CustomError('User not found', 404);
     }
-    res.json(user);
+    
+    const userDoc = await firestoreInstance.collection('users').doc(req.user.uid).get();
+    const userProfile = userDoc.data() as UserProfile;
+    
+    res.json({
+      ...req.user,
+      profile: userProfile
+    });
   } catch (error) {
     next(error);
   }
@@ -16,21 +23,27 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
 
 export const updateUserProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { displayName, email } = req.body;
-    const user = req.user;
-    if (!user) {
+    const updateData: UpdateUserData = req.body;
+    if (!req.user) {
       throw new CustomError('User not found', 404);
     }
 
-    if (displayName) {
-      await auth.updateUser(user.uid, { displayName });
-    }
-    if (email) {
-      await auth.updateUser(user.uid, { email });
+    if (updateData.displayName || updateData.photoURL) {
+      await auth.updateUser(req.user.uid, {
+        displayName: updateData.displayName,
+        photoURL: updateData.photoURL
+      });
     }
 
-    const updatedUser = await auth.getUser(user.uid);
-    res.json(updatedUser);
+    if (updateData.profile) {
+      await firestore.collection('users').doc(req.user.uid).set(updateData.profile, { merge: true });
+    }
+
+    const updatedUser = await auth.getUser(req.user.uid);
+    const updatedUserDoc = await firestore.collection('users').doc(req.user.uid).get();
+    const updatedProfile = updatedUserDoc.data() as UserProfile;
+
+    res.json({ ...updatedUser, profile: updatedProfile });
   } catch (error) {
     next(error);
   }
@@ -38,17 +51,44 @@ export const updateUserProfile = async (req: Request, res: Response, next: NextF
 
 export const getUserLimits = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.user;
-    if (!user) {
+    if (!req.user) {
       throw new CustomError('User not found', 404);
     }
-    // Implement logic to get user limits and usage
-    // This is a placeholder, you'll need to implement the actual logic
-    res.json({
-      calculationLimit: 100,
-      calculationsUsed: 50,
-      isPremium: false
-    });
+
+    const limits: UserLimits = req.user.tier === UserTier.Premium
+      ? { maxCalculations: Infinity, maxSavedScenarios: Infinity }
+      : { maxCalculations: 100, maxSavedScenarios: 5 };
+
+    res.json(limits);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserTier = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      throw new CustomError('User not found', 404);
+    }
+    res.json({ tier: req.user.tier });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserTier = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { tier } = req.body;
+    if (!req.user) {
+      throw new CustomError('User not found', 404);
+    }
+
+    if (!Object.values(UserTier).includes(tier)) {
+      throw new CustomError('Invalid tier', 400);
+    }
+
+    await firestore.collection('users').doc(req.user.uid).update({ tier });
+    res.json({ message: 'User tier updated successfully', tier });
   } catch (error) {
     next(error);
   }

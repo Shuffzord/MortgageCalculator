@@ -14,5 +14,3 @@ export const config = {
   FB_CLIENT_EMAIL: process.env.FB_CLIENT_EMAIL,
   FB_PRIVATE_KEY: process.env.FB_PRIVATE_KEY ? process.env.FB_PRIVATE_KEY.replace(/\\n/g, '\n') : '',
 };
-
-console.log('Environment loaded:', config);

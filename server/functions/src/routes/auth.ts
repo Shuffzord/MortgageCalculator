@@ -1,26 +1,13 @@
 import express from 'express';
-import { body } from 'express-validator';
-import { validate } from '../middleware/validation';
-import { verifyToken, getCurrentUser, updateUserProfile } from '../services/authService';
+import { verifyToken } from '../services/authService';
 
 const router = express.Router();
 
 // POST /api/auth/verify
-router.post('/verify', 
-  body('token').isString().notEmpty(),
-  validate,
-  verifyToken
-);
+router.post('/verify', verifyToken);
 
-// GET /api/auth/user
-router.get('/user', getCurrentUser);
-
-// PUT /api/auth/user
-router.put('/user',
-  body('displayName').optional().isString(),
-  body('email').optional().isEmail(),
-  validate,
-  updateUserProfile
-);
+// The following routes are now handled in the users.ts file:
+// GET /api/users/profile
+// PUT /api/users/profile
 
 export default router;

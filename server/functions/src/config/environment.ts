@@ -16,5 +16,3 @@ export const config = {
   FIREBASE_CLIENT_EMAIL: process.env.FB_CLIENT_EMAIL || '',
   FIREBASE_PRIVATE_KEY: process.env.FB_PRIVATE_KEY ? process.env.FB_PRIVATE_KEY.replace(/\\n/g, '\n') : '',
 };
-
-console.log('Environment loaded:', config);

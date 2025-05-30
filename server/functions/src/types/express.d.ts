@@ -1,11 +1,11 @@
-import { UserRecord } from 'firebase-admin/auth';
+import { CustomUser } from './customUser';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: UserRecord;
+      user?: CustomUser;
     }
   }
 }
 
-export {}; // Make this a module
+export {};
