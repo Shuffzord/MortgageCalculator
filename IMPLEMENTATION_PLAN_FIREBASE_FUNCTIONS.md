@@ -18,6 +18,10 @@ This document provides a detailed, step-by-step implementation plan for transfor
 - Firebase Functions initialized in `server/functions/`
 - Firebase project configured: `mortgage-firebase-firebase`
 - Basic Firebase Functions structure ready
+- Express app structure migrated to Firebase Functions
+- TypeScript configuration complete
+- Europe West 3 region configured
+- Dependencies installed and configured
 
 **Deliverables**:
 ```
@@ -41,21 +45,28 @@ server/
 **Implementation Steps**:
 1. ✅ Initialize Firebase Functions project
 2. ✅ Configure Firebase project (`mortgage-firebase-firebase`)
-3. 🔄 **NEXT**: Move Express app from `server/src/` to `server/functions/src/`
-4. 🔄 **NEXT**: Update Firebase Function entry point
-5. 🔄 **NEXT**: Configure Europe West 3 region
-6. 🔄 **NEXT**: Set up environment variables
+3. ✅ Move Express app from `server/src/` to `server/functions/src/`
+4. ✅ Update Firebase Function entry point
+5. ✅ Configure Europe West 3 region
+6. 🔄 **NEXT PR #1**: Set up environment variables and Firebase Admin SDK
 
 **Acceptance Criteria**:
-- [ ] Firebase Function deploys successfully to eur3 region
-- [ ] Health check endpoint responds with 200
-- [ ] TypeScript compilation works without errors
-- [ ] Environment variables load correctly in Firebase Functions
+- [x] Firebase Function structure is ready
+- [x] TypeScript compilation works without errors
+- [ ] **PR #1**: Environment variables load correctly in Firebase Functions
+- [ ] **PR #1**: Firebase Admin SDK initializes correctly
+- [ ] **PR #4**: Firebase Function deploys successfully to eur3 region
+- [ ] **PR #4**: Health check endpoint responds with 200
 
 ### Task 1.2: Firebase Integration & Express App Migration
 **Priority**: Critical
 **Estimated Time**: 4-5 hours
 **Dependencies**: Task 1.1
+
+**Current Status**: ✅ **COMPLETED**
+- Express app integrated with Firebase Functions
+- Firebase Function entry point configured
+- Basic middleware and routes structure ready
 
 **Deliverables**:
 - Express app integrated with Firebase Functions
@@ -64,29 +75,18 @@ server/
 - Environment variables configured for Firebase Functions
 
 **Implementation Steps**:
-1. Move Express app structure to `server/functions/src/`
-2. Update Firebase Function entry point:
-   ```typescript
-   // server/functions/src/index.ts
-   import * as functions from 'firebase-functions/v2/https';
-   import app from './app';
-
-   export const api = functions.onRequest({
-     region: 'europe-west3',
-     memory: '512MiB',
-     timeoutSeconds: 60,
-     cors: true
-   }, app);
-   ```
-3. Configure Firebase Functions environment variables
-4. Update CORS for production URLs
-5. Test local Firebase Functions emulator
+1. ✅ Move Express app structure to `server/functions/src/`
+2. ✅ Update Firebase Function entry point
+3. 🔄 **PR #1**: Configure Firebase Functions environment variables
+4. 🔄 **PR #1**: Configure Firebase Admin SDK initialization
+5. 🔄 **PR #1**: Test local Firebase Functions emulator
 
 **Acceptance Criteria**:
-- [ ] Firebase Functions emulator runs locally
-- [ ] Express app responds through Firebase Functions
-- [ ] Firebase Admin SDK initializes correctly
-- [ ] Authentication middleware works in serverless environment
+- [x] Express app structure moved to Firebase Functions
+- [x] Firebase Function entry point configured
+- [ ] **PR #1**: Firebase Functions emulator runs locally
+- [ ] **PR #1**: Firebase Admin SDK initializes correctly
+- [ ] **PR #2**: Authentication middleware works in serverless environment
 
 ### Task 1.3: API Endpoints & Deployment
 **Priority**: High
@@ -124,6 +124,73 @@ GET    /api/users/limits              # Usage limits
 - [ ] Firebase Functions auto-scale correctly
 - [ ] Response times are acceptable (<2 seconds)
 
+---
+
+## PULL REQUEST ROADMAP
+
+### PR #1: Environment Configuration & Firebase Admin Setup
+**Priority**: Critical | **Next Action**
+**Estimated Time**: 2-3 hours | **Dependencies**: None
+
+**Scope**:
+- Configure Firebase Admin SDK initialization
+- Set up environment variables for Firebase Functions
+- Test Firebase Functions emulator locally
+- Verify health check endpoint
+
+**Files to Modify**:
+- `server/functions/src/config/firebase.ts`
+- `server/functions/src/config/environment.ts`
+- `server/functions/.env`
+
+**Acceptance Criteria**:
+- [ ] Firebase Functions emulator runs locally
+- [ ] Health check endpoint responds with 200
+- [ ] Environment variables load correctly
+- [ ] Firebase Admin SDK initializes without errors
+
+### PR #2: Authentication Middleware & JWT Verification
+**Priority**: Critical
+**Estimated Time**: 3-4 hours | **Dependencies**: PR #1
+
+**Scope**:
+- Complete authentication middleware implementation
+- Add JWT token verification
+- Test authentication endpoints
+- Add user profile management
+
+**API Endpoints**:
+```typescript
+POST   /api/auth/verify     # Token verification
+GET    /api/auth/user       # Get current user
+PUT    /api/auth/user       # Update user profile
+```
+
+### PR #3: User Management & Profile System
+**Priority**: High
+**Estimated Time**: 3-4 hours | **Dependencies**: PR #2
+
+**Scope**:
+- Complete user service implementation
+- Add user profile CRUD operations
+- Implement user tier system foundation
+- Add input validation
+
+### PR #4: First Deployment & Production Testing
+**Priority**: Critical
+**Estimated Time**: 2-3 hours | **Dependencies**: PR #3
+
+**Scope**:
+- Deploy Firebase Functions to production
+- Configure production environment variables
+- Test production endpoints
+- Set up basic monitoring
+
+**Production URLs**:
+```
+Base API: https://europe-west3-mortgage-firebase-firebase.cloudfunctions.net/api
+Health: https://europe-west3-mortgage-firebase-firebase.cloudfunctions.net/api/health
+```
 ---
 
 ## Phase 2: User Management & Limits (Week 1-2)
