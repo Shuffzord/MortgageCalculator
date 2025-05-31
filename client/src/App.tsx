@@ -10,6 +10,8 @@ import AuthPage from "@/pages/Auth";
 import Profile from "@/pages/Profile";
 import Terms from "@/pages/Terms";
 import FirebaseDebugPage from "@/pages/FirebaseDebug";
+import SubscriptionPage from "@/pages/Subscription";
+import { LoanComparison, ScenarioModeling, ExportCenter } from "@/pages/premium";
 import "./i18n"; // Import i18n configuration
 import { useState, useEffect } from "react";
 import Navigation from "./components/Navigation";
@@ -129,6 +131,55 @@ function Router() {
               <Terms />
             ) : (
               <Redirect to="/en/terms" />
+            )
+          }
+        </Route>
+        
+        {/* Premium feature routes */}
+        <Route path="/:lang/premium/loan-comparison">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <LoanComparison />
+            ) : (
+              <Redirect to="/en/premium/loan-comparison" />
+            )
+          }
+        </Route>
+        <Route path="/:lang/premium/scenario-modeling">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <ScenarioModeling />
+            ) : (
+              <Redirect to="/en/premium/scenario-modeling" />
+            )
+          }
+        </Route>
+        <Route path="/:lang/premium/export-center">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <ExportCenter />
+            ) : (
+              <Redirect to="/en/premium/export-center" />
+            )
+          }
+        </Route>
+        
+        {/* Subscription management routes */}
+        <Route path="/:lang/subscription">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <SubscriptionPage />
+            ) : (
+              <Redirect to="/en/subscription" />
+            )
+          }
+        </Route>
+        <Route path="/:lang/billing">
+          {(params) =>
+            validateLanguage(params.lang) ? (
+              <SubscriptionPage />
+            ) : (
+              <Redirect to="/en/billing" />
             )
           }
         </Route>

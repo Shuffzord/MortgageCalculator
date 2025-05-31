@@ -34,11 +34,15 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
       throw new CustomError('User not found', 404);
     }
     const userDoc = await firestoreInstance.collection('users').doc(user.uid).get();
-    const userProfile = userDoc.data() as UserProfile;
+    const userData = userDoc.data();
+    const userProfile = userData?.profile || {};
+    const userTier = userData?.tier || 'free';
+    
     res.json({
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
+      tier: userTier,
       profile: userProfile
     });
   } catch (error) {

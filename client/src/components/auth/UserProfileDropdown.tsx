@@ -1,14 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'wouter';
-import { 
-  User, 
-  Settings, 
-  LogOut, 
-  Crown, 
+import {
+  User,
+  Settings,
+  LogOut,
+  Crown,
   Shield,
   Mail,
-  MailCheck
+  MailCheck,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
 import { Button } from '@/components/ui/button';
@@ -28,12 +29,14 @@ interface UserProfileDropdownProps {
   onProfileClick?: () => void;
   onSettingsClick?: () => void;
   onVerificationClick?: () => void;
+  onSubscriptionClick?: () => void;
 }
 
 export function UserProfileDropdown({
   onProfileClick,
   onSettingsClick,
-  onVerificationClick
+  onVerificationClick,
+  onSubscriptionClick
 }: UserProfileDropdownProps) {
   const { t } = useTranslation();
   const { user, firebaseUser, logout, isPremium } = useAuth();
@@ -129,16 +132,18 @@ export function UserProfileDropdown({
           </DropdownMenuItem>
         )}
 
-        {!isPremium() && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`/${langPrefix}/premium`}>
-                <Crown className="mr-2 h-4 w-4" />
-                <span>{t('auth.profile.upgradeToPremium', 'Upgrade to Premium')}</span>
-              </Link>
-            </DropdownMenuItem>
-          </>
+        <DropdownMenuSeparator />
+        
+        {isPremium() ? (
+          <DropdownMenuItem onClick={onSubscriptionClick}>
+            <CreditCard className="mr-2 h-4 w-4" />
+            <span>{t('auth.profile.manageSubscription', 'Manage Subscription')}</span>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem onClick={onSubscriptionClick}>
+            <Crown className="mr-2 h-4 w-4" />
+            <span>{t('auth.profile.upgradeToPremium', 'Upgrade to Premium')}</span>
+          </DropdownMenuItem>
         )}
 
         <DropdownMenuSeparator />

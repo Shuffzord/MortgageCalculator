@@ -8,8 +8,8 @@ import AmortizationSchedule from "@/components/AmortizationSchedule";
 import OverpaymentOptimizationPanel from "@/components/OverpaymentOptimizationPanel";
 import DataTransferPanel from "@/components/DataTransferPanel";
 import LoadModal from "@/components/LoadModal";
-import { 
-  CalculationResults, 
+import {
+  CalculationResults,
   LoanDetails,
   SavedCalculation
 } from "@/lib/types";
@@ -23,6 +23,9 @@ import Footer from './ui/footer';
 import { ExperienceLevelAssessment } from "@/components/ExperienceLevelAssessment";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { useTutorialStore } from "@/lib/tutorial/tutorialState";
+import { useAuth } from "@/lib/auth/context";
+import { UpgradePrompt } from "@/components/gating";
+import { UsageProgress, useUsageData } from "@/components/usage";
 
 interface HomePageProps {
   showExportModal?: boolean;
@@ -39,6 +42,8 @@ const HomePage: React.FC<HomePageProps> = ({
 }) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  const { isAuthenticated, isPremium } = useAuth();
+  const { getUsageData } = useUsageData();
   
   // Tutorial state management
   const {
@@ -306,6 +311,29 @@ const HomePage: React.FC<HomePageProps> = ({
               yearlyData={calculationResults?.yearlyData || []}
               currency={selectedCurrency}
             />
+            
+            {/* Usage tracking for free users */}
+            {isAuthenticated && !isPremium() && (() => {
+              const usageData = getUsageData('calculations');
+              return (
+                <UsageProgress
+                  currentUsage={usageData.currentUsage}
+                  maxUsage={usageData.maxUsage}
+                  usageType="Calculations"
+                  onUpgrade={() => window.location.href = '/subscription'}
+                />
+              );
+            })()}
+            
+            {/* Premium features preview */}
+            {!isPremium() && calculationResults && (
+              <UpgradePrompt
+                feature="Advanced Analysis Tools"
+                message="Unlock loan comparison, scenario modeling, and detailed export features"
+                showBenefits={true}
+                variant="card"
+              />
+            )}
             
             {/* Advanced features section */}
             <div id="advanced-features">

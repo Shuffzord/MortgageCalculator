@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, DatabaseBackup } from 'lucide-react';
+import { Menu, X, DatabaseBackup, Crown, BarChart3, TrendingUp, Download } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { useLanguagePrefix, withLanguagePrefix } from '@/lib/languageUtils';
 import { useAuth } from '@/lib/auth/context';
 import { UserProfileDropdown, AuthButton } from '@/components/auth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel
+} from '@/components/ui/dropdown-menu';
 
 interface NavigationProps {
   onExportClick?: () => void;
@@ -15,7 +23,7 @@ interface NavigationProps {
 
 export default function Navigation({ onExportClick, onAuthClick }: NavigationProps) {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isPremium } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Get current path and language prefix
@@ -59,25 +67,72 @@ export default function Navigation({ onExportClick, onAuthClick }: NavigationPro
             <div className="hidden md:flex">
               <Link href={`/${langPrefix}/`}>
                 <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/`
-                  ? 'bg-[#0f172a] text-white rounded-t' 
+                  ? 'bg-[#0f172a] text-white rounded-t'
                   : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.home')}
                 </div>
               </Link>
               <Link href={`/${langPrefix}/about`}>
                 <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/about`
-                  ? 'bg-[#0f172a] text-white rounded-t' 
+                  ? 'bg-[#0f172a] text-white rounded-t'
                   : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.about')}
                 </div>
               </Link>
               <Link href={`/${langPrefix}/education`}>
                 <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/education`
-                  ? 'bg-[#0f172a] text-white rounded-t' 
+                  ? 'bg-[#0f172a] text-white rounded-t'
                   : 'text-gray-300 hover:text-white'}`}>
                   {t('navigation.education')}
                 </div>
               </Link>
+              
+              {/* Premium Features Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className={`px-5 py-3 font-medium cursor-pointer text-sm flex items-center gap-1 ${
+                    location.includes('/premium/')
+                      ? 'bg-[#0f172a] text-white rounded-t'
+                      : 'text-gray-300 hover:text-white'
+                  }`}>
+                    <Crown className="h-4 w-4" />
+                    Premium
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Premium Features</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${langPrefix}/premium/loan-comparison`}>
+                      <BarChart3 className="mr-2 h-4 w-4" />
+                      <span>Loan Comparison</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${langPrefix}/premium/scenario-modeling`}>
+                      <TrendingUp className="mr-2 h-4 w-4" />
+                      <span>Scenario Modeling</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${langPrefix}/premium/export-center`}>
+                      <Download className="mr-2 h-4 w-4" />
+                      <span>Export Center</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  {!isPremium() && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href={`/${langPrefix}/subscription`}>
+                          <Crown className="mr-2 h-4 w-4" />
+                          <span>Upgrade to Premium</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
@@ -101,6 +156,7 @@ export default function Navigation({ onExportClick, onAuthClick }: NavigationPro
                   onProfileClick={() => setLocation(`/${langPrefix}/profile`)}
                   onSettingsClick={() => setLocation(`/${langPrefix}/profile`)}
                   onVerificationClick={() => setLocation(`/${langPrefix}/auth?mode=verify`)}
+                  onSubscriptionClick={() => setLocation(`/${langPrefix}/subscription`)}
                 />
               ) : (
                 <AuthButton
@@ -162,6 +218,59 @@ export default function Navigation({ onExportClick, onAuthClick }: NavigationPro
               </div>
             </Link>
             
+            {/* Premium Features Section */}
+            <div className="border-t border-gray-700 pt-2 mt-2">
+              <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                Premium Features
+              </div>
+              <Link href={`/${langPrefix}/premium/loan-comparison`}>
+                <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                  location === `/${langPrefix}/premium/loan-comparison`
+                    ? 'bg-[#1e293b] text-white'
+                    : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
+                }`}>
+                  <div className="flex items-center">
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    Loan Comparison
+                  </div>
+                </div>
+              </Link>
+              <Link href={`/${langPrefix}/premium/scenario-modeling`}>
+                <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                  location === `/${langPrefix}/premium/scenario-modeling`
+                    ? 'bg-[#1e293b] text-white'
+                    : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
+                }`}>
+                  <div className="flex items-center">
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Scenario Modeling
+                  </div>
+                </div>
+              </Link>
+              <Link href={`/${langPrefix}/premium/export-center`}>
+                <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                  location === `/${langPrefix}/premium/export-center`
+                    ? 'bg-[#1e293b] text-white'
+                    : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
+                }`}>
+                  <div className="flex items-center">
+                    <Download className="h-4 w-4 mr-2" />
+                    Export Center
+                  </div>
+                </div>
+              </Link>
+              {!isPremium() && (
+                <Link href={`/${langPrefix}/subscription`}>
+                  <div className="block px-3 py-2 rounded-md text-base font-medium cursor-pointer text-yellow-300 hover:bg-[#1e293b] hover:text-yellow-200">
+                    <div className="flex items-center">
+                      <Crown className="h-4 w-4 mr-2" />
+                      Upgrade to Premium
+                    </div>
+                  </div>
+                </Link>
+              )}
+            </div>
+            
             {/* Mobile Authentication */}
             <div className="border-t border-gray-700 pt-2 mt-2">
               {isAuthenticated ? (
@@ -169,6 +278,23 @@ export default function Navigation({ onExportClick, onAuthClick }: NavigationPro
                   <Link href={`/${langPrefix}/profile`}>
                     <div className="block px-3 py-2 rounded-md text-base font-medium cursor-pointer text-gray-300 hover:bg-[#1e293b] hover:text-white">
                       {t('auth.profile.profile', 'Profile')}
+                    </div>
+                  </Link>
+                  <Link href={`/${langPrefix}/subscription`}>
+                    <div className="block px-3 py-2 rounded-md text-base font-medium cursor-pointer text-gray-300 hover:bg-[#1e293b] hover:text-white">
+                      <div className="flex items-center">
+                        {isPremium() ? (
+                          <>
+                            <Crown className="h-4 w-4 mr-2" />
+                            Manage Subscription
+                          </>
+                        ) : (
+                          <>
+                            <Crown className="h-4 w-4 mr-2" />
+                            Upgrade to Premium
+                          </>
+                        )}
+                      </div>
                     </div>
                   </Link>
                   <div className="px-3 py-2">

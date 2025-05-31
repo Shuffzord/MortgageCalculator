@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { User, Mail, Shield, Crown, Save, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { User, Mail, Shield, Crown, Save, Eye, EyeOff, Loader2, CreditCard } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/form';
 import SEOHead from '@/components/SEOHead';
 import { withAuth } from '@/lib/auth/context';
+import { SubscriptionDashboard } from '@/components/subscription';
 
 const profileSchema = z.object({
   displayName: z.string().min(2, 'Display name must be at least 2 characters').optional(),
@@ -255,6 +256,10 @@ function ProfilePage() {
             <TabsList>
               <TabsTrigger value="profile">{t('auth.profile.personalInfo', 'Personal Information')}</TabsTrigger>
               <TabsTrigger value="security">{t('auth.profile.security', 'Security')}</TabsTrigger>
+              <TabsTrigger value="subscription">
+                <CreditCard className="h-4 w-4 mr-2" />
+                {t('auth.profile.subscription', 'Subscription')}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="profile">
@@ -495,6 +500,10 @@ function ProfilePage() {
                   </Form>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="subscription">
+              <SubscriptionDashboard />
             </TabsContent>
           </Tabs>
         </div>
