@@ -239,7 +239,6 @@ const HomePage: React.FC<HomePageProps> = ({
       <ExperienceLevelAssessment
         isOpen={showExperienceModal}
         onClose={() => {
-          console.log('[HomePage] Modal closed');
           setShowExperienceModal(false);
         }}
         onExperienceLevelSet={handleExperienceSelect}
