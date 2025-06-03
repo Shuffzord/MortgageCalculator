@@ -849,7 +849,7 @@ export default function LoanInputForm({
             control={form.control}
             name="overpaymentPlans"
             render={({ field }) => (
-              <FormItem>
+              <FormItem id="overpayments-section">
                 <FormLabel className="flex items-center">
                   {t('overpayment.title')}
                   <Tooltip>
@@ -1117,7 +1117,7 @@ export default function LoanInputForm({
             control={form.control}
             name="additionalCosts"
             render={({ field }) => (
-              <FormItem>
+              <FormItem id="additional-costs-section">
                 <FormLabel className="flex items-center">
                   {t('form.additionalCosts') || "Additional Costs"}
                   <Tooltip>

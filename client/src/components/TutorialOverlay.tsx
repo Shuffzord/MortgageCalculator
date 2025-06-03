@@ -30,7 +30,7 @@ function getPositionForTarget(targetId: string, placement: Placement = 'bottom')
   const MARGIN = 12; // Space between target and tutorial
   const PADDING = 400; // Minimum space from viewport edges
   const TUTORIAL_WIDTH = 500;
-  const TUTORIAL_HEIGHT = 350; // Increased for better content visibility
+  const TUTORIAL_HEIGHT = 450; // Increased for better content visibility
   
   // Calculate center points
   const targetCenterX = rect.left + (rect.width / 2);
@@ -130,6 +130,7 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
     currentStep: stepIndex,
     startTutorial,
     completeStep,
+    goToPreviousStep,
     completeTutorial,
     abandonTutorial
   } = useTutorialStore();
@@ -247,6 +248,12 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
     onSkip();
   };
 
+  const handlePrevious = (): void => {
+    console.log('[TutorialOverlay] Going to previous step');
+    tutorialAnalytics.stepCompleted(stepIndex - 1); // Track backward navigation
+    goToPreviousStep();
+  };
+
   if (!isActive || !currentStep) {
     return null;
   }
@@ -282,7 +289,9 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
               step={currentStep}
               onComplete={() => handleStepComplete(stepIndex)}
               onSkip={handleSkip}
+              onPrevious={handlePrevious}
               isLastStep={stepIndex === steps.length - 1}
+              isFirstStep={stepIndex === 0}
             />
 
             {educationalContent && (

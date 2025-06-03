@@ -19,6 +19,7 @@
     },
      "common": {
       "skip": "Pomiń",
+      "previous": "Poprzedni",
       "next": "Następne",
       "step": "Krok {{current}}/{{total}}",
       "last": "Koniec"
@@ -146,7 +147,8 @@
     "startingAtMonth": "począwszy od miesiąca",
     "untilMonth": "do miesiąca",
     "impactTitle": "Wpływ różnych kwot nadpłaty",
-    "applyStrategy": "Zastosuj Strategię"
+    "applyStrategy": "Zastosuj Strategię",
+    "savingsSpotlight": "Wyróżnienie Oszczędności z Nadpłat"
   },
   "summary": {
     "title": "Podsumowanie Kredytu",
@@ -236,15 +238,23 @@
     "relatedTerms": "Powiązane Terminy",
     "faqTitle": "Często Zadawane Pytania o Kredyty Hipoteczne",
     "tooltips": {
-      "principal": "Pierwotna kwota pożyczona w kredycie, bez odsetek i innych opłat.",
+      "administrativeFees": "Różne opłaty pobierane przez kredytodawcę za obsługę kredytu, takie jak roczne opłaty serwisowe lub opłaty za wyciągi.",
+      "amortizationSchedule": "Szczegółowa tabela pokazująca podział każdej płatności i pozostałe saldo przez cały okres kredytu.",
+      "apr": "Roczna Stopa Procentowa - roczny koszt kredytu obejmujący odsetki i opłaty.",
+      "calculateButton": "Kliknij ten przycisk, aby przetworzyć szczegóły kredytu i wygenerować wyniki.",
       "interestRate": "Koszt pożyczenia pieniędzy, wyrażony jako procent kwoty kredytu. Określa, ile dodatkowo zapłacisz ponad kapitał.",
-      "loanTerm": "Okres, w którym zobowiązujesz się spłacić kredyt hipoteczny, zazwyczaj wyrażony w latach. Typowe okresy kredytowania to 15, 20 lub 30 lat.",
-      "repaymentModel": "Różne metody strukturyzacji spłat kredytu w czasie. Równe raty utrzymują tę samą wysokość przez cały okres kredytu, podczas gdy raty malejące zaczynają się od wyższych kwot, ale maleją w czasie.",
-      "loanStartDate": "Data rozpoczęcia kredytu hipotecznego i naliczania odsetek. Określa harmonogram spłat.",
-      "overpayment": "Dodatkowe płatności dokonywane ponad wymaganą ratę miesięczną, stosowane bezpośrednio do salda kapitału. Zmniejsza to całkowite odsetki i może skrócić okres kredytowania.",
-      "originationFee": "Opłata pobierana przez kredytodawców za rozpatrzenie nowego wniosku kredytowego, zazwyczaj 0,5% do 1% kwoty kredytu.",
       "loanInsurance": "Ubezpieczenie chroniące kredytodawcę w przypadku niewypłacalności kredytobiorcy. W przypadku kredytów hipotecznych często nazywane jest Prywatnym Ubezpieczeniem Hipotecznym (PUH).",
-      "administrativeFees": "Różne opłaty pobierane przez kredytodawcę za obsługę kredytu, takie jak roczne opłaty serwisowe lub opłaty za wyciągi."
+      "loanStartDate": "Data rozpoczęcia kredytu hipotecznego i naliczania odsetek. Określa harmonogram spłat.",
+      "loanTerm": "Okres, w którym zobowiązujesz się spłacić kredyt hipoteczny, zazwyczaj wyrażony w latach. Typowe okresy kredytowania to 15, 20 lub 30 lat.",
+      "monthlyPayment": "Stała kwota, którą będziesz płacić każdego miesiąca, obejmująca kapitał i odsetki.",
+      "originationFee": "Opłata pobierana przez kredytodawców za rozpatrzenie nowego wniosku kredytowego, zazwyczaj 0,5% do 1% kwoty kredytu.",
+      "overpayment": "Dodatkowe płatności dokonywane ponad wymaganą ratę miesięczną, stosowane bezpośrednio do salda kapitału. Zmniejsza to całkowite odsetki i może skrócić okres kredytowania.",
+      "overpaymentSpotlight": "Ta sekcja podkreśla potencjalne oszczędności z dokonywania dodatkowych płatności na kapitał kredytu.",
+      "paymentBreakdown": "Wizualna reprezentacja pokazująca, jak Twoje płatności są dzielone między kapitał a odsetki w czasie.",
+      "principal": "Pierwotna kwota pożyczona w kredycie, bez odsetek i innych opłat.",
+      "repaymentModel": "Różne metody strukturyzacji spłat kredytu w czasie. Równe raty utrzymują tę samą wysokość przez cały okres kredytu, podczas gdy raty malejące zaczynają się od wyższych kwot, ale maleją w czasie.",
+      "totalInterest": "Całkowita kwota odsetek, którą zapłacisz przez cały okres kredytowania.",
+      "totalPayment": "Całkowita kwota, którą zapłacisz przez cały okres kredytu, obejmująca kapitał i odsetki."
     }
   },
   "financialGlossary": {

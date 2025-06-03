@@ -121,7 +121,8 @@
     "startingAtMonth": "starting at month",
     "untilMonth": "until month",
     "impactTitle": "Impact of Different Overpayment Amounts",
-    "applyStrategy": "Apply Strategy"
+    "applyStrategy": "Apply Strategy",
+    "savingsSpotlight": "Overpayment Savings Spotlight"
   },
   "summary": {
     "title": "Loan Summary",
@@ -206,6 +207,7 @@
     },
     "common": {
       "skip": "Skip",
+      "previous": "Previous",
       "next": "Next",
       "step": "Step {{current}}/{{total}}",
       "last": "End"
@@ -231,15 +233,23 @@
     "relatedTerms": "Related Terms",
     "faqTitle": "Frequently Asked Questions About Mortgages",
     "tooltips": {
-      "principal": "The original amount of money borrowed in a loan, excluding interest and other fees.",
+      "administrativeFees": "Various fees charged by the lender for managing your loan, such as annual service fees or statement fees.",
+      "amortizationSchedule": "Detailed table showing each payment's breakdown and remaining balance throughout your loan term.",
+      "apr": "Annual Percentage Rate - the yearly cost of the loan including interest and fees.",
+      "calculateButton": "Click this button to process your loan details and generate the results.",
       "interestRate": "The cost of borrowing money, expressed as a percentage of the loan amount. It determines how much extra you pay beyond the principal.",
-      "loanTerm": "The length of time over which you agree to repay your mortgage, typically expressed in years. Common mortgage terms are 15, 20, or 30 years.",
-      "repaymentModel": "Different methods of structuring loan payments over time. Equal installments keep your payment the same throughout the loan, while decreasing installments start higher but decrease over time.",
-      "loanStartDate": "The date when your mortgage begins and interest starts accruing. This determines your payment schedule.",
-      "overpayment": "Additional payments made beyond the required monthly payment, applied directly to the principal balance. This reduces the total interest paid and can shorten the loan term.",
-      "originationFee": "A fee charged by lenders to process a new loan application, typically 0.5% to 1% of the loan amount.",
       "loanInsurance": "Insurance that protects the lender if the borrower defaults. For mortgages, this is often called Private Mortgage Insurance (PMI).",
-      "administrativeFees": "Various fees charged by the lender for managing your loan, such as annual service fees or statement fees."
+      "loanStartDate": "The date when your mortgage begins and interest starts accruing. This determines your payment schedule.",
+      "loanTerm": "The length of time over which you agree to repay your mortgage, typically expressed in years. Common mortgage terms are 15, 20, or 30 years.",
+      "monthlyPayment": "The fixed amount you'll pay each month, including principal and interest.",
+      "originationFee": "A fee charged by lenders to process a new loan application, typically 0.5% to 1% of the loan amount.",
+      "overpayment": "Additional payments made beyond the required monthly payment, applied directly to the principal balance. This reduces the total interest paid and can shorten the loan term.",
+      "overpaymentSpotlight": "This section highlights the potential savings from making additional payments toward your loan principal.",
+      "paymentBreakdown": "Visual representation showing how your payments are split between principal and interest over time.",
+      "principal": "The original amount of money borrowed in a loan, excluding interest and other fees.",
+      "repaymentModel": "Different methods of structuring loan payments over time. Equal installments keep your payment the same throughout the loan, while decreasing installments start higher but decrease over time.",
+      "totalInterest": "The total amount of interest you'll pay over the entire loan term.",
+      "totalPayment": "The total amount you'll pay over the life of the loan, including principal and interest."
     }
   },
   "financialGlossary": {

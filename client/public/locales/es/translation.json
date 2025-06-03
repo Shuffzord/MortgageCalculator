@@ -125,7 +125,8 @@
     "startingAtMonth": "comenzando en el mes",
     "untilMonth": "hasta el mes",
     "impactTitle": "Impacto de los diferentes montos de sobrepago",
-    "applyStrategy": "Aplicar Estrategia"
+    "applyStrategy": "Aplicar Estrategia",
+    "savingsSpotlight": "Destacado de Ahorros por Sobrepago"
   },
   "summary": {
     "title": "Resumen del Préstamo",
@@ -201,6 +202,7 @@
     },
     "common": {
       "skip": "Saltar",
+      "previous": "Anterior",
       "next": "Siguiente",
       "step": "Paso {{current}} de {{total}}"
     },
@@ -230,15 +232,23 @@
     "relatedTerms": "Términos Relacionados",
     "faqTitle": "Preguntas Frecuentes Sobre Hipotecas",
     "tooltips": {
-      "principal": "La cantidad original de dinero prestada en un préstamo, excluyendo intereses y otras tarifas.",
+      "administrativeFees": "Varias tarifas cobradas por el prestamista por administrar su préstamo, como tarifas de servicio anual o tarifas de estado de cuenta.",
+      "amortizationSchedule": "Tabla detallada que muestra el desglose de cada pago y el saldo restante durante todo el plazo de su préstamo.",
+      "apr": "Tasa Porcentual Anual - el costo anual del préstamo incluyendo intereses y tarifas.",
+      "calculateButton": "Haga clic en este botón para procesar los detalles de su préstamo y generar los resultados.",
       "interestRate": "El costo de pedir dinero prestado, expresado como porcentaje del monto del préstamo. Determina cuánto paga adicional más allá del principal.",
-      "loanTerm": "El período de tiempo durante el cual acuerda pagar su hipoteca, típicamente expresado en años. Los plazos hipotecarios comunes son 15, 20 o 30 años.",
-      "repaymentModel": "Diferentes métodos de estructurar los pagos del préstamo a lo largo del tiempo. Las cuotas iguales mantienen su pago igual durante todo el préstamo, mientras que las cuotas decrecientes comienzan más altas pero disminuyen con el tiempo.",
-      "loanStartDate": "La fecha en que comienza su hipoteca y comienzan a acumularse los intereses. Esto determina su calendario de pagos.",
-      "overpayment": "Pagos adicionales realizados más allá del pago mensual requerido, aplicados directamente al saldo principal. Esto reduce el interés total pagado y puede acortar el plazo del préstamo.",
-      "originationFee": "Una tarifa cobrada por los prestamistas para procesar una nueva solicitud de préstamo, típicamente del 0.5% al 1% del monto del préstamo.",
       "loanInsurance": "Seguro que protege al prestamista si el prestatario incumple. Para hipotecas, esto a menudo se llama Seguro Hipotecario Privado (PMI).",
-      "administrativeFees": "Varias tarifas cobradas por el prestamista por administrar su préstamo, como tarifas de servicio anual o tarifas de estado de cuenta."
+      "loanStartDate": "La fecha en que comienza su hipoteca y comienzan a acumularse los intereses. Esto determina su calendario de pagos.",
+      "loanTerm": "El período de tiempo durante el cual acuerda pagar su hipoteca, típicamente expresado en años. Los plazos hipotecarios comunes son 15, 20 o 30 años.",
+      "monthlyPayment": "La cantidad fija que pagarás cada mes, incluyendo capital e intereses.",
+      "originationFee": "Una tarifa cobrada por los prestamistas para procesar una nueva solicitud de préstamo, típicamente del 0.5% al 1% del monto del préstamo.",
+      "overpayment": "Pagos adicionales realizados más allá del pago mensual requerido, aplicados directamente al saldo principal. Esto reduce el interés total pagado y puede acortar el plazo del préstamo.",
+      "overpaymentSpotlight": "Esta sección destaca los ahorros potenciales de hacer pagos adicionales hacia el capital de su préstamo.",
+      "paymentBreakdown": "Representación visual que muestra cómo se dividen sus pagos entre capital e intereses a lo largo del tiempo.",
+      "principal": "La cantidad original de dinero prestada en un préstamo, excluyendo intereses y otras tarifas.",
+      "repaymentModel": "Diferentes métodos de estructurar los pagos del préstamo a lo largo del tiempo. Las cuotas iguales mantienen su pago igual durante todo el préstamo, mientras que las cuotas decrecientes comienzan más altas pero disminuyen con el tiempo.",
+      "totalInterest": "La cantidad total de intereses que pagarás durante todo el plazo del préstamo.",
+      "totalPayment": "La cantidad total que pagarás durante la vida del préstamo, incluyendo capital e intereses."
     }
   },
   "financialGlossary": {

@@ -33,6 +33,7 @@ interface TutorialState {
   // Actions
   startTutorial: () => void;
   completeStep: (step: number) => void;
+  goToPreviousStep: () => void;
   setExperienceLevel: (level: 'beginner' | 'intermediate' | 'advanced') => void;
   completeTutorial: () => void;
   abandonTutorial: () => void;
@@ -135,6 +136,19 @@ export const useTutorialStore = create<TutorialState>()(
           completedSteps: [...state.completedSteps, step],
           currentStep: step + 1
         }));
+      },
+
+      goToPreviousStep: () => {
+        console.log('[Tutorial] Going to previous step');
+        set((state) => {
+          const newStep = Math.max(0, state.currentStep - 1);
+          // Remove the current step from completed steps if going back
+          const updatedCompletedSteps = state.completedSteps.filter(step => step < newStep);
+          return {
+            currentStep: newStep,
+            completedSteps: updatedCompletedSteps
+          };
+        });
       },
 
       setExperienceLevel: (level: 'beginner' | 'intermediate' | 'advanced') => {

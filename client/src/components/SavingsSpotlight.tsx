@@ -51,7 +51,7 @@ const SavingsSpotlight: React.FC<SavingsSpotlightProps> = ({
   }
 
   return (
-    <div className="bg-green-50 p-4 rounded-lg border border-green-100 mt-4">
+    <div id="overpayment-savings-spotlight" className="bg-green-50 p-4 rounded-lg border border-green-100 mt-4">
 
       <div className="text-center mb-4">
         <h3 className="text-lg font-bold text-green-700">
