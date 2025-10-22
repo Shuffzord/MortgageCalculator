@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__list_dir",
+      "Bash(npx vite-bundle-visualizer:*)",
+      "Bash(jq:*)",
+      "Bash(npm test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Calculadora de Hipotecas",
+  "description": "Una calculadora hipotecaria completa que ayuda a los usuarios a calcular pagos hipotecarios, ver programas de amortización y optimizar sus préstamos.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  },
+  "inLanguage": "es",
+  "availableLanguage": ["en", "es", "pl"],
+  "featureList": [
+    "Calcular pagos hipotecarios",
+    "Ver programas de amortización",
+    "Comparar diferentes escenarios de préstamos",
+    "Analizar estrategias de pago adicional",
+    "Exportar datos en varios formatos"
+  ],
+  "screenshot": "https://www.smarter-loan.com/mortgage-calculator-preview.jpg",
+  "potentialAction": {
+    "@type": "UseAction",
+    "target": "https://www.smarter-loan.com/es/"
+  },
+  "mainEntity": {
+    "@type": "FinancialProduct",
+    "name": "Hipoteca",
+    "category": "Préstamo",
+    "description": "Un préstamo utilizado para comprar bienes inmuebles, donde la propiedad sirve como garantía para el préstamo."
+  },
+  "sameAs": [
+    "https://www.smarter-loan.com/",
+    "https://www.smarter-loan.com/pl/"
+  ]
+}

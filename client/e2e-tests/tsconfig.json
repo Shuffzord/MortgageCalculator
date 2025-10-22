@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["./**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noEmit": true,
+    "types": ["node", "jest", "puppeteer"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../src/*"]
+    }
+  }
+}

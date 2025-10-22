@@ -1,0 +1,33 @@
+There are multiple build errors, example below. Build the solution and fix potential type errors
+
+
+client/src/components/HomeWrapper.tsx:16:7 - error TS2322: Type '{ selectedCurrency: string; onCurrencyChange: (currency: string) => void; showExportModal: boolean; setShowExportModal: Dispatch<SetStateAction<boolean>>; showLoadModal: boolean; setShowLoadModal: Dispatch<...>; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'selectedCurrency' does not exist on type 'IntrinsicAttributes'.
+
+16       selectedCurrency={selectedCurrency}
+         ~~~~~~~~~~~~~~~~
+
+client/src/components/LoadModal.tsx:42:87 - error TS2339: Property 'interestRate' does not exist on type 'LoanDetails'.
+
+42                   ${calc.loanDetails.principal.toLocaleString()} at {calc.loanDetails.interestRate}% for {calc.loanDetails.loanTerm} years
+                                                                                         ~~~~~~~~~~~~
+
+client/src/components/mortgage-calculator/saved-calculations-modal.tsx:11:10 - error TS2459: Module '"@/lib/mortgage-calculator"' declares 'LoanDetails' locally, but it is not exported.
+
+11 import { LoanDetails } from "@/lib/mortgage-calculator";
+            ~~~~~~~~~~~
+
+  client/src/lib/mortgage-calculator.ts:7:10
+    7 import { LoanDetails, OverpaymentDetails, PaymentData } from './types';
+               ~~~~~~~~~~~
+    'LoanDetails' is declared here.
+
+client/src/components/mortgage-calculator/saved-calculations-modal.tsx:61:22 - error TS2304: Cannot find name 'formatCurrency'.
+
+61                     {formatCurrency(calc.principal, 'en-US', calc.currency || 'USD')} at {calc.interestRate}% for {calc.loanTerm} years
+                        ~~~~~~~~~~~~~~
+
+client/src/lib/direct-test.ts:53:51 - error TS2345: Argument of type 'number' is not assignable to parameter of type '{ startMonth: number; interestRate: number; }[]'.
+
+53   const results = calculateLoanDetails(principal, interestRate, termYears);
+                                                     ~~~~~~~~~~~~

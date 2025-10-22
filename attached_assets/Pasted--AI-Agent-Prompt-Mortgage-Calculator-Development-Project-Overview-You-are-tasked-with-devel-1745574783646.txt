@@ -1,0 +1,74 @@
+# AI Agent Prompt: Mortgage Calculator Development
+
+## Project Overview
+You are tasked with developing a mortgage calculator application that runs entirely on the client side. This calculator will help users understand their loan payments, simulate various repayment scenarios, and visualize the distribution between principal and interest over time. The system should be powerful enough to handle complex calculations while remaining user-friendly.
+
+## Target for Proof of Concept (POC)
+For the initial POC phase, focus on creating a minimal functional version with these specific features:
+
+1. **Basic loan calculation functionality:**
+   - Input fields for principal loan amount, interest rate, and loan term
+   - Calculate monthly payment for equal installments (annuity)
+   - Generate basic repayment schedule showing principal and interest breakdown for each payment
+
+2. **Simple visualization:**
+   - A bar chart showing the distribution between principal and interest for each year
+   - A pie chart showing the total interest vs. principal over the full loan term
+
+3. **Single overpayment scenario:**
+   - Allow users to add a one-time overpayment at a specific point in time
+   - Recalculate the repayment schedule with two options: reduced term or reduced payment
+
+4. **Client-side storage:**
+   - Save calculation parameters in browser localStorage
+   - Allow loading of previously saved calculation
+
+## Technical Guidelines for POC
+
+1. **Development approach:**
+   - Use React with TypeScript for the frontend
+   - Use a simple state management approach (React context or basic state)
+   - Incorporate Chart.js for visualizations
+
+2. **Code structure:**
+   - Create a clear separation between the UI components and calculation logic
+   - Build a reusable calculation engine that can be extended later
+   - Document all financial formulas with comments explaining the mathematical approach
+
+3. **UI requirements:**
+   - Create a clean, minimalist interface with form validation
+   - Include basic tooltips explaining key financial terms
+   - Ensure all calculation results are clearly presented and formatted properly
+
+4. **Testing focus:**
+   - Implement unit tests for the core calculation functions
+   - Include test cases for edge cases (very long terms, high interest rates, etc.)
+   - Create a sample dataset for demonstrating the POC
+
+## POC Deliverables
+
+1. A working prototype accessible via web browser
+2. Source code with documentation
+3. Unit tests for core calculation functions
+4. A brief technical document explaining:
+   - The implementation approach
+   - Financial formulas used
+   - Known limitations
+   - Recommended next steps for Phase 1
+
+## POC Success Criteria
+
+The POC will be considered successful if:
+1. Users can enter loan details and get accurate calculation results
+2. The repayment schedule correctly shows the amortization with principal and interest breakdown
+3. The visualization clearly illustrates the loan structure
+4. The overpayment functionality correctly recalculates the schedule
+5. All calculations are mathematically accurate when compared to established mortgage calculators
+
+## Important Notes
+
+- Focus on calculation accuracy first, then UI/UX
+- Ensure that the foundation is extensible for future paid features
+- The POC should demonstrate both technical feasibility and value to users
+- All processing must happen entirely on the client side with no server requirements
+- The code structure should allow for easy addition of different repayment models in the future

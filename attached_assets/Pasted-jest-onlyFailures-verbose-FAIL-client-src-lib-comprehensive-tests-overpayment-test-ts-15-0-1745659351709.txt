@@ -1,0 +1,224 @@
+jest --onlyFailures --verbose
+
+ FAIL  client/src/lib/comprehensive-tests/overpayment.test.ts (15.022 s)
+  Mortgage Overpayment Calculations
+    ✓ O1: One-Time Overpayment with Term Reduction (74 ms)
+    ✕ O2: One-Time Overpayment with Payment Reduction (7 ms)
+    ✕ O3: Regular Monthly Overpayments (7 ms)
+
+  ● Mortgage Overpayment Calculations › O2: One-Time Overpayment with Payment Reduction
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 1266.72
+    Received: 1242.89
+
+    Expected precision:    1
+    Expected difference: < 0.05
+    Received difference:   23.829999999999927
+
+      82 |     
+      83 |     // Verify the new monthly payment is close to expected
+    > 84 |     expect(overpaymentResults.newCalculation.monthlyPayment).toBeCloseTo(expectedNewMonthlyPayment, 1);
+         |                                                              ^
+      85 |     
+      86 |     // Verify interest savings
+      87 |     const interestSavings = standardTotalInterest - overpaymentResults.newCalculation.totalInterest;
+
+      at client/src/lib/comprehensive-tests/overpayment.test.ts:84:62
+      at fulfilled (client/src/lib/comprehensive-tests/overpayment.test.ts:11:58)
+
+  ● Mortgage Overpayment Calculations › O3: Regular Monthly Overpayments
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 42736
+    Received:   0
+
+      123 |     // Verify interest savings
+      124 |     const interestSavings = standardResults.totalInterest - results.totalInterest;
+    > 125 |     expect(interestSavings).toBeGreaterThan(expectedInterestSaved * 0.8); // Allow 20% tolerance
+          |                             ^
+      126 |   });
+      127 | });
+
+      at client/src/lib/comprehensive-tests/overpayment.test.ts:125:29
+      at client/src/lib/comprehensive-tests/overpayment.test.ts:14:71
+      at Object.<anonymous>.__awaiter (client/src/lib/comprehensive-tests/overpayment.test.ts:10:12)
+      at Object.<anonymous> (client/src/lib/comprehensive-tests/overpayment.test.ts:92:55)
+
+ FAIL  client/src/lib/comprehensive-tests/interest-rate-changes.test.ts (15.23 s)
+  Mortgage Calculations with Interest Rate Changes
+    ✕ I1: One-Time Interest Rate Change (12 ms)
+    ✕ I2: Multiple Scheduled Interest Rate Changes (50 ms)
+    ✓ Combined Rate Changes with Overpayments (61 ms)
+
+  ● Mortgage Calculations with Interest Rate Changes › I1: One-Time Interest Rate Change
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 1702.8
+    Received: 1652.77
+
+    Expected precision:    1
+    Expected difference: < 0.05
+    Received difference:   50.02999999999997
+
+      36 |     
+      37 |     // Validate payment after rate change (at index changeAtMonth - 1)
+    > 38 |     expect(results.amortizationSchedule[changeAtMonth].monthlyPayment).toBeCloseTo(newMonthlyPayment, 1);
+         |                                                                        ^
+      39 |     
+      40 |     // Validate total interest paid
+      41 |     expect(results.totalInterest).toBeCloseTo(expectedTotalInterest, 0);
+
+      at client/src/lib/comprehensive-tests/interest-rate-changes.test.ts:38:72
+      at fulfilled (client/src/lib/comprehensive-tests/interest-rate-changes.test.ts:11:58)
+
+  ● Mortgage Calculations with Interest Rate Changes › I2: Multiple Scheduled Interest Rate Changes
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 1454.8
+    Received: 1420.36
+
+    Expected precision:    1
+    Expected difference: < 0.05
+    Received difference:   34.440000000000055
+
+      84 |     
+      85 |     // Validate payments after each rate change
+    > 86 |     expect(results.amortizationSchedule[60].monthlyPayment).toBeCloseTo(expectedPayments[1].payment, 1);
+         |                                                             ^
+      87 |     expect(results.amortizationSchedule[120].monthlyPayment).toBeCloseTo(expectedPayments[2].payment, 1);
+      88 |     expect(results.amortizationSchedule[180].monthlyPayment).toBeCloseTo(expectedPayments[3].payment, 1);
+      89 |     expect(results.amortizationSchedule[240].monthlyPayment).toBeCloseTo(expectedPayments[4].payment, 1);
+
+      at client/src/lib/comprehensive-tests/interest-rate-changes.test.ts:86:61
+      at fulfilled (client/src/lib/comprehensive-tests/interest-rate-changes.test.ts:11:58)
+
+ FAIL  client/src/lib/comprehensive-tests/edge-cases.test.ts (15.034 s)
+  Mortgage Calculator Edge Cases
+    ✕ E1: Extra-Long Term Mortgage (40 years) (15 ms)
+    ✕ E2: Very Large Principal Amount (4 ms)
+    ✓ Zero Principal Amount (1 ms)
+    ✓ Zero Interest Rate (2 ms)
+    ✕ Extremely Short Term (1 year)
+
+  ● Mortgage Calculator Edge Cases › E1: Extra-Long Term Mortgage (40 years)
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 1363.95
+    Received: 1348.69
+
+    Expected precision:    1
+    Expected difference: < 0.05
+    Received difference:   15.259999999999991
+
+      24 |     
+      25 |     // Validate monthly payment
+    > 26 |     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);
+         |                                    ^
+      27 |     
+      28 |     // Validate total interest
+      29 |     expect(results.totalInterest).toBeCloseTo(expectedTotalInterest, 0);
+
+      at Object.<anonymous> (client/src/lib/comprehensive-tests/edge-cases.test.ts:26:36)
+
+  ● Mortgage Calculator Edge Cases › E2: Very Large Principal Amount
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 25334.37
+    Received: 25334.27
+
+    Expected precision:    1
+    Expected difference: < 0.05
+    Received difference:   0.09999999999854481
+
+      51 |     
+      52 |     // Validate monthly payment
+    > 53 |     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);
+         |                                    ^
+      54 |     
+      55 |     // Validate total interest
+      56 |     expect(results.totalInterest).toBeCloseTo(expectedTotalInterest, 0);
+
+      at Object.<anonymous> (client/src/lib/comprehensive-tests/edge-cases.test.ts:53:36)
+
+  ● Mortgage Calculator Edge Cases › Extremely Short Term (1 year)
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 25548.49
+    Received: 25613.56
+
+    Expected precision:    1
+    Expected difference: < 0.05
+    Received difference:   65.06999999999971
+
+      126 |     
+      127 |     // Validate monthly payment
+    > 128 |     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 1);
+          |                                    ^
+      129 |     
+      130 |     // Validate payment count
+      131 |     expect(results.amortizationSchedule.length).toBe(termYears * 12);
+
+      at Object.<anonymous> (client/src/lib/comprehensive-tests/edge-cases.test.ts:128:36)
+
+ FAIL  client/src/lib/comprehensive-tests/amortization-validation.test.ts (15.236 s)
+  Amortization Schedule Validation
+    ✕ A1: Amortization Schedule Validation for 15-year 3.5% Loan (27 ms)
+    ✕ A3: Round-Off Error Accumulation Test (3 ms)
+
+  ● Amortization Schedule Validation › A1: Amortization Schedule Validation for 15-year 3.5% Loan
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 1429.77
+    Received: 1428.61
+
+    Expected precision:    2
+    Expected difference: < 0.005
+    Received difference:   1.1600000000000819
+
+      30 |     // Test total payment amount is consistent throughout the schedule
+      31 |     schedule.forEach(payment => {
+    > 32 |       expect(Math.round(payment.monthlyPayment * 100) / 100).toBeCloseTo(expectedBreakdowns[0].total, 2);
+         |                                                              ^
+      33 |     });
+      34 |     
+      35 |     // Test specific payment breakdowns
+
+      at client/src/lib/comprehensive-tests/amortization-validation.test.ts:32:62
+          at Array.forEach (<anonymous>)
+      at Object.<anonymous> (client/src/lib/comprehensive-tests/amortization-validation.test.ts:31:14)
+
+  ● Amortization Schedule Validation › A3: Round-Off Error Accumulation Test
+
+    expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 1654.55
+    Received: 1655.45
+
+    Expected precision:    2
+    Expected difference: < 0.005
+    Received difference:   0.900000000000091
+
+      74 |     
+      75 |     // Verify monthly payment calculation
+    > 76 |     expect(results.monthlyPayment).toBeCloseTo(expectedMonthlyPayment, 2);
+         |                                    ^
+      77 |     
+      78 |     // Verify the final balance is zero
+      79 |     expect(schedule[schedule.length - 1].balance).toBeCloseTo(0, 2);
+
+      at Object.<anonymous> (client/src/lib/comprehensive-tests/amortization-validation.test.ts:76:36)
+
+Test Suites: 4 failed, 4 total
+Tests:       9 failed, 4 passed, 13 total
+Snapshots:   0 total
+Time:        16.371 s, estimated 37 s
+Ran all test suites.
