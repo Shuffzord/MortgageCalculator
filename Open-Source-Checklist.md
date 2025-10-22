@@ -1,139 +1,147 @@
-Here’s a concrete, repo-specific plan to get this project truly open-source ready. I’ll sequence work so you can make fast progress while building quality safeguards.
+## Open-Source Readiness Checklist
 
-Current Observations
+Use this file to track work to make the repo production‑quality and contributor‑friendly. Convert major items into GitHub issues, link them back here, and check items off as they are completed.
 
-Build/deploy: Vite app (root client), Azure Static Web Apps GitHub Action (.github/workflows/azure-static-web-apps.yml), Node 20, unit tests in CI.
-Tests: Many unit tests for calculation engines, Puppeteer E2E runner present but not in CI by default.
-i18n: i18next with locales in client/public/locales/{en,es,pl}/translation.json. Translation validator exists.
-Potential cleanup: .bak sources (client/src/lib/*.{ts}.bak), .todo tests, attached_assets/ paste artifacts, archive/ leftovers, hard-coded GTM/GA IDs in client/index.html.
-Tooling gaps: No ESLint/Prettier config checked in; no CodeQL/Scorecards; no coverage gate; no LICENSE file (MIT in package.json but add file); no branch protection policy encoded.
-Phase 0 — Source Hygiene (P0)
+Legend: P0 = Blocker, P1 = Important, P2 = Nice‑to‑have
 
-Remove vestigial files:
-client/src/lib/*.bak, client/src/components/*/*.todo, attached_assets/*, archive/* if not needed.
-Add ignores for test artifacts, screenshots, reports if large.
-Identify and delete dead code:
-Run depcheck and ts-prune to find unused deps/exports.
-Add “unused import” rule in ESLint to stop regressions.
-Secrets & IDs:
-Move hard-coded analytics IDs out of client/index.html to Vite env (VITE_ANALYTICS_ID, VITE_GTM_ID) and wire at runtime.
-Licensing:
-Add LICENSE (MIT) to match package.json.
-Phase 1 — Tooling & Quality Gates (P0)
+### Completed So Far
+- [x] Update `README.md` with stack, scripts, architecture, deploy notes
+- [x] Add `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`
+- [x] Remove plan files from repo root
 
-Linting & formatting:
-ESLint (typescript-eslint, react, jsx-a11y, testing-library, jest) and Prettier config.
-Add npm run lint and a CI job that fails on errors.
-TypeScript:
-Ensure strict mode on, tighten tsconfig.json (noImplicitAny, noUnusedLocals/Params, exactOptionalPropertyTypes).
-Pre-commit automation:
-Husky + lint-staged to run eslint --fix, prettier --check, type-check on staged files.
-Commit/PR standards:
-Conventional Commits (commitlint) or at least a PR template to capture test plan, screenshots, and i18n updates.
-Coverage:
-Add Jest coverage thresholds and fail CI under threshold.
-Optional: upload to Codecov with PR comments.
-Phase 2 — Testing Strategy (P0/P1)
+---
 
-Unit tests:
-Ensure coverage on core engines: client/src/lib/calculationCore.ts, calculationEngine.ts, overpaymentCalculator.ts, optimizationEngine.ts, formatters.ts.
-Add regression tests for rounding, edge cases (rate changes mid-term, overpayment edge months).
-E2E tests:
-Run Puppeteer E2E in CI headless on PRs, at least smoke paths:
-/en/ rendering, form interactions, amortization schedule visible, chart renders, i18n switch.
-Store artifacts (screenshots/reports) as workflow artifacts on failure.
-Optionally evaluate Playwright later for parallel, trace, and cross-browser.
-Accessibility checks:
-Add axe-core checks in E2E or a11y unit tests for key flows.
-Performance tests:
-Add Lighthouse CI on PRs for Home page; fail on major regressions (LCP, CLS, Best Practices).
-Phase 3 — Security & Supply Chain (P0)
+### Phase 0 — Source Hygiene (P0)
+- [ ] Remove vestigial files and folders: `client/src/lib/*.bak`, `client/src/components/*/*.todo`, `attached_assets/`, `archive/` (confirm necessity or relocate to `docs/appendix/`)
+- [ ] Add `.gitignore` entries for E2E screenshots/reports if large
+- [ ] Move analytics IDs from `client/index.html` to Vite env (`VITE_ANALYTICS_ID`, `VITE_GTM_ID`); inject via code
+- [ ] Add `LICENSE` (MIT) file to match `package.json`
+- [ ] Dead code audit: `npx depcheck` (unused deps) and `npx ts-prune` (unused exports)
 
-GitHub security:
-Enable Dependabot (security + version updates), Secret scanning, Code scanning (CodeQL for JS/TS).
-Add OSSF Scorecard workflow.
-Audits:
-Keep npm audit integrated (already via scripts/security-audit.js); enforce severity threshold in CI.
-Lockfiles:
-Keep package-lock.json committed and updated; avoid pinning to latest.
-CSP hardening:
-Review CSP in staticwebapp.config.json and client/index.html.
-Reduce 'unsafe-inline' where possible by moving analytics to external script tags with nonces or using framework-based injection; document any required exceptions.
-Dependency policy:
-Add Renovate or Dependabot for automated version bumps; include grouping and weekly batched PRs.
-Phase 4 — CI/CD Refinements (P0/P1)
+Acceptance Criteria
+- No unused exports reported by `ts-prune`; no unused deps reported by `depcheck`
+- No `.bak`/`.todo`/artifact folders left, or documented if retained
 
-Split workflows:
-ci.yml: lint, type-check, unit tests, coverage, E2E smoke (pull_request).
-deploy.yml: build + Azure deploy on main after CI passes.
-Caching & speed:
-Use actions/setup-node cache for npm, and cache ~/.vite if helpful.
-PR Preview:
-Azure SWA already gives preview for PRs; ensure the E2E smoke can run against preview URL or local Vite server, not both.
-Required checks:
-Make CI status checks required on main: lint, type-check, unit tests, E2E smoke.
-Phase 5 — Dependencies & Performance (P1)
+Commands
+```
+npx depcheck
+npx ts-prune
+```
 
-Update dependencies:
-Use npx npm-check-updates -ui locally to evaluate upgrades; schedule batch updates with tests.
-Bundle & perf:
-Enable bundle analysis (rollup-plugin-visualizer) for periodic audits.
-Verify tree-shaking with Radix, Recharts/Chart.js; lazy-load heavy charts.
-Optimize CSP-compatible analytics loading (defer scripts).
-Phase 6 — Documentation & Community (P0/P1)
+### Phase 1 — Tooling & Quality Gates (P0)
+- [ ] Add ESLint (typescript-eslint, react, jsx-a11y, testing-library, jest) and Prettier; `npm run lint`
+- [ ] Enforce TypeScript strictness: enable `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`
+- [ ] Pre-commit: Husky + lint-staged running `eslint --fix`, `prettier --check`, and type-check on staged files
+- [ ] PR standards: add PR template; consider Conventional Commits (commitlint)
+- [ ] Coverage: set Jest thresholds; fail CI below threshold; optional Codecov integration
 
-Already added: README.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md.
-Add:
-SECURITY.md (vuln report policy), SUPPORT.md (how to get help), ROADMAP.md (high-level milestones), GOVERNANCE.md (decision-making), CODEOWNERS (review routing).
-Issue templates (bug, feature), PR template.
-FUNDING.yml if sponsorship is desired.
-Architecture docs:
-Brief “How the calculator works” with formulas and assumptions.
-Document i18n process and translation validator usage.
-Privacy:
-Add Privacy and Terms pages; be transparent about analytics and cookies.
-Phase 7 — Branch Protections & Policies (P0)
+Acceptance Criteria
+- CI fails on lint errors, TS errors, and coverage breaches
+- Consistent formatting enforced locally and in CI
 
-Protect main:
-Require PR, 1–2 approvals, dismiss stale reviews on new commits.
-Require up-to-date branch, required status checks (lint/type/test/e2e/coverage).
-Enforce linear history or squash merges; enable “delete head branches” after merge.
-Optionally require signed commits or DCO.
-Phase 8 — Repository Cleanup & Consistency (P0/P1)
+### Phase 2 — Testing Strategy (P0/P1)
+- [ ] Unit tests: ensure coverage for `calculationCore.ts`, `calculationEngine.ts`, `overpaymentCalculator.ts`, `optimizationEngine.ts`, `formatters.ts`
+- [ ] Add edge/regression cases: rate changes mid-term, overpayment boundary months, rounding behavior
+- [ ] E2E smoke in CI: render `/en/`, submit form, verify amortization schedule, chart, language switch; upload artifacts on failure
+- [ ] Accessibility checks with `axe-core` for critical screens
+- [ ] Performance check: Lighthouse CI on Home page with budgets
 
-Consolidate directories:
-Remove/relocate attached_assets/ and archive/ out of the main repo or into docs/appendix/ if needed.
-Editor settings:
-Add .editorconfig and consistent .gitattributes (line endings), VSCode recommendations file if desired.
-Assets:
-Ensure large images are optimized or stored via LFS if they must be versioned.
-Phase 9 — Releases & Versioning (P1)
+Acceptance Criteria
+- Reliable, repeatable E2E run headless in CI with artifacts
+- Measurable coverage improvement and enforced minimum threshold
 
-Tags & changelog:
-Adopt Keep a Changelog; tag releases with GitHub Releases.
-Automation:
-Use changesets or release-please to automate versioning and notes (even if not publishing to npm).
-“Initial public release”:
-After cleanup and gates are green, squash history (if desired) and tag v1.0.0.
-Phase 10 — Optional Enhancements (P2)
+### Phase 3 — Security & Supply Chain (P0)
+- [ ] Enable Dependabot (security alerts + version updates)
+- [ ] Enable secret scanning and push protection
+- [ ] Add CodeQL workflow for JS/TS
+- [ ] Add OSSF Scorecard workflow
+- [ ] Enforce `npm audit` severity threshold in CI (block high/critical)
+- [ ] CSP hardening: reduce `'unsafe-inline'` where possible; document exceptions
 
-Split core into a reusable package:
-Extract client/src/lib/* mortgage logic to a @smarter-loan/mortgage-core npm package for reuse and testability.
-Visual regression testing:
-Use Playwright or jest-image-snapshot for key charts/schedules.
-Telemetry for errors:
-Client-side error reporting (Sentry) with privacy-first configuration and opt-out.
-How To Execute Efficiently
+Acceptance Criteria
+- Security dashboards green or actionable; CI blocks high/critical vulns
+- CSP documented and justified; no analytics breakage
 
-Week 1 (P0): Hygiene (cleanup, IDs to env), ESLint/Prettier/Husky, CI split + required checks, basic coverage threshold, SECURITY.md, issue/PR templates, branch protections.
-Week 2 (P0/P1): E2E smoke in CI, Dependabot/Renovate, CodeQL/Scorecard, CSP review, documentation set (Roadmap/Support), Lighthouse CI.
-Week 3 (P1): Dependency updates, bundle analysis improvements, additional unit tests and a11y checks, privacy/terms pages.
-Week 4 (P1/P2): Optional packaging split, visual regression, release automation, tag initial release.
-Success Criteria
+### Phase 4 — CI/CD Refinements (P0/P1)
+- [ ] Create `ci.yml` (pull_request): lint, type-check, unit tests, coverage, E2E smoke
+- [ ] Create `deploy.yml` (push to `main`): build + Azure SWA deploy after CI pass
+- [ ] Cache npm and Vite appropriately
+- [ ] Make status checks required on `main`
 
-CI green on lint, type-check, unit tests, E2E smoke, coverage ≥ threshold.
-No unused exports/dependencies per ts-prune/depcheck.
-Security scanners (Dependabot, CodeQL, Audit) show no known critical issues.
-Docs complete (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, ROADMAP, SUPPORT).
-Branch protection enforced; PR previews working; automated release process in place.
-If you want, I can open issues for each phase with checklists and wire up the CI templates next.
+Acceptance Criteria
+- Fast CI with stable caching; clear separation of test vs. deploy
+- Required checks enforced on `main`
+
+### Phase 5 — Dependencies & Performance (P1)
+- [ ] Audit outdated packages: `npm outdated`
+- [ ] Use `npx npm-check-updates -u` to stage batch upgrades; run tests
+- [ ] Add bundle analysis (rollup-plugin-visualizer) and document tops
+- [ ] Lazy-load heavy charts; verify tree-shaking of Radix/Recharts/Chart.js
+
+Acceptance Criteria
+- Dependencies current with no breaking regressions; bundle size understood
+
+### Phase 6 — Documentation & Community (P0/P1)
+- [ ] Add `SECURITY.md` (vulnerability disclosure process)
+- [ ] Add `SUPPORT.md` (how to get help)
+- [ ] Add `ROADMAP.md` (short- and mid-term milestones)
+- [ ] Add `GOVERNANCE.md` and `CODEOWNERS` (review routing)
+- [ ] Add issue templates (bug, feature) and PR template
+- [ ] Add `FUNDING.yml` if sponsorship desired
+- [ ] Architecture notes: formulas/assumptions for calculations; i18n workflow doc
+- [ ] Privacy/Terms pages in app; document analytics
+
+Acceptance Criteria
+- Contributors can self-serve; predictable reviews; clear policies
+
+### Phase 7 — Branch Protections & Policies (P0)
+- [ ] Protect `main`: require PR reviews (1–2), up-to-date branches, required status checks
+- [ ] Enforce squash merges or linear history; auto-delete merged branches
+- [ ] Consider requiring signed commits or DCO
+
+Acceptance Criteria
+- Accidental direct pushes and broken main prevented by policy
+
+### Phase 8 — Repository Cleanup & Consistency (P0/P1)
+- [ ] Add `.editorconfig` and `.gitattributes` for consistent editors and line endings
+- [ ] Optimize large images or move to LFS
+- [ ] Move `attached_assets/` and `archive/` to `docs/appendix/` or remove
+- [ ] Update `.gitignore` for E2E artifacts if needed
+
+Acceptance Criteria
+- Clean root; predictable diffs; minimal repo bloat
+
+### Phase 9 — Releases & Versioning (P1)
+- [ ] Adopt Keep a Changelog; generate release notes
+- [ ] Automate releases (Changesets or Release Please)
+- [ ] Tag initial public release `v1.0.0`
+
+Acceptance Criteria
+- Repeatable, documented release process with changelog
+
+### Phase 10 — Optional Enhancements (P2)
+- [ ] Extract `client/src/lib/*` into `@smarter-loan/mortgage-core` package
+- [ ] Add visual regression testing (Playwright traces or image snapshots)
+- [ ] Add error telemetry (Sentry) with privacy-first config and opt-out
+
+---
+
+## Execution Plan (Suggested)
+- Week 1 (P0): Hygiene, ESLint/Prettier/Husky, CI split + required checks, coverage gate, SECURITY.md, issue/PR templates, branch protection
+- Week 2 (P0/P1): E2E smoke in CI, Dependabot/Renovate, CodeQL/Scorecard, CSP review, Lighthouse CI, Support/Roadmap
+- Week 3 (P1): Dependency updates, bundle analysis, more unit tests + a11y, privacy/terms
+- Week 4 (P1/P2): Optional core package extraction, visual regression, release automation, tag `v1.0.0`
+
+## Success Criteria
+- CI green on lint, type-check, unit tests, E2E smoke; coverage ≥ threshold
+- No unused exports/dependencies (ts-prune/depcheck)
+- Security tools (Dependabot, CodeQL, Audit) show no high/critical issues
+- Docs and policies complete; protections enforced on `main`
+
+
+FInally:
+Squash history: git checkout main; git reset $(git commit-tree HEAD^{tree} -m "Initial public release"); verify; git push --force-with-lease origin main. Replace message as needed.
+
+
+Review: https://www.freecodecamp.org/news/how-to-start-an-open-source-project-on-github-tips-from-building-my-trending-repo/
+And think about additioanl improvements

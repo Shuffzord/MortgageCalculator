@@ -1,0 +1,8 @@
+dist
+build
+node_modules
+coverage
+client/public
+attached_assets
+archive
+
