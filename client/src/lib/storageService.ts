@@ -1,8 +1,4 @@
-import { 
-  LoanDetails, 
-  OverpaymentDetails, 
-  SavedCalculation 
-} from './types';
+import { LoanDetails, OverpaymentDetails, SavedCalculation } from './types';
 
 const STORAGE_KEY = 'mortgageCalculations';
 
@@ -15,25 +11,25 @@ export function saveCalculation(
 ): SavedCalculation {
   // Get existing calculations from localStorage
   const savedCalculations = getSavedCalculations();
-  
+
   // Create a new calculation object
   const newCalculation: SavedCalculation = {
     id: Date.now(),
     name: `Mortgage - $${loanDetails.principal.toLocaleString()} at ${loanDetails.interestRatePeriods[0].interestRate}%`,
     date: new Date().toISOString(),
-    loanDetails: { 
+    loanDetails: {
       ...loanDetails,
       // Ensure we have the proper structure
-      overpaymentPlans: loanDetails.overpaymentPlans || [overpaymentDetails]
-    }
+      overpaymentPlans: loanDetails.overpaymentPlans || [overpaymentDetails],
+    },
   };
-  
+
   // Add to list of saved calculations
   savedCalculations.push(newCalculation);
-  
+
   // Save back to localStorage
   localStorage.setItem(STORAGE_KEY, JSON.stringify(savedCalculations));
-  
+
   return newCalculation;
 }
 
@@ -42,9 +38,9 @@ export function saveCalculation(
  */
 export function getSavedCalculations(): SavedCalculation[] {
   const savedData = localStorage.getItem(STORAGE_KEY);
-  
+
   if (!savedData) return [];
-  
+
   try {
     const parsedData = JSON.parse(savedData);
     if (Array.isArray(parsedData)) {
@@ -53,7 +49,7 @@ export function getSavedCalculations(): SavedCalculation[] {
   } catch (error) {
     console.error('Error parsing saved calculations:', error);
   }
-  
+
   return [];
 }
 
@@ -62,12 +58,12 @@ export function getSavedCalculations(): SavedCalculation[] {
  */
 export function deleteCalculation(id: number): boolean {
   const savedCalculations = getSavedCalculations();
-  const updatedCalculations = savedCalculations.filter(calc => calc.id !== id);
-  
+  const updatedCalculations = savedCalculations.filter((calc) => calc.id !== id);
+
   if (updatedCalculations.length === savedCalculations.length) {
     return false; // Nothing was deleted
   }
-  
+
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCalculations));
   return true;
 }

@@ -15,31 +15,32 @@ export function useComparison(
   calculationWithoutOverpayments: CalculationResults | null,
   autoCompare = true
 ) {
-  const [comparisonResults, setComparisonResults] = useState<ComparisonResults & { isLoading: boolean }>({
+  const [comparisonResults, setComparisonResults] = useState<
+    ComparisonResults & { isLoading: boolean }
+  >({
     interestSaved: 0,
     timeSaved: 0,
     percentageSaved: 0,
-    isLoading: false
+    isLoading: false,
   });
-  
+
   const [error, setError] = useState<string | null>(null);
 
   const runComparison = useCallback(() => {
-    
     // If there's no calculation with overpayments or they're the same object, there are no overpayments to compare
     if (!baseCalculation || !calculationWithoutOverpayments) {
       setComparisonResults({
         interestSaved: 0,
         timeSaved: 0,
         percentageSaved: 0,
-        isLoading: false
+        isLoading: false,
       });
       setError(null);
       return;
     }
 
     // Set loading state
-    setComparisonResults(prev => ({ ...prev, isLoading: true }));
+    setComparisonResults((prev) => ({ ...prev, isLoading: true }));
     setError(null);
 
     // Use setTimeout to ensure the loading state doesn't get stuck
@@ -49,14 +50,14 @@ export function useComparison(
           baseCalculation,
           calculationWithoutOverpayments
         );
-        
+
         setComparisonResults({
           ...results,
-          isLoading: false
+          isLoading: false,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred during comparison');
-        setComparisonResults(prev => ({ ...prev, isLoading: false }));
+        setComparisonResults((prev) => ({ ...prev, isLoading: false }));
       }
     }, 0);
   }, [baseCalculation, calculationWithoutOverpayments]);
@@ -71,6 +72,6 @@ export function useComparison(
   return {
     ...comparisonResults,
     error,
-    runComparison
+    runComparison,
   };
 }

@@ -144,6 +144,7 @@ TRANSLATION VALIDATION REPORT
 **Extra Keys**: Keys that exist in one language but not in English (base language)
 
 **Example:**
+
 ```json
 // en/translation.json
 { "welcome": "Welcome" }
@@ -157,6 +158,7 @@ TRANSLATION VALIDATION REPORT
 Placeholders must match exactly between languages:
 
 **Valid:**
+
 ```json
 // en
 { "greeting": "Hello {{name}}" }
@@ -165,6 +167,7 @@ Placeholders must match exactly between languages:
 ```
 
 **Invalid:**
+
 ```json
 // en
 { "greeting": "Hello {{name}}" }
@@ -177,6 +180,7 @@ Placeholders must match exactly between languages:
 Object nesting must be consistent:
 
 **Valid:**
+
 ```json
 // en
 { "calculator": { "input": "Enter amount" } }
@@ -185,6 +189,7 @@ Object nesting must be consistent:
 ```
 
 **Invalid:**
+
 ```json
 // en
 { "calculator": { "input": "Enter amount" } }
@@ -199,8 +204,8 @@ Finds values used for multiple keys (potential copy-paste errors):
 ```json
 {
   "button.save": "Save",
-  "button.submit": "Save",  // ⚠️ Suspicious duplicate
-  "button.confirm": "Save"  // ⚠️ Suspicious duplicate
+  "button.submit": "Save", // ⚠️ Suspicious duplicate
+  "button.confirm": "Save" // ⚠️ Suspicious duplicate
 }
 ```
 
@@ -250,7 +255,7 @@ Edit `scripts/translation-validator.js` constants to customize:
 
 ```javascript
 const LOCALES_DIR = path.join(__dirname, '../client/public/locales');
-const SUPPORTED_LANGUAGES = ['en', 'es', 'pl'];  // Add more languages
+const SUPPORTED_LANGUAGES = ['en', 'es', 'pl']; // Add more languages
 const TRANSLATION_FILE = 'translation.json';
 ```
 
@@ -283,6 +288,7 @@ const TRANSLATION_FILE = 'translation.json';
 ### Regular Checks
 
 **Recommended Schedule:**
+
 - Before every release
 - On pull requests changing translations
 - Weekly automated check
@@ -334,6 +340,7 @@ console.log(results);
 ## Future Enhancements
 
 Potential additions:
+
 - Translation quality scoring
 - Fuzzy duplicate detection
 - Pluralization rule validation

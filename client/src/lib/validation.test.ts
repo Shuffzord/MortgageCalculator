@@ -5,7 +5,7 @@ import {
   normalizeInterestRate,
   normalizeLoanTerm,
   normalizeDate,
-  normalizeLoanDetails
+  normalizeLoanDetails,
 } from './validation';
 import { LoanDetails } from './types';
 
@@ -18,7 +18,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Test Loan'
+        name: 'Test Loan',
       };
 
       const result = validateLoanDetails(loanDetails);
@@ -33,7 +33,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Test Loan'
+        name: 'Test Loan',
       };
 
       const result = validateLoanDetails(loanDetails);
@@ -48,7 +48,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Test Loan'
+        name: 'Test Loan',
       };
 
       const result = validateLoanDetails(loanDetails);
@@ -63,7 +63,7 @@ describe('Validation Functions', () => {
         loanTerm: 0,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Test Loan'
+        name: 'Test Loan',
       };
 
       const result = validateLoanDetails(loanDetails);
@@ -81,11 +81,11 @@ describe('Validation Functions', () => {
             amount: -100,
             startDate: new Date(),
             isRecurring: true,
-            frequency: 'monthly'
-          }
+            frequency: 'monthly',
+          },
         ],
         startDate: new Date(),
-        name: 'Test Loan'
+        name: 'Test Loan',
       };
 
       const result = validateLoanDetails(loanDetails, { validateDates: true });
@@ -100,7 +100,7 @@ describe('Validation Functions', () => {
         loanTerm: 50, // Long term
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Test Loan'
+        name: 'Test Loan',
       };
 
       // Allow negative principal
@@ -163,7 +163,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Current Loan'
+        name: 'Current Loan',
       };
 
       const newLoan: LoanDetails = {
@@ -172,7 +172,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'New Loan'
+        name: 'New Loan',
       };
 
       const result = validateBreakEvenParams(currentLoan, newLoan, 3000);
@@ -187,7 +187,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Current Loan'
+        name: 'Current Loan',
       };
 
       const newLoan: LoanDetails = {
@@ -196,7 +196,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'New Loan'
+        name: 'New Loan',
       };
 
       const result = validateBreakEvenParams(currentLoan, newLoan, 3000);
@@ -211,7 +211,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'Current Loan'
+        name: 'Current Loan',
       };
 
       const newLoan: LoanDetails = {
@@ -220,7 +220,7 @@ describe('Validation Functions', () => {
         loanTerm: 30,
         overpaymentPlans: [],
         startDate: new Date(),
-        name: 'New Loan'
+        name: 'New Loan',
       };
 
       const result = validateBreakEvenParams(currentLoan, newLoan, -1000);
@@ -270,7 +270,7 @@ describe('Validation Functions', () => {
       const loanDetailsInput = {
         principal: 300000,
         interestRatePeriods: [
-          { startMonth: 1, interestRate: 0.045 } // Decimal format
+          { startMonth: 1, interestRate: 0.045 }, // Decimal format
         ],
         loanTerm: 30,
         overpaymentPlans: [
@@ -278,13 +278,13 @@ describe('Validation Functions', () => {
             amount: 10000,
             startDate: '2025-01-15', // String date
             isRecurring: false,
-            frequency: 'one-time'
-          }
+            frequency: 'one-time',
+          },
         ],
         startDate: '2024-06-01', // String date
-        name: 'Test Loan'
+        name: 'Test Loan',
       };
-      
+
       // Cast to LoanDetails to test normalization
       const loanDetails = loanDetailsInput as unknown as LoanDetails;
 

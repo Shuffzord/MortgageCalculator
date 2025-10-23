@@ -2,23 +2,15 @@
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp@latest"
-      ]
+      "args": ["-y", "@upstash/context7-mcp@latest"]
     },
-     "calculator": {
+    "calculator": {
       "command": "uvx",
-      "args": [
-        "mcp-server-calculator"
-      ]
+      "args": ["mcp-server-calculator"]
     },
     "puppeteer": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-puppeteer"
-      ]
-    },
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    }
   }
 }

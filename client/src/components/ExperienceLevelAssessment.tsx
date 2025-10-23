@@ -1,18 +1,12 @@
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { tutorialAnalytics } from "../lib/tutorial/analytics";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Label } from "./ui/label";
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { tutorialAnalytics } from '../lib/tutorial/analytics';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
+import { Button } from './ui/button';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Label } from './ui/label';
 
-export type ExperienceLevel = "beginner" | "intermediate" | "advanced";
+export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
 
 interface ExperienceLevelAssessmentProps {
   isOpen: boolean;
@@ -26,9 +20,7 @@ export function ExperienceLevelAssessment({
   onExperienceLevelSet,
 }: ExperienceLevelAssessmentProps) {
   const { t } = useTranslation();
-  const [selectedLevel, setSelectedLevel] =
-    useState<ExperienceLevel>("beginner");
-
+  const [selectedLevel, setSelectedLevel] = useState<ExperienceLevel>('beginner');
 
   const handleSubmit = () => {
     tutorialAnalytics.experienceLevelChanged(selectedLevel);
@@ -37,7 +29,7 @@ export function ExperienceLevelAssessment({
   };
 
   const handleSkip = () => {
-    tutorialAnalytics.tutorialAbandoned(0, "not_selected");
+    tutorialAnalytics.tutorialAbandoned(0, 'not_selected');
     onClose();
   };
 
@@ -53,20 +45,18 @@ export function ExperienceLevelAssessment({
           >
             <div className="flex items-center space-x-2 mb-4">
               <RadioGroupItem value="beginner" id="beginner" />
-              <Label htmlFor="beginner">
-                {t("tutorial.experience.beginner")}
-              </Label>
+              <Label htmlFor="beginner">{t('tutorial.experience.beginner')}</Label>
             </div>
             <div className="flex items-center space-x-2 mb-4">
               <RadioGroupItem value="intermediate" id="intermediate" disabled />
               <Label htmlFor="intermediate" className="text-muted-foreground">
-                {t("tutorial.experience.intermediate")}
+                {t('tutorial.experience.intermediate')}
               </Label>
             </div>
             <div className="flex items-center space-x-2 mb-4">
               <RadioGroupItem value="advanced" id="advanced" disabled />
               <Label htmlFor="advanced" className="text-muted-foreground">
-                {t("tutorial.experience.advanced")}
+                {t('tutorial.experience.advanced')}
               </Label>
             </div>
           </RadioGroup>
@@ -74,14 +64,11 @@ export function ExperienceLevelAssessment({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleSkip} className="mr-2">
-            {t("common.skip")}
+            {t('common.skip')}
           </Button>
-          <Button onClick={handleSubmit}>{t("common.start")}</Button>
-         
+          <Button onClick={handleSubmit}>{t('common.start')}</Button>
         </DialogFooter>
-          <div className="bg-yellow-500 text-yellow-900 text-center py-2 block">
-        {t('app.beta')}
-      </div>
+        <div className="bg-yellow-500 text-yellow-900 text-center py-2 block">{t('app.beta')}</div>
       </DialogContent>
     </Dialog>
   );

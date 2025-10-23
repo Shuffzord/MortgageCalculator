@@ -1,13 +1,14 @@
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import './index.css';
 // i18n is imported in App.tsx
 
 // Handle HMR reconnection issues
-if (import.meta.hot) {  import.meta.hot.on('vite:beforeUpdate', () => {
+if (import.meta.hot) {
+  import.meta.hot.on('vite:beforeUpdate', () => {
     // Development-only HMR update handler
   });
-  
+
   // Add a listener for vite connection status
   window.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
@@ -16,7 +17,7 @@ if (import.meta.hot) {  import.meta.hot.on('vite:beforeUpdate', () => {
         // If we don't get a connection event soon, reload the page
         window.location.reload();
       }, 1000);
-      
+
       // Clear timeout if we get a connection event
       import.meta.hot?.on('vite:connect', () => {
         clearTimeout(viteHmrTimeoutId);
@@ -64,4 +65,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById('root')!).render(<App />);

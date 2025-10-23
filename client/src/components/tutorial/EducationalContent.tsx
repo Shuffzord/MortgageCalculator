@@ -22,7 +22,7 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
   concepts = [],
   interactiveExample,
   onExampleComplete,
-  onContentView
+  onContentView,
 }) => {
   const { t } = useTranslation();
 
@@ -33,7 +33,10 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
       content: (
         <div className="space-y-2">
           {glossaryTerms.map((term) => (
-            <div key={term.term} className="bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors">
+            <div
+              key={term.term}
+              className="bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors"
+            >
               <h5 className="font-medium text-sm">{term.term}</h5>
               <p className="text-sm text-gray-600 mt-1">{term.definition}</p>
               {term.example && (
@@ -44,7 +47,7 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
             </div>
           ))}
         </div>
-      )
+      ),
     },
     concepts.length > 0 && {
       title: t('education.concepts'),
@@ -52,7 +55,10 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
       content: (
         <div className="space-y-3">
           {concepts.map((concept) => (
-            <div key={concept.concept} className="bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors">
+            <div
+              key={concept.concept}
+              className="bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors"
+            >
               <h5 className="font-medium text-sm">{concept.concept}</h5>
               <p className="text-sm text-gray-600 mt-1">{concept.explanation}</p>
               <p className="text-sm text-gray-600 mt-1">
@@ -67,7 +73,7 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
             </div>
           ))}
         </div>
-      )
+      ),
     },
     interactiveExample && {
       title: t('education.interactive'),
@@ -76,9 +82,7 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
         <div className="space-y-2">
           <div className="bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors">
             <h5 className="font-medium text-sm">{interactiveExample.title}</h5>
-            <p className="text-sm text-gray-600 mt-1">
-              {interactiveExample.description}
-            </p>
+            <p className="text-sm text-gray-600 mt-1">{interactiveExample.description}</p>
             <div className="mt-3 space-y-2">
               {interactiveExample.scenarios.map((scenario) => (
                 <div key={scenario.name} className="text-sm">
@@ -97,8 +101,8 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
             )}
           </div>
         </div>
-      )
-    }
+      ),
+    },
   ].filter(Boolean) as ExpandableSection[];
 
   const [sections, setSections] = useState<ExpandableSection[]>(availableSections);
@@ -110,20 +114,22 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
 
   useEffect(() => {
     if (onContentView) {
-      glossaryTerms.forEach(term => {
+      glossaryTerms.forEach((term) => {
         onContentView(`glossary-${term.term}`);
       });
-      concepts.forEach(concept => {
+      concepts.forEach((concept) => {
         onContentView(`concept-${concept.concept}`);
       });
     }
   }, [glossaryTerms, concepts, onContentView]);
 
   const toggleSection = (index: number) => {
-    setSections(prev => prev.map((section, i) => ({
-      ...section,
-      isExpanded: i === index ? !section.isExpanded : section.isExpanded
-    })));
+    setSections((prev) =>
+      prev.map((section, i) => ({
+        ...section,
+        isExpanded: i === index ? !section.isExpanded : section.isExpanded,
+      }))
+    );
   };
 
   return (
@@ -141,11 +147,7 @@ export const EducationalContent: React.FC<EducationalContentProps> = ({
               <ChevronDown className="h-4 w-4 text-gray-500" />
             )}
           </button>
-          {section.isExpanded && (
-            <div className="p-3 space-y-2">
-              {section.content}
-            </div>
-          )}
+          {section.isExpanded && <div className="p-3 space-y-2">{section.content}</div>}
         </div>
       ))}
     </div>

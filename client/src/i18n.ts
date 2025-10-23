@@ -8,44 +8,44 @@ const config: InitOptions = {
   // Language settings
   fallbackLng: 'en',
   supportedLngs: ['en', 'es', 'pl'],
-  
+
   // Debug settings
   debug: false,
-  
+
   // Namespace settings
   defaultNS: 'translation',
-  
+
   // Interpolation settings
   interpolation: {
     escapeValue: false, // React already does escaping
   },
-  
+
   // Backend options
   backend: {
     loadPath: '/locales/{{lng}}/{{ns}}.json',
   },
-  
+
   // Detection options
   detection: {
     // Order of language detection
     order: ['path', 'querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
-    
+
     // Cache settings
     caches: ['localStorage', 'cookie'],
-    
+
     // Path detection settings
     lookupFromPathIndex: 0,
-    
+
     // Cookie settings
     cookieMinutes: 10080, // 7 days
     cookieDomain: 'localhost',
-    
+
     // Query string settings
     lookupQuerystring: 'lng',
-    
+
     // Local storage settings
     lookupLocalStorage: 'i18nextLng',
-  }
+  },
 };
 
 i18n

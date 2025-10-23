@@ -12,7 +12,7 @@ export const mockLocalStorage = {
   },
   clear() {
     this.store = {};
-  }
+  },
 };
 
 // Mock analytics
@@ -22,18 +22,19 @@ export const mockAnalytics = {
   tutorialCompleted: jest.fn(),
   tutorialAbandoned: jest.fn(),
   experienceLevelChanged: jest.fn(),
-  getEvents: jest.fn().mockReturnValue([])
+  getEvents: jest.fn().mockReturnValue([]),
 };
 
 // Mock i18n translations
 export const mockTranslations = {
   en: {
-    translation: {}
-  }
+    translation: {},
+  },
 };
 
 // Common test data generators
-export const generateTestId = (prefix: string) => `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
+export const generateTestId = (prefix: string) =>
+  `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
 
 // Common test helpers
 export const waitForMockCall = (mock: jest.Mock, callIndex = 0) => {

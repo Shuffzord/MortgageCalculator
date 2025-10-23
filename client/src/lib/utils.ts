@@ -1,20 +1,20 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { PaymentData, OverpaymentDetails, RepaymentModel } from "./types";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { PaymentData, OverpaymentDetails, RepaymentModel } from './types';
 import { calculateBaseMonthlyPayment, roundToCents as roundToCentsCore } from './calculationCore';
 // Re-export formatting functions from formatters.ts for backward compatibility
 import { formatCurrency, formatDate, formatTimePeriod, formatDateLegacy } from './formatters';
 export { formatCurrency, formatDate, formatTimePeriod, formatDateLegacy };
 
 export const CURRENCIES = [
-  { code: "USD", symbol: "$", name: "US Dollar" },
-  { code: "EUR", symbol: "€", name: "Euro" },
-  { code: "GBP", symbol: "£", name: "British Pound" },
-  { code: "JPY", symbol: "¥", name: "Japanese Yen" },
-  { code: "CAD", symbol: "C$", name: "Canadian Dollar" },
-  { code: "AUD", symbol: "A$", name: "Australian Dollar" },
-  { code: "CHF", symbol: "CHF", name: "Swiss Franc" },
-  { code: "PLN", symbol: "zł", name: "Polish Złoty" },
+  { code: 'USD', symbol: '$', name: 'US Dollar' },
+  { code: 'EUR', symbol: '€', name: 'Euro' },
+  { code: 'GBP', symbol: '£', name: 'British Pound' },
+  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+  { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc' },
+  { code: 'PLN', symbol: 'zł', name: 'Polish Złoty' },
 ];
 
 export function areMonetaryValuesEqual(a: number, b: number, tolerance = 0.01): boolean {
@@ -54,18 +54,18 @@ export function roundToCents(amount: number): number {
 // Overloaded signatures for backward compatibility
 export function generateAmortizationSchedule(
   principal: number,
-  interestRatePeriods: { startMonth: number; interestRate: number; }[],
+  interestRatePeriods: { startMonth: number; interestRate: number }[],
   termYears: number,
   overpaymentAmount?: number | OverpaymentDetails,
   overpaymentMonth?: number | Date,
   reduceTermNotPayment?: boolean,
   startDate?: Date,
-  repaymentModel?: RepaymentModel,
+  repaymentModel?: RepaymentModel
 ): PaymentData[] {
   // Handle legacy parameters format
   let overpaymentPlan: OverpaymentDetails | undefined;
   let scheduleStartDate = startDate;
-  
+
   if (typeof overpaymentAmount === 'number' && typeof overpaymentMonth === 'number') {
     // Legacy format with separate parameters
     overpaymentPlan = {
@@ -75,7 +75,7 @@ export function generateAmortizationSchedule(
       startDate: scheduleStartDate || new Date(),
       isRecurring: false,
       frequency: 'one-time',
-      effect: reduceTermNotPayment ? 'reduceTerm' : 'reducePayment'
+      effect: reduceTermNotPayment ? 'reduceTerm' : 'reducePayment',
     };
   } else if (typeof overpaymentAmount === 'object') {
     // New format with OverpaymentDetails object
@@ -84,11 +84,11 @@ export function generateAmortizationSchedule(
       scheduleStartDate = overpaymentMonth;
     }
   }
-  
+
   // Proceed with calculation
   const originalTotalPayments = termYears * 12;
   const schedule: PaymentData[] = [];
-  let monthlyPayment = 0;
+  const monthlyPayment = 0;
 
   let remainingPrincipal = principal;
   let paymentNum = 1;
@@ -105,11 +105,11 @@ export function generateAmortizationSchedule(
   let frequencyMultiplier = 0;
   if (overpaymentPlan && overpaymentPlan.frequency) {
     frequencyMultiplier =
-      overpaymentPlan.frequency === "monthly"
+      overpaymentPlan.frequency === 'monthly'
         ? 1
-        : overpaymentPlan.frequency === "quarterly"
+        : overpaymentPlan.frequency === 'quarterly'
           ? 3
-          : overpaymentPlan.frequency === "annual"
+          : overpaymentPlan.frequency === 'annual'
             ? 12
             : 0;
   }
@@ -138,11 +138,7 @@ export function generateAmortizationSchedule(
       payment = monthlyPayment;
     } else {
       // Default: equal installments (annuity) model
-      monthlyPayment = calculateBaseMonthlyPayment(
-        remainingPrincipal,
-        monthlyRate,
-        totalPayments,
-      );
+      monthlyPayment = calculateBaseMonthlyPayment(remainingPrincipal, monthlyRate, totalPayments);
       interestPayment = remainingPrincipal * monthlyRate;
       principalPayment = monthlyPayment - interestPayment;
       payment = monthlyPayment;
@@ -163,7 +159,7 @@ export function generateAmortizationSchedule(
       overpaymentPlan.startMonth !== undefined &&
       paymentNum >= overpaymentPlan.startMonth &&
       (!overpaymentPlan.endMonth || paymentNum <= overpaymentPlan.endMonth) &&
-      (overpaymentPlan.frequency === "monthly" ||
+      (overpaymentPlan.frequency === 'monthly' ||
         (paymentNum - overpaymentPlan.startMonth) % frequencyMultiplier === 0)
     ) {
       overpaymentAmount = overpaymentPlan.amount;
@@ -195,7 +191,7 @@ export function generateAmortizationSchedule(
       overpaymentAmount: overpaymentAmount,
       totalInterest: 0, // This will be calculated in a separate pass
       totalPayment: 0, // This will be calculated in a separate pass
-      paymentDate
+      paymentDate,
     });
 
     paymentNum++;
@@ -205,7 +201,7 @@ export function generateAmortizationSchedule(
       newMonthlyPayment = calculateBaseMonthlyPayment(
         remainingPrincipal,
         monthlyRate,
-        totalPayments,
+        totalPayments
       );
       monthlyPayment = newMonthlyPayment;
     }
@@ -227,21 +223,20 @@ export function generateAmortizationSchedule(
   // Calculate running totals for interest and payments
   let runningTotalInterest = 0;
   let runningTotalPayment = 0;
-  
+
   for (let i = 0; i < schedule.length; i++) {
     runningTotalInterest += schedule[i].interestPayment;
     runningTotalPayment += schedule[i].monthlyPayment;
-    
+
     schedule[i].totalInterest = runningTotalInterest;
     schedule[i].totalPayment = runningTotalPayment;
   }
-  
+
   return schedule;
 }
 
-
 export function getCurrencySymbol(code: string): string {
-  const currency = CURRENCIES.find(c => c.code === code);
+  const currency = CURRENCIES.find((c) => c.code === code);
   return currency ? currency.symbol : CURRENCIES[0].symbol;
 }
 

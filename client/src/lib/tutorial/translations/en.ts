@@ -9,7 +9,7 @@ export const tutorialTranslations = {
     steps: {
       welcome: {
         title: 'Welcome to the Mortgage Calculator',
-        content: 'Let\'s walk through the main features of this calculator.',
+        content: "Let's walk through the main features of this calculator.",
       },
       loanInput: {
         title: 'Loan Details',

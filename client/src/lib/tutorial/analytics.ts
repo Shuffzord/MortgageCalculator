@@ -8,10 +8,10 @@ interface TutorialEvent {
 }
 
 class TutorialAnalytics {
-  private events: TutorialEvent[] = []
+  private events: TutorialEvent[] = [];
 
   private logEvent(event: TutorialEvent) {
-    this.events.push(event)
+    this.events.push(event);
     // In a real implementation, this would send to an analytics service
     //TODO:
   }
@@ -20,24 +20,24 @@ class TutorialAnalytics {
     this.logEvent({
       eventName: 'tutorial_started',
       experienceLevel,
-      timestamp: Date.now()
-    })
+      timestamp: Date.now(),
+    });
   }
 
   stepCompleted(stepNumber: number) {
     this.logEvent({
       eventName: 'step_completed',
       stepNumber,
-      timestamp: Date.now()
-    })
+      timestamp: Date.now(),
+    });
   }
 
   tutorialCompleted(experienceLevel?: string) {
     this.logEvent({
       eventName: 'tutorial_completed',
       experienceLevel,
-      timestamp: Date.now()
-    })
+      timestamp: Date.now(),
+    });
   }
 
   tutorialAbandoned(stepNumber: number, experienceLevel?: string) {
@@ -45,23 +45,23 @@ class TutorialAnalytics {
       eventName: 'tutorial_abandoned',
       stepNumber,
       experienceLevel,
-      timestamp: Date.now()
-    })
+      timestamp: Date.now(),
+    });
   }
 
   experienceLevelChanged(level: string) {
     this.logEvent({
       eventName: 'experience_level_changed',
       experienceLevel: level,
-      timestamp: Date.now()
-    })
+      timestamp: Date.now(),
+    });
   }
 
   interactiveExampleCompleted(sectionId: string) {
     this.logEvent({
       eventName: 'interactive_example_completed',
       sectionId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -69,7 +69,7 @@ class TutorialAnalytics {
     this.logEvent({
       eventName: 'educational_content_viewed',
       contentId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -78,4 +78,4 @@ class TutorialAnalytics {
   }
 }
 
-export const tutorialAnalytics = new TutorialAnalytics()
+export const tutorialAnalytics = new TutorialAnalytics();

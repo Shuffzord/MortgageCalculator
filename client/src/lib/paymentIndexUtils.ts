@@ -35,8 +35,10 @@ export function indexToPaymentMonth(index: number): number {
  * @returns The number of months between the two dates
  */
 export function monthsBetweenDates(startDate: Date, endDate: Date): number {
-  return (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
-         (endDate.getMonth() - startDate.getMonth());
+  return (
+    (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+    (endDate.getMonth() - startDate.getMonth())
+  );
 }
 
 /**

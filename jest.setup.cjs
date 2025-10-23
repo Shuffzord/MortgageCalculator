@@ -7,28 +7,28 @@ class MockTutorialAnalytics {
   logEvent(event) {
     this.events.push({
       ...event,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   tutorialStarted(experienceLevel) {
     this.logEvent({
       eventName: 'tutorial_started',
-      experienceLevel
+      experienceLevel,
     });
   }
 
   stepCompleted(stepNumber) {
     this.logEvent({
       eventName: 'step_completed',
-      stepNumber
+      stepNumber,
     });
   }
 
   tutorialCompleted(experienceLevel) {
     this.logEvent({
       eventName: 'tutorial_completed',
-      experienceLevel
+      experienceLevel,
     });
   }
 
@@ -36,14 +36,14 @@ class MockTutorialAnalytics {
     this.logEvent({
       eventName: 'tutorial_abandoned',
       stepNumber,
-      experienceLevel
+      experienceLevel,
     });
   }
 
   experienceLevelChanged(level) {
     this.logEvent({
       eventName: 'experience_level_changed',
-      experienceLevel: level
+      experienceLevel: level,
     });
   }
 
@@ -60,7 +60,7 @@ const mockAnalytics = new MockTutorialAnalytics();
 
 // Mock the analytics module
 jest.mock('./client/src/lib/tutorial/analytics', () => ({
-  tutorialAnalytics: mockAnalytics
+  tutorialAnalytics: mockAnalytics,
 }));
 
 // Mock i18next and its plugins
@@ -72,12 +72,12 @@ const mockI18n = {
   // Core functionality
   exists: () => true,
   ready: Promise.resolve(),
-  
+
   // Language handling
   language: 'en',
   languages: ['en'],
   loadLanguages: () => Promise.resolve(),
-  
+
   // Resource handling
   addResource: () => mockI18n,
   addResources: () => mockI18n,
@@ -86,28 +86,28 @@ const mockI18n = {
   hasResourceBundle: () => true,
   reloadResources: () => Promise.resolve(),
   loadResources: () => Promise.resolve(),
-  
+
   // Namespace handling
   loadNamespaces: () => Promise.resolve(),
-  
+
   // Store and services
   store: {
     options: {
       defaultNS: 'translation',
       fallbackLng: 'en',
       ns: ['translation'],
-    }
+    },
   },
   services: {
     resourceStore: {
-      data: {}
+      data: {},
     },
     backendConnector: {},
     languageDetector: {
-      detect: () => 'en'
-    }
+      detect: () => 'en',
+    },
   },
-  
+
   // Additional required properties
   isInitialized: true,
   options: {
@@ -117,16 +117,16 @@ const mockI18n = {
   },
   dir: () => 'ltr',
   format: (value) => value,
-  
+
   // Event handling
   on: () => mockI18n,
   off: () => mockI18n,
   emit: () => mockI18n,
-  
+
   // Module handling
   modules: {
-    external: []
-  }
+    external: [],
+  },
 };
 
 jest.mock('i18next', () => ({
@@ -141,48 +141,50 @@ jest.mock('i18next-http-backend', () => ({
     constructor() {}
     init() {}
     read() {}
-  }
+  },
 }));
 
 jest.mock('i18next-browser-languagedetector', () => ({
   default: class LanguageDetector {
     constructor() {}
     init() {}
-    detect() { return 'en'; }
-  }
+    detect() {
+      return 'en';
+    }
+  },
 }));
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key) => key,
-    i18n: mockI18n
+    i18n: mockI18n,
   }),
   initReactI18next: {
     type: '3rdParty',
-    init: () => {}
+    init: () => {},
   },
-  I18nextProvider: ({ children }) => children
+  I18nextProvider: ({ children }) => children,
 }));
 
 // Mock localStorage
 const mockLocalStorage = {
   store: {},
-  getItem: function(key) {
+  getItem: function (key) {
     return this.store[key] || null;
   },
-  setItem: function(key, value) {
+  setItem: function (key, value) {
     this.store[key] = value;
   },
-  clear: function() {
+  clear: function () {
     this.store = {};
   },
-  removeItem: function(key) {
+  removeItem: function (key) {
     delete this.store[key];
-  }
+  },
 };
 
 Object.defineProperty(window, 'localStorage', {
-  value: mockLocalStorage
+  value: mockLocalStorage,
 });
 
 // Mock ResizeObserver
@@ -195,7 +197,7 @@ global.ResizeObserver = class ResizeObserver {
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -223,7 +225,7 @@ global.console = {
   error: (...args) => {
     if (args[0]?.includes?.('Warning:')) return;
     originalConsole.error(...args);
-  }
+  },
 };
 
 // Clear mocks and localStorage before each test
@@ -236,5 +238,5 @@ beforeEach(() => {
 // Export mocks for use in tests
 global.__mocks__ = {
   analytics: mockAnalytics,
-  i18n: mockI18n
+  i18n: mockI18n,
 };

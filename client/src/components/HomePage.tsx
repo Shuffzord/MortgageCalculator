@@ -1,28 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Clippy } from './ui/Clippy';
-import LoanInputForm from "@/components/LoanInputForm";
-import LoanSummary from "@/components/LoanSummary";
-import ChartSection from "@/components/ChartSection";
-import AmortizationSchedule from "@/components/AmortizationSchedule";
-import OverpaymentOptimizationPanel from "@/components/OverpaymentOptimizationPanel";
-import DataTransferPanel from "@/components/DataTransferPanel";
-import LoadModal from "@/components/LoadModal";
-import { 
-  CalculationResults, 
-  LoanDetails,
-  SavedCalculation
-} from "@/lib/types";
-import {
-  calculationService
-} from "@/lib/services/calculationService";
-import { saveCalculation, getSavedCalculations } from "@/lib/storageService";
-import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LoanInputForm from '@/components/LoanInputForm';
+import LoanSummary from '@/components/LoanSummary';
+import ChartSection from '@/components/ChartSection';
+import AmortizationSchedule from '@/components/AmortizationSchedule';
+import OverpaymentOptimizationPanel from '@/components/OverpaymentOptimizationPanel';
+import DataTransferPanel from '@/components/DataTransferPanel';
+import LoadModal from '@/components/LoadModal';
+import { CalculationResults, LoanDetails, SavedCalculation } from '@/lib/types';
+import { calculationService } from '@/lib/services/calculationService';
+import { saveCalculation, getSavedCalculations } from '@/lib/storageService';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Footer from './ui/footer';
-import { ExperienceLevelAssessment } from "@/components/ExperienceLevelAssessment";
-import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { useTutorialStore } from "@/lib/tutorial/tutorialState";
+import { ExperienceLevelAssessment } from '@/components/ExperienceLevelAssessment';
+import { TutorialOverlay } from '@/components/TutorialOverlay';
+import { useTutorialStore } from '@/lib/tutorial/tutorialState';
 
 interface HomePageProps {
   showExportModal?: boolean;
@@ -35,11 +29,11 @@ const HomePage: React.FC<HomePageProps> = ({
   showExportModal: externalShowExportModal,
   setShowExportModal: externalSetShowExportModal,
   showLoadModal: externalShowLoadModal,
-  setShowLoadModal: externalSetShowLoadModal
+  setShowLoadModal: externalSetShowLoadModal,
 }) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  
+
   // Tutorial state management
   const {
     experienceLevel,
@@ -49,23 +43,11 @@ const HomePage: React.FC<HomePageProps> = ({
     startTutorial,
     completeTutorial,
     abandonTutorial,
-    resetTutorial
+    resetTutorial,
   } = useTutorialStore();
 
   // Experience level modal state
   const [showExperienceModal, setShowExperienceModal] = useState(false);
-
-  // Initialize tutorial state
-  // Track tutorial state changes
-  useEffect(() => {
-    console.log('[HomePage] Tutorial state changed:', {
-      experienceLevel,
-      hasCompletedTutorial,
-      isActive,
-      showExperienceModal,
-      stateInStorage: localStorage.getItem('tutorial-storage')
-    });
-  }, [experienceLevel, hasCompletedTutorial, isActive, showExperienceModal]);
 
   // Initialize tutorial modal - don't show on mobile
   useEffect(() => {
@@ -73,10 +55,7 @@ const HomePage: React.FC<HomePageProps> = ({
   }, [experienceLevel, isMobile]);
 
   const handleExperienceSelect = (level: 'beginner' | 'intermediate' | 'advanced') => {
-    console.log('[HomePage] Experience Level Selected:', level);
-    
     if (level === 'beginner') {
-      console.log('[HomePage] Starting tutorial for beginner');
       // First clear any existing tutorial state
       localStorage.removeItem('tutorial-storage');
       // Then update experience level and start tutorial
@@ -84,7 +63,6 @@ const HomePage: React.FC<HomePageProps> = ({
       setShowExperienceModal(false);
       startTutorial();
     } else {
-      console.log('[HomePage] Completing tutorial for non-beginner');
       setExperienceLevel(level);
       setShowExperienceModal(false);
       completeTutorial();
@@ -92,28 +70,39 @@ const HomePage: React.FC<HomePageProps> = ({
   };
 
   // Main state management
-  const [selectedCurrency, setSelectedCurrency] = useState(localStorage.getItem("selectedCurrency") || "USD");
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    localStorage.getItem('selectedCurrency') || 'USD'
+  );
   const [internalShowExportModal, setInternalShowExportModal] = useState(false);
   const [internalShowLoadModal, setInternalShowLoadModal] = useState(false);
-  
+
   // Use external state if provided, otherwise use internal state
-  const showExportModal = externalShowExportModal !== undefined ? externalShowExportModal : internalShowExportModal;
+  const showExportModal =
+    externalShowExportModal !== undefined ? externalShowExportModal : internalShowExportModal;
   const setShowExportModal = externalSetShowExportModal || setInternalShowExportModal;
-  const showLoadModal = externalShowLoadModal !== undefined ? externalShowLoadModal : internalShowLoadModal;
+  const showLoadModal =
+    externalShowLoadModal !== undefined ? externalShowLoadModal : internalShowLoadModal;
   const setShowLoadModal = externalSetShowLoadModal || setInternalShowLoadModal;
-  
+
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({
-    name: "My Calculation",
+    name: 'My Calculation',
     principal: 250000,
     interestRatePeriods: [{ startMonth: 0, interestRate: 4.5 }],
     loanTerm: 30,
-    overpaymentPlans: [{
-      amount: 1000, startMonth: 0, endMonth: 30, isRecurring: true, frequency: 'monthly',
-      afterPayment: 0, effect: 'reduceTerm',
-      startDate: new Date()
-    }],
+    overpaymentPlans: [
+      {
+        amount: 1000,
+        startMonth: 0,
+        endMonth: 30,
+        isRecurring: true,
+        frequency: 'monthly',
+        afterPayment: 0,
+        effect: 'reduceTerm',
+        startDate: new Date(),
+      },
+    ],
     startDate: new Date(),
-    currency: selectedCurrency
+    currency: selectedCurrency,
   });
 
   const [calculationResults, setCalculationResults] = useState<CalculationResults | null>(null);
@@ -122,14 +111,14 @@ const HomePage: React.FC<HomePageProps> = ({
 
   // Update localStorage when currency changes
   useEffect(() => {
-    localStorage.setItem("selectedCurrency", selectedCurrency);
+    localStorage.setItem('selectedCurrency', selectedCurrency);
   }, [selectedCurrency]);
 
   const handleCurrencyChange = (currency: string) => {
     setSelectedCurrency(currency);
-    setLoanDetails(prev => ({
+    setLoanDetails((prev) => ({
       ...prev,
-      currency
+      currency,
     }));
   };
 
@@ -145,15 +134,15 @@ const HomePage: React.FC<HomePageProps> = ({
       setSavedCalculations(calculations);
     }
   }, [showLoadModal]);
-  
+
   // Listen for the openLoadModal event
   useEffect(() => {
     const handleOpenLoadModal = () => {
       setShowLoadModal(true);
     };
-    
+
     window.addEventListener('openLoadModal', handleOpenLoadModal);
-    
+
     return () => {
       window.removeEventListener('openLoadModal', handleOpenLoadModal);
     };
@@ -163,19 +152,21 @@ const HomePage: React.FC<HomePageProps> = ({
   const handleCalculateLoan = (loanDetailsToCalculate?: LoanDetails) => {
     // Use the provided loan details if available, otherwise use the current state
     const detailsToUse = loanDetailsToCalculate || loanDetails;
-    
+
     // Calculate with overpayments (full calculation)
     const resultsWithOverpayments = calculationService.calculateLoanDetails(detailsToUse);
-    
+
     // Create a version of loan details without overpayments
     const detailsWithoutOverpayments = {
       ...detailsToUse,
-      overpaymentPlans: [] // Empty array for no overpayments
+      overpaymentPlans: [], // Empty array for no overpayments
     };
-    
+
     // Calculate without overpayments (base calculation)
-    const resultsWithoutOverpayments = calculationService.calculateLoanDetails(detailsWithoutOverpayments);
-    
+    const resultsWithoutOverpayments = calculationService.calculateLoanDetails(
+      detailsWithoutOverpayments
+    );
+
     // Set both results
     setCalculationResults(resultsWithOverpayments);
     setOverpaymentResults(resultsWithoutOverpayments);
@@ -189,9 +180,9 @@ const HomePage: React.FC<HomePageProps> = ({
         startMonth: 0,
         endMonth: 0,
         isRecurring: false,
-        frequency: 'one-time'
+        frequency: 'one-time',
       });
-      
+
       // Update local state with newly saved calculation
       setSavedCalculations([...savedCalculations, savedCalc]);
     }
@@ -200,7 +191,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const handleLoadCalculation = (calculation: SavedCalculation) => {
     // Create updated loan details from the loaded calculation
     const updatedDetails = { ...calculation.loanDetails, currency: selectedCurrency };
-    
+
     // Update state and close modal
     setLoanDetails(updatedDetails);
     setShowLoadModal(false);
@@ -209,16 +200,19 @@ const HomePage: React.FC<HomePageProps> = ({
     handleCalculateLoan(updatedDetails);
   };
 
-  const handleImportData = (importedLoanDetails: LoanDetails, importedResults?: Partial<CalculationResults>) => {
+  const handleImportData = (
+    importedLoanDetails: LoanDetails,
+    importedResults?: Partial<CalculationResults>
+  ) => {
     // Update loan details with the imported data
     const updatedDetails = {
       ...importedLoanDetails,
-      currency: selectedCurrency // Ensure we use the current currency
+      currency: selectedCurrency, // Ensure we use the current currency
     };
-    
+
     // Update state
     setLoanDetails(updatedDetails);
-    
+
     // If results were imported, use them; otherwise recalculate
     if (importedResults && Object.keys(importedResults).length > 0) {
       // We need to recalculate anyway to ensure all data is consistent
@@ -234,7 +228,6 @@ const HomePage: React.FC<HomePageProps> = ({
       <ExperienceLevelAssessment
         isOpen={showExperienceModal}
         onClose={() => {
-          console.log('[HomePage] Modal closed');
           setShowExperienceModal(false);
         }}
         onExperienceLevelSet={handleExperienceSelect}
@@ -246,11 +239,9 @@ const HomePage: React.FC<HomePageProps> = ({
           isActive={isActive}
           experienceLevel="beginner"
           onComplete={() => {
-            console.log('[HomePage] Tutorial completed');
             completeTutorial();
           }}
           onSkip={() => {
-            console.log('[HomePage] Tutorial skipped');
             abandonTutorial();
             completeTutorial();
           }}
@@ -258,21 +249,21 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* Tutorial reset button with Clippy - hide on mobile */}
-      {!isMobile && <Clippy
-        onClick={() => {
-          // Reset tutorial state completely
-          resetTutorial();
-          setShowExperienceModal(true);
-        }}
-        isAnimated={!hasCompletedTutorial}
-      />}
+      {!isMobile && (
+        <Clippy
+          onClick={() => {
+            // Reset tutorial state completely
+            resetTutorial();
+            setShowExperienceModal(true);
+          }}
+          isAnimated={!hasCompletedTutorial}
+        />
+      )}
 
       <div className="bg-yellow-500 text-yellow-900 text-center py-2 sm:hidden block">
         {t('app.desktopOptimized')}
       </div>
-      <div className="bg-yellow-500 text-yellow-900 text-center py-2 block">
-        {t('app.beta')}
-      </div>
+      <div className="bg-yellow-500 text-yellow-900 text-center py-2 block">{t('app.beta')}</div>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -287,7 +278,7 @@ const HomePage: React.FC<HomePageProps> = ({
               />
             </div>
           </div>
-          
+
           <div className="lg:col-span-2 space-y-8">
             <div id="results-section">
               <LoanSummary
@@ -296,17 +287,14 @@ const HomePage: React.FC<HomePageProps> = ({
                 loanDetails={loanDetails}
               />
             </div>
-            
-            <ChartSection
-              loanDetails={loanDetails}
-              calculationResults={calculationResults}
-            />
-            
+
+            <ChartSection loanDetails={loanDetails} calculationResults={calculationResults} />
+
             <AmortizationSchedule
               yearlyData={calculationResults?.yearlyData || []}
               currency={selectedCurrency}
             />
-            
+
             {/* Advanced features section */}
             <div id="advanced-features">
               {/* <OverpaymentOptimizationPanel
@@ -331,7 +319,7 @@ const HomePage: React.FC<HomePageProps> = ({
       </main>
 
       <Footer />
-      
+
       {showLoadModal && (
         <LoadModal
           savedCalculations={savedCalculations}
@@ -339,7 +327,7 @@ const HomePage: React.FC<HomePageProps> = ({
           onClose={() => setShowLoadModal(false)}
         />
       )}
-      
+
       {calculationResults && (
         <DataTransferPanel
           loanDetails={loanDetails}

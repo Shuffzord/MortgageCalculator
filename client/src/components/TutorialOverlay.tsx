@@ -2,7 +2,10 @@ import React, { useEffect, memo, CSSProperties, useCallback } from 'react';
 import { tutorialAnalytics } from '../lib/tutorial/analytics';
 import { useTutorialStore } from '../lib/tutorial/tutorialState';
 import { getBeginnerSteps, getStepEducationalContent } from '../lib/tutorial/beginnerTutorialSteps';
-import { getTutorialSteps, type TutorialStep as BaseTutorialStep } from '../lib/tutorial/tutorialSteps';
+import {
+  getTutorialSteps,
+  type TutorialStep as BaseTutorialStep,
+} from '../lib/tutorial/tutorialSteps';
 import type { BeginnerTutorialStep } from '../lib/tutorial/beginnerTutorialSteps';
 import type { ExperienceLevel } from './ExperienceLevelAssessment';
 import { TutorialStep as StepComponent } from './TutorialStep';
@@ -25,21 +28,21 @@ function getPositionForTarget(targetId: string, placement: Placement = 'bottom')
 
   const rect = targetElement.getBoundingClientRect();
   const positions: PositionStyle = {};
-  
+
   // Constants for positioning
   const MARGIN = 12; // Space between target and tutorial
   const PADDING = 400; // Minimum space from viewport edges
   const TUTORIAL_WIDTH = 500;
   const TUTORIAL_HEIGHT = 450; // Increased for better content visibility
-  
+
   // Calculate center points
-  const targetCenterX = rect.left + (rect.width / 2);
-  const targetCenterY = rect.top + (rect.height / 2);
-  
+  const targetCenterX = rect.left + rect.width / 2;
+  const targetCenterY = rect.top + rect.height / 2;
+
   // Get scroll position
   const scrollX = window.scrollX;
   const scrollY = window.scrollY;
-  
+
   // Get viewport dimensions
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
@@ -48,18 +51,18 @@ function getPositionForTarget(targetId: string, placement: Placement = 'bottom')
   switch (placement) {
     case 'top':
       positions.top = rect.top - TUTORIAL_HEIGHT - MARGIN;
-      positions.left = targetCenterX - (TUTORIAL_WIDTH / 2);
+      positions.left = targetCenterX - TUTORIAL_WIDTH / 2;
       break;
     case 'bottom':
       positions.top = rect.bottom + MARGIN;
-      positions.left = targetCenterX - (TUTORIAL_WIDTH / 2);
+      positions.left = targetCenterX - TUTORIAL_WIDTH / 2;
       break;
     case 'left':
-      positions.top = targetCenterY - (TUTORIAL_HEIGHT / 2);
+      positions.top = targetCenterY - TUTORIAL_HEIGHT / 2;
       positions.left = rect.left - TUTORIAL_WIDTH - MARGIN;
       break;
     case 'right':
-      positions.top = targetCenterY - (TUTORIAL_HEIGHT / 2);
+      positions.top = targetCenterY - TUTORIAL_HEIGHT / 2;
       positions.left = rect.right + MARGIN;
       break;
   }
@@ -69,7 +72,7 @@ function getPositionForTarget(targetId: string, placement: Placement = 'bottom')
     left: PADDING,
     right: viewportWidth - TUTORIAL_WIDTH - PADDING,
     top: 100,
-    bottom: viewportHeight - TUTORIAL_HEIGHT - PADDING
+    bottom: viewportHeight - TUTORIAL_HEIGHT - PADDING,
   };
 
   // Keep tutorial within viewport bounds
@@ -106,17 +109,6 @@ function getPositionForTarget(targetId: string, placement: Placement = 'bottom')
   positions.top! += scrollY;
   positions.left! += scrollX;
 
-  // Log positioning details
-  console.log('[TutorialOverlay] Positioning:', {
-    targetId,
-    placement,
-    rect,
-    positions,
-    viewport: { width: viewportWidth, height: viewportHeight },
-    scroll: { x: scrollX, y: scrollY },
-    bounds
-  });
-
   return positions;
 }
 
@@ -124,7 +116,7 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
   isActive,
   experienceLevel,
   onComplete,
-  onSkip
+  onSkip,
 }) => {
   const {
     currentStep: stepIndex,
@@ -132,16 +124,15 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
     completeStep,
     goToPreviousStep,
     completeTutorial,
-    abandonTutorial
+    abandonTutorial,
   } = useTutorialStore();
 
   // Get appropriate steps based on experience level
-  const steps = experienceLevel === 'beginner'
-    ? getBeginnerSteps()
-    : getTutorialSteps(experienceLevel);
-  
+  const steps =
+    experienceLevel === 'beginner' ? getBeginnerSteps() : getTutorialSteps(experienceLevel);
+
   const currentStep = steps[stepIndex];
-  
+
   // Type guard for beginner tutorial step
   const isBeginnerStep = (
     step: BeginnerTutorialStep | BaseTutorialStep
@@ -150,9 +141,8 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
   };
 
   // Get educational content only for beginner steps
-  const educationalContent = currentStep && isBeginnerStep(currentStep)
-    ? getStepEducationalContent(currentStep.id)
-    : null;
+  const educationalContent =
+    currentStep && isBeginnerStep(currentStep) ? getStepEducationalContent(currentStep.id) : null;
 
   // Handle tutorial start/stop
   useEffect(() => {
@@ -160,7 +150,7 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
       tutorialAnalytics.tutorialStarted(experienceLevel);
       startTutorial();
     }
-    
+
     return () => {
       if (isActive) {
         abandonTutorial();
@@ -171,36 +161,28 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
   // Handle highlight class and scroll position
   useEffect(() => {
     if (!currentStep?.target) return;
-    
+
     const targetElement = document.getElementById(currentStep.target);
     if (!targetElement) return;
 
     // Add highlight class
     targetElement.classList.add('tutorial-highlight');
-    
+
     // Get element position
     const rect = targetElement.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    
+
     // Calculate the visible area needed
     const visibleAreaNeeded = 400; // Enough space for element + tutorial
     const elementCenter = rect.top + rect.height / 2;
-    
+
     // Calculate target scroll position to center the visible area
     const scrollTarget = window.scrollY + elementCenter - viewportHeight / 2;
-    
+
     // Apply scroll with a slight upward bias to ensure tutorial is visible
     window.scrollTo({
       top: Math.max(0, scrollTarget - 100), // Bias upward by 100px
-      behavior: 'smooth'
-    });
-
-    // Log scroll adjustment
-    console.log('[TutorialOverlay] Scroll adjustment:', {
-      elementPosition: rect,
-      viewportHeight,
-      elementCenter,
-      scrollTarget: Math.max(0, scrollTarget - 100)
+      behavior: 'smooth',
     });
 
     return () => {
@@ -209,23 +191,26 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
   }, [currentStep?.target]);
 
   // Track when educational content is viewed
-  const handleEducationalContentView = useCallback((contentId: string) => {
-    if (currentStep && isBeginnerStep(currentStep)) {
-      useTutorialStore.getState().viewEducationalContent(contentId);
-      tutorialAnalytics.educationalContentViewed(contentId);
-    }
-  }, [currentStep, experienceLevel]);
+  const handleEducationalContentView = useCallback(
+    (contentId: string) => {
+      if (currentStep && isBeginnerStep(currentStep)) {
+        useTutorialStore.getState().viewEducationalContent(contentId);
+        tutorialAnalytics.educationalContentViewed(contentId);
+      }
+    },
+    [currentStep, experienceLevel]
+  );
 
   const handleStepComplete = (currentStepIndex: number): void => {
     tutorialAnalytics.stepCompleted(currentStepIndex);
-    
+
     if (currentStep && isBeginnerStep(currentStep)) {
       useTutorialStore.getState().completeSection(currentStep.id);
       if (educationalContent?.interactiveExample) {
         useTutorialStore.getState().completeInteractiveExample(currentStep.id);
       }
     }
-    
+
     completeStep(currentStepIndex);
 
     if (currentStepIndex === steps.length - 1) {
@@ -249,7 +234,6 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
   };
 
   const handlePrevious = (): void => {
-    console.log('[TutorialOverlay] Going to previous step');
     tutorialAnalytics.stepCompleted(stepIndex - 1); // Track backward navigation
     goToPreviousStep();
   };
@@ -262,27 +246,28 @@ const UnmemoizedTutorialOverlay: React.FC<TutorialOverlayProps> = ({
     <div className="fixed inset-0 z-[100] bg-black/50 tutorial-overlay">
       <div
         className="fixed rounded-lg bg-white shadow-xl flex flex-col transition-all duration-300 ease-in-out"
-        style={{
-          maxWidth: '400px',
-          maxHeight: '80vh',
-          ...(currentStep.target ? {
-            ...getPositionForTarget(currentStep.target, currentStep.placement)
-          } : {
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            margin: '20px',
-            maxHeight: 'calc(100vh - 40px)'
-          })
-        } as CSSProperties}
+        style={
+          {
+            maxWidth: '400px',
+            maxHeight: '80vh',
+            ...(currentStep.target
+              ? {
+                  ...getPositionForTarget(currentStep.target, currentStep.placement),
+                }
+              : {
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  margin: '20px',
+                  maxHeight: 'calc(100vh - 40px)',
+                }),
+          } as CSSProperties
+        }
       >
         <div className="p-4 border-b">
-          <TutorialProgress
-            currentStep={stepIndex}
-            totalSteps={steps.length}
-          />
+          <TutorialProgress currentStep={stepIndex} totalSteps={steps.length} />
         </div>
-        
+
         <div className="p-4 overflow-y-auto flex-1">
           <div className="space-y-4">
             <StepComponent

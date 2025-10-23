@@ -4,7 +4,7 @@ import {
   monthsBetweenDates,
   addMonthsToDate,
   dateToPaymentMonth,
-  paymentMonthToDate
+  paymentMonthToDate,
 } from './paymentIndexUtils';
 
 describe('Payment Index Utilities', () => {
@@ -36,28 +36,36 @@ describe('Payment Index Utilities', () => {
   describe('monthsBetweenDates', () => {
     it('should calculate months between dates correctly', () => {
       // Same month
-      expect(monthsBetweenDates(
-        new Date(2025, 4, 15), // May 15, 2025
-        new Date(2025, 4, 30)  // May 30, 2025
-      )).toBe(0);
+      expect(
+        monthsBetweenDates(
+          new Date(2025, 4, 15), // May 15, 2025
+          new Date(2025, 4, 30) // May 30, 2025
+        )
+      ).toBe(0);
 
       // Different months same year
-      expect(monthsBetweenDates(
-        new Date(2025, 4, 15), // May 15, 2025
-        new Date(2025, 7, 15)  // August 15, 2025
-      )).toBe(3);
+      expect(
+        monthsBetweenDates(
+          new Date(2025, 4, 15), // May 15, 2025
+          new Date(2025, 7, 15) // August 15, 2025
+        )
+      ).toBe(3);
 
       // Different years
-      expect(monthsBetweenDates(
-        new Date(2025, 4, 15), // May 15, 2025
-        new Date(2026, 4, 15)  // May 15, 2026
-      )).toBe(12);
+      expect(
+        monthsBetweenDates(
+          new Date(2025, 4, 15), // May 15, 2025
+          new Date(2026, 4, 15) // May 15, 2026
+        )
+      ).toBe(12);
 
       // Different years and months
-      expect(monthsBetweenDates(
-        new Date(2025, 4, 15), // May 15, 2025
-        new Date(2030, 10, 15) // November 15, 2030
-      )).toBe(66);
+      expect(
+        monthsBetweenDates(
+          new Date(2025, 4, 15), // May 15, 2025
+          new Date(2030, 10, 15) // November 15, 2030
+        )
+      ).toBe(66);
     });
   });
 
@@ -93,11 +101,11 @@ describe('Payment Index Utilities', () => {
 
       // Test payment month 1 (loan start date)
       expect(dateToPaymentMonth(loanStartDate, loanStartDate)).toBe(1);
-      
+
       // Test payment month 2
       const month2Date = new Date(2025, 5, 1); // June 1, 2025
       expect(dateToPaymentMonth(month2Date, loanStartDate)).toBe(2);
-      
+
       // Test payment month 61 (rate change boundary)
       const month61Date = new Date(2030, 4, 1); // May 1, 2030
       expect(dateToPaymentMonth(month61Date, loanStartDate)).toBe(61);
@@ -113,19 +121,19 @@ describe('Payment Index Utilities', () => {
   describe('Real-world scenario test', () => {
     it('should handle a mortgage starting on May 20, 2025 correctly', () => {
       const loanStartDate = new Date(2025, 4, 20); // May 20, 2025
-      
+
       // First payment (month 1)
       expect(paymentMonthToDate(1, loanStartDate).getMonth()).toBe(4); // May
       expect(paymentMonthToDate(1, loanStartDate).getFullYear()).toBe(2025);
-      
+
       // Payment at 5 years (month 61) - rate change boundary
       const rateChangeDate = paymentMonthToDate(61, loanStartDate);
       expect(rateChangeDate.getMonth()).toBe(4); // May
       expect(rateChangeDate.getFullYear()).toBe(2030);
-      
+
       // Convert back to payment month
       expect(dateToPaymentMonth(rateChangeDate, loanStartDate)).toBe(61);
-      
+
       // Array index for month 61
       expect(paymentMonthToIndex(61)).toBe(60);
     });

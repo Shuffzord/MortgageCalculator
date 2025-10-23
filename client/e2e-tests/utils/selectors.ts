@@ -37,7 +37,8 @@ export const ADD_OVERPAYMENT_BUTTON = '[data-testid="add-overpayment-button"]';
 // Interest rate period selectors
 export const INTEREST_RATE_DATE_RANGE = '[data-testid^="interest-rate-date-range"]';
 export const INTEREST_RATE_END_DATE = '[data-testid="interest-rate-end-date"]';
-export const INTEREST_RATE_INPUT_ADDITIONAL = (index: number) => `[data-testid="interest-rate-input-${index}"]`;
+export const INTEREST_RATE_INPUT_ADDITIONAL = (index: number) =>
+  `[data-testid="interest-rate-input-${index}"]`;
 
 // Currency selectors
 export const CURRENCY_SYMBOL = '[data-testid="currency-symbol"]';

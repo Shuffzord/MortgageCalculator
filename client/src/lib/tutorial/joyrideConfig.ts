@@ -1,4 +1,10 @@
-import { Step } from 'react-joyride';
+// Local minimal type to avoid dependency on react-joyride
+type JoyrideStep = {
+  disableBeacon?: boolean;
+  placement?: 'top' | 'bottom' | 'left' | 'right' | (string & {});
+  styles?: unknown;
+  [key: string]: unknown;
+};
 
 export interface TutorialConfig {
   defaultOptions: {
@@ -10,7 +16,7 @@ export interface TutorialConfig {
     spotlightPadding: number;
     zIndex: number;
   };
-  defaultStepOptions: Partial<Step>;
+  defaultStepOptions: Partial<JoyrideStep>;
 }
 
 export const joyrideConfig: TutorialConfig = {

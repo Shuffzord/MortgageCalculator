@@ -17,7 +17,7 @@ describe('Overpayment Yearly Totals', () => {
       amount: monthlyOverpayment,
       frequency: 'monthly',
       isRecurring: true,
-      startDate: new Date()
+      startDate: new Date(),
     };
 
     // Create loan details
@@ -27,7 +27,7 @@ describe('Overpayment Yearly Totals', () => {
       loanTerm: termYears,
       overpaymentPlans: [overpaymentPlan],
       startDate: new Date(),
-      name: 'Test Loan'
+      name: 'Test Loan',
     };
 
     // Calculate loan with overpayments
@@ -59,7 +59,7 @@ describe('Overpayment Yearly Totals', () => {
         principal: year.principal,
         interest: year.interest,
         sum: year.principal + year.interest,
-        difference: Math.abs(year.payment - (year.principal + year.interest))
+        difference: Math.abs(year.payment - (year.principal + year.interest)),
       });
     });
 

@@ -12,14 +12,14 @@ describe('Educational Content', () => {
         'equalInstallments',
         'decreasingInstallments',
         'overpayment',
-        'loanTerm'
+        'loanTerm',
       ];
-      
+
       // essentialTerms.forEach(term => {
       //   expect(financialGlossary).toHaveProperty(term);
       // });
     });
-    
+
     test('each term should have required properties', () => {
       // Object.values(financialGlossary).forEach(term => {
       //   expect(term).toHaveProperty('term');
@@ -31,7 +31,7 @@ describe('Educational Content', () => {
       // });
     });
   });
-  
+
   describe('Mortgage Concepts', () => {
     test('should have all required concepts', () => {
       // Check that essential mortgage concepts are defined
@@ -40,14 +40,14 @@ describe('Educational Content', () => {
         'overpayments',
         'interestRateChanges',
         'additionalCosts',
-        'amortizationSchedule'
+        'amortizationSchedule',
       ];
-      
+
       // essentialConcepts.forEach(concept => {
       //   expect(mortgageConcepts).toHaveProperty(concept);
       // });
     });
-    
+
     test('each concept should have required properties', () => {
       // Object.values(mortgageConcepts).forEach(concept => {
       //   expect(concept).toHaveProperty('concept');
@@ -61,7 +61,7 @@ describe('Educational Content', () => {
       //   expect(concept.impact.length).toBeGreaterThan(0);
       // });
     });
-    
+
     test('related terms should reference valid glossary terms', () => {
       // Object.values(mortgageConcepts).forEach(concept => {
       //   if (concept.relatedTerms) {
@@ -75,12 +75,12 @@ describe('Educational Content', () => {
       // });
     });
   });
-  
+
   describe('Interactive Examples', () => {
     // test('should have interactive examples defined', () => {
     //   expect(interactiveExamples.length).toBeGreaterThan(0);
     // });
-    
+
     test('each example should have required properties', () => {
       // interactiveExamples.forEach(example => {
       //   expect(example).toHaveProperty('id');
@@ -89,12 +89,10 @@ describe('Educational Content', () => {
       //   expect(example).toHaveProperty('defaultValues');
       //   expect(example).toHaveProperty('scenarios');
       //   expect(example.scenarios.length).toBeGreaterThan(0);
-        
       //   // Check default values
       //   expect(example.defaultValues).toHaveProperty('principal');
       //   expect(example.defaultValues).toHaveProperty('interestRate');
       //   expect(example.defaultValues).toHaveProperty('term');
-        
       //   // Check scenarios
       //   example.scenarios.forEach(scenario => {
       //     expect(scenario).toHaveProperty('name');

@@ -1,6 +1,7 @@
 Based on the code I've examined, I now have a good understanding of how the mortgage calculator works. Let me organize what I've learned to create a comprehensive explanation of mortgage calculation algorithms and compare them with the implementation in this app.
 
 Key components I've identified:
+
 1. Core mortgage calculation formula (in utils.ts)
 2. Handling of initial costs (one-time fees)
 3. Handling of recurring costs
@@ -10,6 +11,7 @@ Key components I've identified:
 7. APR calculation
 
 I'll structure my response as follows:
+
 1. General mortgage calculation algorithm
 2. Handling initial costs
 3. Multiple interest rate periods
@@ -32,16 +34,18 @@ M = P[r(1+r)^n]/[(1+r)^n-1]
 ```
 
 Where:
+
 - M = monthly payment
 - P = loan principal
 - r = monthly interest rate (annual rate / 12 / 100)
-- n = number of monthly payments (term * 12)
+- n = number of monthly payments (term \* 12)
 
 This formula calculates a fixed monthly payment that will fully amortize the loan over its term.
 
 ### Amortization Schedule Generation
 
 For each payment period:
+
 1. Calculate interest portion: `interest = remaining_balance * monthly_rate`
 2. Calculate principal portion: `principal = monthly_payment - interest`
 3. Update remaining balance: `new_balance = old_balance - principal`
@@ -67,14 +71,18 @@ Initial costs and recurring fees increase the total cost of the loan and the Ann
 ## 3. Multiple Interest Rate Periods
 
 ### Fixed-Rate Mortgages
+
 - Single interest rate for the entire loan term
 
 ### Adjustable-Rate Mortgages (ARMs)
+
 - Initial fixed period followed by rate adjustments
 - Rate changes affect monthly payment or loan term
 
 ### Rate Change Handling
+
 When interest rates change:
+
 1. Recalculate monthly payment based on:
    - Current remaining balance
    - New interest rate
@@ -83,14 +91,17 @@ When interest rates change:
 ## 4. Overpayment Strategies
 
 ### Types of Overpayments
+
 1. **One-time lump sum**: Extra payment made once
 2. **Recurring overpayments**: Regular extra payments (monthly, quarterly, annual)
 
 ### Effects of Overpayments
+
 1. **Reduce term**: Keep same monthly payment, pay off loan faster
 2. **Reduce payment**: Keep same term, lower monthly payments
 
 ### Optimization Strategies
+
 - Front-loading overpayments (early in loan term) maximizes interest savings
 - Strategic timing around rate changes can enhance benefits
 
@@ -112,16 +123,16 @@ export function calculateMonthlyPayment(
   if (Math.abs(monthlyRate) < 0.0001) {
     return roundToCents(principal / totalMonths);
   }
-  
+
   // For very low rates, use simplified calculation
   if (monthlyRate < 0.001) {
-    const totalPayment = principal * (1 + (monthlyRate * totalMonths));
+    const totalPayment = principal * (1 + monthlyRate * totalMonths);
     return roundToCents(totalPayment / totalMonths);
   }
-  
+
   // Standard formula for normal interest rates
   const compoundFactor = Math.pow(1 + monthlyRate, totalMonths);
-  const payment = principal * (monthlyRate * compoundFactor) / (compoundFactor - 1);
+  const payment = (principal * (monthlyRate * compoundFactor)) / (compoundFactor - 1);
   return roundToCents(payment);
 }
 ```
@@ -133,13 +144,10 @@ The implementation includes special handling for very low interest rates, which 
 The app supports two repayment models:
 
 1. **Equal Installments (Annuity)**: Fixed monthly payment throughout the loan term
+
    ```typescript
    // Default: equal installments (annuity) model
-   monthlyPayment = calculateMonthlyPayment(
-     remainingPrincipal,
-     monthlyRate,
-     totalPayments,
-   );
+   monthlyPayment = calculateMonthlyPayment(remainingPrincipal, monthlyRate, totalPayments);
    interestPayment = remainingPrincipal * monthlyRate;
    principalPayment = monthlyPayment - interestPayment;
    ```
@@ -157,10 +165,7 @@ The app supports two repayment models:
 The app handles one-time and recurring fees with separate functions:
 
 ```typescript
-export function calculateOneTimeFees(
-  principal: number,
-  additionalCosts?: AdditionalCosts
-): number {
+export function calculateOneTimeFees(principal: number, additionalCosts?: AdditionalCosts): number {
   if (!additionalCosts) return 0;
 
   let totalFees = 0;
@@ -169,7 +174,7 @@ export function calculateOneTimeFees(
   if (additionalCosts.originationFeeType === 'fixed') {
     totalFees += additionalCosts.originationFee;
   } else {
-    totalFees += (principal * additionalCosts.originationFee / 100);
+    totalFees += (principal * additionalCosts.originationFee) / 100;
   }
 
   return roundToCents(totalFees);
@@ -187,14 +192,14 @@ export function calculateRecurringFees(
   if (additionalCosts.loanInsuranceType === 'fixed') {
     monthlyFees += additionalCosts.loanInsurance;
   } else {
-    monthlyFees += (remainingBalance * additionalCosts.loanInsurance / 100 / 12);
+    monthlyFees += (remainingBalance * additionalCosts.loanInsurance) / 100 / 12;
   }
 
   // Administrative fees
   if (additionalCosts.administrativeFeesType === 'fixed') {
     monthlyFees += additionalCosts.administrativeFees;
   } else {
-    monthlyFees += (remainingBalance * additionalCosts.administrativeFees / 100 / 12);
+    monthlyFees += (remainingBalance * additionalCosts.administrativeFees) / 100 / 12;
   }
 
   return roundToCents(monthlyFees);
@@ -253,7 +258,7 @@ if (
   overpaymentPlan.startMonth !== undefined &&
   paymentNum >= overpaymentPlan.startMonth &&
   (!overpaymentPlan.endMonth || paymentNum <= overpaymentPlan.endMonth) &&
-  (overpaymentPlan.frequency === "monthly" ||
+  (overpaymentPlan.frequency === 'monthly' ||
     (paymentNum - overpaymentPlan.startMonth) % frequencyMultiplier === 0)
 ) {
   overpaymentAmount = overpaymentPlan.amount;
@@ -266,20 +271,21 @@ It also handles both term reduction and payment reduction strategies:
 
 ```typescript
 // Calculate remaining schedule based on effect
-const remainingSchedule = effect === 'reduceTerm'
-  ? calculateReducedTermSchedule(
-    remainingBalance,
-    interestRatePeriods,
-    schedule[0].monthlyPayment,
-    afterPayment + 1
-  )
-  : calculateReducedPaymentSchedule(
-    remainingBalance,
-    interestRatePeriods,
-    schedule.length - afterPayment,
-    schedule[0].monthlyPayment,
-    afterPayment + 1
-  );
+const remainingSchedule =
+  effect === 'reduceTerm'
+    ? calculateReducedTermSchedule(
+        remainingBalance,
+        interestRatePeriods,
+        schedule[0].monthlyPayment,
+        afterPayment + 1
+      )
+    : calculateReducedPaymentSchedule(
+        remainingBalance,
+        interestRatePeriods,
+        schedule.length - afterPayment,
+        schedule[0].monthlyPayment,
+        afterPayment + 1
+      );
 ```
 
 ## 6. Strengths and Limitations of the App's Implementation
@@ -318,13 +324,13 @@ flowchart TD
     E --> F
     F --> G[Calculate APR]
     G --> H[Return Calculation Results]
-    
+
     subgraph "Overpayment Processing"
     E1[Determine Overpayment Type] --> E2{Reduce Term or Payment?}
     E2 -- Reduce Term --> E3[Keep Same Payment, Shorten Term]
     E2 -- Reduce Payment --> E4[Keep Same Term, Lower Payment]
     end
-    
+
     subgraph "Interest Rate Changes"
     I1[Detect Rate Change] --> I2[Recalculate Payment with New Rate]
     I2 --> I3[Update Amortization Schedule]

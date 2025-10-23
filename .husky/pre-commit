@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh" 2>/dev/null || true
+
+echo "Running pre-commit checks..."
+# Block console logs outside of tests/scripts via custom checker
+node scripts/check-console-logs.js || exit 1
+
+# Run ESLint/Prettier on staged files
+npx --no-install lint-staged
+
+# Build the project to ensure compile + bundle validity
+echo "Building project (pre-commit)..."
+npm run build --silent || exit 1

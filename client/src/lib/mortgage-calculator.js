@@ -1,30 +1,40 @@
-"use strict";
+'use strict';
 /**
  * This file contains the core calculation logic for the mortgage calculator.
  * It handles amortization schedules, monthly payments and overpayment scenarios.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.formatDate = exports.formatCurrency = void 0;
 exports.convertLegacySchedule = convertLegacySchedule;
-var utils_1 = require("./utils");
-Object.defineProperty(exports, "formatCurrency", { enumerable: true, get: function () { return utils_1.formatCurrency; } });
-Object.defineProperty(exports, "formatDate", { enumerable: true, get: function () { return utils_1.formatDate; } });
+var utils_1 = require('./utils');
+Object.defineProperty(exports, 'formatCurrency', {
+  enumerable: true,
+  get: function () {
+    return utils_1.formatCurrency;
+  },
+});
+Object.defineProperty(exports, 'formatDate', {
+  enumerable: true,
+  get: function () {
+    return utils_1.formatDate;
+  },
+});
 // Schedule type has been removed, using PaymentData directly
 // Convert legacy Schedule format to PaymentData
 function convertLegacySchedule(schedule) {
-    return {
-        payment: schedule.paymentNum || schedule.payment,
-        monthlyPayment: schedule.monthlyPayment || schedule.payment, // Fix: switched the order to prioritize monthlyPayment
-        principalPayment: schedule.principalPayment,
-        interestPayment: schedule.interestPayment,
-        balance: schedule.remainingPrincipal || schedule.balance,
-        isOverpayment: schedule.isOverpayment || false,
-        overpaymentAmount: schedule.overpaymentAmount || 0,
-        totalInterest: schedule.totalInterest || 0,
-        totalPayment: schedule.totalPayment || schedule.payment,
-        paymentDate: schedule.paymentDate,
-        currency: schedule.currency
-    };
+  return {
+    payment: schedule.paymentNum || schedule.payment,
+    monthlyPayment: schedule.monthlyPayment || schedule.payment, // Fix: switched the order to prioritize monthlyPayment
+    principalPayment: schedule.principalPayment,
+    interestPayment: schedule.interestPayment,
+    balance: schedule.remainingPrincipal || schedule.balance,
+    isOverpayment: schedule.isOverpayment || false,
+    overpaymentAmount: schedule.overpaymentAmount || 0,
+    totalInterest: schedule.totalInterest || 0,
+    totalPayment: schedule.totalPayment || schedule.payment,
+    paymentDate: schedule.paymentDate,
+    currency: schedule.currency,
+  };
 }
 /**
  * Calculates the monthly payment amount for a loan

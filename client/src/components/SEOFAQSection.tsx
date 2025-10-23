@@ -1,5 +1,10 @@
 import React from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { useTranslation } from 'react-i18next';
 
 interface FAQItem {
@@ -13,42 +18,42 @@ interface SEOFAQSectionProps {
 
 const SEOFAQSection: React.FC<SEOFAQSectionProps> = ({ faqs }) => {
   const { t, i18n } = useTranslation();
-    // Create structured data for FAQs
+  // Create structured data for FAQs
   React.useEffect(() => {
     // Remove any existing FAQ structured data
     const existingScript = document.getElementById('faq-structured-data');
     if (existingScript) {
       existingScript.remove();
     }
-    
+
     // Create structured data for FAQs
     const faqStructuredData = {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": faqs.map((faq, index) => ({
-        "@type": "Question",
-        "name": faq.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": faq.answer
-        }
-      }))
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((faq, index) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
     };
-    
+
     // Add structured data to the page
     const script = document.createElement('script');
     script.id = 'faq-structured-data';
     script.type = 'application/ld+json';
     script.textContent = JSON.stringify(faqStructuredData);
     document.head.appendChild(script);
-    
+
     return () => {
       if (script.parentNode) {
         script.parentNode.removeChild(script);
       }
     };
   }, [faqs, i18n.language, t]);
-  
+
   return (
     <div className="mt-12 transform transition-all duration-300">
       <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-primary">

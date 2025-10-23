@@ -17,10 +17,10 @@
  * locales and currencies.
  */
 
-import { format } from "date-fns";
-import { enUS, es, pl } from "date-fns/locale";
-import i18n from "@/i18n";
-import { PaymentData, YearlyData } from "./types";
+import { format } from 'date-fns';
+import { enUS, es, pl } from 'date-fns/locale';
+import i18n from '@/i18n';
+import { PaymentData, YearlyData } from './types';
 
 /**
  * Formats a number as currency with proper localization
@@ -43,20 +43,16 @@ import { PaymentData, YearlyData } from "./types";
  * // Format as Euros
  * formatCurrency(1234.56, 'en-US', 'EUR'); // Returns: "€1,234.56"
  */
-export function formatCurrency(
-  value: number,
-  locale?: string,
-  currency: string = "USD",
-): string {
+export function formatCurrency(value: number, locale?: string, currency: string = 'USD'): string {
   // Ensure value is treated as a number to prevent string concatenation issues
   const numericValue = Number(value);
-  
+
   // Use the current language from i18n if locale is not provided
-  const currentLocale = locale || (i18n.language === 'pl' ? 'pl-PL' :
-                                   i18n.language === 'es' ? 'es-ES' : 'en-US');
-  
+  const currentLocale =
+    locale || (i18n.language === 'pl' ? 'pl-PL' : i18n.language === 'es' ? 'es-ES' : 'en-US');
+
   return new Intl.NumberFormat(currentLocale, {
-    style: "currency",
+    style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -79,12 +75,11 @@ export function formatTimePeriod(months: number): string {
   const years = Math.floor(months / 12);
   const remainingMonths = months % 12;
 
-  let formattedString = "";
+  let formattedString = '';
 
   // Check if we're in a test environment or if i18n.t is not available
-  const isTestEnvironment = typeof process !== 'undefined' && 
-                           process.env?.NODE_ENV === 'test' || 
-                           !i18n?.t;
+  const isTestEnvironment =
+    (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') || !i18n?.t;
 
   if (years > 0) {
     // In test environment, use hardcoded strings
@@ -93,9 +88,10 @@ export function formatTimePeriod(months: number): string {
     } else {
       // In production, use i18n
       try {
-        const yearLabel = years > 1 ? 
-          i18n.t('form.years', { defaultValue: 'years' }) : 
-          i18n.t('form.year', { defaultValue: 'year' });
+        const yearLabel =
+          years > 1
+            ? i18n.t('form.years', { defaultValue: 'years' })
+            : i18n.t('form.year', { defaultValue: 'year' });
         formattedString += `${years} ${yearLabel} `;
       } catch (e) {
         // Fallback if translation fails
@@ -111,9 +107,10 @@ export function formatTimePeriod(months: number): string {
     } else {
       // In production, use i18n
       try {
-        const monthLabel = remainingMonths > 1 ? 
-          i18n.t('form.months', { defaultValue: 'months' }) : 
-          i18n.t('form.month', { defaultValue: 'month' });
+        const monthLabel =
+          remainingMonths > 1
+            ? i18n.t('form.months', { defaultValue: 'months' })
+            : i18n.t('form.month', { defaultValue: 'month' });
         formattedString += `${remainingMonths} ${monthLabel}`;
       } catch (e) {
         // Fallback if translation fails
@@ -148,10 +145,10 @@ export function formatTimePeriod(months: number): string {
  * // With custom format
  * formatDate(new Date(2023, 0, 15), "MM/dd/yyyy"); // Returns: "01/15/2023"
  */
-export function formatDate(date: Date, formatStr: string = "PPP"): string {
+export function formatDate(date: Date, formatStr: string = 'PPP'): string {
   const language = i18n.language || 'en';
   const locale = language === 'pl' ? pl : language === 'es' ? es : enUS;
-  
+
   return format(date, formatStr, { locale });
 }
 
@@ -169,7 +166,7 @@ export function formatDateLegacy(date: Date): string {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   });
 }
 
@@ -186,7 +183,7 @@ export function formatDateLegacy(date: Date): string {
  * formatPaymentAmount(1234.56); // Returns: "$1,234.56"
  * formatPaymentAmount(1234.56, "EUR"); // Returns: "€1,234.56"
  */
-export function formatPaymentAmount(amount: number, currency: string = "USD"): string {
+export function formatPaymentAmount(amount: number, currency: string = 'USD'): string {
   return formatCurrency(amount, undefined, currency);
 }
 
@@ -234,7 +231,7 @@ export function formatInterestRate(rate: number): string {
  * formatPaymentEntry(entry);
  * // Returns: "Payment #1: $1,000.00 (Principal: $800.00, Interest: $200.00)"
  */
-export function formatPaymentEntry(entry: PaymentData, currency: string = "USD"): string {
+export function formatPaymentEntry(entry: PaymentData, currency: string = 'USD'): string {
   return `Payment #${entry.payment}: ${formatCurrency(entry.monthlyPayment, undefined, currency)} (Principal: ${formatCurrency(entry.principalPayment, undefined, currency)}, Interest: ${formatCurrency(entry.interestPayment, undefined, currency)})`;
 }
 
@@ -261,7 +258,7 @@ export function formatPaymentEntry(entry: PaymentData, currency: string = "USD")
  * formatYearlySummary(yearData);
  * // Returns: "Year 1: Paid $12,000.00 (Principal: $10,000.00, Interest: $2,000.00)"
  */
-export function formatYearlySummary(yearData: YearlyData, currency: string = "USD"): string {
+export function formatYearlySummary(yearData: YearlyData, currency: string = 'USD'): string {
   return `Year ${yearData.year}: Paid ${formatCurrency(yearData.payment, undefined, currency)} (Principal: ${formatCurrency(yearData.principal, undefined, currency)}, Interest: ${formatCurrency(yearData.interest, undefined, currency)})`;
 }
 
@@ -302,7 +299,7 @@ export function formatLoanSummary(
   monthlyPayment: number,
   totalInterest: number,
   term: number,
-  currency: string = "USD"
+  currency: string = 'USD'
 ): string {
   return `Loan Amount: ${formatCurrency(principal, undefined, currency)}
 Monthly Payment: ${formatCurrency(monthlyPayment, undefined, currency)}

@@ -11,10 +11,10 @@ export async function injectAxe(): Promise<void> {
     console.log('Skipping axe injection as accessibility tests are disabled');
     return;
   }
-  
+
   try {
     console.log('Injecting axe-core from CDN');
-    
+
     // Use a more reliable CDN
     await global.page.evaluate(() => {
       return new Promise((resolve, reject) => {
@@ -25,19 +25,25 @@ export async function injectAxe(): Promise<void> {
         document.head.appendChild(script);
       });
     });
-    
+
     // Wait for axe to be available in the page context
-    await global.page.waitForFunction(() => {
-      return typeof (window as any).axe !== 'undefined';
-    }, { timeout: 5000 });
-    
+    await global.page.waitForFunction(
+      () => {
+        return typeof (window as any).axe !== 'undefined';
+      },
+      { timeout: 5000 }
+    );
+
     console.log('Axe successfully injected from CDN');
-    
+
     // Wait for axe to load with a shorter timeout and better error handling
-    await global.page.waitForFunction(() => {
-      return typeof (window as any).axe !== 'undefined';
-    }, { timeout: 5000 });
-    
+    await global.page.waitForFunction(
+      () => {
+        return typeof (window as any).axe !== 'undefined';
+      },
+      { timeout: 5000 }
+    );
+
     console.log('Axe successfully injected');
   } catch (error) {
     console.error('Failed to inject axe:', error);
@@ -59,16 +65,16 @@ export async function runAccessibilityAudit(options = {}): Promise<AxeResults> {
       testRunner: { name: 'mock' },
       timestamp: new Date().toISOString(),
       url: global.page.url(),
-      toolOptions: {}
+      toolOptions: {},
     };
-    
+
     // Cast to unknown first to avoid TypeScript errors
     return mockResult as unknown as AxeResults;
   }
-  
+
   try {
     console.log('Running accessibility audit with options:', JSON.stringify(options));
-    
+
     return await global.page.evaluate((opts) => {
       // Use type assertion to avoid TypeScript errors
       return (window as any).axe.run(document, opts);

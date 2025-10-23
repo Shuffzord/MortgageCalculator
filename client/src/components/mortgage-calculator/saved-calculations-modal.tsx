@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { LoanDetails } from "@/lib/types";
-import { calculationService } from "@/lib/services/calculationService";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { LoanDetails } from '@/lib/types';
+import { calculationService } from '@/lib/services/calculationService';
 
 interface SavedCalculationsModalProps {
   isOpen: boolean;
@@ -32,9 +32,7 @@ export default function SavedCalculationsModal({
             <DialogTitle>Saved Calculations</DialogTitle>
           </DialogHeader>
           <div className="py-6">
-            <p className="text-center text-gray-500">
-              No saved calculations found.
-            </p>
+            <p className="text-center text-gray-500">No saved calculations found.</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={onClose}>
@@ -59,7 +57,12 @@ export default function SavedCalculationsModal({
                 <div>
                   <p className="text-sm font-medium text-gray-900">{calc.name}</p>
                   <p className="text-xs text-gray-500">
-                    {calculationService.formatCurrency(calc.principal, undefined, calc.currency || 'USD')} at {calc.interestRatePeriods?.[0]?.interestRate || 0}% for {calc.loanTerm} years
+                    {calculationService.formatCurrency(
+                      calc.principal,
+                      undefined,
+                      calc.currency || 'USD'
+                    )}{' '}
+                    at {calc.interestRatePeriods?.[0]?.interestRate || 0}% for {calc.loanTerm} years
                   </p>
                 </div>
                 <Button

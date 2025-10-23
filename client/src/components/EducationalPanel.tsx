@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,75 +20,83 @@ interface EducationalPanelProps {
 
 export default function EducationalPanel({
   activeLanguage,
-  onLanguageChange
+  onLanguageChange,
 }: EducationalPanelProps) {
   const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('glossary');
   const [selectedExample, setSelectedExample] = useState<string | null>(null);
-  
+
   // Change language when activeLanguage prop changes
   useEffect(() => {
     if (activeLanguage && i18n.language !== activeLanguage) {
       i18n.changeLanguage(activeLanguage);
     }
   }, [activeLanguage, i18n]);
-  
+
   const handleLanguageChange = (language: string) => {
     i18n.changeLanguage(language);
     if (onLanguageChange) {
       onLanguageChange(language);
     }
   };
-  
+
   // Get translated content
   const resources = i18n.getResourceBundle(i18n.language, 'translation');
   const financialGlossary = resources?.financialGlossary || {};
   const mortgageConcepts = resources?.mortgageConcepts || {};
   const interactiveExamples = resources?.interactiveExamples || [];
-  
+
   // Filter glossary terms based on search
-  const filteredGlossary = Object.values(financialGlossary).filter((term: any) =>
-    searchTerm === '' ||
-    term.term?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    term.definition?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredGlossary = Object.values(financialGlossary).filter(
+    (term: any) =>
+      searchTerm === '' ||
+      term.term?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      term.definition?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   // Filter concepts based on search
-  const filteredConcepts = Object.values(mortgageConcepts).filter((concept: any) =>
-    searchTerm === '' ||
-    concept.concept?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    concept.explanation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    concept.impact?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredConcepts = Object.values(mortgageConcepts).filter(
+    (concept: any) =>
+      searchTerm === '' ||
+      concept.concept?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      concept.explanation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      concept.impact?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Filter interactive examples based on search
-  const filteredExamples = interactiveExamples.filter((example: any) =>
-    searchTerm === '' ||
-    example.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    example.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredExamples = interactiveExamples.filter(
+    (example: any) =>
+      searchTerm === '' ||
+      example.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      example.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="overflow-hidden">
       <div className="space-y-6">
         <div className="space-y-4">
-          <p className="text-base text-muted-foreground">{t('education.description') || 'Learn about mortgage concepts and how different factors affect your loan.'}</p>
-          
+          <p className="text-base text-muted-foreground">
+            {t('education.description') ||
+              'Learn about mortgage concepts and how different factors affect your loan.'}
+          </p>
+
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-muted-foreground" />
             </div>
             <Input
               type="text"
-              placeholder={(t('education.search') as string) || "Search terms, concepts, or examples..."}
+              placeholder={
+                (t('education.search') as string) || 'Search terms, concepts, or examples...'
+              }
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
         </div>
-        
+
         <Tabs defaultValue="glossary" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-3 p-1 bg-muted rounded-lg">
             <TabsTrigger value="glossary" className="flex items-center gap-2 py-2">
@@ -99,10 +112,12 @@ export default function EducationalPanel({
               {t('education.interactive') || 'Interactive Examples'}
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="glossary" className="space-y-4">
             {filteredGlossary.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">{t('education.noResults') || 'No matching terms found'}</p>
+              <p className="text-muted-foreground text-center py-4">
+                {t('education.noResults') || 'No matching terms found'}
+              </p>
             ) : (
               <Accordion type="single" collapsible className="w-full">
                 {filteredGlossary.map((term: any, index: number) => (
@@ -116,7 +131,10 @@ export default function EducationalPanel({
                         {term?.example && (
                           <div className="mt-2 bg-gray-50 p-3 rounded-md">
                             <p className="text-sm text-gray-600">
-                              <span className="font-medium">{t('education.example') || 'Example'}:</span> {term?.example}
+                              <span className="font-medium">
+                                {t('education.example') || 'Example'}:
+                              </span>{' '}
+                              {term?.example}
                             </p>
                           </div>
                         )}
@@ -127,10 +145,12 @@ export default function EducationalPanel({
               </Accordion>
             )}
           </TabsContent>
-          
+
           <TabsContent value="concepts" className="space-y-4">
             {filteredConcepts.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">{t('education.noResults') || 'No matching concepts found'}</p>
+              <p className="text-muted-foreground text-center py-4">
+                {t('education.noResults') || 'No matching concepts found'}
+              </p>
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {filteredConcepts.map((concept: any, index: number) => (
@@ -142,20 +162,26 @@ export default function EducationalPanel({
                     <CardContent>
                       <div className="space-y-3">
                         <div>
-                          <h4 className="font-medium text-sm mb-1">{t('education.impact') || 'Impact'}</h4>
+                          <h4 className="font-medium text-sm mb-1">
+                            {t('education.impact') || 'Impact'}
+                          </h4>
                           <p className="text-gray-700">{concept.impact}</p>
                         </div>
-                        
+
                         {concept.example && (
                           <div className="bg-gray-50 p-3 rounded-md">
-                            <h4 className="font-medium text-sm mb-1">{t('education.example') || 'Example'}</h4>
+                            <h4 className="font-medium text-sm mb-1">
+                              {t('education.example') || 'Example'}
+                            </h4>
                             <p className="text-sm text-gray-600">{concept.example}</p>
                           </div>
                         )}
-                        
+
                         {concept.relatedTerms && concept.relatedTerms.length > 0 && (
                           <div>
-                            <h4 className="font-medium text-sm mb-2">{t('education.relatedTerms') || 'Related Terms'}</h4>
+                            <h4 className="font-medium text-sm mb-2">
+                              {t('education.relatedTerms') || 'Related Terms'}
+                            </h4>
                             <div className="flex flex-wrap gap-2">
                               {concept.relatedTerms.map((term: string, i: number) => (
                                 <Badge
@@ -180,27 +206,31 @@ export default function EducationalPanel({
               </div>
             )}
           </TabsContent>
-          
+
           <TabsContent value="interactive" className="space-y-4">
             {filteredExamples.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">{t('education.noResults') || 'No matching examples found'}</p>
+              <p className="text-muted-foreground text-center py-4">
+                {t('education.noResults') || 'No matching examples found'}
+              </p>
             ) : (
               <div className="space-y-6">
                 {selectedExample ? (
                   <div>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="mb-4"
                       onClick={() => setSelectedExample(null)}
                     >
                       ← Back to examples
                     </Button>
-                    
+
                     {/* Display the selected interactive example */}
                     {(() => {
-                      const example = interactiveExamples?.find((ex: any) => ex.id === selectedExample);
+                      const example = interactiveExamples?.find(
+                        (ex: any) => ex.id === selectedExample
+                      );
                       if (!example) return null;
-                      
+
                       return (
                         <Card>
                           <CardHeader>
@@ -213,26 +243,34 @@ export default function EducationalPanel({
                                 <h4 className="font-medium mb-2">Default Scenario</h4>
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                   <div>
-                                    <span className="font-medium">Principal:</span> ${example.defaultValues.principal.toLocaleString()}
+                                    <span className="font-medium">Principal:</span> $
+                                    {example.defaultValues.principal.toLocaleString()}
                                   </div>
                                   <div>
-                                    <span className="font-medium">Interest Rate:</span> {example.defaultValues.interestRate}%
+                                    <span className="font-medium">Interest Rate:</span>{' '}
+                                    {example.defaultValues.interestRate}%
                                   </div>
                                   <div>
-                                    <span className="font-medium">Term:</span> {example.defaultValues.term} years
+                                    <span className="font-medium">Term:</span>{' '}
+                                    {example.defaultValues.term} years
                                   </div>
                                   {Object.entries(example.defaultValues)
-                                    .filter(([key]) => !['principal', 'interestRate', 'term'].includes(key))
+                                    .filter(
+                                      ([key]) =>
+                                        !['principal', 'interestRate', 'term'].includes(key)
+                                    )
                                     .map(([key, value]) => (
                                       <div key={key}>
-                                        <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {String(value)}
+                                        <span className="font-medium">
+                                          {key.charAt(0).toUpperCase() + key.slice(1)}:
+                                        </span>{' '}
+                                        {String(value)}
                                         {key === 'overpayment' ? '/month' : ''}
                                       </div>
-                                    ))
-                                  }
+                                    ))}
                                 </div>
                               </div>
-                              
+
                               <div className="space-y-4">
                                 <h4 className="font-medium">Scenarios</h4>
                                 {example.scenarios.map((scenario: any, i: number) => (
@@ -245,7 +283,10 @@ export default function EducationalPanel({
                                         <div className="grid grid-cols-2 gap-2 text-sm">
                                           {Object.entries(scenario.values).map(([key, value]) => (
                                             <div key={key} className="text-blue-600">
-                                              <span className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}:</span> {String(value)}
+                                              <span className="font-medium">
+                                                {key.charAt(0).toUpperCase() + key.slice(1)}:
+                                              </span>{' '}
+                                              {String(value)}
                                               {key === 'interestRate' ? '%' : ''}
                                               {key === 'term' ? ' years' : ''}
                                               {key === 'overpayment' ? '/month' : ''}

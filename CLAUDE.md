@@ -9,6 +9,7 @@ MortgageCalc is a client-side React mortgage calculator with TypeScript, featuri
 ## Development Commands
 
 ### Build & Development
+
 ```bash
 npm run dev              # Start Vite dev server on http://localhost:3000
 npm run build            # TypeScript check + production build to dist/public
@@ -18,6 +19,7 @@ npm run validate         # Run pre-build checks (security, logs)
 ```
 
 ### Testing
+
 ```bash
 npm test                 # Run Jest unit tests (max 80% workers)
 npm run test:watch       # Run tests in watch mode
@@ -29,6 +31,7 @@ npm run fulltest         # Run both unit and E2E tests
 ```
 
 ### Quality & Security
+
 ```bash
 npm run security-audit   # Run security audit on dependencies
 npm run check-logs       # Check for console.log statements
@@ -36,6 +39,7 @@ npm run precommit        # Run validation + tests (pre-commit hook)
 ```
 
 ### Deployment
+
 ```bash
 npm run deploy:local     # Build and preview with Azure Static Web Apps CLI
 npm run deploy:azure     # Deploy to Azure (requires PowerShell)
@@ -62,6 +66,7 @@ types.ts (shared type definitions)
 ```
 
 **Key Architecture Principles:**
+
 1. **UI components MUST use `calculationService`** - Never import calculation modules directly
 2. **calculationCore** breaks circular dependencies by providing shared functions (`roundToCents`, `calculateBaseMonthlyPayment`, `convertScheduleFormat`)
 3. **calculationEngine** orchestrates all calculations and delegates to specialized modules
@@ -71,21 +76,25 @@ types.ts (shared type definitions)
 ### Module Dependencies
 
 **calculationCore.ts** (lowest level):
+
 - Contains: `roundToCents()`, `calculateBaseMonthlyPayment()`, `convertScheduleFormat()`
 - Dependencies: Only types.ts
 - Used by: calculationEngine, overpaymentCalculator, calculationService
 
 **overpaymentCalculator.ts**:
+
 - Contains: `applyOverpayment()`, `performOverpayments()`, `aggregateYearlyData()`, rate change logic
 - Dependencies: calculationCore, types
 - Used by: calculationEngine
 
 **calculationEngine.ts**:
+
 - Contains: Main calculation orchestration, `calculateLoanDetails()`, repayment models
 - Dependencies: overpaymentCalculator, calculationCore, validation, formatters, types
 - Used by: calculationService
 
 **calculationService.ts** (service layer):
+
 - Contains: UI-friendly API, parameter validation, result formatting
 - Dependencies: calculationEngine, overpaymentCalculator, optimizationEngine, formatters, validation
 - Used by: UI components
@@ -93,6 +102,7 @@ types.ts (shared type definitions)
 ### Key Data Structures
 
 **PaymentData** (unified payment structure in `types.ts`):
+
 ```typescript
 {
   payment: number;              // 1-based payment number
@@ -110,6 +120,7 @@ types.ts (shared type definitions)
 ```
 
 **LoanDetails** (main input structure):
+
 ```typescript
 {
   principal: number;
@@ -133,6 +144,7 @@ types.ts (shared type definitions)
 ### Overpayment Logic
 
 The system supports sophisticated overpayment scenarios:
+
 - **One-time overpayments**: Applied at specific dates
 - **Recurring overpayments**: Monthly, quarterly, or annual with date ranges
 - **Effects**: Reduce loan term OR reduce monthly payment
@@ -141,6 +153,7 @@ The system supports sophisticated overpayment scenarios:
 ## Testing Strategy
 
 ### Unit Tests (Jest + React Testing Library)
+
 - Test files: `**/*.test.ts(x)` (excluding `/client/e2e-tests/`)
 - Comprehensive test suite in `client/src/lib/comprehensive-tests/`:
   - `amortization-validation.test.ts` - Schedule accuracy
@@ -154,6 +167,7 @@ The system supports sophisticated overpayment scenarios:
   - `mocks.ts` - Mock implementations
 
 ### E2E Tests (Puppeteer)
+
 - Located in `client/e2e-tests/`
 - Page objects pattern: `page-objects/LoanForm.ts`, `page-objects/LoanSummary.ts`
 - Test specs: `specs/*.spec.ts`
@@ -166,6 +180,7 @@ The system supports sophisticated overpayment scenarios:
 ## Path Aliases
 
 Configured in both `tsconfig.json` and `vite.config.ts`:
+
 ```typescript
 "@/*": ["./client/src/*"]      // Main source code
 "@shared/*": ["./shared/*"]    // Shared types/utils
@@ -173,6 +188,7 @@ Configured in both `tsconfig.json` and `vite.config.ts`:
 ```
 
 Always use path aliases in imports:
+
 ```typescript
 // ✅ Correct
 import { calculateLoanDetails } from '@/lib/calculationEngine';
@@ -185,6 +201,7 @@ import { calculateLoanDetails } from '../../../lib/calculationEngine';
 ## Build Process
 
 ### Vite Configuration
+
 - **Root**: `client/` directory
 - **Output**: `dist/public/`
 - **Dev server**: Port 3000 with auto-open
@@ -194,7 +211,9 @@ import { calculateLoanDetails } from '../../../lib/calculationEngine';
   - `runtimeErrorOverlay()` - Development error overlay
 
 ### Pre-build Checks
+
 The `prebuild` script runs automatically before build:
+
 1. Security audit (`scripts/security-audit.js`)
 2. Console log check (`scripts/check-console-logs.js`)
 3. Validation checks (`scripts/pre-build-checks.js`)
@@ -210,6 +229,7 @@ The `prebuild` script runs automatically before build:
 ## Tutorial System
 
 Interactive tutorial using `react-joyride`:
+
 - Configuration: `client/src/lib/tutorial/joyrideConfig.ts`
 - Steps: `client/src/lib/tutorial/tutorialSteps.ts`
 - Beginner mode: `client/src/lib/tutorial/beginnerTutorialSteps.ts`
@@ -226,12 +246,14 @@ Interactive tutorial using `react-joyride`:
 ## UI Components
 
 **shadcn/ui based components** in `client/src/components/ui/`:
+
 - Built on Radix UI primitives
 - Tailwind CSS for styling
 - Custom theme via `next-themes`
 - Component library: Accordion, Dialog, Toast, Chart, etc.
 
 **Domain components** in `client/src/components/`:
+
 - `LoanInputForm.tsx` - Main calculation input
 - `AmortizationSchedule.tsx` - Schedule display
 - `ChartSection.tsx` - Visualizations
@@ -240,6 +262,7 @@ Interactive tutorial using `react-joyride`:
 - `ScenarioComparison.tsx` - Scenario comparison
 
 **Mortgage calculator components** in `client/src/components/mortgage-calculator/`:
+
 - `calculator-form.tsx`
 - `payment-summary.tsx`
 - `amortization-schedule.tsx`
@@ -268,7 +291,7 @@ const overpayment: OverpaymentDetails = {
   startDate: new Date('2024-06-01'),
   isRecurring: false,
   frequency: 'one-time',
-  effect: 'reduceTerm'  // or 'reducePayment'
+  effect: 'reduceTerm', // or 'reducePayment'
 };
 
 const results = calculationService.calculateWithOverpayments(loanDetails);
@@ -277,13 +300,14 @@ const results = calculationService.calculateWithOverpayments(loanDetails);
 ### Parameter Object Pattern
 
 Prefer parameter objects over long argument lists:
+
 ```typescript
 // ✅ Preferred
 calculateDecreasingInstallment({
   principal: 300000,
   monthlyRate: 0.0029,
   totalMonths: 360,
-  currentMonth: 1
+  currentMonth: 1,
 });
 
 // ❌ Avoid (but supported for backward compatibility)
@@ -295,16 +319,19 @@ calculateDecreasingInstallment(300000, 0.0029, 360, 1);
 ### Common Issues
 
 **Circular Dependency Errors**:
+
 - Ensure calculationCore is used for shared functions
 - Never import calculationEngine into overpaymentCalculator
 - Follow the dependency flow diagram
 
 **Test Failures**:
+
 - Check `client/src/lib/testCaseValues.ts` for standard test inputs
 - Run `npm run test:failed` to focus on failures
 - Use `npm run test:watch` for rapid iteration
 
 **E2E Test Issues**:
+
 - Ensure dev server is running (default: port 3000)
 - Use `--no-headless` to see browser actions
 - Check page objects for selector updates

@@ -4,7 +4,7 @@ import { LoanDetails, OverpaymentDetails } from './types';
 
 // Mock the calculationEngine's calculateLoanDetails function
 jest.mock('./calculationEngine', () => ({
-  calculateLoanDetails: jest.fn()
+  calculateLoanDetails: jest.fn(),
 }));
 
 describe('analyzeOverpaymentImpact', () => {
@@ -16,25 +16,25 @@ describe('analyzeOverpaymentImpact', () => {
     overpaymentPlans: [],
     startDate: new Date('2025-01-01'),
     name: 'Test Loan',
-    currency: 'USD'
+    currency: 'USD',
   };
 
   // Mock baseline calculation results
   const mockBaselineResults = {
     monthlyPayment: 1432.25,
-    totalInterest: 215610.00,
-    totalCost: 515610.00,
+    totalInterest: 215610.0,
+    totalCost: 515610.0,
     apr: 4.0,
     originalTerm: 30,
     actualTerm: 30,
     amortizationSchedule: [],
-    yearlyData: []
+    yearlyData: [],
   };
 
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     // Setup default mock implementation for calculateLoanDetails
     (calculateLoanDetails as jest.Mock).mockReturnValue(mockBaselineResults);
   });
@@ -43,36 +43,38 @@ describe('analyzeOverpaymentImpact', () => {
     // Arrange
     const maxMonthlyAmount = 200;
     const steps = 5;
-    
+
     // Mock overpayment results with decreasing interest and term
-    (calculateLoanDetails as jest.Mock).mockImplementation((principal, interestRatePeriods, loanTerm, overpayment) => {
-      if (overpayment) {
-        const amount = overpayment.amount;
-        // Calculate a proportional reduction in interest and term based on overpayment amount
-        const interestReduction = amount * 500; // Simplified calculation for test
-        const termReduction = amount / 100; // Simplified calculation for test
-        
-        return {
-          monthlyPayment: 1432.25,
-          totalInterest: 215610.00 - interestReduction,
-          totalCost: 515610.00 - interestReduction,
-          apr: 4.0,
-          originalTerm: 30,
-          actualTerm: 30 - termReduction,
-          amortizationSchedule: [],
-          yearlyData: []
-        };
+    (calculateLoanDetails as jest.Mock).mockImplementation(
+      (principal, interestRatePeriods, loanTerm, overpayment) => {
+        if (overpayment) {
+          const amount = overpayment.amount;
+          // Calculate a proportional reduction in interest and term based on overpayment amount
+          const interestReduction = amount * 500; // Simplified calculation for test
+          const termReduction = amount / 100; // Simplified calculation for test
+
+          return {
+            monthlyPayment: 1432.25,
+            totalInterest: 215610.0 - interestReduction,
+            totalCost: 515610.0 - interestReduction,
+            apr: 4.0,
+            originalTerm: 30,
+            actualTerm: 30 - termReduction,
+            amortizationSchedule: [],
+            yearlyData: [],
+          };
+        }
+        return mockBaselineResults;
       }
-      return mockBaselineResults;
-    });
-    
+    );
+
     // Act
     const result = analyzeOverpaymentImpact(mockLoanDetails, maxMonthlyAmount, steps);
-    
+
     // Assert
     expect(result).toHaveLength(steps);
     expect(calculateLoanDetails).toHaveBeenCalledTimes(steps + 1); // baseline + steps
-    
+
     // Check that each result has the expected properties
     result.forEach((item, index) => {
       const expectedAmount = (maxMonthlyAmount / steps) * (index + 1);
@@ -83,11 +85,11 @@ describe('analyzeOverpaymentImpact', () => {
       expect(item.interestSaved).toBeGreaterThan(0);
       expect(item.termReduction).toBeGreaterThan(0);
     });
-    
+
     // Check that values increase with overpayment amount
     for (let i = 1; i < result.length; i++) {
-      expect(result[i].interestSaved).toBeGreaterThan(result[i-1].interestSaved);
-      expect(result[i].termReduction).toBeGreaterThan(result[i-1].termReduction);
+      expect(result[i].interestSaved).toBeGreaterThan(result[i - 1].interestSaved);
+      expect(result[i].termReduction).toBeGreaterThan(result[i - 1].termReduction);
     }
   });
 
@@ -95,49 +97,57 @@ describe('analyzeOverpaymentImpact', () => {
     // Arrange
     const mockLoanWithOneTimeOverpayment = {
       ...mockLoanDetails,
-      overpaymentPlans: [{
-        amount: 10000,
-        startMonth: 1,
-        startDate: new Date('2025-01-01'),
-        isRecurring: false,
-        frequency: 'one-time' as const,
-        effect: 'reduceTerm' as const
-      }]
+      overpaymentPlans: [
+        {
+          amount: 10000,
+          startMonth: 1,
+          startDate: new Date('2025-01-01'),
+          isRecurring: false,
+          frequency: 'one-time' as const,
+          effect: 'reduceTerm' as const,
+        },
+      ],
     };
-    
+
     const maxMonthlyAmount = 200; // This will be used for analysis even though we have a one-time overpayment
     const steps = 5;
-    
+
     // Mock overpayment results
-    (calculateLoanDetails as jest.Mock).mockImplementation((principal, interestRatePeriods, loanTerm, overpayment) => {
-      if (overpayment) {
-        const amount = overpayment.amount;
-        const interestReduction = amount * 500;
-        const termReduction = amount / 100;
-        
-        return {
-          monthlyPayment: 1432.25,
-          totalInterest: 215610.00 - interestReduction,
-          totalCost: 515610.00 - interestReduction,
-          apr: 4.0,
-          originalTerm: 30,
-          actualTerm: 30 - termReduction,
-          amortizationSchedule: [],
-          yearlyData: []
-        };
+    (calculateLoanDetails as jest.Mock).mockImplementation(
+      (principal, interestRatePeriods, loanTerm, overpayment) => {
+        if (overpayment) {
+          const amount = overpayment.amount;
+          const interestReduction = amount * 500;
+          const termReduction = amount / 100;
+
+          return {
+            monthlyPayment: 1432.25,
+            totalInterest: 215610.0 - interestReduction,
+            totalCost: 515610.0 - interestReduction,
+            apr: 4.0,
+            originalTerm: 30,
+            actualTerm: 30 - termReduction,
+            amortizationSchedule: [],
+            yearlyData: [],
+          };
+        }
+        return mockBaselineResults;
       }
-      return mockBaselineResults;
-    });
-    
+    );
+
     // Act
-    const result = analyzeOverpaymentImpact(mockLoanWithOneTimeOverpayment, maxMonthlyAmount, steps);
-    
+    const result = analyzeOverpaymentImpact(
+      mockLoanWithOneTimeOverpayment,
+      maxMonthlyAmount,
+      steps
+    );
+
     // Assert
     expect(result).toHaveLength(steps);
     expect(calculateLoanDetails).toHaveBeenCalledTimes(steps + 1);
-    
+
     // Check that each result has the expected properties
-    result.forEach(item => {
+    result.forEach((item) => {
       expect(item).toHaveProperty('amount');
       expect(item).toHaveProperty('interestSaved');
       expect(item).toHaveProperty('termReduction');
@@ -150,16 +160,16 @@ describe('analyzeOverpaymentImpact', () => {
     // Arrange
     const maxMonthlyAmount = 0;
     const steps = 5;
-    
+
     // Act
     const result = analyzeOverpaymentImpact(mockLoanDetails, maxMonthlyAmount, steps);
-    
+
     // Assert
     expect(result).toHaveLength(steps);
-    
+
     // Even with zero maxMonthlyAmount, we should still get some results
     // because the function should use a small default value
-    result.forEach(item => {
+    result.forEach((item) => {
       expect(item.amount).toBeGreaterThanOrEqual(0);
     });
   });
@@ -168,10 +178,10 @@ describe('analyzeOverpaymentImpact', () => {
     // Arrange
     const maxMonthlyAmount = 200;
     const steps = 3; // Different step count
-    
+
     // Act
     const result = analyzeOverpaymentImpact(mockLoanDetails, maxMonthlyAmount, steps);
-    
+
     // Assert
     expect(result).toHaveLength(steps);
     expect(calculateLoanDetails).toHaveBeenCalledTimes(steps + 1);

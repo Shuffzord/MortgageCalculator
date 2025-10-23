@@ -1,4 +1,4 @@
-import { CalculationResults } from "./types";
+import { CalculationResults } from './types';
 
 /**
  * Compares two CalculationResults objects and returns key savings metrics.
@@ -10,11 +10,13 @@ export function compareCalculations(
   baseCalculation: CalculationResults,
   calculationWithoutOverpayments: CalculationResults
 ): { interestSaved: number; timeSaved: number; percentageSaved: number } {
-  const interestSaved =  Number(baseCalculation.totalInterest) - Number(calculationWithoutOverpayments.totalInterest);
+  const interestSaved =
+    Number(baseCalculation.totalInterest) - Number(calculationWithoutOverpayments.totalInterest);
   // Convert timeSaved from years to months for proper formatting
-  const timeSavedYears = Number(baseCalculation.actualTerm) - Number(calculationWithoutOverpayments.actualTerm);
+  const timeSavedYears =
+    Number(baseCalculation.actualTerm) - Number(calculationWithoutOverpayments.actualTerm);
   const timeSavedMonths = Math.round(timeSavedYears * 12);
-  
+
   const percentageSaved =
     Number(baseCalculation.totalInterest) > 0
       ? (interestSaved / Number(baseCalculation.totalInterest)) * 100

@@ -23,16 +23,16 @@ export async function initPuppeteer() {
   const browser = await puppeteer.launch({
     headless: process.env.HEADLESS !== 'false',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    defaultViewport: { width: 1280, height: 800 }
+    defaultViewport: { width: 1280, height: 800 },
   });
-  
+
   // Create a new page
   const page = await browser.newPage();
-  
+
   // Set global variables
   global.browser = browser;
   global.page = page;
-  
+
   return { browser, page };
 }
 

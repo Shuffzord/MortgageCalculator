@@ -6,7 +6,7 @@ import {
   CalculationResults,
   OverpaymentStrategy,
   StrategyResult,
-  PaymentData
+  PaymentData,
 } from './types';
 import { calculateLoanDetails } from './calculationEngine.ts';
 import { roundToCents } from './calculationCore';
@@ -29,14 +29,17 @@ export function optimizeOverpayments(
     baselineDetails.repaymentModel,
     baselineDetails.additionalCosts
   );
-  
+
   // Generate different overpayment strategies based on the optimization strategy
   const strategies = generateOverpaymentStrategies(loanDetails, optimizationParams);
-  
+
   // Evaluate each strategy and find the best one
   const evaluatedStrategies = evaluateStrategies(loanDetails, strategies, baselineResults);
-  const bestStrategy = findBestStrategy(evaluatedStrategies, optimizationParams.optimizationStrategy);
-  
+  const bestStrategy = findBestStrategy(
+    evaluatedStrategies,
+    optimizationParams.optimizationStrategy
+  );
+
   // Calculate results with optimized overpayments
   const optimizedDetails = { ...loanDetails, overpaymentPlans: bestStrategy.overpayments };
   const optimizedResults = calculateLoanDetails(
@@ -49,27 +52,29 @@ export function optimizeOverpayments(
     bestStrategy.overpayments, // Pass all overpayments
     optimizedDetails.startDate
   );
-  
+
   // Calculate savings
   const interestSaved = baselineResults.totalInterest - optimizedResults.totalInterest;
   const timeOrPaymentSaved = baselineResults.actualTerm - optimizedResults.actualTerm;
-  
+
   // Calculate optimization value and fee
   const optimizationValue = interestSaved;
-  const optimizationFee = roundToCents(optimizationValue * optimizationParams.feePercentage / 100);
-  
+  const optimizationFee = roundToCents(
+    (optimizationValue * optimizationParams.feePercentage) / 100
+  );
+
   // Generate comparison chart data
   const comparisonChart = generateComparisonChartData(baselineResults, optimizedResults);
-  
+
   // Create a summary of all strategies for debugging
-  const allStrategies = evaluatedStrategies.map(strategy => ({
+  const allStrategies = evaluatedStrategies.map((strategy) => ({
     name: strategy.name,
     interestSaved: strategy.results.interestSaved,
     termReduction: strategy.results.termReduction,
     effectivenessRatio: strategy.results.effectivenessRatio,
-    isBest: strategy === bestStrategy
+    isBest: strategy === bestStrategy,
   }));
-  
+
   return {
     optimizedOverpayments: bestStrategy.overpayments,
     interestSaved,
@@ -77,7 +82,7 @@ export function optimizeOverpayments(
     optimizationValue,
     optimizationFee,
     comparisonChart,
-    allStrategies
+    allStrategies,
   };
 }
 
@@ -89,41 +94,45 @@ function generateOverpaymentStrategies(
   params: OptimizationParameters
 ): OverpaymentStrategy[] {
   const strategies: OverpaymentStrategy[] = [];
-  
+
   // Strategy 1: Lump Sum at Beginning
   if (params.maxOneTimeOverpayment > 0) {
     strategies.push({
       name: 'Lump Sum at Beginning',
       description: 'Make a one-time lump sum payment at the beginning of the loan',
-      overpayments: [{
-        amount: params.maxOneTimeOverpayment,
-        startMonth: 1,
-        startDate: loanDetails.startDate,
-        isRecurring: false,
-        frequency: 'one-time',
-        effect: 'reduceTerm'
-      }],
-      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+      overpayments: [
+        {
+          amount: params.maxOneTimeOverpayment,
+          startMonth: 1,
+          startDate: loanDetails.startDate,
+          isRecurring: false,
+          frequency: 'one-time',
+          effect: 'reduceTerm',
+        },
+      ],
+      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
     });
   }
-  
+
   // Strategy 2: Regular Monthly Overpayments
   if (params.maxMonthlyOverpayment > 0) {
     strategies.push({
       name: 'Regular Monthly Overpayments',
       description: 'Make regular monthly overpayments throughout the loan term',
-      overpayments: [{
-        amount: params.maxMonthlyOverpayment,
-        startMonth: 1,
-        startDate: loanDetails.startDate,
-        isRecurring: true,
-        frequency: 'monthly',
-        effect: 'reduceTerm'
-      }],
-      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+      overpayments: [
+        {
+          amount: params.maxMonthlyOverpayment,
+          startMonth: 1,
+          startDate: loanDetails.startDate,
+          isRecurring: true,
+          frequency: 'monthly',
+          effect: 'reduceTerm',
+        },
+      ],
+      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
     });
   }
-  
+
   // Strategy 3: Combination (Lump Sum + Monthly)
   if (params.maxOneTimeOverpayment > 0 && params.maxMonthlyOverpayment > 0) {
     strategies.push({
@@ -136,7 +145,7 @@ function generateOverpaymentStrategies(
           startDate: loanDetails.startDate,
           isRecurring: false,
           frequency: 'one-time',
-          effect: 'reduceTerm'
+          effect: 'reduceTerm',
         },
         {
           amount: params.maxMonthlyOverpayment,
@@ -144,19 +153,19 @@ function generateOverpaymentStrategies(
           startDate: loanDetails.startDate,
           isRecurring: true,
           frequency: 'monthly',
-          effect: 'reduceTerm'
-        }
+          effect: 'reduceTerm',
+        },
       ],
-      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
     });
   }
-  
+
   // Strategy 4: Graduated Overpayments (increasing over time)
   if (params.maxMonthlyOverpayment > 0) {
     const initialAmount = params.maxMonthlyOverpayment * 0.5;
     const secondStageAmount = params.maxMonthlyOverpayment * 0.75;
     const finalAmount = params.maxMonthlyOverpayment;
-    
+
     strategies.push({
       name: 'Graduated Overpayments',
       description: 'Start with smaller overpayments and increase them over time',
@@ -168,7 +177,7 @@ function generateOverpaymentStrategies(
           startDate: loanDetails.startDate,
           isRecurring: true,
           frequency: 'monthly',
-          effect: 'reduceTerm'
+          effect: 'reduceTerm',
         },
         {
           amount: secondStageAmount,
@@ -177,7 +186,7 @@ function generateOverpaymentStrategies(
           startDate: loanDetails.startDate,
           isRecurring: true,
           frequency: 'monthly',
-          effect: 'reduceTerm'
+          effect: 'reduceTerm',
         },
         {
           amount: finalAmount,
@@ -185,32 +194,34 @@ function generateOverpaymentStrategies(
           startDate: loanDetails.startDate,
           isRecurring: true,
           frequency: 'monthly',
-          effect: 'reduceTerm'
-        }
+          effect: 'reduceTerm',
+        },
       ],
-      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
     });
   }
-  
+
   // Strategy 5: Quarterly Lump Sums
   if (params.maxOneTimeOverpayment > 0) {
     const quarterlyAmount = params.maxOneTimeOverpayment / 4;
-    
+
     strategies.push({
       name: 'Quarterly Lump Sums',
       description: 'Make quarterly lump sum payments',
-      overpayments: [{
-        amount: quarterlyAmount,
-        startMonth: 1,
-        startDate: loanDetails.startDate,
-        isRecurring: true,
-        frequency: 'quarterly',
-        effect: 'reduceTerm'
-      }],
-      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+      overpayments: [
+        {
+          amount: quarterlyAmount,
+          startMonth: 1,
+          startDate: loanDetails.startDate,
+          isRecurring: true,
+          frequency: 'quarterly',
+          effect: 'reduceTerm',
+        },
+      ],
+      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
     });
   }
-  
+
   return strategies;
 }
 
@@ -228,31 +239,31 @@ function calculatePresentValueOfInterestSaved(
   if (!baseSchedule.length || !optimizedSchedule.length) {
     return 0;
   }
-  
+
   // Calculate the monthly discount rate
   const monthlyDiscountRate = discountRate / 12;
-  
+
   // Calculate the present value of interest saved for each month
   let presentValueOfInterestSaved = 0;
-  
+
   // Determine the maximum length to compare
   const maxLength = Math.min(baseSchedule.length, optimizedSchedule.length);
-  
+
   for (let i = 0; i < maxLength; i++) {
     // Get the interest payment for each schedule
     const baseInterest = baseSchedule[i].interestPayment;
     const optimizedInterest = optimizedSchedule[i].interestPayment;
-    
+
     // Calculate the interest saved for this month
     const interestSaved = baseInterest - optimizedInterest;
-    
+
     // Calculate the present value of the interest saved
     const presentValue = interestSaved / Math.pow(1 + monthlyDiscountRate, i);
-    
+
     // Add to the total
     presentValueOfInterestSaved += presentValue;
   }
-  
+
   // If the optimized schedule is shorter than the base schedule,
   // add the present value of all remaining interest payments in the base schedule
   if (optimizedSchedule.length < baseSchedule.length) {
@@ -262,7 +273,7 @@ function calculatePresentValueOfInterestSaved(
       presentValueOfInterestSaved += presentValue;
     }
   }
-  
+
   return presentValueOfInterestSaved;
 }
 
@@ -274,7 +285,7 @@ function evaluateStrategies(
   strategies: OverpaymentStrategy[],
   baselineResults: CalculationResults
 ): OverpaymentStrategy[] {
-  return strategies.map(strategy => {
+  return strategies.map((strategy) => {
     // Calculate results with this strategy
     const strategyDetails = { ...loanDetails, overpaymentPlans: strategy.overpayments };
     const strategyResults = calculateLoanDetails(
@@ -287,26 +298,28 @@ function evaluateStrategies(
       strategy.overpayments, // Pass all overpayments
       strategyDetails.startDate
     );
-    
+
     // Calculate effectiveness metrics
     // Use present value calculation for more accurate interest savings
     const interestSaved = calculatePresentValueOfInterestSaved(
       baselineResults.amortizationSchedule,
       strategyResults.amortizationSchedule
     );
-    
+
     const termReduction = baselineResults.actualTerm - strategyResults.actualTerm;
-    
-   // Calculate total overpayment amount
+
+    // Calculate total overpayment amount
     let totalOverpayment = 0;
-    
+
     for (const overpayment of strategy.overpayments) {
       if (!overpayment.isRecurring) {
         totalOverpayment += overpayment.amount;
       } else {
         const startMonth = overpayment.startMonth || 1;
-        const endMonth = overpayment.endMonth || Math.min(loanDetails.loanTerm * 12, strategyResults.amortizationSchedule.length);
-        
+        const endMonth =
+          overpayment.endMonth ||
+          Math.min(loanDetails.loanTerm * 12, strategyResults.amortizationSchedule.length);
+
         if (overpayment.frequency === 'monthly') {
           totalOverpayment += overpayment.amount * (endMonth - startMonth + 1);
         } else if (overpayment.frequency === 'quarterly') {
@@ -318,50 +331,51 @@ function evaluateStrategies(
         }
       }
     }
-    
+
     // Calculate effectiveness ratio (interest saved per dollar of overpayment)
     // For very large monthly overpayments, we need to be careful with the calculation
     // to avoid favoring tiny one-time payments over substantial monthly payments
     let effectivenessRatio = 0;
-    
+
     if (totalOverpayment > 0) {
       // Basic ratio is interest saved per dollar of overpayment
       effectivenessRatio = interestSaved / totalOverpayment;
-      
+
       // Add a term reduction factor to the effectiveness ratio
       // This ensures strategies that pay off the loan faster are properly valued
       const termReductionFactor = termReduction / baselineResults.actualTerm;
       const timeValueMultiplier = 1 + termReductionFactor;
-      
+
       // Apply the time value multiplier to the effectiveness ratio
       effectivenessRatio *= timeValueMultiplier;
-      
+
       // For monthly payments, we also consider the term reduction
-      if (strategy.overpayments.some(op => op.isRecurring && op.frequency === 'monthly')) {
+      if (strategy.overpayments.some((op) => op.isRecurring && op.frequency === 'monthly')) {
         // Add a term reduction bonus to the effectiveness ratio
         // This helps ensure that large monthly payments that significantly reduce the term
         // are properly valued compared to small one-time payments
         const termReductionBonus = termReduction > 0 ? Math.log10(termReduction + 1) : 0;
-        effectivenessRatio *= (1 + termReductionBonus);
+        effectivenessRatio *= 1 + termReductionBonus;
       }
-      
+
       // For very small one-time payments, apply a penalty to prevent them from being
       // artificially favored due to floating-point precision issues
-      if (strategy.overpayments.length === 1 &&
-          !strategy.overpayments[0].isRecurring &&
-          strategy.overpayments[0].amount < 100) {
+      if (
+        strategy.overpayments.length === 1 &&
+        !strategy.overpayments[0].isRecurring &&
+        strategy.overpayments[0].amount < 100
+      ) {
         effectivenessRatio *= 0.1; // Stronger penalty for very small payments
       }
-      
     }
-    
+
     return {
       ...strategy,
       results: {
         interestSaved,
         termReduction,
-        effectivenessRatio
-      }
+        effectivenessRatio,
+      },
     };
   });
 }
@@ -379,10 +393,10 @@ function findBestStrategy(
       name: 'Default',
       description: 'No overpayments',
       overpayments: [],
-      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+      results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
     };
   }
-  
+
   if (optimizationStrategy === 'maximizeInterestSavings') {
     // Sort by interest saved (descending)
     return [...strategies].sort((a, b) => b.results.interestSaved - a.results.interestSaved)[0];
@@ -391,7 +405,9 @@ function findBestStrategy(
     return [...strategies].sort((a, b) => b.results.termReduction - a.results.termReduction)[0];
   } else {
     // Balanced approach: sort by effectiveness ratio (descending)
-    return [...strategies].sort((a, b) => b.results.effectivenessRatio - a.results.effectivenessRatio)[0];
+    return [...strategies].sort(
+      (a, b) => b.results.effectivenessRatio - a.results.effectivenessRatio
+    )[0];
   }
 }
 
@@ -407,26 +423,26 @@ function generateComparisonChartData(
     Math.ceil(baselineResults.actualTerm),
     Math.ceil(optimizedResults.actualTerm)
   );
-  
+
   const labels = Array.from({ length: maxYears }, (_, i) => `Year ${i + 1}`);
-  
+
   // Extract yearly total interest data
-  const originalData = baselineResults.yearlyData.map(year => year.totalInterest);
-  const optimizedData = optimizedResults.yearlyData.map(year => year.totalInterest);
-  
+  const originalData = baselineResults.yearlyData.map((year) => year.totalInterest);
+  const optimizedData = optimizedResults.yearlyData.map((year) => year.totalInterest);
+
   // Pad arrays to match the number of years
   while (originalData.length < maxYears) {
     originalData.push(originalData[originalData.length - 1] || 0);
   }
-  
+
   while (optimizedData.length < maxYears) {
     optimizedData.push(optimizedData[optimizedData.length - 1] || 0);
   }
-  
+
   return {
     labels,
     originalData,
-    optimizedData
+    optimizedData,
   };
 }
 
@@ -448,22 +464,22 @@ export function analyzeOverpaymentImpact(
     baselineDetails.repaymentModel,
     baselineDetails.additionalCosts
   );
-  
+
   const stepSize = maxMonthlyAmount / steps;
   const results = [];
-  
+
   for (let i = 1; i <= steps; i++) {
     const amount = stepSize * i;
-    
+
     const overpaymentPlan: OverpaymentDetails = {
       amount,
       startMonth: 1,
       startDate: loanDetails.startDate,
       isRecurring: true,
       frequency: 'monthly',
-      effect: 'reduceTerm'
+      effect: 'reduceTerm',
     };
-    
+
     const overpaymentDetails = { ...loanDetails, overpaymentPlans: [overpaymentPlan] };
     const overpaymentResults = calculateLoanDetails(
       overpaymentDetails.principal,
@@ -475,17 +491,17 @@ export function analyzeOverpaymentImpact(
       [overpaymentPlan], // Pass all overpayments
       overpaymentDetails.startDate
     );
-    
+
     const interestSaved = baselineResults.totalInterest - overpaymentResults.totalInterest;
     const termReduction = baselineResults.actualTerm - overpaymentResults.actualTerm;
-    
+
     results.push({
       amount,
       interestSaved,
-      termReduction
+      termReduction,
     });
   }
-  
+
   return results;
 }
 
@@ -511,7 +527,7 @@ export function compareLumpSumVsRegular(
     baselineDetails.repaymentModel,
     baselineDetails.additionalCosts
   );
-  
+
   // Lump sum strategy
   const lumpSumPlan: OverpaymentDetails = {
     amount: lumpSumAmount,
@@ -519,9 +535,9 @@ export function compareLumpSumVsRegular(
     startDate: loanDetails.startDate,
     isRecurring: false,
     frequency: 'one-time',
-    effect: 'reduceTerm'
+    effect: 'reduceTerm',
   };
-  
+
   const lumpSumDetails = { ...loanDetails, overpaymentPlans: [lumpSumPlan] };
   const lumpSumResults = calculateLoanDetails(
     lumpSumDetails.principal,
@@ -533,7 +549,7 @@ export function compareLumpSumVsRegular(
     [lumpSumPlan], // Pass all overpayments
     lumpSumDetails.startDate
   );
-  
+
   // Monthly strategy
   const monthlyPlan: OverpaymentDetails = {
     amount: monthlyAmount,
@@ -541,9 +557,9 @@ export function compareLumpSumVsRegular(
     startDate: loanDetails.startDate,
     isRecurring: true,
     frequency: 'monthly',
-    effect: 'reduceTerm'
+    effect: 'reduceTerm',
   };
-  
+
   const monthlyDetails = { ...loanDetails, overpaymentPlans: [monthlyPlan] };
   const monthlyResults = calculateLoanDetails(
     monthlyDetails.principal,
@@ -555,26 +571,26 @@ export function compareLumpSumVsRegular(
     [monthlyPlan], // Pass all overpayments
     monthlyDetails.startDate
   );
-  
+
   // Calculate metrics
   const lumpSumInterestSaved = baselineResults.totalInterest - lumpSumResults.totalInterest;
   const lumpSumTermReduction = baselineResults.actualTerm - lumpSumResults.actualTerm;
-  
+
   const monthlyInterestSaved = baselineResults.totalInterest - monthlyResults.totalInterest;
   const monthlyTermReduction = baselineResults.actualTerm - monthlyResults.actualTerm;
-  
+
   // Calculate break-even month (when monthly overpayments total equals lump sum)
   const breakEvenMonth = Math.ceil(lumpSumAmount / monthlyAmount);
-  
+
   return {
     lumpSum: {
       interestSaved: lumpSumInterestSaved,
-      termReduction: lumpSumTermReduction
+      termReduction: lumpSumTermReduction,
     },
     monthly: {
       interestSaved: monthlyInterestSaved,
-      termReduction: monthlyTermReduction
+      termReduction: monthlyTermReduction,
     },
-    breakEvenMonth
+    breakEvenMonth,
   };
 }

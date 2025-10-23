@@ -1,4 +1,7 @@
-import { screen, waitForElementToBeRemoved as _waitForElementToBeRemoved } from '@testing-library/react';
+import {
+  screen,
+  waitForElementToBeRemoved as _waitForElementToBeRemoved,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // Helper to find elements by test ID with proper typing
@@ -24,7 +27,7 @@ export const userActions = {
   },
   async selectOption(element: HTMLElement, option: string) {
     await userEvent.selectOptions(element, option);
-  }
+  },
 };
 
 // Helper to wait for element to be removed
@@ -43,14 +46,16 @@ export const generateTestData = {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   },
   string(length = 10) {
-    return Math.random().toString(36).substring(2, length + 2);
+    return Math.random()
+      .toString(36)
+      .substring(2, length + 2);
   },
   boolean() {
     return Math.random() >= 0.5;
   },
   array<T>(generator: () => T, length = 5): T[] {
     return Array.from({ length }, generator);
-  }
+  },
 };
 
 // Helper to mock date/time

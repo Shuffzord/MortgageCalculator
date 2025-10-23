@@ -89,7 +89,7 @@ function getValueByPath(obj, path) {
 function extractPlaceholders(str) {
   if (typeof str !== 'string') return [];
   const matches = str.match(/\{\{[^}]+\}\}/g);
-  return matches ? matches.map(m => m.slice(2, -2).trim()) : [];
+  return matches ? matches.map((m) => m.slice(2, -2).trim()) : [];
 }
 
 /**
@@ -103,7 +103,7 @@ function compareKeys(translations) {
   for (const [lang, data] of Object.entries(translations)) {
     const keys = getAllKeys(data);
     keysByLang[lang] = new Set(keys);
-    keys.forEach(key => allKeys.add(key));
+    keys.forEach((key) => allKeys.add(key));
   }
 
   // Find missing and extra keys
@@ -118,16 +118,16 @@ function compareKeys(translations) {
     const langKeys = keysByLang[lang];
 
     // Missing keys (in other languages but not in this one)
-    allKeys.forEach(key => {
+    allKeys.forEach((key) => {
       if (!langKeys.has(key)) {
         issues[lang].missing.push(key);
       }
     });
 
     // Extra keys (in this language but not in others)
-    langKeys.forEach(key => {
-      if (!Array.from(allKeys).every(k => k === key || keysByLang['en'].has(key))) {
-        const inOthers = SUPPORTED_LANGUAGES.filter(l => l !== lang && keysByLang[l].has(key));
+    langKeys.forEach((key) => {
+      if (!Array.from(allKeys).every((k) => k === key || keysByLang['en'].has(key))) {
+        const inOthers = SUPPORTED_LANGUAGES.filter((l) => l !== lang && keysByLang[l].has(key));
         if (inOthers.length === 0) {
           issues[lang].extra.push(key);
         }
@@ -210,7 +210,7 @@ function calculateCoverage(translations) {
   for (const [lang, data] of Object.entries(translations)) {
     const keys = getAllKeys(data);
     const totalKeys = keys.length;
-    const translatedKeys = keys.filter(key => {
+    const translatedKeys = keys.filter((key) => {
       const value = getValueByPath(data, key);
       // Check if value exists and is not empty (handle strings, arrays, objects)
       if (typeof value === 'string') {
@@ -246,8 +246,11 @@ function generateConsoleReport(results) {
   // Coverage Summary
   console.log(`${colors.blue}📊 COVERAGE SUMMARY${colors.reset}`);
   for (const [lang, stats] of Object.entries(coverage)) {
-    const color = stats.coverage >= 95 ? colors.green : stats.coverage >= 80 ? colors.yellow : colors.red;
-    console.log(`  ${lang.toUpperCase()}: ${color}${stats.coverage}%${colors.reset} (${stats.translated}/${stats.total} keys)`);
+    const color =
+      stats.coverage >= 95 ? colors.green : stats.coverage >= 80 ? colors.yellow : colors.red;
+    console.log(
+      `  ${lang.toUpperCase()}: ${color}${stats.coverage}%${colors.reset} (${stats.translated}/${stats.total} keys)`
+    );
   }
 
   // Key Parity Issues
@@ -261,17 +264,19 @@ function generateConsoleReport(results) {
 
       if (issues.missing.length > 0) {
         console.log(`    ${colors.red}Missing (${issues.missing.length}):${colors.reset}`);
-        issues.missing.slice(0, 10).forEach(key => {
+        issues.missing.slice(0, 10).forEach((key) => {
           console.log(`      - ${key}`);
         });
         if (issues.missing.length > 10) {
-          console.log(`      ${colors.gray}... and ${issues.missing.length - 10} more${colors.reset}`);
+          console.log(
+            `      ${colors.gray}... and ${issues.missing.length - 10} more${colors.reset}`
+          );
         }
       }
 
       if (issues.extra.length > 0) {
         console.log(`    ${colors.yellow}Extra (${issues.extra.length}):${colors.reset}`);
-        issues.extra.slice(0, 5).forEach(key => {
+        issues.extra.slice(0, 5).forEach((key) => {
           console.log(`      - ${key}`);
         });
         if (issues.extra.length > 5) {
@@ -288,8 +293,10 @@ function generateConsoleReport(results) {
   // Placeholder Issues
   console.log(`\n${colors.blue}📝 PLACEHOLDER VALIDATION${colors.reset}`);
   if (placeholderIssues.length > 0) {
-    console.log(`  ${colors.red}Found ${placeholderIssues.length} placeholder mismatches:${colors.reset}\n`);
-    placeholderIssues.slice(0, 5).forEach(issue => {
+    console.log(
+      `  ${colors.red}Found ${placeholderIssues.length} placeholder mismatches:${colors.reset}\n`
+    );
+    placeholderIssues.slice(0, 5).forEach((issue) => {
       console.log(`    ${colors.yellow}${issue.key}${colors.reset} (${issue.lang})`);
       console.log(`      Expected: ${colors.gray}${JSON.stringify(issue.expected)}${colors.reset}`);
       console.log(`      Actual:   ${colors.red}${JSON.stringify(issue.actual)}${colors.reset}`);
@@ -308,8 +315,10 @@ function generateConsoleReport(results) {
   for (const [lang, dups] of Object.entries(duplicates)) {
     if (dups.length > 0) {
       hasDuplicates = true;
-      console.log(`\n  ${colors.yellow}${lang.toUpperCase()} (${dups.length} duplicate values):${colors.reset}`);
-      dups.slice(0, 3).forEach(dup => {
+      console.log(
+        `\n  ${colors.yellow}${lang.toUpperCase()} (${dups.length} duplicate values):${colors.reset}`
+      );
+      dups.slice(0, 3).forEach((dup) => {
         console.log(`    "${colors.gray}${dup.value.slice(0, 50)}...${colors.reset}"`);
         console.log(`      Used in: ${dup.keys.slice(0, 3).join(', ')}`);
         if (dup.keys.length > 3) {
@@ -349,9 +358,11 @@ function generateJSONReport(results, outputFile) {
   const report = {
     timestamp: new Date().toISOString(),
     summary: {
-      totalIssues: Object.values(results.keyIssues.issues).reduce(
-        (sum, i) => sum + i.missing.length + i.extra.length, 0
-      ) + results.placeholderIssues.length,
+      totalIssues:
+        Object.values(results.keyIssues.issues).reduce(
+          (sum, i) => sum + i.missing.length + i.extra.length,
+          0
+        ) + results.placeholderIssues.length,
       languages: SUPPORTED_LANGUAGES,
     },
     coverage: results.coverage,
@@ -390,7 +401,7 @@ function generateMarkdownReport(results, outputFile) {
 
       if (issues.missing.length > 0) {
         md += `**Missing Keys (${issues.missing.length}):**\n\n`;
-        issues.missing.forEach(key => {
+        issues.missing.forEach((key) => {
           md += `- \`${key}\`\n`;
         });
         md += '\n';
@@ -398,7 +409,7 @@ function generateMarkdownReport(results, outputFile) {
 
       if (issues.extra.length > 0) {
         md += `**Extra Keys (${issues.extra.length}):**\n\n`;
-        issues.extra.forEach(key => {
+        issues.extra.forEach((key) => {
           md += `- \`${key}\`\n`;
         });
         md += '\n';
@@ -410,7 +421,7 @@ function generateMarkdownReport(results, outputFile) {
   md += '## Placeholder Mismatches\n\n';
   if (placeholderIssues.length > 0) {
     md += `Found ${placeholderIssues.length} placeholder mismatches:\n\n`;
-    placeholderIssues.forEach(issue => {
+    placeholderIssues.forEach((issue) => {
       md += `### \`${issue.key}\` (${issue.lang})\n\n`;
       md += `- **Expected:** ${JSON.stringify(issue.expected)}\n`;
       md += `- **Actual:** ${JSON.stringify(issue.actual)}\n\n`;
@@ -424,10 +435,10 @@ function generateMarkdownReport(results, outputFile) {
   for (const [lang, dups] of Object.entries(duplicates)) {
     if (dups.length > 0) {
       md += `### ${lang.toUpperCase()} (${dups.length} duplicates)\n\n`;
-      dups.forEach(dup => {
+      dups.forEach((dup) => {
         md += `**"${dup.value.slice(0, 100)}..."**\n\n`;
         md += 'Used in:\n';
-        dup.keys.forEach(key => {
+        dup.keys.forEach((key) => {
           md += `- \`${key}\`\n`;
         });
         md += '\n';
@@ -460,7 +471,9 @@ function main() {
     }
   }
 
-  console.log(`${colors.green}✓ Loaded translations for: ${SUPPORTED_LANGUAGES.join(', ')}${colors.reset}`);
+  console.log(
+    `${colors.green}✓ Loaded translations for: ${SUPPORTED_LANGUAGES.join(', ')}${colors.reset}`
+  );
   console.log(`${colors.cyan}Running validation...${colors.reset}\n`);
 
   // Run validations

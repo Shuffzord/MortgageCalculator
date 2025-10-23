@@ -1,6 +1,6 @@
 /**
  * Puppeteer Helper Functions
- * 
+ *
  * This file contains utility functions for working with Puppeteer.
  * These functions make it easier to interact with the Puppeteer API.
  */
@@ -87,7 +87,7 @@ export async function hoverElement(selector: string) {
 // Helper function to execute JavaScript in the browser
 export async function evaluateInBrowser(script: string) {
   // Create a function that returns the result of the script
-  return await global.page.evaluate(function(scriptToEval) {
+  return await global.page.evaluate(function (scriptToEval) {
     // Create a function from the script that returns the result
     const fn = new Function(`
       try {

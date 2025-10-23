@@ -11,7 +11,7 @@ declare global {
       HEADLESS: boolean;
     }
   }
-  
+
   var BASE_URL: string;
   var HEADLESS: boolean;
 }
@@ -29,7 +29,7 @@ if (baseUrl.includes('localhost')) {
     // Get the port from the BASE_URL environment variable
     const urlObj = new URL(baseUrl);
     const portFromEnv = urlObj.port;
-    
+
     // If the port is explicitly set in the environment variable, use it
     if (portFromEnv) {
       console.log(`Using port ${portFromEnv} from BASE_URL environment variable`);

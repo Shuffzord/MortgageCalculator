@@ -12,7 +12,7 @@ export const createMockStore = (overrides = {}) => ({
   completeStep: jest.fn(),
   setExperienceLevel: jest.fn(),
   resetTutorial: jest.fn(),
-  ...overrides
+  ...overrides,
 });
 
 export const mockStore = createMockStore();

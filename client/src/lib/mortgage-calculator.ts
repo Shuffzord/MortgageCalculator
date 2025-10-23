@@ -11,7 +11,14 @@ import { generateAmortizationSchedule } from './calculationEngine';
 
 // Re-export these utilities for backward compatibility
 // Re-export formatting functions from formatters.ts
-export { formatCurrency, formatDate, formatTimePeriod, formatPaymentAmount, formatInterestRate, formatLoanSummary } from './formatters';
+export {
+  formatCurrency,
+  formatDate,
+  formatTimePeriod,
+  formatPaymentAmount,
+  formatInterestRate,
+  formatLoanSummary,
+} from './formatters';
 
 // Convert legacy Schedule format to PaymentData
 export function convertLegacySchedule(schedule: any): PaymentData {
@@ -20,13 +27,13 @@ export function convertLegacySchedule(schedule: any): PaymentData {
 
 /**
  * Calculates the monthly payment amount for a loan
- * 
+ *
  * Formula: M = P[r(1+r)^n]/[(1+r)^n-1] where:
  * M = monthly payment
  * P = loan principal
  * r = monthly interest rate (annual rate / 12 / 100)
  * n = number of monthly payments (term * 12)
- * 
+ *
  * @param principal Loan principal amount
  * @param annualRate Annual interest rate (percentage)
  * @param termYears Loan term in years
@@ -35,10 +42,10 @@ export function convertLegacySchedule(schedule: any): PaymentData {
 
 /**
  * Generates the amortization schedule for the loan
- * 
+ *
  * This calculates a payment-by-payment breakdown of principal and interest,
  * and handles overpayment scenarios with either term or payment reduction.
- * 
+ *
  * @param principal Loan principal amount
  * @param annualRate Annual interest rate (percentage)
  * @param termYears Loan term in years

@@ -21,7 +21,7 @@ export class LoanSummary extends BasePage {
       return null;
     }
   }
-  
+
   async getTotalInterest(timeout = 10000): Promise<string | null> {
     try {
       await waitForElement(selectors.TOTAL_INTEREST, timeout);
@@ -31,7 +31,7 @@ export class LoanSummary extends BasePage {
       return null;
     }
   }
-  
+
   async getTotalCost(timeout = 10000): Promise<string | null> {
     try {
       await waitForElement(selectors.TOTAL_COST, timeout);
@@ -41,7 +41,7 @@ export class LoanSummary extends BasePage {
       return null;
     }
   }
-  
+
   async isVisible(): Promise<boolean> {
     return await this.elementExists(selectors.LOAN_SUMMARY);
   }

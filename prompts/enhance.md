@@ -1,9 +1,11 @@
 # Smart Loan Calculator Enhancement Architectural Prompt
 
 ## Project Context
+
 You are an AI architect tasked with designing a comprehensive enhancement plan for an existing smart loan calculator application. The application is currently front-end only but requires expansion to include server-side functionality, user accounts, and premium payment features.
 
 ## Current Application
+
 - **Type**: Smart loan calculator with advanced features
 - **Technology**: TypeScript/JavaScript front-end only
 - **Current Functionality**: Advanced loan calculations (amortization, interest rates, comparison tools, etc.)
@@ -12,7 +14,8 @@ You are an AI architect tasked with designing a comprehensive enhancement plan f
 ## Enhancement Requirements
 
 ### 1. Server-Side Implementation
-- **Technology Constraints**: 
+
+- **Technology Constraints**:
   - Must use TypeScript/JavaScript stack (Node.js ecosystem)
   - Must be cost-effective for a small, new project
   - Will be hosted on Render.com
@@ -23,6 +26,7 @@ You are an AI architect tasked with designing a comprehensive enhancement plan f
   - Premium feature access control
 
 ### 2. User Account System
+
 - **Core Requirements**:
   - Username/email and password authentication
   - Secure storage of user credentials
@@ -35,6 +39,7 @@ You are an AI architect tasked with designing a comprehensive enhancement plan f
   - Premium feature access rights
 
 ### 3. Premium Membership System
+
 - **Structure**:
   - Feature-based premium access (users pay for specific premium features)
   - Different tiers or individual feature purchases
@@ -43,6 +48,7 @@ You are an AI architect tasked with designing a comprehensive enhancement plan f
   - Graceful handling of non-premium users attempting to access premium features
 
 ### 4. Payment Processing
+
 - **Payment Type**:
   - Recurring yearly subscriptions
   - Potential one-time purchases for specific features
@@ -53,8 +59,9 @@ You are an AI architect tasked with designing a comprehensive enhancement plan f
   - Receipt generation
 
 ### 5. Database Requirements
+
 - **Size**: Small-scale database suitable for a new application
-- **Data Types**: 
+- **Data Types**:
   - User accounts
   - Authentication data
   - User preferences/settings
@@ -66,6 +73,7 @@ You are an AI architect tasked with designing a comprehensive enhancement plan f
   - Compatible with TypeScript/JavaScript stack
 
 ## Design Priorities
+
 1. **Functionality Over Scalability**: Focus on getting a working system first
 2. **Cost-Effectiveness**: Both development and operational costs should be minimized
 3. **Future-Proofing**: Design should allow for scaling in the distant future without major rework
@@ -136,6 +144,7 @@ You are an AI architect tasked with designing a comprehensive enhancement plan f
     - Scaling cost projections
 
 ## Response Format
+
 Please structure your architectural response with the following sections:
 
 1. **Executive Summary**: Brief overview of the proposed solution

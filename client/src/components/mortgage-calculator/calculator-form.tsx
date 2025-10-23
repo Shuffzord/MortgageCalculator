@@ -1,19 +1,15 @@
-import React from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Calendar } from "@/components/ui/calendar";
-import CurrencySelector from "@/components/ui/currency-selector";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import React from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Calendar } from '@/components/ui/calendar';
+import CurrencySelector from '@/components/ui/currency-selector';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Form,
   FormControl,
@@ -21,38 +17,40 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import {
-  RadioGroup,
-  RadioGroupItem
-} from "@/components/ui/radio-group";
-import { LoanDetails } from "@/lib/types";
-import { useTranslation } from "react-i18next";
-import { cn, getCurrencySymbol } from "@/lib/utils";
+} from '@/components/ui/form';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { LoanDetails } from '@/lib/types';
+import { useTranslation } from 'react-i18next';
+import { cn, getCurrencySymbol } from '@/lib/utils';
 
 // Form validation schema
 const loanFormSchema = z.object({
-  name: z.string().min(1, "Name is required").default("My Calculation"),
-  principal: z.coerce.number().min(1000, "Loan amount must be at least $1,000"),
-  loanTerm: z.coerce.number()
-    .min(1, "Loan term must be at least 1 year")
-    .max(50, "Loan term must be at most 50 years"),
+  name: z.string().min(1, 'Name is required').default('My Calculation'),
+  principal: z.coerce.number().min(1000, 'Loan amount must be at least $1,000'),
+  loanTerm: z.coerce
+    .number()
+    .min(1, 'Loan term must be at least 1 year')
+    .max(50, 'Loan term must be at most 50 years'),
   startDate: z.date().default(() => new Date()),
-  interestRatePeriods: z.array(
-    z.object({
-      startMonth: z.coerce.number().min(0, "Start month must be at least 0"),
-      interestRate: z.coerce.number().min(0, "Interest rate must be at least 0")
-    })
-  ).default([{ startMonth: 0, interestRate: 5 }]),
-  overpaymentPlans: z.array(
-    z.object({
-      amount: z.coerce.number().min(0, "Amount must be at least 0"),
-      startMonth: z.coerce.number().min(0, "Start month must be at least 0"),
-      endMonth: z.coerce.number().min(0, "End month must be at least 0"),
-      frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']),
-      effect: z.enum(['reduceTerm', 'reducePayment'])
-    })
-  ).default([])
+  interestRatePeriods: z
+    .array(
+      z.object({
+        startMonth: z.coerce.number().min(0, 'Start month must be at least 0'),
+        interestRate: z.coerce.number().min(0, 'Interest rate must be at least 0'),
+      })
+    )
+    .default([{ startMonth: 0, interestRate: 5 }]),
+  overpaymentPlans: z
+    .array(
+      z.object({
+        amount: z.coerce.number().min(0, 'Amount must be at least 0'),
+        startMonth: z.coerce.number().min(0, 'Start month must be at least 0'),
+        endMonth: z.coerce.number().min(0, 'End month must be at least 0'),
+        frequency: z.enum(['monthly', 'quarterly', 'annual', 'one-time']),
+        effect: z.enum(['reduceTerm', 'reducePayment']),
+      })
+    )
+    .default([]),
 });
 
 interface CalculatorFormProps {
@@ -71,7 +69,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
       loanTerm: loanDetails.loanTerm,
       startDate: loanDetails.startDate,
       interestRatePeriods: loanDetails.interestRatePeriods,
-      overpaymentPlans: loanDetails.overpaymentPlans
+      overpaymentPlans: loanDetails.overpaymentPlans,
     },
   });
 
@@ -83,11 +81,11 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
     <Card className="bg-white shadow">
       <CardContent className="pt-6">
         <h2 className="text-lg font-medium text-gray-900 mb-4">{t('form.loanDetails')}</h2>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             {/* Loan Amount */}
-           <FormField
+            <FormField
               control={form.control}
               name="principal"
               render={({ field }) => (
@@ -96,13 +94,18 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                     <FormLabel>Loan Amount</FormLabel>
                     <div className="tooltip">
                       <span className="material-icons text-gray-400 text-sm">help_outline</span>
-                      <span className="tooltip-text">The total amount you are borrowing from the lender, typically the home price minus your down payment.</span>
+                      <span className="tooltip-text">
+                        The total amount you are borrowing from the lender, typically the home price
+                        minus your down payment.
+                      </span>
                     </div>
                   </div>
                   <FormControl>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(form.getValues("currency") || "USD")}</span>
+                        <span className="text-gray-500 sm:text-sm">
+                          {getCurrencySymbol(form.getValues('currency') || 'USD')}
+                        </span>
                       </div>
                       <Input
                         id="principal-input"
@@ -130,11 +133,15 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                     <div key={index} className="flex flex-col space-y-2 border p-4 rounded-md">
                       <div className="flex justify-between items-center">
                         <FormLabel>Period {index + 1}</FormLabel>
-                        <Button variant="ghost" size="sm" onClick={() => {
-                          const newPeriods = [...field.value];
-                          newPeriods.splice(index, 1);
-                          form.setValue("interestRatePeriods", newPeriods);
-                        }}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const newPeriods = [...field.value];
+                            newPeriods.splice(index, 1);
+                            form.setValue('interestRatePeriods', newPeriods);
+                          }}
+                        >
                           Remove
                         </Button>
                       </div>
@@ -157,7 +164,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                           <FormLabel htmlFor={`interestRate-${index}`}>Interest Rate</FormLabel>
                           <Input
                             type="number"
-                            id={index === 0 ? "interest-rate-input" : `interestRate-${index}`}
+                            id={index === 0 ? 'interest-rate-input' : `interestRate-${index}`}
                             placeholder="Interest Rate"
                             value={period.interestRate}
                             onChange={(e) => {
@@ -170,9 +177,17 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                       </div>
                     </div>
                   ))}
-                  <Button type="button" onClick={() => {
-                    form.setValue("interestRatePeriods", [...field.value, { startMonth: 0, interestRate: 5 }]);
-                  }}>Add Period</Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      form.setValue('interestRatePeriods', [
+                        ...field.value,
+                        { startMonth: 0, interestRate: 5 },
+                      ]);
+                    }}
+                  >
+                    Add Period
+                  </Button>
                 </FormItem>
               )}
             />
@@ -192,7 +207,9 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                           <FormLabel>Amount</FormLabel>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <span className="text-gray-500 sm:text-sm">{getCurrencySymbol(loanDetails.currency || 'USD')}</span>
+                              <span className="text-gray-500 sm:text-sm">
+                                {getCurrencySymbol(loanDetails.currency || 'USD')}
+                              </span>
                             </div>
                             <Input
                               type="number"
@@ -225,7 +242,7 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                           <Input
                             type="number"
                             placeholder="End Month"
-                            value={plan.endMonth || ""}
+                            value={plan.endMonth || ''}
                             onChange={(e) => {
                               const newPlans = [...field.value];
                               newPlans[index].endMonth = Number(e.target.value);
@@ -264,16 +281,37 @@ export default function CalculatorForm({ loanDetails, onFormSubmit }: Calculator
                           </select>
                         </div>
                       </div>
-                      <Button type="button" onClick={() => {
-                        const newPlans = [...field.value];
-                        newPlans.splice(index, 1);
-                        form.setValue("overpaymentPlans", newPlans);
-                      }}>Remove Plan</Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          const newPlans = [...field.value];
+                          newPlans.splice(index, 1);
+                          form.setValue('overpaymentPlans', newPlans);
+                        }}
+                      >
+                        Remove Plan
+                      </Button>
                     </div>
                   ))}
-                  <Button type="button" onClick={() => {
-                    form.setValue("overpaymentPlans", [...field.value, { amount: 0, startMonth: 0, endMonth: 0, frequency: "monthly", effect: "reduceTerm", startDate: new Date(), isRecurring: true }]);
-                  }}>Add Overpayment Plan</Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      form.setValue('overpaymentPlans', [
+                        ...field.value,
+                        {
+                          amount: 0,
+                          startMonth: 0,
+                          endMonth: 0,
+                          frequency: 'monthly',
+                          effect: 'reduceTerm',
+                          startDate: new Date(),
+                          isRecurring: true,
+                        },
+                      ]);
+                    }}
+                  >
+                    Add Overpayment Plan
+                  </Button>
                 </FormItem>
               )}
             />

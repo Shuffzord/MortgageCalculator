@@ -1,5 +1,13 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+const reportDebug = (_message: string, _details?: unknown) => {
+  // Placeholder for optional instrumentation.
+};
+
+const reportError = (_message: string, _details?: unknown) => {
+  // Placeholder for optional instrumentation.
+};
 
 interface TutorialSection {
   id: string;
@@ -20,7 +28,7 @@ interface TutorialState {
   completedSteps: number[];
   experienceLevel: 'beginner' | 'intermediate' | 'advanced' | null;
   hasCompletedTutorial: boolean;
-  
+
   // Enhanced state for multi-level system
   progress: {
     beginner: TutorialProgress;
@@ -38,13 +46,13 @@ interface TutorialState {
   completeTutorial: () => void;
   abandonTutorial: () => void;
   resetTutorial: () => void;
-  
+
   // New actions for enhanced functionality
   completeSection: (sectionId: string) => void;
   completeInteractiveExample: (sectionId: string) => void;
   viewEducationalContent: (contentId: string) => void;
   setActiveInteractiveExample: (exampleId: string | null) => void;
-  
+
   // Debug utilities
   getDebugState: () => string;
   validateState: () => boolean;
@@ -53,30 +61,36 @@ interface TutorialState {
 // Validation helper
 const validateTutorialState = (state: Partial<TutorialState>): boolean => {
   // Check required fields exist
-  if (typeof state.isActive !== 'boolean' ||
-      typeof state.currentStep !== 'number' ||
-      !Array.isArray(state.completedSteps) ||
-      typeof state.hasCompletedTutorial !== 'boolean') {
-    console.error('[Tutorial] Invalid state structure:', state);
+  if (
+    typeof state.isActive !== 'boolean' ||
+    typeof state.currentStep !== 'number' ||
+    !Array.isArray(state.completedSteps) ||
+    typeof state.hasCompletedTutorial !== 'boolean'
+  ) {
+    reportError('[Tutorial] Invalid state structure', state);
     return false;
   }
 
   // Validate experience level
   const validLevels = ['beginner', 'intermediate', 'advanced'] as const;
-  if (state.experienceLevel !== null &&
-      !validLevels.includes(state.experienceLevel as typeof validLevels[number])) {
-    console.error('[Tutorial] Invalid experience level:', state.experienceLevel);
+  if (
+    state.experienceLevel !== null &&
+    !validLevels.includes(state.experienceLevel as (typeof validLevels)[number])
+  ) {
+    reportError('[Tutorial] Invalid experience level', state.experienceLevel);
     return false;
   }
 
   // Validate step consistency
   const currentStep = state.currentStep as number;
-  if (currentStep < 0 ||
-      state.completedSteps.some(step => step < 0) ||
-      (!state.hasCompletedTutorial && state.completedSteps.some(step => step >= currentStep))) {
-    console.error('[Tutorial] Invalid step configuration:', {
+  if (
+    currentStep < 0 ||
+    state.completedSteps.some((step) => step < 0) ||
+    (!state.hasCompletedTutorial && state.completedSteps.some((step) => step >= currentStep))
+  ) {
+    reportError('[Tutorial] Invalid step configuration', {
       current: currentStep,
-      completed: state.completedSteps
+      completed: state.completedSteps,
     });
     return false;
   }
@@ -87,19 +101,19 @@ const validateTutorialState = (state: Partial<TutorialState>): boolean => {
     for (const level of levels) {
       const progress = state.progress[level];
       if (!progress || !Array.isArray(progress.completedSections)) {
-        console.error(`[Tutorial] Invalid progress for level ${level}:`, progress);
+        reportError(`[Tutorial] Invalid progress for level ${level}`, progress);
         return false;
       }
     }
   }
 
   return true;
-}
+};
 
 // Initial progress state
 const createInitialProgress = (): TutorialProgress => ({
   completedSections: [],
-  currentSectionId: null
+  currentSectionId: null,
 });
 
 export const useTutorialStore = create<TutorialState>()(
@@ -114,46 +128,46 @@ export const useTutorialStore = create<TutorialState>()(
       progress: {
         beginner: createInitialProgress(),
         intermediate: createInitialProgress(),
-        advanced: createInitialProgress()
+        advanced: createInitialProgress(),
       },
       activeInteractiveExample: null,
       lastEducationalContent: null,
 
       // Actions
       startTutorial: () => {
-        console.log('[Tutorial] Starting tutorial');
+        reportDebug('[Tutorial] Starting tutorial');
         set({
           isActive: true,
           currentStep: 0,
           completedSteps: [],
-          hasCompletedTutorial: false
+          hasCompletedTutorial: false,
         });
       },
 
       completeStep: (step: number) => {
-        console.log('[Tutorial] Completing step:', step);
+        reportDebug('[Tutorial] Completing step', step);
         set((state) => ({
           completedSteps: [...state.completedSteps, step],
-          currentStep: step + 1
+          currentStep: step + 1,
         }));
       },
 
       goToPreviousStep: () => {
-        console.log('[Tutorial] Going to previous step');
+        reportDebug('[Tutorial] Going to previous step');
         set((state) => {
           const newStep = Math.max(0, state.currentStep - 1);
           // Remove the current step from completed steps if going back
-          const updatedCompletedSteps = state.completedSteps.filter(step => step < newStep);
+          const updatedCompletedSteps = state.completedSteps.filter((step) => step < newStep);
           return {
             currentStep: newStep,
-            completedSteps: updatedCompletedSteps
+            completedSteps: updatedCompletedSteps,
           };
         });
       },
 
       setExperienceLevel: (level: 'beginner' | 'intermediate' | 'advanced') => {
-        console.log('[Tutorial] Setting level:', level);
-        
+        reportDebug('[Tutorial] Setting level', level);
+
         // Reset state when switching to beginner mode
         if (level === 'beginner') {
           set({
@@ -161,7 +175,7 @@ export const useTutorialStore = create<TutorialState>()(
             isActive: true,
             currentStep: 0,
             completedSteps: [],
-            hasCompletedTutorial: false
+            hasCompletedTutorial: false,
           });
         } else {
           set({ experienceLevel: level });
@@ -169,21 +183,21 @@ export const useTutorialStore = create<TutorialState>()(
       },
 
       completeTutorial: () => {
-        console.log('[Tutorial] Completing tutorial');
+        reportDebug('[Tutorial] Completing tutorial');
         set({ hasCompletedTutorial: true, isActive: false });
       },
 
       abandonTutorial: () => {
-        console.log('[Tutorial] Abandoning tutorial');
+        reportDebug('[Tutorial] Abandoning tutorial');
         set({
           isActive: false,
           currentStep: 0,
-          hasCompletedTutorial: true
+          hasCompletedTutorial: true,
         });
       },
 
       resetTutorial: () => {
-        console.log('[Tutorial] Resetting tutorial state');
+        reportDebug('[Tutorial] Resetting tutorial state');
         localStorage.removeItem('tutorial-storage');
         set({
           isActive: false,
@@ -194,23 +208,23 @@ export const useTutorialStore = create<TutorialState>()(
           progress: {
             beginner: createInitialProgress(),
             intermediate: createInitialProgress(),
-            advanced: createInitialProgress()
+            advanced: createInitialProgress(),
           },
           activeInteractiveExample: null,
-          lastEducationalContent: null
+          lastEducationalContent: null,
         });
       },
 
       // New action implementations
       completeSection: (sectionId: string) => {
-        console.log('[Tutorial] Completing section:', sectionId);
+        reportDebug('[Tutorial] Completing section', sectionId);
         set((state) => {
           const level = state.experienceLevel;
           if (!level) return state;
 
           const progress = state.progress[level];
           const updatedSections = [...progress.completedSections];
-          const sectionIndex = updatedSections.findIndex(s => s.id === sectionId);
+          const sectionIndex = updatedSections.findIndex((s) => s.id === sectionId);
 
           if (sectionIndex >= 0) {
             updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], completed: true };
@@ -223,27 +237,27 @@ export const useTutorialStore = create<TutorialState>()(
               ...state.progress,
               [level]: {
                 ...progress,
-                completedSections: updatedSections
-              }
-            }
+                completedSections: updatedSections,
+              },
+            },
           };
         });
       },
 
       completeInteractiveExample: (sectionId: string) => {
-        console.log('[Tutorial] Completing interactive example for section:', sectionId);
+        reportDebug('[Tutorial] Completing interactive example for section', sectionId);
         set((state) => {
           const level = state.experienceLevel;
           if (!level) return state;
 
           const progress = state.progress[level];
           const updatedSections = [...progress.completedSections];
-          const sectionIndex = updatedSections.findIndex(s => s.id === sectionId);
+          const sectionIndex = updatedSections.findIndex((s) => s.id === sectionId);
 
           if (sectionIndex >= 0) {
             updatedSections[sectionIndex] = {
               ...updatedSections[sectionIndex],
-              interactiveExampleCompleted: true
+              interactiveExampleCompleted: true,
             };
           }
 
@@ -252,9 +266,9 @@ export const useTutorialStore = create<TutorialState>()(
               ...state.progress,
               [level]: {
                 ...progress,
-                completedSections: updatedSections
-              }
-            }
+                completedSections: updatedSections,
+              },
+            },
           };
         });
       },
@@ -269,7 +283,7 @@ export const useTutorialStore = create<TutorialState>()(
           if (!currentSection) return state;
 
           const updatedSections = [...progress.completedSections];
-          const sectionIndex = updatedSections.findIndex(s => s.id === currentSection);
+          const sectionIndex = updatedSections.findIndex((s) => s.id === currentSection);
 
           if (sectionIndex >= 0) {
             const section = updatedSections[sectionIndex];
@@ -277,7 +291,7 @@ export const useTutorialStore = create<TutorialState>()(
             if (!viewedContent.includes(contentId)) {
               updatedSections[sectionIndex] = {
                 ...section,
-                educationalContentViewed: [...viewedContent, contentId]
+                educationalContentViewed: [...viewedContent, contentId],
               };
             }
           }
@@ -287,34 +301,38 @@ export const useTutorialStore = create<TutorialState>()(
               ...state.progress,
               [level]: {
                 ...progress,
-                completedSections: updatedSections
-              }
+                completedSections: updatedSections,
+              },
             },
-            lastEducationalContent: contentId
+            lastEducationalContent: contentId,
           };
         });
       },
 
       setActiveInteractiveExample: (exampleId: string | null) => {
-        console.log('[Tutorial] Setting active interactive example:', exampleId);
+        reportDebug('[Tutorial] Setting active interactive example', exampleId);
         set({ activeInteractiveExample: exampleId });
       },
 
       // Debug utilities
       getDebugState: () => {
         const state = get();
-        return JSON.stringify({
-          isActive: state.isActive,
-          currentStep: state.currentStep,
-          completedSteps: state.completedSteps,
-          experienceLevel: state.experienceLevel,
-          hasCompletedTutorial: state.hasCompletedTutorial
-        }, null, 2);
+        return JSON.stringify(
+          {
+            isActive: state.isActive,
+            currentStep: state.currentStep,
+            completedSteps: state.completedSteps,
+            experienceLevel: state.experienceLevel,
+            hasCompletedTutorial: state.hasCompletedTutorial,
+          },
+          null,
+          2
+        );
       },
 
       validateState: () => {
         return validateTutorialState(get());
-      }
+      },
     }),
     {
       name: 'tutorial-storage',
@@ -322,18 +340,18 @@ export const useTutorialStore = create<TutorialState>()(
       onRehydrateStorage: () => (state) => {
         // Validate state on rehydration
         if (state && !validateTutorialState(state)) {
-          console.error('[Tutorial] Invalid state detected on rehydration, resetting...');
+          reportError('[Tutorial] Invalid state detected on rehydration, resetting...');
           localStorage.removeItem('tutorial-storage');
           return {
             isActive: false,
             currentStep: 0,
             completedSteps: [],
             experienceLevel: null,
-            hasCompletedTutorial: false
+            hasCompletedTutorial: false,
           };
         }
-        console.log('[Tutorial] State rehydrated successfully');
-      }
+        reportDebug('[Tutorial] State rehydrated successfully');
+      },
     }
   )
-)
+);

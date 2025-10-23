@@ -14,12 +14,12 @@ function convertScheduleToPaymentData(schedule: PaymentData[]): PaymentData[] {
   // Calculate running totals once to optimize performance
   let runningTotalInterest = 0;
   let runningTotalPayment = 0;
-  
-  return schedule.map(item => {
+
+  return schedule.map((item) => {
     // Calculate running totals before converting
     runningTotalInterest += item.interestPayment;
     runningTotalPayment += item.monthlyPayment;
-    
+
     // Create properly structured PaymentData object
     return {
       payment: item.payment || 0,
@@ -31,7 +31,7 @@ function convertScheduleToPaymentData(schedule: PaymentData[]): PaymentData[] {
       overpaymentAmount: item.overpaymentAmount || 0,
       totalInterest: runningTotalInterest,
       totalPayment: runningTotalPayment,
-      paymentDate: item.paymentDate
+      paymentDate: item.paymentDate,
     };
   });
 }
@@ -45,7 +45,7 @@ describe('Mortgage Calculation Engine', () => {
       const annualRate = 4.5;
       const monthlyRate = annualRate / 100 / 12;
       const totalMonths = 30 * 12;
-      
+
       const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeCloseTo(1266.71, 1);
     });
@@ -55,7 +55,7 @@ describe('Mortgage Calculation Engine', () => {
       const principal = 250000;
       const monthlyRate = 0;
       const totalMonths = 30 * 12;
-      
+
       const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeCloseTo(694.44, 1);
     });
@@ -66,7 +66,7 @@ describe('Mortgage Calculation Engine', () => {
       const annualRate = 20;
       const monthlyRate = annualRate / 100 / 12;
       const totalMonths = 30 * 12;
-      
+
       const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeGreaterThan(4000);
     });
@@ -76,10 +76,10 @@ describe('Mortgage Calculation Engine', () => {
       const principal = 250000;
       const annualRate = 4.5;
       const termYears = 1;
-      
+
       const monthlyRate = annualRate / 100 / 12;
       const totalMonths = termYears * 12;
-      
+
       const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
       expect(result).toBeCloseTo(21344.63, 1);
     });
@@ -132,13 +132,17 @@ describe('Mortgage Calculation Engine', () => {
 
     test('should calculate total interest correctly for each year', () => {
       console.log('Running aggregateYearlyData test: calculate total interest correctly');
-      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const schedule = generateAmortizationSchedule(
+        100000,
+        [{ startMonth: 1, interestRate: 5 }],
+        10
+      );
       const paymentData = convertScheduleToPaymentData(schedule);
       const yearlyData = aggregateYearlyData(paymentData);
       let totalInterest = 0;
-      schedule.forEach((month) => totalInterest += month.interestPayment);
+      schedule.forEach((month) => (totalInterest += month.interestPayment));
       let yearlyInterest = 0;
-      yearlyData.forEach(year => yearlyInterest += year.interest);
+      yearlyData.forEach((year) => (yearlyInterest += year.interest));
       // Use a lower precision (0) to accommodate floating point differences
       expect(yearlyInterest).toBeCloseTo(totalInterest, 0);
     });
@@ -147,7 +151,11 @@ describe('Mortgage Calculation Engine', () => {
   describe('applyOverpayment', () => {
     test('should reduce loan term with reduceTerm effect', async () => {
       console.log('Running applyOverpayment test: reduce loan term');
-      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const schedule = generateAmortizationSchedule(
+        100000,
+        [{ startMonth: 1, interestRate: 5 }],
+        10
+      );
       const paymentData = convertScheduleToPaymentData(schedule);
       const overpaymentResult = await applyOverpayment(
         paymentData,
@@ -168,7 +176,11 @@ describe('Mortgage Calculation Engine', () => {
 
     test('should reduce monthly payment with reducePayment effect', async () => {
       console.log('Running applyOverpayment test: reduce monthly payment');
-      const schedule = generateAmortizationSchedule(100000, [{ startMonth: 1, interestRate: 5 }], 10);
+      const schedule = generateAmortizationSchedule(
+        100000,
+        [{ startMonth: 1, interestRate: 5 }],
+        10
+      );
       const paymentData = convertScheduleToPaymentData(schedule);
       const overpaymentResult = await applyOverpayment(
         paymentData,

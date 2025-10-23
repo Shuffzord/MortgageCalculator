@@ -1,4 +1,9 @@
-import { compareScenarios, calculateBreakEvenPoint, calculateCumulativeCostDifference, calculateMonthlyPaymentDifference } from '../comparisonEngine';
+import {
+  compareScenarios,
+  calculateBreakEvenPoint,
+  calculateCumulativeCostDifference,
+  calculateMonthlyPaymentDifference,
+} from '../comparisonEngine';
 import { LoanDetails, ScenarioComparison } from '../types';
 
 describe('Comparative Analysis Tests', () => {
@@ -10,7 +15,7 @@ describe('Comparative Analysis Tests', () => {
     overpaymentPlans: [],
     startDate: new Date('2025-01-01'),
     name: 'Base Scenario',
-    currency: 'USD'
+    currency: 'USD',
   };
 
   const scenario2: LoanDetails = {
@@ -20,7 +25,7 @@ describe('Comparative Analysis Tests', () => {
     overpaymentPlans: [],
     startDate: new Date('2025-01-01'),
     name: 'Lower Rate Scenario',
-    currency: 'USD'
+    currency: 'USD',
   };
 
   const scenario3: LoanDetails = {
@@ -30,23 +35,23 @@ describe('Comparative Analysis Tests', () => {
     overpaymentPlans: [],
     startDate: new Date('2025-01-01'),
     name: 'Shorter Term Scenario',
-    currency: 'USD'
+    currency: 'USD',
   };
 
   test('CA1: Basic Scenario Comparison', () => {
     // Compare two scenarios with different interest rates
     const result = compareScenarios([
       { id: '1', name: 'Base Scenario', loanDetails: scenario1 },
-      { id: '2', name: 'Lower Rate Scenario', loanDetails: scenario2 }
+      { id: '2', name: 'Lower Rate Scenario', loanDetails: scenario2 },
     ]);
 
     // Verify the comparison results
     expect(result.scenarios.length).toBe(2);
     expect(result.differences.length).toBe(1);
-    
+
     // Lower rate should result in lower total interest
     expect(result.differences[0].totalInterestDiff).toBeGreaterThan(0);
-    
+
     // Lower rate should result in lower monthly payment
     expect(result.differences[0].monthlyPaymentDiff).toBeGreaterThan(0);
   });
@@ -55,19 +60,19 @@ describe('Comparative Analysis Tests', () => {
     // Compare scenarios with different terms
     const result = compareScenarios([
       { id: '1', name: 'Base Scenario', loanDetails: scenario1 },
-      { id: '3', name: 'Shorter Term Scenario', loanDetails: scenario3 }
+      { id: '3', name: 'Shorter Term Scenario', loanDetails: scenario3 },
     ]);
 
     // Verify the comparison results
     expect(result.scenarios.length).toBe(2);
     expect(result.differences.length).toBe(1);
-    
+
     // Shorter term should result in less total interest
     expect(result.differences[0].totalInterestDiff).toBeGreaterThan(0);
-    
+
     // Shorter term should result in higher monthly payment
     expect(result.differences[0].monthlyPaymentDiff).toBeLessThan(0);
-    
+
     // Term difference should be 15 years
     expect(result.differences[0].termDiff).toBeCloseTo(15, 0);
   });
@@ -78,19 +83,19 @@ describe('Comparative Analysis Tests', () => {
       { monthlyPayment: 1000, fees: 100 },
       { monthlyPayment: 1000, fees: 100 },
       { monthlyPayment: 1000, fees: 100 },
-      { monthlyPayment: 1000, fees: 100 }
+      { monthlyPayment: 1000, fees: 100 },
     ];
-    
+
     const schedule2 = [
       { monthlyPayment: 1200, fees: 50 },
       { monthlyPayment: 1200, fees: 50 },
       { monthlyPayment: 1200, fees: 50 },
-      { monthlyPayment: 1200, fees: 50 }
+      { monthlyPayment: 1200, fees: 50 },
     ];
-    
+
     // Calculate break-even point
     const breakEvenPoint = calculateBreakEvenPoint(schedule1, schedule2);
-    
+
     // The break-even point should be at month 3
     // Schedule 1: (1100 + 1100 + 1100) = 3300
     // Schedule 2: (1250 + 1250 + 1250) = 3750
@@ -103,27 +108,27 @@ describe('Comparative Analysis Tests', () => {
     const schedule1 = [
       { monthlyPayment: 1000, fees: 100 },
       { monthlyPayment: 1000, fees: 100 },
-      { monthlyPayment: 1000, fees: 100 }
+      { monthlyPayment: 1000, fees: 100 },
     ];
-    
+
     const schedule2 = [
       { monthlyPayment: 1200, fees: 50 },
       { monthlyPayment: 1200, fees: 50 },
-      { monthlyPayment: 1200, fees: 50 }
+      { monthlyPayment: 1200, fees: 50 },
     ];
-    
+
     // Calculate cumulative cost differences
     const differences = calculateCumulativeCostDifference(schedule1, schedule2);
-    
+
     // Verify the differences
     expect(differences.length).toBe(3);
-    
+
     // Month 1: (1000 + 100) - (1200 + 50) = -150
     expect(differences[0]).toBe(-150);
-    
+
     // Month 2: (1000 + 100 + 1000 + 100) - (1200 + 50 + 1200 + 50) = -300
     expect(differences[1]).toBe(-300);
-    
+
     // Month 3: (1000 + 100 + 1000 + 100 + 1000 + 100) - (1200 + 50 + 1200 + 50 + 1200 + 50) = -450
     expect(differences[2]).toBe(-450);
   });
@@ -133,27 +138,27 @@ describe('Comparative Analysis Tests', () => {
     const schedule1 = [
       { monthlyPayment: 1000, fees: 100 },
       { monthlyPayment: 1000, fees: 100 },
-      { monthlyPayment: 1000, fees: 100 }
+      { monthlyPayment: 1000, fees: 100 },
     ];
-    
+
     const schedule2 = [
       { monthlyPayment: 1200, fees: 50 },
       { monthlyPayment: 1200, fees: 50 },
-      { monthlyPayment: 1200, fees: 50 }
+      { monthlyPayment: 1200, fees: 50 },
     ];
-    
+
     // Calculate monthly payment differences
     const differences = calculateMonthlyPaymentDifference(schedule1, schedule2);
-    
+
     // Verify the differences
     expect(differences.length).toBe(3);
-    
+
     // Month 1: (1000 + 100) - (1200 + 50) = -150
     expect(differences[0]).toBe(-150);
-    
+
     // Month 2: (1000 + 100) - (1200 + 50) = -150
     expect(differences[1]).toBe(-150);
-    
+
     // Month 3: (1000 + 100) - (1200 + 50) = -150
     expect(differences[2]).toBe(-150);
   });
@@ -163,16 +168,16 @@ describe('Comparative Analysis Tests', () => {
     const result = compareScenarios([
       { id: '1', name: 'Base Scenario', loanDetails: scenario1 },
       { id: '2', name: 'Lower Rate Scenario', loanDetails: scenario2 },
-      { id: '3', name: 'Shorter Term Scenario', loanDetails: scenario3 }
+      { id: '3', name: 'Shorter Term Scenario', loanDetails: scenario3 },
     ]);
 
     // Verify the comparison results
     expect(result.scenarios.length).toBe(3);
     expect(result.differences.length).toBe(2);
-    
+
     // First difference is between Base and Lower Rate
     expect(result.differences[0].totalInterestDiff).toBeGreaterThan(0);
-    
+
     // Second difference is between Base and Shorter Term
     expect(result.differences[1].termDiff).toBeGreaterThan(0);
   });

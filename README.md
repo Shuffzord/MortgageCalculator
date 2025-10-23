@@ -67,19 +67,19 @@ staticwebapp.config.json  # SPA routing and caching headers
 
 ### Setup
 
-1) Install dependencies
+1. Install dependencies
 
 ```
 npm install
 ```
 
-2) Start the development server (Vite on port 3000)
+2. Start the development server (Vite on port 3000)
 
 ```
 npm run dev
 ```
 
-3) Open your browser to `http://localhost:3000`
+3. Open your browser to `http://localhost:3000`
 
 ### Common Scripts
 
@@ -158,4 +158,3 @@ Open an issue or pull request to discuss ideas and improvements.
 ---
 
 Created with ❤️ by Mateusz Wozniak and contributors
-

@@ -4,20 +4,20 @@ Thanks for your interest in contributing! This guide explains how to set up your
 
 ## Quick Start
 
-1) Install dependencies
+1. Install dependencies
 
 ```
 npm install
 ```
 
-2) Start the dev server
+2. Start the dev server
 
 ```
 npm run dev
 # http://localhost:3000
 ```
 
-3) Run tests locally
+3. Run tests locally
 
 ```
 npm test              # unit tests
@@ -78,4 +78,3 @@ npm run check:translations    # Verify translation keys
 ## Communication
 
 Use GitHub issues and pull requests for discussion. Be respectful and collaborative—see our [Code of Conduct](CODE_OF_CONDUCT.md).
-

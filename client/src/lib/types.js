@@ -1,3 +1,3 @@
-"use strict";
+'use strict';
 // Core Types
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, '__esModule', { value: true });

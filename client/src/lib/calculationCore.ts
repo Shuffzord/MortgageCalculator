@@ -47,7 +47,6 @@ export function roundToCents(amount: number): number {
   return Math.round(amount * 100) / 100;
 }
 
-
 /**
  * Calculates the monthly payment amount for a loan
  *
@@ -91,19 +90,21 @@ export function calculateBaseMonthlyPayment(
   totalMonths: number
 ): number {
   // For extremely low rates (near-zero), use simple division
-  if (Math.abs(monthlyRate) < 0.0001) { // 0.01% annual rate threshold
+  if (Math.abs(monthlyRate) < 0.0001) {
+    // 0.01% annual rate threshold
     return roundToCents(principal / totalMonths);
   }
-  
+
   // For very low rates, use simplified calculation
-  if (monthlyRate < 0.001) { // 0.12% annual rate threshold
-    const totalPayment = principal * (1 + (monthlyRate * totalMonths));
+  if (monthlyRate < 0.001) {
+    // 0.12% annual rate threshold
+    const totalPayment = principal * (1 + monthlyRate * totalMonths);
     return roundToCents(totalPayment / totalMonths);
   }
-  
+
   // Standard formula for normal interest rates
   const compoundFactor = Math.pow(1 + monthlyRate, totalMonths);
-  const payment = principal * (monthlyRate * compoundFactor) / (compoundFactor - 1);
+  const payment = (principal * (monthlyRate * compoundFactor)) / (compoundFactor - 1);
   return roundToCents(payment);
 }
 
@@ -159,6 +160,6 @@ export function convertScheduleFormat(schedule: any): PaymentData {
     totalInterest: schedule.totalInterest || 0,
     totalPayment: schedule.totalPayment || schedule.monthlyPayment || 0,
     paymentDate: schedule.paymentDate,
-    currency: schedule.currency
+    currency: schedule.currency,
   };
 }

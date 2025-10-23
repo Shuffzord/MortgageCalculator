@@ -1,5 +1,9 @@
 import { compareCalculations } from '../comparisonUtils';
-import { compareScenarios, calculateBreakEvenPoint, calculateCumulativeCostDifference } from '../comparisonEngine';
+import {
+  compareScenarios,
+  calculateBreakEvenPoint,
+  calculateCumulativeCostDifference,
+} from '../comparisonEngine';
 import {
   CalculationResults,
   LoanDetails,
@@ -9,7 +13,7 @@ import {
   IComparisonService,
   OverpaymentDetails,
   RepaymentModel,
-  OverpaymentStrategy
+  OverpaymentStrategy,
 } from '../types';
 import { validateLoanDetails } from '../validation';
 import { calculateLoanDetails } from '../calculationEngine';
@@ -46,14 +50,14 @@ export class ComparisonService implements IComparisonService {
     if (!baseCalculation || !calculationWithoutOverpayments) {
       throw new ComparisonServiceError('Both calculations must be provided');
     }
-    
+
     return compareCalculations(baseCalculation, calculationWithoutOverpayments);
   }
 
   /**
    * Compare a base loan with a loan that has overpayments
    *
-   * @param baseCalculation 
+   * @param baseCalculation
    * @param loanWithoutOverpayments - The calculation WITHOUT overpayments applied
    * @returns Comparison results showing the impact of overpayments
    * @throws ComparisonServiceError if inputs are invalid
@@ -66,7 +70,7 @@ export class ComparisonService implements IComparisonService {
     if (!baseCalculation || !loanWithoutOverpayments) {
       throw new ComparisonServiceError('Both calculations must be provided');
     }
-    
+
     return compareCalculations(baseCalculation, loanWithoutOverpayments);
   }
 
@@ -86,15 +90,17 @@ export class ComparisonService implements IComparisonService {
     if (!scenarios || scenarios.length < 2) {
       throw new ComparisonServiceError('At least two scenarios must be provided for comparison');
     }
-    
+
     // Validate each scenario's loan details
     for (const scenario of scenarios) {
       const validation = validateLoanDetails(scenario.loanDetails);
       if (!validation.isValid) {
-        throw new ComparisonServiceError(`Invalid loan details in scenario "${scenario.name}": ${validation.errors.join(', ')}`);
+        throw new ComparisonServiceError(
+          `Invalid loan details in scenario "${scenario.name}": ${validation.errors.join(', ')}`
+        );
       }
     }
-    
+
     return compareScenarios(scenarios, options);
   }
 
@@ -114,34 +120,36 @@ export class ComparisonService implements IComparisonService {
     if (!baseLoanDetails) {
       throw new ComparisonServiceError('Base loan details must be provided');
     }
-    
+
     if (!comparisonTerms || comparisonTerms.length === 0) {
       throw new ComparisonServiceError('At least one comparison term must be provided');
     }
-    
+
     // Validate base loan details
     const validation = validateLoanDetails(baseLoanDetails);
     if (!validation.isValid) {
-      throw new ComparisonServiceError(`Invalid base loan details: ${validation.errors.join(', ')}`);
+      throw new ComparisonServiceError(
+        `Invalid base loan details: ${validation.errors.join(', ')}`
+      );
     }
-    
+
     // Create scenarios for each term
     const scenarios = [
       {
         id: 'base',
         name: `${baseLoanDetails.loanTerm} Year Term (Base)`,
-        loanDetails: baseLoanDetails
+        loanDetails: baseLoanDetails,
       },
       ...comparisonTerms.map((term, index) => ({
         id: `term-${term}`,
         name: `${term} Year Term`,
         loanDetails: {
           ...baseLoanDetails,
-          loanTerm: term
-        }
-      }))
+          loanTerm: term,
+        },
+      })),
     ];
-    
+
     return this.compareMultipleScenarios(scenarios);
   }
 
@@ -161,24 +169,26 @@ export class ComparisonService implements IComparisonService {
     if (!baseLoanDetails) {
       throw new ComparisonServiceError('Base loan details must be provided');
     }
-    
+
     if (!comparisonRates || comparisonRates.length === 0) {
       throw new ComparisonServiceError('At least one comparison rate must be provided');
     }
-    
+
     // Validate base loan details
     const validation = validateLoanDetails(baseLoanDetails);
     if (!validation.isValid) {
-      throw new ComparisonServiceError(`Invalid base loan details: ${validation.errors.join(', ')}`);
+      throw new ComparisonServiceError(
+        `Invalid base loan details: ${validation.errors.join(', ')}`
+      );
     }
-    
+
     // Create scenarios for each interest rate
     const baseRate = baseLoanDetails.interestRatePeriods[0].interestRate;
     const scenarios = [
       {
         id: 'base',
         name: `${baseRate}% Interest Rate (Base)`,
-        loanDetails: baseLoanDetails
+        loanDetails: baseLoanDetails,
       },
       ...comparisonRates.map((rate, index) => ({
         id: `rate-${rate}`,
@@ -187,12 +197,12 @@ export class ComparisonService implements IComparisonService {
           ...baseLoanDetails,
           interestRatePeriods: [
             { startMonth: 0, interestRate: rate },
-            ...baseLoanDetails.interestRatePeriods.filter(p => p.startMonth > 0)
-          ]
-        }
-      }))
+            ...baseLoanDetails.interestRatePeriods.filter((p) => p.startMonth > 0),
+          ],
+        },
+      })),
     ];
-    
+
     return this.compareMultipleScenarios(scenarios);
   }
 
@@ -212,33 +222,35 @@ export class ComparisonService implements IComparisonService {
     if (!baseLoanDetails) {
       throw new ComparisonServiceError('Base loan details must be provided');
     }
-    
+
     // Validate base loan details
     const validation = validateLoanDetails(baseLoanDetails);
     if (!validation.isValid) {
-      throw new ComparisonServiceError(`Invalid base loan details: ${validation.errors.join(', ')}`);
+      throw new ComparisonServiceError(
+        `Invalid base loan details: ${validation.errors.join(', ')}`
+      );
     }
-    
+
     // Create scenarios for each repayment model
     const baseModel = baseLoanDetails.repaymentModel || 'equalInstallments';
     const scenarios = [
       {
         id: 'base',
         name: `${baseModel} (Base)`,
-        loanDetails: baseLoanDetails
+        loanDetails: baseLoanDetails,
       },
       ...repaymentModels
-        .filter(model => model !== baseModel) // Exclude the base model
+        .filter((model) => model !== baseModel) // Exclude the base model
         .map((model, index) => ({
           id: `model-${model}`,
           name: model,
           loanDetails: {
             ...baseLoanDetails,
-            repaymentModel: model
-          }
-        }))
+            repaymentModel: model,
+          },
+        })),
     ];
-    
+
     return this.compareMultipleScenarios(scenarios);
   }
 
@@ -258,17 +270,17 @@ export class ComparisonService implements IComparisonService {
     if (!loanDetails) {
       throw new ComparisonServiceError('Loan details must be provided');
     }
-    
+
     if (overpaymentAmount <= 0) {
       throw new ComparisonServiceError('Overpayment amount must be greater than zero');
     }
-    
+
     // Validate loan details
     const validation = validateLoanDetails(loanDetails);
     if (!validation.isValid) {
       throw new ComparisonServiceError(`Invalid loan details: ${validation.errors.join(', ')}`);
     }
-    
+
     // Calculate base loan without overpayments
     const baseLoanDetails = { ...loanDetails, overpaymentPlans: [] };
     const baseCalculation = calculateLoanDetails(
@@ -279,7 +291,7 @@ export class ComparisonService implements IComparisonService {
       baseLoanDetails.repaymentModel,
       baseLoanDetails.additionalCosts
     );
-    
+
     // Define different strategies
     const strategies: OverpaymentStrategy[] = [
       // Strategy 1: Lump sum at the beginning
@@ -292,12 +304,12 @@ export class ComparisonService implements IComparisonService {
             startDate: loanDetails.startDate,
             isRecurring: false,
             frequency: 'one-time',
-            effect: 'reduceTerm'
-          }
+            effect: 'reduceTerm',
+          },
         ],
-        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
       },
-      
+
       // Strategy 2: Monthly recurring payments
       {
         name: 'Monthly Recurring',
@@ -308,12 +320,12 @@ export class ComparisonService implements IComparisonService {
             startDate: loanDetails.startDate,
             isRecurring: true,
             frequency: 'monthly',
-            effect: 'reduceTerm'
-          }
+            effect: 'reduceTerm',
+          },
         ],
-        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
       },
-      
+
       // Strategy 3: Annual payments
       {
         name: 'Annual Payments',
@@ -324,12 +336,12 @@ export class ComparisonService implements IComparisonService {
             startDate: loanDetails.startDate,
             isRecurring: true,
             frequency: 'annual',
-            effect: 'reduceTerm'
-          }
+            effect: 'reduceTerm',
+          },
         ],
-        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
+        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
       },
-      
+
       // Strategy 4: Front-loaded (first half of loan term)
       {
         name: 'Front-Loaded',
@@ -338,23 +350,26 @@ export class ComparisonService implements IComparisonService {
           {
             amount: overpaymentAmount / (loanDetails.loanTerm * 6),
             startDate: loanDetails.startDate,
-            endDate: new Date(loanDetails.startDate.getTime() + (loanDetails.loanTerm * 12 / 2) * 30 * 24 * 60 * 60 * 1000),
+            endDate: new Date(
+              loanDetails.startDate.getTime() +
+                ((loanDetails.loanTerm * 12) / 2) * 30 * 24 * 60 * 60 * 1000
+            ),
             isRecurring: true,
             frequency: 'monthly',
-            effect: 'reduceTerm'
-          }
+            effect: 'reduceTerm',
+          },
         ],
-        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 }
-      }
+        results: { interestSaved: 0, termReduction: 0, effectivenessRatio: 0 },
+      },
     ];
-    
+
     // Calculate results for each strategy
     for (const strategy of strategies) {
       const loanWithOverpayments = {
         ...loanDetails,
-        overpaymentPlans: strategy.overpayments
+        overpaymentPlans: strategy.overpayments,
       };
-      
+
       // Calculate results with overpayments
       const overpaymentCalculation = calculateLoanDetails(
         loanWithOverpayments.principal,
@@ -364,25 +379,25 @@ export class ComparisonService implements IComparisonService {
         loanWithOverpayments.repaymentModel,
         loanWithOverpayments.additionalCosts
       );
-      
+
       // Calculate metrics
       const interestSaved = baseCalculation.totalInterest - overpaymentCalculation.totalInterest;
       const termReduction = baseCalculation.actualTerm - overpaymentCalculation.actualTerm;
-      
+
       // Calculate effectiveness ratio (interest saved per dollar of overpayment)
       const effectivenessRatio = interestSaved / overpaymentAmount;
-      
+
       // Update strategy results
       strategy.results = {
         interestSaved,
         termReduction,
-        effectivenessRatio
+        effectivenessRatio,
       };
     }
-    
+
     // Sort strategies by effectiveness ratio (most effective first)
     strategies.sort((a, b) => b.results.effectivenessRatio - a.results.effectivenessRatio);
-    
+
     return strategies;
   }
 
@@ -404,17 +419,17 @@ export class ComparisonService implements IComparisonService {
     if (!loanDetails) {
       throw new ComparisonServiceError('Loan details must be provided');
     }
-    
+
     if (overpaymentAmount <= 0) {
       throw new ComparisonServiceError('Overpayment amount must be greater than zero');
     }
-    
+
     // Validate loan details
     const validation = validateLoanDetails(loanDetails);
     if (!validation.isValid) {
       throw new ComparisonServiceError(`Invalid loan details: ${validation.errors.join(', ')}`);
     }
-    
+
     // Calculate base loan without overpayments
     const baseLoanDetails = { ...loanDetails, overpaymentPlans: [] };
     const baseCalculation = calculateLoanDetails(
@@ -425,36 +440,36 @@ export class ComparisonService implements IComparisonService {
       baseLoanDetails.repaymentModel,
       baseLoanDetails.additionalCosts
     );
-    
+
     // Calculate total loan term in months
     const totalMonths = baseCalculation.amortizationSchedule.length;
-    
+
     // Determine interval size
     const intervalSize = Math.max(1, Math.floor(totalMonths / intervals));
-    
+
     // Analyze overpayment at different points in time
     const results: { month: number; interestSaved: number; termReduction: number }[] = [];
-    
+
     for (let month = 1; month < totalMonths; month += intervalSize) {
       // Create loan details with overpayment at this month
       // Create a date for this month by adding months to the start date
       const overpaymentDate = new Date(loanDetails.startDate);
       overpaymentDate.setMonth(overpaymentDate.getMonth() + month);
-      
+
       const overpaymentPlan: OverpaymentDetails = {
         amount: overpaymentAmount,
         startDate: overpaymentDate,
         isRecurring: false,
         frequency: 'one-time',
         effect: 'reduceTerm',
-        startMonth: month // For backwards compatibility
+        startMonth: month, // For backwards compatibility
       };
-      
+
       const loanWithOverpayment = {
         ...loanDetails,
-        overpaymentPlans: [overpaymentPlan]
+        overpaymentPlans: [overpaymentPlan],
       };
-      
+
       // Calculate results with overpayment
       const overpaymentCalculation = calculateLoanDetails(
         loanWithOverpayment.principal,
@@ -464,21 +479,21 @@ export class ComparisonService implements IComparisonService {
         loanWithOverpayment.repaymentModel,
         loanWithOverpayment.additionalCosts
       );
-      
+
       // Calculate metrics
       const interestSaved = baseCalculation.totalInterest - overpaymentCalculation.totalInterest;
       const termReduction = baseCalculation.actualTerm - overpaymentCalculation.actualTerm;
-      
+
       results.push({
         month,
         interestSaved,
-        termReduction
+        termReduction,
       });
     }
-    
+
     // Sort by interest saved (most saved first)
     results.sort((a, b) => b.interestSaved - a.interestSaved);
-    
+
     return results;
   }
 
@@ -505,21 +520,21 @@ export class ComparisonService implements IComparisonService {
     if (!loanDetails) {
       throw new ComparisonServiceError('Loan details must be provided');
     }
-    
+
     if (lumpSumAmount <= 0) {
       throw new ComparisonServiceError('Lump sum amount must be greater than zero');
     }
-    
+
     if (recurringAmount <= 0) {
       throw new ComparisonServiceError('Recurring amount must be greater than zero');
     }
-    
+
     // Validate loan details
     const validation = validateLoanDetails(loanDetails);
     if (!validation.isValid) {
       throw new ComparisonServiceError(`Invalid loan details: ${validation.errors.join(', ')}`);
     }
-    
+
     // Calculate base loan without overpayments
     const baseLoanDetails = { ...loanDetails, overpaymentPlans: [] };
     const baseCalculation = calculateLoanDetails(
@@ -530,35 +545,35 @@ export class ComparisonService implements IComparisonService {
       baseLoanDetails.repaymentModel,
       baseLoanDetails.additionalCosts
     );
-    
+
     // Create loan with lump sum overpayment
     const lumpSumPlan: OverpaymentDetails = {
       amount: lumpSumAmount,
       startDate: loanDetails.startDate,
       isRecurring: false,
       frequency: 'one-time',
-      effect: 'reduceTerm'
+      effect: 'reduceTerm',
     };
-    
+
     const loanWithLumpSum = {
       ...loanDetails,
-      overpaymentPlans: [lumpSumPlan]
+      overpaymentPlans: [lumpSumPlan],
     };
-    
+
     // Create loan with recurring overpayments
     const recurringPlan: OverpaymentDetails = {
       amount: recurringAmount,
       startDate: loanDetails.startDate,
       isRecurring: true,
       frequency: 'monthly',
-      effect: 'reduceTerm'
+      effect: 'reduceTerm',
     };
-    
+
     const loanWithRecurring = {
       ...loanDetails,
-      overpaymentPlans: [recurringPlan]
+      overpaymentPlans: [recurringPlan],
     };
-    
+
     // Calculate results for both strategies
     const lumpSumCalculation = calculateLoanDetails(
       loanWithLumpSum.principal,
@@ -568,7 +583,7 @@ export class ComparisonService implements IComparisonService {
       loanWithLumpSum.repaymentModel,
       loanWithLumpSum.additionalCosts
     );
-    
+
     const recurringCalculation = calculateLoanDetails(
       loanWithRecurring.principal,
       loanWithRecurring.interestRatePeriods,
@@ -577,34 +592,35 @@ export class ComparisonService implements IComparisonService {
       loanWithRecurring.repaymentModel,
       loanWithRecurring.additionalCosts
     );
-    
+
     // Calculate metrics
     const lumpSumInterestSaved = baseCalculation.totalInterest - lumpSumCalculation.totalInterest;
     const lumpSumTermReduction = baseCalculation.actualTerm - lumpSumCalculation.actualTerm;
-    
-    const recurringInterestSaved = baseCalculation.totalInterest - recurringCalculation.totalInterest;
+
+    const recurringInterestSaved =
+      baseCalculation.totalInterest - recurringCalculation.totalInterest;
     const recurringTermReduction = baseCalculation.actualTerm - recurringCalculation.actualTerm;
-    
+
     // Calculate break-even point
     const breakEvenMonth = calculateBreakEvenPoint(
       lumpSumCalculation.amortizationSchedule,
       recurringCalculation.amortizationSchedule
     );
-    
+
     // Determine which strategy is more effective based on interest saved
     const moreEffective = lumpSumInterestSaved > recurringInterestSaved ? 'lumpSum' : 'recurring';
-    
+
     return {
       lumpSum: {
         interestSaved: lumpSumInterestSaved,
-        termReduction: lumpSumTermReduction
+        termReduction: lumpSumTermReduction,
       },
       recurring: {
         interestSaved: recurringInterestSaved,
-        termReduction: recurringTermReduction
+        termReduction: recurringTermReduction,
       },
       breakEvenMonth,
-      moreEffective
+      moreEffective,
     };
   }
 }

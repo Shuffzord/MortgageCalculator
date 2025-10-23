@@ -21,7 +21,7 @@ export default function Navigation({ onExportClick }: NavigationProps) {
   // Get current path and language prefix
   const [location] = useLocation();
   const langPrefix = useLanguagePrefix();
-  
+
   // Check if we're on the home page (considering language prefix)
   const isHomePage = location === `/${langPrefix}/`;
 
@@ -32,10 +32,10 @@ export default function Navigation({ onExportClick }: NavigationProps) {
           {/* Logo and app name */}
           <div className="flex items-center space-x-8">
             <Link href={`/${langPrefix}/`}>
-              <div className="flex items-center cursor-pointer" title={t('app.title') + " - Home"}>
-                <img 
+              <div className="flex items-center cursor-pointer" title={t('app.title') + ' - Home'}>
+                <img
                   src={new URL('/images/logo.png', import.meta.url).href}
-                  alt={t('app.title') + " Logo"}
+                  alt={t('app.title') + ' Logo'}
                   className="h-32 w-32" // Match the actual favicon size of 32x32px
                 />
                 <span className="ml-2 text-xl font-bold">{t('app.title')}</span>
@@ -45,23 +45,35 @@ export default function Navigation({ onExportClick }: NavigationProps) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex">
               <Link href={`/${langPrefix}/`}>
-                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/`
-                  ? 'bg-[#0f172a] text-white rounded-t' 
-                  : 'text-gray-300 hover:text-white'}`}>
+                <div
+                  className={`px-5 py-3 font-medium cursor-pointer text-sm ${
+                    location === `/${langPrefix}/`
+                      ? 'bg-[#0f172a] text-white rounded-t'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
                   {t('navigation.home')}
                 </div>
               </Link>
               <Link href={`/${langPrefix}/about`}>
-                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/about`
-                  ? 'bg-[#0f172a] text-white rounded-t' 
-                  : 'text-gray-300 hover:text-white'}`}>
+                <div
+                  className={`px-5 py-3 font-medium cursor-pointer text-sm ${
+                    location === `/${langPrefix}/about`
+                      ? 'bg-[#0f172a] text-white rounded-t'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
                   {t('navigation.about')}
                 </div>
               </Link>
               <Link href={`/${langPrefix}/education`}>
-                <div className={`px-5 py-3 font-medium cursor-pointer text-sm ${location === `/${langPrefix}/education`
-                  ? 'bg-[#0f172a] text-white rounded-t' 
-                  : 'text-gray-300 hover:text-white'}`}>
+                <div
+                  className={`px-5 py-3 font-medium cursor-pointer text-sm ${
+                    location === `/${langPrefix}/education`
+                      ? 'bg-[#0f172a] text-white rounded-t'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
                   {t('navigation.education')}
                 </div>
               </Link>
@@ -80,7 +92,7 @@ export default function Navigation({ onExportClick }: NavigationProps) {
               <DatabaseBackup className="h-4 w-4" />
             </Button>
             <LanguageSwitcher />
-            
+
             {/* Mobile menu button */}
             <div className="md:hidden">
               <button
@@ -105,29 +117,35 @@ export default function Navigation({ onExportClick }: NavigationProps) {
         <div className="md:hidden bg-[#0f172a]">
           <div className="px-2 pt-2 pb-3 space-y-1">
             <Link href={`/${langPrefix}/`}>
-              <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
-                location === `/${langPrefix}/`
-                  ? 'bg-[#1e293b] text-white'
-                  : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
-              }`}>
+              <div
+                className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                  location === `/${langPrefix}/`
+                    ? 'bg-[#1e293b] text-white'
+                    : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
+                }`}
+              >
                 {t('navigation.home')}
               </div>
             </Link>
             <Link href={`/${langPrefix}/about`}>
-              <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
-                location === `/${langPrefix}/about`
-                  ? 'bg-[#1e293b] text-white'
-                  : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
-              }`}>
+              <div
+                className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                  location === `/${langPrefix}/about`
+                    ? 'bg-[#1e293b] text-white'
+                    : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
+                }`}
+              >
                 {t('navigation.about')}
               </div>
             </Link>
             <Link href={`/${langPrefix}/education`}>
-              <div className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
-                location === `/${langPrefix}/education`
-                  ? 'bg-[#1e293b] text-white'
-                  : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
-              }`}>
+              <div
+                className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                  location === `/${langPrefix}/education`
+                    ? 'bg-[#1e293b] text-white'
+                    : 'text-gray-300 hover:bg-[#1e293b] hover:text-white'
+                }`}
+              >
                 {t('navigation.education')}
               </div>
             </Link>

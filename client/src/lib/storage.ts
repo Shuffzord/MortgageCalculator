@@ -3,9 +3,9 @@
  * using localStorage for persistence between sessions.
  */
 
-import { LoanDetails } from "./types";
+import { LoanDetails } from './types';
 
-const STORAGE_KEY = "mortgage-calculator-saved";
+const STORAGE_KEY = 'mortgage-calculator-saved';
 
 /**
  * Save a calculation to localStorage
@@ -14,10 +14,10 @@ const STORAGE_KEY = "mortgage-calculator-saved";
 export function saveCalculation(calculation: LoanDetails): void {
   // Get existing calculations
   const savedCalculations = getSavedCalculations();
-  
+
   // Check if calculation with the same name exists
-  const existingIndex = savedCalculations.findIndex(calc => calc.name === calculation.name);
-  
+  const existingIndex = savedCalculations.findIndex((calc) => calc.name === calculation.name);
+
   if (existingIndex >= 0) {
     // Update existing calculation
     savedCalculations[existingIndex] = calculation;
@@ -25,7 +25,7 @@ export function saveCalculation(calculation: LoanDetails): void {
     // Add new calculation
     savedCalculations.push(calculation);
   }
-  
+
   // Save to localStorage
   localStorage.setItem(STORAGE_KEY, JSON.stringify(savedCalculations));
 }
@@ -38,13 +38,13 @@ export function getSavedCalculations(): LoanDetails[] {
   try {
     const savedJSON = localStorage.getItem(STORAGE_KEY);
     if (!savedJSON) return [];
-    
+
     const parsed = JSON.parse(savedJSON);
     if (!Array.isArray(parsed)) return [];
-    
+
     return parsed;
   } catch (error) {
-    console.error("Error loading saved calculations:", error);
+    console.error('Error loading saved calculations:', error);
     return [];
   }
 }
@@ -56,7 +56,7 @@ export function getSavedCalculations(): LoanDetails[] {
  */
 export function loadCalculation(name: string): LoanDetails | undefined {
   const savedCalculations = getSavedCalculations();
-  return savedCalculations.find(calc => calc.name === name);
+  return savedCalculations.find((calc) => calc.name === name);
 }
 
 /**
@@ -67,13 +67,13 @@ export function loadCalculation(name: string): LoanDetails | undefined {
 export function deleteCalculation(name: string): boolean {
   const savedCalculations = getSavedCalculations();
   const initialLength = savedCalculations.length;
-  
-  const filteredCalculations = savedCalculations.filter(calc => calc.name !== name);
-  
+
+  const filteredCalculations = savedCalculations.filter((calc) => calc.name !== name);
+
   if (filteredCalculations.length !== initialLength) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredCalculations));
     return true;
   }
-  
+
   return false;
 }

@@ -16,7 +16,7 @@ declare global {
           t: (key: string) => string;
           changeLanguage: () => Promise<void>;
         };
-      }
+      };
     }
   }
 }

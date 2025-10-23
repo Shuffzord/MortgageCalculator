@@ -15,14 +15,18 @@ import {
   RecurringFeesParams,
   MonthlyPaymentParams,
   ConvertScheduleParams,
-  ConvertScheduleWithFeesParams
-} from "./types";
-import { validateInputs } from "./validation";
-import { generateAmortizationSchedule } from "./utils";
+  ConvertScheduleWithFeesParams,
+} from './types';
+import { validateInputs } from './validation';
+import { generateAmortizationSchedule } from './utils';
 // Re-export for use by other modules
 export { generateAmortizationSchedule };
-import { formatCurrency } from "./formatters";
-import { convertScheduleFormat, calculateBaseMonthlyPayment, roundToCents } from './calculationCore';
+import { formatCurrency } from './formatters';
+import {
+  convertScheduleFormat,
+  calculateBaseMonthlyPayment,
+  roundToCents,
+} from './calculationCore';
 import {
   applyOverpayment,
   applyMultipleOverpayments,
@@ -35,7 +39,7 @@ import {
   recalculateScheduleWithNewRate,
   applyRateChange,
   performRateChanges,
-  calculateComplexScenario
+  calculateComplexScenario,
 } from './overpaymentCalculator';
 
 /**
@@ -77,7 +81,7 @@ export function calculateDecreasingInstallment(
       params.currentMonth
     );
   }
-  
+
   // Handle individual parameters
   return calculateDecreasingInstallmentImpl(
     principalOrParams,
@@ -100,7 +104,7 @@ function calculateDecreasingInstallmentImpl(
   const principalPortion = principal / totalMonths;
 
   // Remaining balance after previous payments
-  const remainingBalance = principal - (principalPortion * (currentMonth - 1));
+  const remainingBalance = principal - principalPortion * (currentMonth - 1);
 
   // Interest portion based on remaining balance
   const interestPortion = remainingBalance * monthlyRate;
@@ -121,10 +125,7 @@ export function calculateOneTimeFees(params: OneTimeFeesParams): number;
  * Calculate one-time fees with individual parameters (backward compatibility)
  * @deprecated Use parameter object version instead
  */
-export function calculateOneTimeFees(
-  principal: number,
-  additionalCosts?: AdditionalCosts
-): number;
+export function calculateOneTimeFees(principal: number, additionalCosts?: AdditionalCosts): number;
 
 /**
  * Implementation that handles both parameter object and individual parameters
@@ -136,26 +137,17 @@ export function calculateOneTimeFees(
   // Handle parameter object
   if (typeof principalOrParams === 'object') {
     const params = principalOrParams;
-    return calculateOneTimeFeesImpl(
-      params.principal,
-      params.additionalCosts
-    );
+    return calculateOneTimeFeesImpl(params.principal, params.additionalCosts);
   }
-  
+
   // Handle individual parameters
-  return calculateOneTimeFeesImpl(
-    principalOrParams,
-    additionalCosts
-  );
+  return calculateOneTimeFeesImpl(principalOrParams, additionalCosts);
 }
 
 /**
  * Implementation of one-time fees calculation
  */
-function calculateOneTimeFeesImpl(
-  principal: number,
-  additionalCosts?: AdditionalCosts
-): number {
+function calculateOneTimeFeesImpl(principal: number, additionalCosts?: AdditionalCosts): number {
   if (!additionalCosts) return 0;
 
   let totalFees = 0;
@@ -164,7 +156,7 @@ function calculateOneTimeFeesImpl(
   if (additionalCosts.originationFeeType === 'fixed') {
     totalFees += additionalCosts.originationFee;
   } else {
-    totalFees += (principal * additionalCosts.originationFee / 100);
+    totalFees += (principal * additionalCosts.originationFee) / 100;
   }
 
   return roundToCents(totalFees);
@@ -197,17 +189,11 @@ export function calculateRecurringFees(
   // Handle parameter object
   if (typeof remainingBalanceOrParams === 'object') {
     const params = remainingBalanceOrParams;
-    return calculateRecurringFeesImpl(
-      params.remainingBalance,
-      params.additionalCosts
-    );
+    return calculateRecurringFeesImpl(params.remainingBalance, params.additionalCosts);
   }
-  
+
   // Handle individual parameters
-  return calculateRecurringFeesImpl(
-    remainingBalanceOrParams,
-    additionalCosts
-  );
+  return calculateRecurringFeesImpl(remainingBalanceOrParams, additionalCosts);
 }
 
 /**
@@ -225,14 +211,14 @@ function calculateRecurringFeesImpl(
   if (additionalCosts.loanInsuranceType === 'fixed') {
     monthlyFees += additionalCosts.loanInsurance;
   } else {
-    monthlyFees += (remainingBalance * additionalCosts.loanInsurance / 100 / 12);
+    monthlyFees += (remainingBalance * additionalCosts.loanInsurance) / 100 / 12;
   }
 
   // Administrative fees
   if (additionalCosts.administrativeFeesType === 'fixed') {
     monthlyFees += additionalCosts.administrativeFees;
   } else {
-    monthlyFees += (remainingBalance * additionalCosts.administrativeFees / 100 / 12);
+    monthlyFees += (remainingBalance * additionalCosts.administrativeFees) / 100 / 12;
   }
 
   return roundToCents(monthlyFees);
@@ -280,7 +266,7 @@ export function calculateAPR(
       params.recurringFees
     );
   }
-  
+
   // Handle individual parameters
   return calculateAPRImpl(
     principalOrParams,
@@ -305,18 +291,18 @@ function calculateAPRImpl(
   // Initial guess: standard interest rate + 1%
   let guess = 0.05;
   let step = 0.01;
-  let tolerance = 0.0001;
-  let maxIterations = 100;
-  
+  const tolerance = 0.0001;
+  const maxIterations = 100;
+
   // Newton-Raphson method to find APR
   for (let i = 0; i < maxIterations; i++) {
     // Calculate present value with current guess
     let pv = 0;
-    
+
     // Optimization: Pre-calculate the divisor for each month to avoid repeated calculations
     const monthlyFactor = 1 + guess / 12;
     let divisor = monthlyFactor;
-    
+
     for (let month = 1; month <= loanTermMonths; month++) {
       // Use pre-calculated divisor instead of Math.pow for each iteration
       pv += (monthlyPayment + recurringFees) / divisor;
@@ -339,7 +325,6 @@ function calculateAPRImpl(
 
     // Reduce step size with a more aggressive factor for faster convergence
     step *= 0.8;
-    
   }
 
   // Convert to annual percentage rate
@@ -356,7 +341,7 @@ export function calculateLoanDetails(params: LoanCalculationParams): Calculation
  */
 export function calculateLoanDetails(
   principal: number,
-  interestRatePeriods: { startMonth: number; interestRate: number; }[],
+  interestRatePeriods: { startMonth: number; interestRate: number }[],
   loanTerm: number,
   overpaymentPlan?: OverpaymentDetails,
   repaymentModel?: RepaymentModel,
@@ -371,7 +356,7 @@ export function calculateLoanDetails(
  */
 export function calculateLoanDetails(
   principalOrParams: number | LoanCalculationParams,
-  interestRatePeriods?: { startMonth: number; interestRate: number; }[],
+  interestRatePeriods?: { startMonth: number; interestRate: number }[],
   loanTerm?: number,
   overpaymentPlan?: OverpaymentDetails,
   repaymentModel?: RepaymentModel,
@@ -395,7 +380,7 @@ export function calculateLoanDetails(
       params.loanDetails
     );
   }
-  
+
   // Handle individual parameters
   return calculateLoanDetailsImpl(
     principalOrParams,
@@ -415,7 +400,7 @@ export function calculateLoanDetails(
  */
 function calculateLoanDetailsImpl(
   principal: number,
-  interestRatePeriods: { startMonth: number; interestRate: number; }[],
+  interestRatePeriods: { startMonth: number; interestRate: number }[],
   loanTerm: number,
   overpaymentPlan?: OverpaymentDetails,
   repaymentModel?: RepaymentModel,
@@ -432,7 +417,7 @@ function calculateLoanDetailsImpl(
     loanTerm: 0,
     overpaymentPlans: [],
     startDate: new Date(),
-    name: ''
+    name: '',
   };
   if (principal === 0) {
     return {
@@ -441,7 +426,7 @@ function calculateLoanDetailsImpl(
       amortizationSchedule: [],
       yearlyData: [],
       originalTerm: loanTerm,
-      actualTerm: 0
+      actualTerm: 0,
     };
   }
 
@@ -450,7 +435,7 @@ function calculateLoanDetailsImpl(
   // Calculate one-time fees
   const oneTimeFees = calculateOneTimeFees({
     principal: principal,
-    additionalCosts: additionalCosts
+    additionalCosts: additionalCosts,
   });
 
   // Generate the initial amortization schedule without overpayments
@@ -475,10 +460,15 @@ function calculateLoanDetailsImpl(
       overpaymentPlans: overpaymentPlans,
       startDate: startDate || new Date(),
       name: actualLoanDetails.name || '',
-      repaymentModel: actualRepaymentModel
+      repaymentModel: actualRepaymentModel,
     };
-    
-    rawSchedule = applyMultipleOverpayments(rawSchedule, overpaymentPlans, startDate, overpaymentLoanDetails);
+
+    rawSchedule = applyMultipleOverpayments(
+      rawSchedule,
+      overpaymentPlans,
+      startDate,
+      overpaymentLoanDetails
+    );
   } else if (overpaymentPlan) {
     // For backward compatibility
     const overpaymentLoanDetails: LoanDetails = {
@@ -488,10 +478,15 @@ function calculateLoanDetailsImpl(
       overpaymentPlans: [overpaymentPlan],
       startDate: startDate || new Date(),
       name: actualLoanDetails.name || '',
-      repaymentModel: actualRepaymentModel
+      repaymentModel: actualRepaymentModel,
     };
-    
-    rawSchedule = applyMultipleOverpayments(rawSchedule, [overpaymentPlan], startDate, overpaymentLoanDetails);
+
+    rawSchedule = applyMultipleOverpayments(
+      rawSchedule,
+      [overpaymentPlan],
+      startDate,
+      overpaymentLoanDetails
+    );
   }
 
   // Process the schedule and add fees
@@ -502,9 +497,11 @@ function calculateLoanDetailsImpl(
   const recurringFees = paymentData.reduce((sum, payment) => sum + (payment.fees || 0), 0);
 
   // Calculate total interest from the payment data
-  const totalInterest = paymentData.length > 0 ?
-    paymentData.reduce((sum, payment) => sum + payment.interestPayment, 0) : 0;
-  
+  const totalInterest =
+    paymentData.length > 0
+      ? paymentData.reduce((sum, payment) => sum + payment.interestPayment, 0)
+      : 0;
+
   // Calculate total cost (principal + interest + fees)
   const totalCost = principal + totalInterest + oneTimeFees + recurringFees;
 
@@ -519,7 +516,7 @@ function calculateLoanDetailsImpl(
       recurringFees / paymentData.length // average monthly recurring fees
     );
   }
-  
+
   // Update loan details
   const updatedLoanDetails = {
     principal: principal,
@@ -528,7 +525,7 @@ function calculateLoanDetailsImpl(
     overpaymentPlans: overpaymentPlans || [],
     startDate: startDate || new Date(),
     name: actualLoanDetails.name || '',
-    repaymentModel: actualRepaymentModel
+    repaymentModel: actualRepaymentModel,
   };
 
   return {
@@ -541,7 +538,7 @@ function calculateLoanDetailsImpl(
     oneTimeFees: oneTimeFees,
     recurringFees: recurringFees,
     totalCost: totalCost,
-    apr: apr
+    apr: apr,
   };
 }
 
@@ -570,7 +567,7 @@ export function convertAndProcessSchedule(
     const params = rawScheduleOrParams;
     return convertAndProcessScheduleImpl(params.rawSchedule);
   }
-  
+
   // Handle individual parameters
   return convertAndProcessScheduleImpl(rawScheduleOrParams);
 }
@@ -580,7 +577,7 @@ export function convertAndProcessSchedule(
  */
 function convertAndProcessScheduleImpl(rawSchedule: any[]): PaymentData[] {
   // This function now uses convertScheduleFormat from calculationCore.ts
-  const paymentData: PaymentData[] = rawSchedule.map(item => {
+  const paymentData: PaymentData[] = rawSchedule.map((item) => {
     // Use the convertScheduleFormat function from calculationCore.ts
     const converted = convertScheduleFormat(item);
     return {
@@ -592,7 +589,7 @@ function convertAndProcessScheduleImpl(rawSchedule: any[]): PaymentData[] {
       principalPayment: roundToCents(converted.principalPayment),
       balance: roundToCents(converted.balance),
       totalPayment: roundToCents(converted.totalPayment ?? converted.monthlyPayment),
-      totalInterest: 0
+      totalInterest: 0,
     };
   });
 
@@ -612,13 +609,18 @@ function convertAndProcessScheduleImpl(rawSchedule: any[]): PaymentData[] {
 /**
  * Convert raw schedule with fees using parameter object
  */
-export function convertAndProcessScheduleWithFees(params: ConvertScheduleWithFeesParams): PaymentData[];
+export function convertAndProcessScheduleWithFees(
+  params: ConvertScheduleWithFeesParams
+): PaymentData[];
 
 /**
  * Convert raw schedule with fees with individual parameters (backward compatibility)
  * @deprecated Use parameter object version instead
  */
-export function convertAndProcessScheduleWithFees(rawSchedule: any[], additionalCosts?: AdditionalCosts): PaymentData[];
+export function convertAndProcessScheduleWithFees(
+  rawSchedule: any[],
+  additionalCosts?: AdditionalCosts
+): PaymentData[];
 
 /**
  * Implementation that handles both parameter object and individual parameters
@@ -630,32 +632,31 @@ export function convertAndProcessScheduleWithFees(
   // Handle parameter object
   if (!Array.isArray(rawScheduleOrParams)) {
     const params = rawScheduleOrParams;
-    return convertAndProcessScheduleWithFeesImpl(
-      params.rawSchedule,
-      params.additionalCosts
-    );
+    return convertAndProcessScheduleWithFeesImpl(params.rawSchedule, params.additionalCosts);
   }
-  
+
   // Handle individual parameters
-  return convertAndProcessScheduleWithFeesImpl(
-    rawScheduleOrParams,
-    additionalCosts
-  );
+  return convertAndProcessScheduleWithFeesImpl(rawScheduleOrParams, additionalCosts);
 }
 
 /**
  * Implementation of schedule conversion and processing with fees
  */
-function convertAndProcessScheduleWithFeesImpl(rawSchedule: any[], additionalCosts?: AdditionalCosts): PaymentData[] {
-  const paymentData: PaymentData[] = rawSchedule.map(item => {
+function convertAndProcessScheduleWithFeesImpl(
+  rawSchedule: any[],
+  additionalCosts?: AdditionalCosts
+): PaymentData[] {
+  const paymentData: PaymentData[] = rawSchedule.map((item) => {
     // Use convertScheduleFormat from calculationCore.ts
     const converted = convertScheduleFormat(item);
 
     // Calculate recurring fees for this payment
-    const fees = additionalCosts ? calculateRecurringFees({
-      remainingBalance: converted.balance,
-      additionalCosts: additionalCosts
-    }) : 0;
+    const fees = additionalCosts
+      ? calculateRecurringFees({
+          remainingBalance: converted.balance,
+          additionalCosts: additionalCosts,
+        })
+      : 0;
 
     return {
       payment: converted.payment || 0,
@@ -667,7 +668,7 @@ function convertAndProcessScheduleWithFeesImpl(rawSchedule: any[], additionalCos
       balance: roundToCents(converted.balance),
       totalPayment: roundToCents((converted.totalPayment ?? converted.monthlyPayment) + fees),
       totalInterest: 0,
-      fees: fees
+      fees: fees,
     };
   });
 
@@ -716,13 +717,9 @@ export function calculateMonthlyPaymentInternal(
       params.totalMonths
     );
   }
-  
+
   // Handle individual parameters
-  return calculateMonthlyPaymentInternalImpl(
-    principalOrParams,
-    monthlyRate!,
-    totalMonths!
-  );
+  return calculateMonthlyPaymentInternalImpl(principalOrParams, monthlyRate!, totalMonths!);
 }
 
 /**

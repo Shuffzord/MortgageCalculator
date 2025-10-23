@@ -1,7 +1,13 @@
-import React from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useTranslation } from "react-i18next";
-import { CURRENCIES } from "@/lib/utils";
+import React from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useTranslation } from 'react-i18next';
+import { CURRENCIES } from '@/lib/utils';
 
 export interface CurrencySelectorProps {
   value: string;
@@ -10,12 +16,9 @@ export interface CurrencySelectorProps {
 
 export function CurrencySelector({ value, onChange }: CurrencySelectorProps) {
   const { t } = useTranslation();
-  
+
   return (
-    <Select 
-      value={value} 
-      onValueChange={onChange}
-    >
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger id="currency-select" className="w-full">
         <SelectValue placeholder={t('form.selectCurrency')} />
       </SelectTrigger>

@@ -1,13 +1,13 @@
-import { 
-  formatCurrency, 
-  formatDate, 
-  formatTimePeriod, 
+import {
+  formatCurrency,
+  formatDate,
+  formatTimePeriod,
   formatDateLegacy,
   formatPaymentAmount,
   formatInterestRate,
   formatPaymentEntry,
   formatYearlySummary,
-  formatLoanSummary
+  formatLoanSummary,
 } from './formatters';
 import i18n from '@/i18n';
 import { PaymentData, YearlyData } from './types';
@@ -15,7 +15,7 @@ import { PaymentData, YearlyData } from './types';
 // Mock i18n
 jest.mock('@/i18n', () => ({
   language: 'en',
-  changeLanguage: jest.fn()
+  changeLanguage: jest.fn(),
 }));
 
 describe('Formatters', () => {
@@ -48,11 +48,11 @@ describe('Formatters', () => {
       i18n.language = 'pl';
       const plResult = formatCurrency(1234.56);
       expect(plResult).toContain('1234,56');
-      
+
       // @ts-ignore - Mocking i18n
       i18n.language = 'es';
       expect(formatCurrency(1234.56)).toMatch(/1.*234.*56/);
-      
+
       // @ts-ignore - Mocking i18n
       i18n.language = 'en';
       expect(formatCurrency(1234.56)).toBe('$1,234.56');
@@ -104,17 +104,17 @@ describe('Formatters', () => {
 
     it('uses the correct locale based on i18n language', () => {
       const date = new Date(2023, 0, 15); // January 15, 2023
-      
+
       // @ts-ignore - Mocking i18n
       i18n.language = 'pl';
       expect(formatDate(date)).toMatch(/15/);
       expect(formatDate(date)).toMatch(/styczeń|stycznia/i);
-      
+
       // @ts-ignore - Mocking i18n
       i18n.language = 'es';
       expect(formatDate(date)).toMatch(/15/);
       expect(formatDate(date)).toMatch(/enero/i);
-      
+
       // @ts-ignore - Mocking i18n
       i18n.language = 'en';
       expect(formatDate(date)).toMatch(/January 15/);
@@ -163,10 +163,12 @@ describe('Formatters', () => {
         isOverpayment: false,
         overpaymentAmount: 0,
         totalInterest: 200,
-        totalPayment: 1000
+        totalPayment: 1000,
       };
-      
-      expect(formatPaymentEntry(entry)).toBe('Payment #1: $1,000.00 (Principal: $800.00, Interest: $200.00)');
+
+      expect(formatPaymentEntry(entry)).toBe(
+        'Payment #1: $1,000.00 (Principal: $800.00, Interest: $200.00)'
+      );
     });
 
     it('formats payment entry with specified currency', () => {
@@ -179,10 +181,12 @@ describe('Formatters', () => {
         isOverpayment: false,
         overpaymentAmount: 0,
         totalInterest: 200,
-        totalPayment: 1000
+        totalPayment: 1000,
       };
-      
-      expect(formatPaymentEntry(entry, 'EUR')).toBe('Payment #1: €1,000.00 (Principal: €800.00, Interest: €200.00)');
+
+      expect(formatPaymentEntry(entry, 'EUR')).toBe(
+        'Payment #1: €1,000.00 (Principal: €800.00, Interest: €200.00)'
+      );
     });
   });
 
@@ -194,10 +198,12 @@ describe('Formatters', () => {
         interest: 2000,
         payment: 12000,
         balance: 90000,
-        totalInterest: 2000
+        totalInterest: 2000,
       };
-      
-      expect(formatYearlySummary(yearData)).toBe('Year 1: Paid $12,000.00 (Principal: $10,000.00, Interest: $2,000.00)');
+
+      expect(formatYearlySummary(yearData)).toBe(
+        'Year 1: Paid $12,000.00 (Principal: $10,000.00, Interest: $2,000.00)'
+      );
     });
 
     it('formats yearly summary with specified currency', () => {
@@ -207,17 +213,19 @@ describe('Formatters', () => {
         interest: 2000,
         payment: 12000,
         balance: 90000,
-        totalInterest: 2000
+        totalInterest: 2000,
       };
-      
-      expect(formatYearlySummary(yearData, 'EUR')).toBe('Year 1: Paid €12,000.00 (Principal: €10,000.00, Interest: €2,000.00)');
+
+      expect(formatYearlySummary(yearData, 'EUR')).toBe(
+        'Year 1: Paid €12,000.00 (Principal: €10,000.00, Interest: €2,000.00)'
+      );
     });
   });
 
   describe('formatLoanSummary', () => {
     it('formats loan summary correctly', () => {
       const summary = formatLoanSummary(100000, 500, 20000, 30);
-      
+
       expect(summary).toContain('Loan Amount: $100,000.00');
       expect(summary).toContain('Monthly Payment: $500.00');
       expect(summary).toContain('Total Interest: $20,000.00');
@@ -226,7 +234,7 @@ describe('Formatters', () => {
 
     it('formats loan summary with specified currency', () => {
       const summary = formatLoanSummary(100000, 500, 20000, 30, 'EUR');
-      
+
       expect(summary).toContain('Loan Amount: €100,000.00');
       expect(summary).toContain('Monthly Payment: €500.00');
       expect(summary).toContain('Total Interest: €20,000.00');
@@ -235,7 +243,7 @@ describe('Formatters', () => {
 
     it('formats loan summary with non-integer term', () => {
       const summary = formatLoanSummary(100000, 500, 20000, 15.5);
-      
+
       expect(summary).toContain('Term: 15 years 6 months');
     });
   });

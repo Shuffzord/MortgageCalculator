@@ -4,7 +4,7 @@ import {
   ConceptExplanation,
   getFinancialGlossary,
   getMortgageConcepts,
-  getInteractiveExamples
+  getInteractiveExamples,
 } from '../educationalContent';
 import { useTranslation } from 'react-i18next';
 import type { ExperienceLevel } from '../../components/ExperienceLevelAssessment';
@@ -37,7 +37,7 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       target: 'principal-input',
       placement: 'right',
       glossaryTerms: [glossary.principal].filter(Boolean),
-      requiredForProgress: true
+      requiredForProgress: true,
     },
     {
       id: 'loan-term',
@@ -47,7 +47,7 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       placement: 'right',
       glossaryTerms: [glossary.loanTerm].filter(Boolean),
       interactiveExample: 'term-comparison',
-      requiredForProgress: true
+      requiredForProgress: true,
     },
     {
       id: 'repayment-model',
@@ -55,11 +55,8 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       content: `${t('form.repaymentModelTooltip')}\n\n${glossary.equalInstallments?.definition || ''}\n\n${glossary.decreasingInstallments?.definition || ''}`,
       target: 'repayment-model-selector',
       placement: 'right',
-      glossaryTerms: [
-        glossary.equalInstallments,
-        glossary.decreasingInstallments
-      ].filter(Boolean),
-      requiredForProgress: true
+      glossaryTerms: [glossary.equalInstallments, glossary.decreasingInstallments].filter(Boolean),
+      requiredForProgress: true,
     },
     {
       id: 'interest-rate',
@@ -69,7 +66,7 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       placement: 'right',
       glossaryTerms: [glossary.interest, glossary.apr].filter(Boolean),
       interactiveExample: 'interest-rate-impact',
-      requiredForProgress: true
+      requiredForProgress: true,
     },
     {
       id: 'overpayment-section',
@@ -79,7 +76,7 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       placement: 'right',
       glossaryTerms: [glossary.overpayment].filter(Boolean),
       interactiveExample: 'overpayment-impact',
-      requiredForProgress: true
+      requiredForProgress: true,
     },
     // {
     //   id: 'amortization-intro',
@@ -97,12 +94,9 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
       content: `${t('form.additionalCostsTooltip')}\n\n${t('education.tooltips.originationFee')}\n\n${t('education.tooltips.loanInsurance')}`,
       target: 'additional-costs-section',
       placement: 'left',
-      glossaryTerms: [
-        glossary.originationFee,
-        glossary.loanInsurance
-      ].filter(Boolean),
-      requiredForProgress: true
-    }
+      glossaryTerms: [glossary.originationFee, glossary.loanInsurance].filter(Boolean),
+      requiredForProgress: true,
+    },
 
     // // Step 8: Calculate Button (NEW)
     // {
@@ -165,9 +159,7 @@ export const getBeginnerTutorialSteps = (): BeginnerTutorialStep[] => {
 // Helper function to get steps filtered by experience level
 export function getBeginnerSteps(includeOptional: boolean = false): BeginnerTutorialStep[] {
   const steps = getBeginnerTutorialSteps();
-  return steps.filter(step =>
-    includeOptional || step.requiredForProgress
-  );
+  return steps.filter((step) => includeOptional || step.requiredForProgress);
 }
 
 // Helper function to get educational content for a step
@@ -178,7 +170,7 @@ export function getStepEducationalContent(stepId: string): {
 } {
   const { t } = useTranslation();
   const steps = getBeginnerTutorialSteps();
-  const step = steps.find(s => s.id === stepId);
+  const step = steps.find((s) => s.id === stepId);
   if (!step) return { glossaryTerms: [], concepts: [], interactiveExample: null };
 
   const examples = getInteractiveExamples(t);
@@ -186,9 +178,9 @@ export function getStepEducationalContent(stepId: string): {
 
   return {
     glossaryTerms: step.glossaryTerms || [],
-    concepts: (step.concepts || []).map(conceptId => concepts[conceptId]).filter(Boolean),
-    interactiveExample: step.interactiveExample ?
-      examples.find(ex => ex.id === step.interactiveExample) || null :
-      null
+    concepts: (step.concepts || []).map((conceptId) => concepts[conceptId]).filter(Boolean),
+    interactiveExample: step.interactiveExample
+      ? examples.find((ex) => ex.id === step.interactiveExample) || null
+      : null,
   };
 }

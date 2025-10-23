@@ -20,7 +20,7 @@ export function removeConsolePlugin(): Plugin {
           drop: ['console'], // Removes all console.* calls
           minify: false,
           sourcemap: true,
-          legalComments: 'none'
+          legalComments: 'none',
         });
       }
     },

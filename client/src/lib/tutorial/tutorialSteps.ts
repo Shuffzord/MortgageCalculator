@@ -18,7 +18,7 @@ const INTERMEDIATE_ADVANCED_STEPS: TutorialStep[] = [
     content: 'Explore overpayment options and scenario comparisons.',
     target: '#advanced-features',
     placement: 'right',
-    showFor: ['intermediate', 'advanced']
+    showFor: ['intermediate', 'advanced'],
   },
   {
     id: 'optimization-tools',
@@ -26,7 +26,7 @@ const INTERMEDIATE_ADVANCED_STEPS: TutorialStep[] = [
     content: 'Use these tools to optimize your mortgage payments and explore different scenarios.',
     target: '#optimization-tools',
     placement: 'right',
-    showFor: ['intermediate', 'advanced']
+    showFor: ['intermediate', 'advanced'],
   },
   {
     id: 'comparative-analysis',
@@ -34,7 +34,7 @@ const INTERMEDIATE_ADVANCED_STEPS: TutorialStep[] = [
     content: 'Compare different mortgage scenarios side by side.',
     target: '#comparison-section',
     placement: 'bottom',
-    showFor: ['intermediate', 'advanced']
+    showFor: ['intermediate', 'advanced'],
   },
   {
     id: 'advanced-calculations',
@@ -42,7 +42,7 @@ const INTERMEDIATE_ADVANCED_STEPS: TutorialStep[] = [
     content: 'Access detailed amortization schedules and advanced payment calculations.',
     target: '#advanced-calculations',
     placement: 'left',
-    showFor: ['advanced']
+    showFor: ['advanced'],
   },
   {
     id: 'power-features',
@@ -50,12 +50,12 @@ const INTERMEDIATE_ADVANCED_STEPS: TutorialStep[] = [
     content: 'Quick shortcuts and batch scenario analysis tools.',
     target: '#power-features',
     placement: 'top',
-    showFor: ['advanced']
-  }
+    showFor: ['advanced'],
+  },
 ];
 
 export function getTutorialSteps(experienceLevel: ExperienceLevel): TutorialStep[] {
-  return INTERMEDIATE_ADVANCED_STEPS.filter(step => 
-    !step.showFor || step.showFor.includes(experienceLevel)
+  return INTERMEDIATE_ADVANCED_STEPS.filter(
+    (step) => !step.showFor || step.showFor.includes(experienceLevel)
   );
 }

@@ -21,33 +21,33 @@ import {
   BreakEvenResult,
   AmortizationMilestones,
   ValidationOptions,
-  ICalculationService
+  ICalculationService,
 } from '../types';
 import { calculateLoanDetails } from '../calculationEngine';
-import { aggregateYearlyData, } from '../overpaymentCalculator';
+import { aggregateYearlyData } from '../overpaymentCalculator';
 import {
   validateLoanDetails,
   validateAffordabilityParams,
   validateBreakEvenParams,
-  normalizeLoanDetails
+  normalizeLoanDetails,
 } from '../validation';
 import {
   optimizeOverpayments,
   analyzeOverpaymentImpact,
-  compareLumpSumVsRegular
+  compareLumpSumVsRegular,
 } from '../optimizationEngine';
 import {
   formatCurrency,
   formatTimePeriod,
   formatPaymentEntry,
   formatYearlySummary,
-  formatInterestRate
+  formatInterestRate,
 } from '../formatters';
 import {
   applyOverpayment,
   applyMultipleOverpayments,
   performOverpayments,
-  finalizeResults
+  finalizeResults,
 } from '../overpaymentCalculator';
 import { roundToCents } from '../calculationCore';
 
@@ -77,7 +77,6 @@ import { roundToCents } from '../calculationCore';
  * );
  */
 export class CalculationService implements ICalculationService {
-  
   /**
    * Calculates complete loan details using all available parameters.
    *
@@ -114,7 +113,7 @@ export class CalculationService implements ICalculationService {
 
     // Normalize loan details
     const normalizedLoanDetails = normalizeLoanDetails(loanDetails);
-    
+
     // Use the parameter object version
     const results = calculateLoanDetails({
       principal: normalizedLoanDetails.principal,
@@ -124,9 +123,9 @@ export class CalculationService implements ICalculationService {
       additionalCosts: normalizedLoanDetails.additionalCosts,
       overpaymentPlans: normalizedLoanDetails.overpaymentPlans,
       startDate: normalizedLoanDetails.startDate,
-      loanDetails: normalizedLoanDetails
+      loanDetails: normalizedLoanDetails,
     });
-    
+
     // Return formatted results if requested
     if (options?.includeFormattedValues) {
       return this.formatCalculationResults(
@@ -135,7 +134,7 @@ export class CalculationService implements ICalculationService {
         options.locale
       );
     }
-    
+
     return results;
   }
 
@@ -173,15 +172,15 @@ export class CalculationService implements ICalculationService {
     if (principal <= 0) {
       throw new Error('Principal amount must be greater than zero');
     }
-    
+
     if (interestRate <= 0) {
       throw new Error('Interest rate must be greater than zero');
     }
-    
+
     if (loanTerm <= 0) {
       throw new Error('Loan term must be greater than zero');
     }
-    
+
     const loanDetails: LoanDetails = {
       principal,
       interestRatePeriods: [{ startMonth: 1, interestRate }],
@@ -189,7 +188,7 @@ export class CalculationService implements ICalculationService {
       overpaymentPlans: [],
       startDate: new Date(),
       name: '',
-      currency
+      currency,
     };
 
     return this.calculateLoanDetails(loanDetails, options);
@@ -228,7 +227,7 @@ export class CalculationService implements ICalculationService {
     // First calculate the loan without overpayments
     const baseCalculation = this.calculateLoanDetails({
       ...loanDetails,
-      overpaymentPlans: []
+      overpaymentPlans: [],
     });
 
     // Then apply the overpayment using parameter object
@@ -237,7 +236,7 @@ export class CalculationService implements ICalculationService {
       overpaymentAmount: overpaymentAmount,
       afterPayment: afterPayment,
       loanDetails: loanDetails,
-      effect: effect
+      effect: effect,
     });
   }
 
@@ -280,7 +279,7 @@ export class CalculationService implements ICalculationService {
     // First calculate the loan without overpayments
     const baseCalculation = this.calculateLoanDetails({
       ...loanDetails,
-      overpaymentPlans: []
+      overpaymentPlans: [],
     });
 
     // Then apply all overpayments using parameter object
@@ -288,7 +287,7 @@ export class CalculationService implements ICalculationService {
       schedule: baseCalculation.amortizationSchedule,
       overpayments: overpayments,
       loanStartDate: loanDetails.startDate,
-      loanDetails: loanDetails
+      loanDetails: loanDetails,
     });
 
     // Return the final results
@@ -418,11 +417,7 @@ export class CalculationService implements ICalculationService {
    * calculationService.formatCurrency(1234.56, 'de-DE', 'EUR');
    * // Returns: "1.234,56 €"
    */
-  formatCurrency(
-    value: number,
-    locale?: string,
-    currency: string = "USD"
-  ): string {
+  formatCurrency(value: number, locale?: string, currency: string = 'USD'): string {
     // Ensure value is treated as a number to prevent string concatenation issues
     return formatCurrency(Number(value), locale, currency);
   }
@@ -475,10 +470,10 @@ export class CalculationService implements ICalculationService {
    */
   formatAmortizationSchedule(
     schedule: PaymentData[],
-    currency: string = "USD",
+    currency: string = 'USD',
     locale?: string
   ): PaymentData[] {
-    return schedule.map(payment => ({
+    return schedule.map((payment) => ({
       ...payment,
       formattedValues: {
         monthlyPayment: formatCurrency(payment.monthlyPayment, locale, currency),
@@ -486,9 +481,13 @@ export class CalculationService implements ICalculationService {
         interestPayment: formatCurrency(payment.interestPayment, locale, currency),
         balance: formatCurrency(payment.balance, locale, currency),
         totalInterest: formatCurrency(payment.totalInterest, locale, currency),
-        totalPayment: formatCurrency(payment.totalPayment || payment.monthlyPayment, locale, currency),
+        totalPayment: formatCurrency(
+          payment.totalPayment || payment.monthlyPayment,
+          locale,
+          currency
+        ),
         paymentDate: payment.paymentDate ? formatTimePeriod(payment.payment) : '',
-      }
+      },
     }));
   }
 
@@ -517,27 +516,37 @@ export class CalculationService implements ICalculationService {
    */
   formatCalculationResults(
     results: CalculationResults,
-    currency: string = "USD",
+    currency: string = 'USD',
     locale?: string
   ): FormattedCalculationResults {
     // Calculate total payment (principal + interest)
     const totalPayment = results.monthlyPayment * results.originalTerm * 12;
-    
+
     return {
       ...results,
       formatted: {
         monthlyPayment: formatCurrency(results.monthlyPayment, locale, currency),
         totalInterest: formatCurrency(results.totalInterest, locale, currency),
-        totalPayment: formatCurrency(results.totalInterest + results.monthlyPayment * results.originalTerm * 12, locale, currency),
+        totalPayment: formatCurrency(
+          results.totalInterest + results.monthlyPayment * results.originalTerm * 12,
+          locale,
+          currency
+        ),
         originalTerm: `${results.originalTerm} years`,
         actualTerm: `${results.actualTerm.toFixed(2)} years`,
-        oneTimeFees: results.oneTimeFees ? formatCurrency(results.oneTimeFees, locale, currency) : '',
-        recurringFees: results.recurringFees ? formatCurrency(results.recurringFees, locale, currency) : '',
+        oneTimeFees: results.oneTimeFees
+          ? formatCurrency(results.oneTimeFees, locale, currency)
+          : '',
+        recurringFees: results.recurringFees
+          ? formatCurrency(results.recurringFees, locale, currency)
+          : '',
         totalCost: results.totalCost ? formatCurrency(results.totalCost, locale, currency) : '',
         apr: results.apr ? formatInterestRate(results.apr / 100) : '',
-        interestSaved: results.timeOrPaymentSaved ? formatCurrency(results.timeOrPaymentSaved, locale, currency) : '',
+        interestSaved: results.timeOrPaymentSaved
+          ? formatCurrency(results.timeOrPaymentSaved, locale, currency)
+          : '',
         timeSaved: results.timeOrPaymentSaved ? formatTimePeriod(results.timeOrPaymentSaved) : '',
-      }
+      },
     };
   }
 
@@ -562,212 +571,207 @@ export class CalculationService implements ICalculationService {
     return roundToCents(amount);
   }
 
- /**
-  * Calculate the maximum loan amount a user can afford based on income and expenses
-  *
-  * @param {AffordabilityParams} params - Parameters for affordability calculation
-  * @returns {AffordabilityResult} Maximum loan amount and monthly payment
-  *
-  * @example
-  * const affordability = calculationService.calculateAffordability({
-  *   monthlyIncome: 5000,
-  *   monthlyExpenses: 2000,
-  *   interestRate: 3.5,
-  *   loanTerm: 30
-  * });
-  */
- calculateAffordability(params: AffordabilityParams): AffordabilityResult {
-   const {
-     monthlyIncome,
-     monthlyExpenses,
-     interestRate,
-     loanTerm,
-     debtToIncomeRatio = 0.36,
-     additionalCosts
-   } = params;
+  /**
+   * Calculate the maximum loan amount a user can afford based on income and expenses
+   *
+   * @param {AffordabilityParams} params - Parameters for affordability calculation
+   * @returns {AffordabilityResult} Maximum loan amount and monthly payment
+   *
+   * @example
+   * const affordability = calculationService.calculateAffordability({
+   *   monthlyIncome: 5000,
+   *   monthlyExpenses: 2000,
+   *   interestRate: 3.5,
+   *   loanTerm: 30
+   * });
+   */
+  calculateAffordability(params: AffordabilityParams): AffordabilityResult {
+    const {
+      monthlyIncome,
+      monthlyExpenses,
+      interestRate,
+      loanTerm,
+      debtToIncomeRatio = 0.36,
+      additionalCosts,
+    } = params;
 
-   // Validate inputs
-   const validation = validateAffordabilityParams(
-     monthlyIncome,
-     monthlyExpenses,
-     interestRate,
-     loanTerm
-   );
-   
-   if (!validation.isValid) {
-     throw new Error(`Invalid affordability parameters: ${validation.errors.join(', ')}`);
-   }
+    // Validate inputs
+    const validation = validateAffordabilityParams(
+      monthlyIncome,
+      monthlyExpenses,
+      interestRate,
+      loanTerm
+    );
 
-   // Calculate maximum monthly payment based on debt-to-income ratio
-   const maxMonthlyDebt = monthlyIncome * debtToIncomeRatio;
-   const availableForMortgage = maxMonthlyDebt - monthlyExpenses;
+    if (!validation.isValid) {
+      throw new Error(`Invalid affordability parameters: ${validation.errors.join(', ')}`);
+    }
 
-   // Calculate maximum loan amount based on available payment
-   const monthlyRate = interestRate / 100 / 12;
-   const totalMonths = loanTerm * 12;
-   
-   // Use the formula: P = PMT * ((1 - (1 + r)^-n) / r)
-   // Where P is principal, PMT is payment, r is monthly rate, n is number of months
-   const maxLoanAmount = availableForMortgage * ((1 - Math.pow(1 + monthlyRate, -totalMonths)) / monthlyRate);
+    // Calculate maximum monthly payment based on debt-to-income ratio
+    const maxMonthlyDebt = monthlyIncome * debtToIncomeRatio;
+    const availableForMortgage = maxMonthlyDebt - monthlyExpenses;
 
-   // Return the result
-   return {
-     maxLoanAmount: roundToCents(maxLoanAmount),
-     monthlyPayment: roundToCents(availableForMortgage),
-     debtToIncomeRatio
-   };
- }
+    // Calculate maximum loan amount based on available payment
+    const monthlyRate = interestRate / 100 / 12;
+    const totalMonths = loanTerm * 12;
 
- /**
-  * Calculate when refinancing becomes beneficial
-  *
-  * @param {BreakEvenParams} params - Parameters for break-even calculation
-  * @returns {BreakEvenResult} Break-even point and savings information
-  *
-  * @example
-  * const breakEven = calculationService.calculateBreakEvenPoint({
-  *   currentLoan: currentLoanDetails,
-  *   newLoan: newLoanDetails,
-  *   refinancingCosts: 3000
-  * });
-  */
- calculateBreakEvenPoint(params: BreakEvenParams): BreakEvenResult {
-   const { currentLoan, newLoan, refinancingCosts } = params;
+    // Use the formula: P = PMT * ((1 - (1 + r)^-n) / r)
+    // Where P is principal, PMT is payment, r is monthly rate, n is number of months
+    const maxLoanAmount =
+      availableForMortgage * ((1 - Math.pow(1 + monthlyRate, -totalMonths)) / monthlyRate);
 
-   // Validate inputs
-   const validation = validateBreakEvenParams(
-     currentLoan,
-     newLoan,
-     refinancingCosts
-   );
-   
-   if (!validation.isValid) {
-     throw new Error(`Invalid break-even parameters: ${validation.errors.join(', ')}`);
-   }
+    // Return the result
+    return {
+      maxLoanAmount: roundToCents(maxLoanAmount),
+      monthlyPayment: roundToCents(availableForMortgage),
+      debtToIncomeRatio,
+    };
+  }
 
-   // Calculate monthly payments
-   const currentPayment = this.calculateBasicLoanDetails(
-     currentLoan.principal,
-     currentLoan.interestRatePeriods[0].interestRate,
-     currentLoan.loanTerm
-   ).monthlyPayment;
+  /**
+   * Calculate when refinancing becomes beneficial
+   *
+   * @param {BreakEvenParams} params - Parameters for break-even calculation
+   * @returns {BreakEvenResult} Break-even point and savings information
+   *
+   * @example
+   * const breakEven = calculationService.calculateBreakEvenPoint({
+   *   currentLoan: currentLoanDetails,
+   *   newLoan: newLoanDetails,
+   *   refinancingCosts: 3000
+   * });
+   */
+  calculateBreakEvenPoint(params: BreakEvenParams): BreakEvenResult {
+    const { currentLoan, newLoan, refinancingCosts } = params;
 
-   const newPayment = this.calculateBasicLoanDetails(
-     newLoan.principal,
-     newLoan.interestRatePeriods[0].interestRate,
-     newLoan.loanTerm
-   ).monthlyPayment;
+    // Validate inputs
+    const validation = validateBreakEvenParams(currentLoan, newLoan, refinancingCosts);
 
-   // Calculate monthly savings
-   const monthlySavings = currentPayment - newPayment;
+    if (!validation.isValid) {
+      throw new Error(`Invalid break-even parameters: ${validation.errors.join(', ')}`);
+    }
 
-   // If there are no monthly savings, refinancing doesn't make sense
-   if (monthlySavings <= 0) {
-     throw new Error('New loan does not provide monthly savings');
-   }
+    // Calculate monthly payments
+    const currentPayment = this.calculateBasicLoanDetails(
+      currentLoan.principal,
+      currentLoan.interestRatePeriods[0].interestRate,
+      currentLoan.loanTerm
+    ).monthlyPayment;
 
-   // Calculate break-even point
-   const breakEvenMonths = Math.ceil(refinancingCosts / monthlySavings);
+    const newPayment = this.calculateBasicLoanDetails(
+      newLoan.principal,
+      newLoan.interestRatePeriods[0].interestRate,
+      newLoan.loanTerm
+    ).monthlyPayment;
 
-   // Calculate lifetime savings
-   const remainingMonths = currentLoan.loanTerm * 12;
-   const lifetimeSavings = (monthlySavings * remainingMonths) - refinancingCosts;
+    // Calculate monthly savings
+    const monthlySavings = currentPayment - newPayment;
 
-   return {
-     breakEvenMonths,
-     lifetimeSavings: roundToCents(lifetimeSavings),
-     monthlySavings: roundToCents(monthlySavings)
-   };
- }
+    // If there are no monthly savings, refinancing doesn't make sense
+    if (monthlySavings <= 0) {
+      throw new Error('New loan does not provide monthly savings');
+    }
 
- /**
-  * Calculate key milestones in the loan repayment
-  *
-  * @param {LoanDetails} loanDetails - Loan details
-  * @returns {AmortizationMilestones} Key milestones in the loan repayment
-  *
-  * @example
-  * const milestones = calculationService.calculateAmortizationMilestones(loanDetails);
-  */
- calculateAmortizationMilestones(loanDetails: LoanDetails): AmortizationMilestones {
-   // Validate loan details
-   const validation = validateLoanDetails(loanDetails);
-   if (!validation.isValid) {
-     throw new Error(`Invalid loan details: ${validation.errors.join(', ')}`);
-   }
+    // Calculate break-even point
+    const breakEvenMonths = Math.ceil(refinancingCosts / monthlySavings);
 
-   // Calculate full amortization schedule
-   const results = this.calculateLoanDetails(loanDetails);
-   const schedule = results.amortizationSchedule;
-   
-   // Find halfway point (50% of principal paid off)
-   const halfwayPoint = schedule.find(payment =>
-     payment.balance <= loanDetails.principal / 2
-   );
-   
-   // Find principal crossover (where principal payment exceeds interest payment)
-   const principalCrossover = schedule.find(payment =>
-     payment.principalPayment > payment.interestPayment
-   );
-   
-   // Find quarter points
-   const quarterPoints = [
-     schedule.find(payment => payment.balance <= loanDetails.principal * 0.75),
-     halfwayPoint,
-     schedule.find(payment => payment.balance <= loanDetails.principal * 0.25)
-   ];
-   
-   return {
-     halfwayPoint: {
-       month: halfwayPoint?.payment || 0,
-       date: this.getPaymentDate(loanDetails.startDate, halfwayPoint?.payment || 0),
-       balance: halfwayPoint?.balance || 0
-     },
-     principalCrossover: {
-       month: principalCrossover?.payment || 0,
-       date: this.getPaymentDate(loanDetails.startDate, principalCrossover?.payment || 0),
-       balance: principalCrossover?.balance || 0
-     },
-     quarterPoints: quarterPoints.map(point => ({
-       month: point?.payment || 0,
-       date: this.getPaymentDate(loanDetails.startDate, point?.payment || 0),
-       balance: point?.balance || 0
-     }))
-   };
- }
+    // Calculate lifetime savings
+    const remainingMonths = currentLoan.loanTerm * 12;
+    const lifetimeSavings = monthlySavings * remainingMonths - refinancingCosts;
 
- /**
-  * Helper method to calculate payment date
-  *
-  * @param {Date} startDate - Loan start date
-  * @param {number} paymentNumber - Payment number
-  * @returns {Date} Date of the specified payment
-  * @private
-  */
- private getPaymentDate(startDate: Date, paymentNumber: number): Date {
-   const date = new Date(startDate);
-   date.setMonth(date.getMonth() + paymentNumber);
-   return date;
- }
+    return {
+      breakEvenMonths,
+      lifetimeSavings: roundToCents(lifetimeSavings),
+      monthlySavings: roundToCents(monthlySavings),
+    };
+  }
 
- /**
-  * Validate loan details
-  *
-  * @param {LoanDetails} loanDetails - Loan details to validate
-  * @param {ValidationOptions} [options] - Validation options
-  * @returns {boolean} Whether the loan details are valid
-  *
-  * @example
-  * if (!calculationService.validateLoanDetails(loanDetails)) {
-  *   console.error('Invalid loan details');
-  * }
-  */
- validateLoanDetails(
-   loanDetails: LoanDetails,
-   options?: ValidationOptions
- ): { isValid: boolean; errors: string[] } {
-   return validateLoanDetails(loanDetails, options);
- }
+  /**
+   * Calculate key milestones in the loan repayment
+   *
+   * @param {LoanDetails} loanDetails - Loan details
+   * @returns {AmortizationMilestones} Key milestones in the loan repayment
+   *
+   * @example
+   * const milestones = calculationService.calculateAmortizationMilestones(loanDetails);
+   */
+  calculateAmortizationMilestones(loanDetails: LoanDetails): AmortizationMilestones {
+    // Validate loan details
+    const validation = validateLoanDetails(loanDetails);
+    if (!validation.isValid) {
+      throw new Error(`Invalid loan details: ${validation.errors.join(', ')}`);
+    }
+
+    // Calculate full amortization schedule
+    const results = this.calculateLoanDetails(loanDetails);
+    const schedule = results.amortizationSchedule;
+
+    // Find halfway point (50% of principal paid off)
+    const halfwayPoint = schedule.find((payment) => payment.balance <= loanDetails.principal / 2);
+
+    // Find principal crossover (where principal payment exceeds interest payment)
+    const principalCrossover = schedule.find(
+      (payment) => payment.principalPayment > payment.interestPayment
+    );
+
+    // Find quarter points
+    const quarterPoints = [
+      schedule.find((payment) => payment.balance <= loanDetails.principal * 0.75),
+      halfwayPoint,
+      schedule.find((payment) => payment.balance <= loanDetails.principal * 0.25),
+    ];
+
+    return {
+      halfwayPoint: {
+        month: halfwayPoint?.payment || 0,
+        date: this.getPaymentDate(loanDetails.startDate, halfwayPoint?.payment || 0),
+        balance: halfwayPoint?.balance || 0,
+      },
+      principalCrossover: {
+        month: principalCrossover?.payment || 0,
+        date: this.getPaymentDate(loanDetails.startDate, principalCrossover?.payment || 0),
+        balance: principalCrossover?.balance || 0,
+      },
+      quarterPoints: quarterPoints.map((point) => ({
+        month: point?.payment || 0,
+        date: this.getPaymentDate(loanDetails.startDate, point?.payment || 0),
+        balance: point?.balance || 0,
+      })),
+    };
+  }
+
+  /**
+   * Helper method to calculate payment date
+   *
+   * @param {Date} startDate - Loan start date
+   * @param {number} paymentNumber - Payment number
+   * @returns {Date} Date of the specified payment
+   * @private
+   */
+  private getPaymentDate(startDate: Date, paymentNumber: number): Date {
+    const date = new Date(startDate);
+    date.setMonth(date.getMonth() + paymentNumber);
+    return date;
+  }
+
+  /**
+   * Validate loan details
+   *
+   * @param {LoanDetails} loanDetails - Loan details to validate
+   * @param {ValidationOptions} [options] - Validation options
+   * @returns {boolean} Whether the loan details are valid
+   *
+   * @example
+   * if (!calculationService.validateLoanDetails(loanDetails)) {
+   *   console.error('Invalid loan details');
+   * }
+   */
+  validateLoanDetails(
+    loanDetails: LoanDetails,
+    options?: ValidationOptions
+  ): { isValid: boolean; errors: string[] } {
+    return validateLoanDetails(loanDetails, options);
+  }
 
   /**
    * Aggregates monthly payment data into yearly summaries.

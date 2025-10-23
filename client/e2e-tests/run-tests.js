@@ -29,7 +29,7 @@ const config = {
 };
 
 // Parse command line arguments
-process.argv.slice(2).forEach(arg => {
+process.argv.slice(2).forEach((arg) => {
   if (arg === '--no-server') {
     config.startDevServer = false;
   } else if (arg === '--no-headless') {
@@ -45,34 +45,34 @@ const childProcesses = [];
 // Function to start the development server
 function startDevServer() {
   console.log('Starting development server...');
-  
+
   const serverProcess = spawn('npm', ['run', 'dev'], {
     cwd: path.resolve(__dirname, '..'),
     stdio: 'pipe',
     shell: true,
   });
-  
+
   childProcesses.push(serverProcess);
-  
+
   serverProcess.stdout.on('data', (data) => {
     const output = data.toString();
     console.log(`[Dev Server] ${output}`);
-    
+
     // Check if server is ready
     if (output.includes('Local:') || output.includes('ready in')) {
       console.log('Development server is ready!');
       runTests();
     }
   });
-  
+
   serverProcess.stderr.on('data', (data) => {
     console.error(`[Dev Server Error] ${data.toString()}`);
   });
-  
+
   serverProcess.on('close', (code) => {
     console.log(`Development server process exited with code ${code}`);
   });
-  
+
   // Set a timeout in case the server doesn't start properly
   setTimeout(() => {
     console.log('Timeout waiting for dev server, attempting to run tests anyway...');
@@ -83,13 +83,13 @@ function startDevServer() {
 // Function to run the tests
 function runTests() {
   console.log('Running Puppeteer end-to-end tests...');
-  
+
   // Create screenshots directory if it doesn't exist
   const screenshotsDir = path.resolve(__dirname, 'screenshots');
   if (!fs.existsSync(screenshotsDir)) {
     fs.mkdirSync(screenshotsDir, { recursive: true });
   }
-  
+
   // Set environment variables for the tests
   const env = {
     ...process.env,
@@ -97,21 +97,21 @@ function runTests() {
     HEADLESS: config.headless.toString(),
     NODE_OPTIONS: '--experimental-vm-modules', // Enable ES modules in Jest
   };
-  
+
   // Use Jest to run the tests
   const jestConfigPath = path.resolve(__dirname, 'config', 'jest.config.js');
-  
+
   // Build the Jest command
   let command = `npx jest --config ${jestConfigPath}`;
-  
+
   // Add specific test files if provided
   if (config.specs.length > 0) {
-    const specPaths = config.specs.map(spec => path.resolve(__dirname, spec));
+    const specPaths = config.specs.map((spec) => path.resolve(__dirname, spec));
     command += ` ${specPaths.join(' ')}`;
   }
-  
+
   console.log(`Executing: ${command}`);
-  
+
   // Run the tests
   const testProcess = spawn(command, {
     cwd: path.resolve(__dirname, '..'),
@@ -119,9 +119,9 @@ function runTests() {
     shell: true,
     env,
   });
-  
+
   childProcesses.push(testProcess);
-  
+
   testProcess.on('close', (code) => {
     console.log(`Test process exited with code ${code}`);
     cleanup();
@@ -132,7 +132,7 @@ function runTests() {
 // Function to clean up child processes
 function cleanup() {
   console.log('Cleaning up...');
-  childProcesses.forEach(proc => {
+  childProcesses.forEach((proc) => {
     if (!proc.killed) {
       proc.kill();
     }
@@ -156,6 +156,6 @@ process.on('SIGTERM', () => {
 if (config.startDevServer) {
   startDevServer();
 } else {
-  console.log('Skipping dev server start, assuming it\'s already running...');
+  console.log("Skipping dev server start, assuming it's already running...");
   runTests();
 }

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -7,12 +7,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDate } from "@/lib/formatters";
-import { PaymentData, LoanDetails } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { formatCurrency, formatDate } from '@/lib/formatters';
+import { PaymentData, LoanDetails } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface AmortizationScheduleProps {
   schedule: PaymentData[];
@@ -23,7 +23,7 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Adjust items per page based on payment frequency
   const itemsPerPage = 12; // Show one year of monthly payments by default
 
@@ -61,16 +61,20 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
   return (
     <Card className="bg-white shadow rounded-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-lg font-medium text-gray-900">{t('schedule.title', 'Amortization Schedule')}</h2>
-        <Button 
-          variant="ghost" 
+        <h2 className="text-lg font-medium text-gray-900">
+          {t('schedule.title', 'Amortization Schedule')}
+        </h2>
+        <Button
+          variant="ghost"
           onClick={toggleExpand}
           className="text-sm text-primary flex items-center"
         >
-          {isExpanded ? t('schedule.hideDetails', 'Hide Details') : t('schedule.showDetails', 'Show Details')}
+          {isExpanded
+            ? t('schedule.hideDetails', 'Hide Details')
+            : t('schedule.showDetails', 'Show Details')}
         </Button>
       </div>
-      
+
       {isExpanded && (
         <div>
           <div className="overflow-x-auto">
@@ -83,22 +87,19 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
                   <TableHead>{t('schedule.principal', 'Principal')}</TableHead>
                   <TableHead>{t('schedule.interest', 'Interest')}</TableHead>
                   <TableHead>{t('schedule.balance', 'Balance')}</TableHead>
-                  {schedule.some(item => item.overpaymentAmount > 0) && (
+                  {schedule.some((item) => item.overpaymentAmount > 0) && (
                     <TableHead>{t('overpayment.title', 'Overpayment')}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {currentItems.map((item) => (
-                  <TableRow 
-                    key={item.payment}
-                    className={cn(item.isOverpayment && "bg-green-50")}
-                  >
+                  <TableRow key={item.payment} className={cn(item.isOverpayment && 'bg-green-50')}>
+                    <TableCell className="text-sm text-gray-500">{item.payment}</TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {item.payment}
-                    </TableCell>
-                    <TableCell className="text-sm text-gray-500">
-                      {item.paymentDate ? formatDate(item.paymentDate) : getPaymentDate(item.payment)}
+                      {item.paymentDate
+                        ? formatDate(item.paymentDate)
+                        : getPaymentDate(item.payment)}
                     </TableCell>
                     <TableCell className="text-sm font-medium text-gray-900 financial-figure">
                       {formatCurrency(item.monthlyPayment, undefined, currency)}
@@ -112,9 +113,11 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
                     <TableCell className="text-sm text-gray-900 financial-figure">
                       {formatCurrency(item.balance, undefined, currency)}
                     </TableCell>
-                    {schedule.some(item => item.overpaymentAmount > 0) && (
+                    {schedule.some((item) => item.overpaymentAmount > 0) && (
                       <TableCell className="text-sm text-green-600 financial-figure">
-                        {item.overpaymentAmount > 0 ? formatCurrency(item.overpaymentAmount, undefined, currency) : '-'}
+                        {item.overpaymentAmount > 0
+                          ? formatCurrency(item.overpaymentAmount, undefined, currency)
+                          : '-'}
                       </TableCell>
                     )}
                   </TableRow>
@@ -122,24 +125,26 @@ export default function AmortizationSchedule({ schedule, loanDetails }: Amortiza
               </TableBody>
             </Table>
           </div>
-          
+
           <div className="px-6 py-4 flex justify-between items-center">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
-              className={cn(currentPage === 1 && "opacity-50 cursor-not-allowed")}
+              className={cn(currentPage === 1 && 'opacity-50 cursor-not-allowed')}
             >
               {t('pagination.previous', 'Previous')}
             </Button>
             <span className="text-sm text-gray-500">
-              {t('pagination.page', 'Page')} {currentPage} {t('pagination.of', 'of')} {totalPages} ({startIndex + 1}-{endIndex} {t('pagination.of', 'of')} {schedule.length} {t('pagination.payments', 'payments')})
+              {t('pagination.page', 'Page')} {currentPage} {t('pagination.of', 'of')} {totalPages} (
+              {startIndex + 1}-{endIndex} {t('pagination.of', 'of')} {schedule.length}{' '}
+              {t('pagination.payments', 'payments')})
             </span>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className={cn(currentPage === totalPages && "opacity-50 cursor-not-allowed")}
+              className={cn(currentPage === totalPages && 'opacity-50 cursor-not-allowed')}
             >
               {t('pagination.next', 'Next')}
             </Button>

@@ -11,26 +11,17 @@ describe('Basic Payment Calculation', () => {
     const annualRate = 4;
     const termYears = 30;
     const expectedPayment = 954.83;
-    
+
     // Convert annual rate to monthly decimal (4% -> 0.04 / 12)
     const monthlyRate = annualRate / 100 / 12;
     // Convert years to months
     const totalMonths = termYears * 12;
-    
-    const result = calculateBaseMonthlyPayment(
-      principal,
-      monthlyRate,
-      totalMonths
-    );
-    
+
+    const result = calculateBaseMonthlyPayment(principal, monthlyRate, totalMonths);
+
     // Verify result with tolerance
     expect(result).toBeCloseTo(expectedPayment, 2);
-    
-    console.log(
-      'Payment calculation result:',
-      result.toFixed(2),
-      'Expected:',
-      expectedPayment
-    );
+
+    console.log('Payment calculation result:', result.toFixed(2), 'Expected:', expectedPayment);
   });
 });
