@@ -37,3 +37,6 @@ vite.config.ts.*
 # screenshots
 client/screenshots
 screenshots
+
+# reports
+client/reports
