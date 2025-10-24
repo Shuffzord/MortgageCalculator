@@ -1,7 +1,7 @@
 # Smarter Loan – Mortgage Calculator
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![Status: Experimental Sandbox](https://img.shields.io/badge/Status-Experimental%20Sandbox-yellow)
+![Status: Beta](https://img.shields.io/badge/Status-Experimental%20Sandbox-yellow)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 ![Vibe Coded](https://img.shields.io/badge/Vibe%20Coded-AI%20Assisted-purple)
 
