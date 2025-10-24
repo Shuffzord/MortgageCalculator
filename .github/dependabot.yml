@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # 1️⃣ NPM dependencies (your main package.json + lock file)
+  - package-ecosystem: "npm"
+    directory: "/" # Root where package.json is located
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+    versioning-strategy: "increase"
+    ignore:
+      # Optional: Ignore certain libraries that you prefer to update manually
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vite"
+        update-types: ["version-update:semver-major"]
+
+  # 2️⃣ GitHub Actions updates (if you have workflows in .github/workflows/)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+    commit-message:
+      prefix: "ci"
