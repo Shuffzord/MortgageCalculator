@@ -1,0 +1,76 @@
+{
+  "routes": [
+    {
+      "route": "/assets/*",
+      "headers": {
+        "cache-control": "max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/images/*",
+      "headers": {
+        "cache-control": "max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/locales/*",
+      "headers": {
+        "cache-control": "max-age=3600"
+      }
+    },
+    {
+      "route": "/sitemap.xml",
+      "headers": {
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "route": "/robots.txt",
+      "headers": {
+        "content-type": "text/plain",
+        "cache-control": "max-age=3600"
+      }
+    },
+    {
+      "route": "/*.js",
+      "headers": {
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/*.webmanifest",
+      "headers": {
+        "content-type": "application/manifest+json"
+      }
+    },
+    {
+      "route": "/*",
+      "rewrite": "/index.html"
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/images/*.{png,jpg,gif}",
+      "/css/*",
+      "/assets/*",
+      "/locales/*",
+      "/*.js",
+      "/*.webmanifest",
+      "/robots.txt"
+    ]
+  },
+  "mimeTypes": {
+    ".json": "application/json",
+    ".xml": "application/xml",
+    ".js": "application/javascript",
+    ".txt": "text/plain"
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": "1; mode=block",
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://*.buymeacoffee.com https://*.googletagmanager.com https://*.google-analytics.com https://*.doubleclick.net; connect-src 'self' https://www.google-analytics.com;"
+  }
+}

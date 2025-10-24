@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Project README
+    url: https://github.com/Shuffzord/MortgageCalculator/#readme
+    about: Start here for setup, scripts, and contribution overview.
+  - name: Roadmap
+    url: https://github.com/Shuffzord/MortgageCalculator/blob/main/ROADMAP.md
+    about: See what we're planning next.
+
