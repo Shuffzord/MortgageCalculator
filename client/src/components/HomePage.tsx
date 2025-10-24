@@ -67,11 +67,6 @@ const HomePage: React.FC<HomePageProps> = ({
     });
   }, [experienceLevel, hasCompletedTutorial, isActive, showExperienceModal]);
 
-  // Initialize tutorial modal - don't show on mobile
-  useEffect(() => {
-    setShowExperienceModal(!experienceLevel && !isMobile);
-  }, [experienceLevel, isMobile]);
-
   const handleExperienceSelect = (level: 'beginner' | 'intermediate' | 'advanced') => {
     console.log('[HomePage] Experience Level Selected:', level);
     
