@@ -112,10 +112,7 @@ describe('Form Input Tests', () => {
       await loanForm.takeScreenshot('interest-rate-multiple-added');
       
       // Wait for the second interest rate input to appear
-      await global.page.waitForSelector('[data-testid="interest-rate-input-1"]', { timeout: 5000 })
-        .catch(() => {
-          // If the selector doesn't appear, we'll handle it in the next assertion
-        });
+      await global.page.waitForSelector('[data-testid="interest-rate-input-1"]', { timeout: 10000 });
       
       // Check if the second interest rate input exists
       const secondInputExists = await loanForm.elementExists('[data-testid="interest-rate-input-1"]');
