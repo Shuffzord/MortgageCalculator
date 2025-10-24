@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+set -e
+
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "husky pre-commit – running required project checks"
+
+# Align with PR checklist to ensure critical quality gates pass before commit.
+npm test
+npm run test:e2e
+npm run check:translations
+npm run ci
+npm run build
