@@ -5,6 +5,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
+    "prepare": "husky",
     "dev": "vite",
     "prebuild": "node scripts/pre-build-checks.js",
     "build": "tsc && vite build",
@@ -24,6 +25,7 @@
     "check:translations": "node scripts/translation-validator.js",
     "check:translations:report": "node scripts/translation-validator.js --format markdown --output claudedocs/translation-report.md",
     "check:translations:ci": "node scripts/translation-validator.js --strict",
+    "ci": "npm run validate && npm run check:translations:ci",
     "validate": "node scripts/pre-build-checks.js",
     "precommit": "npm run validate && npm run test",
     "predeploy": "npm run validate && npm run build",
@@ -110,6 +112,7 @@
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
     "axe-core": "^4.10.3",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.0.0-beta.3",
     "jest-html-reporter": "^4.1.0",
