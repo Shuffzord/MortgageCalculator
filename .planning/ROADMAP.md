@@ -19,17 +19,15 @@ Integrate WebMCP to expose mortgage calculation to AI agents.
 
 **Goal:** Establish type-safe WebMCP infrastructure
 
-**Tasks:**
-1. Create `client/src/lib/webmcp/types.ts` with:
-   - Navigator extension interface
-   - ModelContext interface
-   - ModelContextTool interface
-   - Tool input/output types
-2. Create `client/src/types/webmcp.d.ts` global declarations
+**Plans:** 1 plan
+
+Plans:
+- [ ] 01-01-PLAN.md — Create WebMCP type definitions and navigator augmentation
 
 **Deliverables:**
-- [ ] WebMCP TypeScript types
+- [ ] WebMCP TypeScript types (split by concern: navigator, tools, context)
 - [ ] Global navigator augmentation
+- [ ] Barrel exports for clean imports
 
 **Success Criteria:** TypeScript compiles without errors for WebMCP types
 
