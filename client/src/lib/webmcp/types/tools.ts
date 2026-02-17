@@ -41,24 +41,33 @@ export interface CalculateMortgageInput {
 
 /**
  * calculateMortgage tool output type
+ * Raw numeric values only - agent formats for user presentation
  */
 export interface CalculateMortgageOutput {
-  readonly summary: {
-    readonly monthlyPayment: string;
-    readonly totalInterest: string;
-    readonly totalCost: string;
-    readonly termLength: string;
-  };
-  readonly details: {
-    readonly monthlyPaymentRaw: number;
-    readonly totalInterestRaw: number;
-    readonly termMonths: number;
-  };
-  readonly yearlyBreakdown: ReadonlyArray<{
-    readonly year: number;
-    readonly principalPaid: string;
-    readonly interestPaid: string;
-    readonly balance: string;
+  readonly monthlyPayment: number;
+  readonly totalInterest: number;
+  readonly totalCost: number;
+  readonly termMonths: number;
+  readonly amortizationSchedule: ReadonlyArray<{
+    readonly payment: number;           // Payment number (1-based)
+    readonly monthlyPayment: number;
+    readonly principalPayment: number;
+    readonly interestPayment: number;
+    readonly balance: number;
+    readonly totalInterest: number;     // Cumulative
+    readonly totalPayment: number;      // Cumulative
   }>;
-  readonly naturalLanguageSummary: string;
+  readonly yearlyData: ReadonlyArray<{
+    readonly year: number;
+    readonly principal: number;
+    readonly interest: number;
+    readonly payment: number;
+    readonly balance: number;
+    readonly totalInterest: number;
+  }>;
+  readonly metadata?: {
+    readonly currency: string;
+    readonly repaymentModel: 'equalInstallments' | 'decreasingInstallments';
+    readonly calculatedAt: string;      // ISO timestamp
+  };
 }
