@@ -26,3 +26,6 @@ export { toolName } from './types';
 
 // Tools
 export { calculateMortgageTool, calculateMortgageInputSchema, allTools } from './tools';
+
+// Registration
+export { registerWebMCPTools, unregisterWebMCPTools } from './register';
