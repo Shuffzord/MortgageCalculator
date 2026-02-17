@@ -23,3 +23,6 @@ export type {
 
 // Re-export factory functions
 export { toolName } from './types';
+
+// Tools
+export { calculateMortgageTool, calculateMortgageInputSchema, allTools } from './tools';
