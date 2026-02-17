@@ -7,20 +7,29 @@
 | Field | Value |
 |-------|-------|
 | Milestone | 1.0 - WebMCP Basic Calculation Tool |
-| Current Phase | 1. TypeScript Foundation (plan 01 complete) |
-| Next Action | Continue with next plan in phase 1 or move to phase 2 |
+| Current Phase | 2. Calculate Tool Implementation (plan 01 complete) |
+| Next Action | Move to phase 3 - Registration & Integration |
 
 ## Progress
 
 | Phase | Status | Notes |
 |-------|--------|-------|
 | 1. TypeScript Foundation | Plan 01 complete (1/1) | WebMCP types with branded ToolName |
-| 2. Calculate Tool Implementation | Pending | |
+| 2. Calculate Tool Implementation | Plan 01 complete (1/1) | calculateMortgage tool with Zod validation |
 | 3. Registration & Integration | Pending | |
 | 4. Testing Infrastructure | Pending | |
 | 5. Documentation & Verification | Pending | |
 
 ## Session History
+
+### 2026-02-17 - Phase 2 Plan 01 Executed
+- Created calculateMortgage WebMCP tool with Zod validation
+- Updated CalculateMortgageOutput type for raw numeric values
+- Implemented JSON Schema for WebMCP registration
+- Added defensive type coercion with z.coerce.number()
+- Created tools barrel export for clean imports
+- Completed in 193 seconds, 4 tasks, 4 files (2 created, 2 modified)
+- Key decisions: first error only validation, raw numeric responses, full amortization schedule
 
 ### 2026-02-17 - Phase 1 Plan 01 Executed
 - Created WebMCP type definitions split by concern (navigator, tools, context)
@@ -52,4 +61,11 @@
 - Global navigator.modelContext augmentation enables IDE support
 - Types importable via @/lib/webmcp path
 
-**Next step:** Phase 2 - Calculate Tool Implementation
+**Phase 2 complete:**
+- calculateMortgage tool implemented with full validation
+- Zod schema with defensive type coercion
+- Raw numeric responses with full amortization schedule
+- Tools barrel export for clean imports
+- Tool callable but not yet registered with browser API
+
+**Next step:** Phase 3 - Registration & Integration
