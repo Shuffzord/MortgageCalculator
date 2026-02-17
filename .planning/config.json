@@ -1,0 +1,13 @@
+{
+  "created": "2026-02-17",
+  "workflow": {
+    "research_depth": "deep",
+    "phase_size": "small",
+    "commit_docs": true
+  },
+  "models": {
+    "researcher": "sonnet",
+    "synthesizer": "sonnet",
+    "roadmapper": "sonnet"
+  }
+}

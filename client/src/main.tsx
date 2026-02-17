@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import { registerWebMCPTools } from '@/lib/webmcp';
 // i18n is imported in App.tsx
 
 // Handle HMR reconnection issues
@@ -63,5 +64,9 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// Register WebMCP tools on page load (Chrome 146+ with WebMCP flag enabled)
+// Silently skips registration if WebMCP unavailable
+registerWebMCPTools();
 
 createRoot(document.getElementById("root")!).render(<App />);
