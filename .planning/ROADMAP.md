@@ -22,14 +22,16 @@ Integrate WebMCP to expose mortgage calculation to AI agents.
 **Plans:** 1 plan
 
 Plans:
-- [ ] 01-01-PLAN.md — Create WebMCP type definitions and navigator augmentation
+- [x] 01-01-PLAN.md — Create WebMCP type definitions and navigator augmentation
 
 **Deliverables:**
-- [ ] WebMCP TypeScript types (split by concern: navigator, tools, context)
-- [ ] Global navigator augmentation
-- [ ] Barrel exports for clean imports
+- [x] WebMCP TypeScript types (split by concern: navigator, tools, context)
+- [x] Global navigator augmentation
+- [x] Barrel exports for clean imports
 
 **Success Criteria:** TypeScript compiles without errors for WebMCP types
+
+**Requirements:** [NFR-2, NFR-3]
 
 ---
 
@@ -37,14 +39,10 @@ Plans:
 
 **Goal:** Implement the calculateMortgage tool
 
-**Tasks:**
-1. Create `client/src/lib/webmcp/tools/calculate.ts`:
-   - Input schema (JSON Schema)
-   - Input validation with Zod
-   - Mapping agent input → LoanDetails
-   - Execute callback calling calculationEngine
-   - Response formatting
-2. Create `client/src/lib/webmcp/tools/index.ts` exporting tools
+**Plans:** 1 plan
+
+Plans:
+- [ ] 02-01-PLAN.md — Implement calculateMortgage tool with validation and response formatting
 
 **Deliverables:**
 - [ ] calculateMortgage tool definition
@@ -52,6 +50,8 @@ Plans:
 - [ ] Response formatting logic
 
 **Success Criteria:** Tool execute function returns correct results for test inputs
+
+**Requirements:** [FR-2, FR-3, FR-5]
 
 ---
 
