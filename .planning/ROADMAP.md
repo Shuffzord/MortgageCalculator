@@ -59,20 +59,18 @@ Plans:
 
 **Goal:** Register tools on page load
 
-**Tasks:**
-1. Create `client/src/lib/webmcp/register.ts`:
-   - Feature detection (`'modelContext' in navigator`)
-   - `registerWebMCPTools()` function
-   - `unregisterWebMCPTools()` function
-   - Error handling
-2. Create `client/src/lib/webmcp/index.ts` main exports
-3. Update `client/src/main.tsx` to call registration
+**Plans:** 1 plan
+
+Plans:
+- [ ] 03-01-PLAN.md — Create registration module with feature detection and integrate into app initialization
 
 **Deliverables:**
 - [ ] Registration module
 - [ ] Integration in app entry point
 
 **Success Criteria:** Tool appears in Chrome extension after page load
+
+**Requirements:** [FR-1, FR-4]
 
 ---
 
